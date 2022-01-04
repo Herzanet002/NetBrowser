@@ -1,0 +1,21 @@
+﻿<Application
+    x:Class="NetBrowser_UWP.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:NetBrowser_UWP" 
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <controls:XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
+            </ResourceDictionary.MergedDictionaries>
+            <SolidColorBrush x:Key="mainBg" Color="#283149"></SolidColorBrush>
+            <SolidColorBrush x:Key="sthBg" Color="#404B69"></SolidColorBrush>
+            <SolidColorBrush x:Key="thBg" Color="#00818A"></SolidColorBrush>
+            <SolidColorBrush x:Key="mainfg" Color="#F9C5D5"></SolidColorBrush>
+        </ResourceDictionary>
+        
+
+    </Application.Resources>
+
+</Application>
