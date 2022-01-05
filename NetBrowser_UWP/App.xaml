@@ -12,7 +12,13 @@
             <SolidColorBrush x:Key="mainBg" Color="#283149"></SolidColorBrush>
             <SolidColorBrush x:Key="sthBg" Color="#404B69"></SolidColorBrush>
             <SolidColorBrush x:Key="thBg" Color="#00818A"></SolidColorBrush>
-            <SolidColorBrush x:Key="mainfg" Color="#F9C5D5"></SolidColorBrush>
+            <SolidColorBrush x:Key="mainfg" Color="#B5EAEA"></SolidColorBrush>
+
+            <Style TargetType="Rectangle" x:Key="HorizontalSeparator">
+                <Setter Property="Width" Value="10"/>
+                <Setter Property="Margin" Value="10,3"/>
+                <Setter Property="Fill" Value="{StaticResource thBg}"/>
+            </Style>
         </ResourceDictionary>
         
 

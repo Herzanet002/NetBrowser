@@ -30,7 +30,6 @@ namespace NetBrowser_UWP
             browser.ContainsFullScreenElementChanged += webView_ContainsFullScreenElementChanged;
             defaultTab.Content = browser;
 
-
         }
 
         private void backButton_Click(object sender, RoutedEventArgs e)
@@ -66,10 +65,8 @@ namespace NetBrowser_UWP
 
         private void browser_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
-            searchBox.Text = browser.Source.ToString();
-            currentSelectedTab.Header = sender.DocumentTitle;
-            Uri icoURI = new Uri("https://www.google.com/s2/favicons?domain=" + sender.Source);
-            currentSelectedTab.IconSource = new muxc.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false };
+            searchBox.Text = currentSelectedWeb.Source.ToString();
+            
         }
 
         private void browser_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
