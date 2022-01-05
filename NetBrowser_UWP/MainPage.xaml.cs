@@ -53,7 +53,7 @@ namespace NetBrowser_UWP
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                searchBtn_Click(sender, e);
+                SearchWeb();
             }
 
         }
@@ -66,7 +66,10 @@ namespace NetBrowser_UWP
         private void browser_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
             searchBox.Text = currentSelectedWeb.Source.ToString();
-            
+            //progressRing.IsActive = true;
+            browserProgress.IsEnabled = true;
+            browserProgress.IsIndeterminate = true;
+
         }
 
         private void browser_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
@@ -76,6 +79,9 @@ namespace NetBrowser_UWP
             currentSelectedTab.Header = sender.DocumentTitle;
             currentSelectedTab.IconSource = new muxc.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false };
             searchBox.Text = sender.Source.AbsoluteUri;
+            //progressRing.IsActive = false;
+            browserProgress.IsEnabled = false;
+            browserProgress.IsIndeterminate = false;
 
         }
 
@@ -141,15 +147,16 @@ namespace NetBrowser_UWP
 
         private void SearchWeb()
         {
-            if (currentSelectedWeb == null)
-            {
-                browser.Source = new Uri("https://www.google.ru/search?q=" + searchBox.Text);
-            }
             if (searchBox.Text.Contains("https://"))
             {
                 browser.Source = new Uri(searchBox.Text);
             }
-            if(searchBox.Text == "app://settings")
+            else if (currentSelectedWeb == null)
+            {
+                browser.Source = new Uri("https://www.google.ru/search?q=" + searchBox.Text);
+            }
+
+            else if (searchBox.Text == "app://settings")
             {
                 AddSettingsTab();
             }

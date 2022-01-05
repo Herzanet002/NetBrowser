@@ -16,6 +16,7 @@
         </Grid.RowDefinitions>
         <Image Source="/Assets/Square44x44Logo.scale-150.png" Grid.Row="0" Height="50" Width="50" VerticalAlignment="Center" HorizontalAlignment="Center" 
                Margin="0,0,0,100"/>
+        <Button Grid.Row="0" Content="Проверить обновления" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,100,0,0"/>
 
         <TextBlock HorizontalTextAlignment="Center" VerticalAlignment="Center" Text="NetBrowser" Foreground="White" FontSize="30" Grid.Row="0"/>
         <TextBlock HorizontalTextAlignment="Center" VerticalAlignment="Center" Text="Версия 01.040122" Foreground="White" FontSize="20" Grid.Row="1"/>

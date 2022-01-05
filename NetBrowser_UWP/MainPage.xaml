@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls" xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" xmlns:Windows10version1809="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
     Background="{StaticResource ResourceKey=mainBg}"
 
 >
@@ -15,6 +15,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30px"/>
             <RowDefinition Height="50px"/>
+            <RowDefinition Height="5px"/>
             <RowDefinition Height="1080*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
@@ -33,7 +34,7 @@
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="2"/>
 
 
 
@@ -48,7 +49,7 @@
             <Button x:Name="refreshBtn" Grid.Column="3" Background="Transparent" Padding="0" Width="30" Height="30" BorderThickness="1"  Style="{StaticResource ButtonRevealStyle}" Click="refreshBtn_Click" HorizontalAlignment="Center">
                 <SymbolIcon Symbol="Refresh" Foreground="White"/>
             </Button>
-            <TextBox x:Name="searchBox" Grid.Column="4" AcceptsReturn="True" PlaceholderText="Search..."  Height="30" Width="auto" VerticalContentAlignment="Center"
+            <TextBox x:Name="searchBox" Grid.Column="4" PlaceholderText="Search..."  Height="30" Width="auto" VerticalContentAlignment="Center"
                          TextWrapping="NoWrap" Background="{StaticResource ResourceKey=sthBg}" Foreground="White" Margin="15,9,0,9" KeyDown="searchBox_KeyDown" />
             <Button x:Name="searchBtn" HorizontalAlignment="Stretch" Grid.Column="5" Background="Transparent" Padding="0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}" Click="searchBtn_Click">
                 <SymbolIcon Symbol="Find" Foreground="White"/>
@@ -60,7 +61,7 @@
             <Button x:Name="historyBtn" Grid.Column="8" Background="Transparent" HorizontalAlignment="Center" Padding="0" Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}">
                 <FontIcon Foreground="White" FontFamily="Segoe MDL2 Assets" Glyph="&#xF738;"/>
             </Button>
-            <Rectangle Grid.Column="9"  Width="3" Fill="{StaticResource sthBg}" 
+            <Rectangle Grid.Column="9"  Width="4" Fill="{StaticResource sthBg}" 
                        Margin="7" Style="{StaticResource ColorPickerBorderStyle}"
                        ></Rectangle>
             <Button x:Name="settingBtn" Grid.Column="10" HorizontalAlignment="Center" Background="Transparent" Padding="0" Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}"  >
@@ -76,21 +77,25 @@
         </Grid>
 
         <Grid Grid.Row="2">
+            <muxc:ProgressBar x:Name="browserProgress" Height="2" Foreground="{StaticResource mainfg}" >
+                
+            </muxc:ProgressBar>
+        </Grid>
+        
+
+        <Grid Grid.Row="3">
             <muxc:TabView x:Name="tabView"  
                           AddTabButtonClick="tabView_AddTabButtonClick" TabCloseRequested="tabView_TabCloseRequested"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" 
                           Background="{StaticResource ResourceKey=sthBg}" SelectionChanged="tabView_SelectionChanged">
-                <muxc:TabView.TabStripHeader>
-                    <Grid x:Name="ShellTitlebarInset" Background="Transparent" />
-                </muxc:TabView.TabStripHeader>
-                <muxc:TabView.TabStripFooter>
-                    <Grid x:Name="CustomDragRegion" Background="Transparent" />
-                </muxc:TabView.TabStripFooter>
 
+                <!--<muxc:TabView.TabStripHeader>
+                    <muxc:ProgressRing Margin="6,0,2,0" Height="15" Width="15" Foreground="{StaticResource mainfg}" x:Name="progressRing"></muxc:ProgressRing>
+
+                </muxc:TabView.TabStripHeader>-->
+              
                 <muxc:TabView.TabItems>
-
                     <muxc:TabViewItem x:Name="defaultTab" Header="Новая вкладка">
-
                         <WebView x:Name="browser" Visibility="Visible" Grid.Row="2" />
                     </muxc:TabViewItem>
                 </muxc:TabView.TabItems>
