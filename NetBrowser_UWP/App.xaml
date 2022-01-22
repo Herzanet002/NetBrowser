@@ -9,10 +9,10 @@
             <ResourceDictionary.MergedDictionaries>
                 <controls:XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
             </ResourceDictionary.MergedDictionaries>
-            <SolidColorBrush x:Key="mainBg" Color="#283149"></SolidColorBrush>
-            <SolidColorBrush x:Key="sthBg" Color="#404B69"></SolidColorBrush>
-            <SolidColorBrush x:Key="thBg" Color="#00818A"></SolidColorBrush>
-            <SolidColorBrush x:Key="mainfg" Color="#B5EAEA"></SolidColorBrush>
+            <SolidColorBrush x:Key="mainBg" Color="#1A374D"></SolidColorBrush>
+            <SolidColorBrush x:Key="sthBg" Color="#406882"></SolidColorBrush>
+            <SolidColorBrush x:Key="thBg" Color="#6998AB"></SolidColorBrush>
+            <SolidColorBrush x:Key="mainfg" Color="#C9CCD5"></SolidColorBrush>
 
             
         </ResourceDictionary>

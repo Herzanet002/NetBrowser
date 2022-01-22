@@ -74,14 +74,24 @@ namespace NetBrowser_UWP
 
         private void browser_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            appTitle.Text = "NetBrowser" + " | " + sender.DocumentTitle;
-            Uri icoURI = new Uri("https://www.google.com/s2/favicons?domain=" + sender.Source);
-            currentSelectedTab.Header = sender.DocumentTitle;
-            currentSelectedTab.IconSource = new muxc.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false };
-            searchBox.Text = sender.Source.AbsoluteUri;
-            //progressRing.IsActive = false;
             browserProgress.IsEnabled = false;
             browserProgress.IsIndeterminate = false;
+            try
+            {
+                appTitle.Text = "NetBrowser" + " | " + sender.DocumentTitle;
+                Uri icoURI = new Uri("https://www.google.com/s2/favicons?domain=" + sender.Source);
+                currentSelectedTab.Header = sender.DocumentTitle;
+                currentSelectedTab.IconSource = new muxc.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false };
+                searchBox.Text = sender.Source.AbsoluteUri;
+                //progressRing.IsActive = false;
+
+
+                //DataTransfer dataTransfer = new DataTransfer();
+                //if (!string.IsNullOrEmpty(searchBox.Text))
+                //    dataTransfer.SaveHistory(searchBox.Text, currentSelectedWeb.DocumentTitle, currentSelectedWeb.Source.AbsoluteUri);
+            }
+            catch { }
+
 
         }
 
@@ -149,11 +159,11 @@ namespace NetBrowser_UWP
         {
             if (searchBox.Text.Contains("https://"))
             {
-                browser.Source = new Uri(searchBox.Text);
+                currentSelectedWeb.Source = new Uri(searchBox.Text);
             }
             else if (currentSelectedWeb == null)
             {
-                browser.Source = new Uri("https://www.google.ru/search?q=" + searchBox.Text);
+                currentSelectedWeb.Source = new Uri("https://www.google.ru/search?q=" + searchBox.Text);
             }
 
             else if (searchBox.Text == "app://settings")
@@ -165,6 +175,14 @@ namespace NetBrowser_UWP
             {
                 currentSelectedWeb.Source = new Uri("https://www.google.ru/search?q=" + searchBox.Text);
             }
+        }
+
+        private void SearchWeb(Uri uri)
+        {
+
+            currentSelectedWeb.Source = uri;
+
+
         }
         private void tabView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -211,6 +229,26 @@ namespace NetBrowser_UWP
         {
             if (!tabView.TabItems.Contains(setTab))
                 AddSettingsTab();
+        }
+
+        private void historyBtn_Click(object sender, RoutedEventArgs e)
+        {
+            historyListBox.Items.Clear();
+
+
+            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
+            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
+            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
+            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
+            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
+            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
+            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
+            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
+        }
+
+        private void historyListBox_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            SearchWeb(new Uri(historyListBox.SelectedItem.ToString()));
         }
     }
 }

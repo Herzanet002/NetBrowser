@@ -3,10 +3,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:NetBrowser_UWP"
+    xmlns:control="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls" xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals" xmlns:Windows10version1809="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+   
     Background="{StaticResource ResourceKey=mainBg}"
 
 >
@@ -40,31 +42,51 @@
 
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="backButton" Grid.Column="1" Background="Transparent" Padding="0" Width="30" Height ="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}" Click="backButton_Click" HorizontalAlignment="Center">
+            <Button x:Name="backButton" Grid.Column="1" Background="Transparent" Padding="0" Width="30" Height ="30"
+                    BorderThickness="1" Style="{StaticResource ButtonRevealStyle}" Click="backButton_Click" HorizontalAlignment="Center">
                 <SymbolIcon Symbol="Back" Foreground="White"/>
             </Button>
-            <Button x:Name="forwardBtn" Grid.Column="2" Background="Transparent" Padding="0" Width="30" Height="30" BorderThickness="1"  Style="{StaticResource ButtonRevealStyle}" Click="forwardBtn_Click" HorizontalAlignment="Center">
+            <Button x:Name="forwardBtn" Grid.Column="2" Background="Transparent" Padding="0" Width="30" Height="30" 
+                    BorderThickness="1"  Style="{StaticResource ButtonRevealStyle}" Click="forwardBtn_Click" HorizontalAlignment="Center">
                 <SymbolIcon Symbol="Forward" Foreground="White"/>
             </Button>
-            <Button x:Name="refreshBtn" Grid.Column="3" Background="Transparent" Padding="0" Width="30" Height="30" BorderThickness="1"  Style="{StaticResource ButtonRevealStyle}" Click="refreshBtn_Click" HorizontalAlignment="Center">
+            <Button x:Name="refreshBtn" Grid.Column="3" Background="Transparent" Padding="0" Width="30" Height="30" 
+                    BorderThickness="1"  Style="{StaticResource ButtonRevealStyle}" Click="refreshBtn_Click" HorizontalAlignment="Center">
                 <SymbolIcon Symbol="Refresh" Foreground="White"/>
             </Button>
             <TextBox x:Name="searchBox" Grid.Column="4" PlaceholderText="Search..."  Height="30" Width="auto" VerticalContentAlignment="Center"
-                         TextWrapping="NoWrap" Background="{StaticResource ResourceKey=sthBg}" Foreground="White" Margin="15,9,0,9" KeyDown="searchBox_KeyDown" />
-            <Button x:Name="searchBtn" HorizontalAlignment="Stretch" Grid.Column="5" Background="Transparent" Padding="0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}" Click="searchBtn_Click">
+                         TextWrapping="NoWrap" Background="{StaticResource ResourceKey=sthBg}" Foreground="White" 
+                     Margin="15,9,0,9" KeyDown="searchBox_KeyDown" />
+            <Button x:Name="searchBtn" HorizontalAlignment="Stretch" Grid.Column="5" Background="Transparent"
+                    Padding="0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}" Click="searchBtn_Click">
                 <SymbolIcon Symbol="Find" Foreground="White"/>
             </Button>
+            <Button x:Name="historyBtn" Grid.Column="7" Background="Transparent" HorizontalAlignment="Center"
+                    Padding="0" Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}"
+                    Click="historyBtn_Click">
+                <Button.Flyout>
+                    <Flyout Placement="Bottom">
+                        <StackPanel Width="400">
+                            <TextBlock Text="История" HorizontalAlignment="Center" Margin="0,0,0,15" Foreground="{StaticResource mainfg}"/>
+                            <ListBox x:Name="historyListBox" Background="Transparent" Tapped="historyListBox_Tapped"/>
+                            <Button x:Name="clearHistory" Content="Очистить историю" HorizontalAlignment="Center"></Button>
 
-            <Button x:Name="bookmarksBtn" Grid.Column="7" Background="Transparent" HorizontalAlignment="Center" Padding="0" Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}" >
-                <FontIcon Foreground="White" FontFamily="Segoe MDL2 Assets" Glyph="&#xE728;"/>
-            </Button>
-            <Button x:Name="historyBtn" Grid.Column="8" Background="Transparent" HorizontalAlignment="Center" Padding="0" Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}">
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
                 <FontIcon Foreground="White" FontFamily="Segoe MDL2 Assets" Glyph="&#xF738;"/>
             </Button>
+            
+            <Button x:Name="bookmarksBtn" Grid.Column="8" Background="Transparent" HorizontalAlignment="Center"
+                    Padding="0" Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}" >
+                <FontIcon Foreground="White" FontFamily="Segoe MDL2 Assets" Glyph="&#xE728;"/>
+            </Button>
+            
             <Rectangle Grid.Column="9"  Width="4" Fill="{StaticResource sthBg}" 
                        Margin="7" Style="{StaticResource ColorPickerBorderStyle}"
                        ></Rectangle>
-            <Button x:Name="settingBtn" Grid.Column="10" HorizontalAlignment="Center" Background="Transparent" Padding="0" Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}"  >
+            <Button x:Name="settingBtn" Grid.Column="10" HorizontalAlignment="Center" Background="Transparent" Padding="0"
+                    Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}"  >
                 <SymbolIcon Symbol="Setting" Foreground="White"></SymbolIcon>
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
