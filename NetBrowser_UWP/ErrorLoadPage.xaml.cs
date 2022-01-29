@@ -20,21 +20,15 @@ namespace NetBrowser_UWP
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
-    public sealed partial class AboutAppPage : Page
+    public sealed partial class ErrorLoadPage : Page
     {
-        public AboutAppPage()
+        public static string error = string.Empty;
+        public ErrorLoadPage()
         {
             this.InitializeComponent();
-        }
+            errorMessage.Text = error;
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var dialogError = new ContentDialog();
-            dialogError.Title = "Проверка обновлений";
-            dialogError.Content = "Обновления не найдены";
-            dialogError.CloseButtonText = "Закрыть";
-
-            await dialogError.ShowAsync();
         }
+        
     }
 }

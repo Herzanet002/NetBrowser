@@ -9,37 +9,36 @@
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
    
-    Background="{StaticResource ResourceKey=mainBg}"
-
->
+    Background="{StaticResource ResourceKey=mainBg}">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30px"/>
-            <RowDefinition Height="50px"/>
+            <RowDefinition Height="40px"/>
+            <RowDefinition Height="45px"/>
             <RowDefinition Height="5px"/>
             <RowDefinition Height="1080*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" x:Name="appTitle" Text="NetBrowser" VerticalAlignment="Center" Margin="15,0" Foreground="{StaticResource ResourceKey=mainfg}"/>
 
-        <Grid x:Name="navBar" Grid.Row="1" HorizontalAlignment="Stretch">
+        <TextBlock Grid.Row="0" x:Name="appTitle" Text="NetBrowser" VerticalAlignment="Center" Margin="15,0"  
+                   Foreground="{StaticResource ResourceKey=appTitleFg}" FontSize="14" />
+        <TextBlock Grid.Row="0" Text="ver.0.1.22.01" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,150,0" FontSize="12"
+                   Foreground="{StaticResource ResourceKey=betaFg}"/>
+
+        <Grid x:Name="navBar" Grid.Row="1" HorizontalAlignment="Stretch" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="600*"/>
-                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="500*"/>
+                <ColumnDefinition Width="35" />
                 <ColumnDefinition Width="100*"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="2"/>
-
-
-
+                <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
 
             <Button x:Name="backButton" Grid.Column="1" Background="Transparent" Padding="0" Width="30" Height ="30"
@@ -56,34 +55,93 @@
             </Button>
             <TextBox x:Name="searchBox" Grid.Column="4" PlaceholderText="Search..."  Height="30" Width="auto" VerticalContentAlignment="Center"
                          TextWrapping="NoWrap" Background="{StaticResource ResourceKey=sthBg}" Foreground="White" 
-                     Margin="15,9,0,9" KeyDown="searchBox_KeyDown" />
+                     Margin="10,0,10,0" KeyDown="searchBox_KeyDown" GotFocus="searchBox_GotFocus" LostFocus="searchBox_LostFocus">
+            </TextBox>
+            <Button x:Name="addbookmarksBtn" Grid.Column="4" Background="Transparent" HorizontalAlignment="Right" Margin="20,0,20,0"
+                    Padding="0" Width="30" Height="25" BorderBrush="Transparent" BorderThickness="0" VerticalContentAlignment="Center"
+                    Click="addBookmarksBtn_Click" >
+                <Button.Flyout>
+                    <Flyout Placement="Bottom" x:Name="bookmarkFlyout">
+                        <StackPanel Orientation="Vertical" Width="300">
+                            <TextBlock Text="Добавить закладку" Foreground="{StaticResource mainfg}" HorizontalAlignment="Center"></TextBlock>
+                            <TextBox x:Name="bookmarkTitle" Header="Заголовок" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                         TextWrapping="NoWrap" PlaceholderText="Название сайта"></TextBox>
+                            <TextBox x:Name="bookmarkUrl" Header="Ссылка" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                         TextWrapping="NoWrap" PlaceholderText="Ссылка на сайт"></TextBox>
+                            <Grid>
+                                <Button x:Name="CancelBookmarksBtn" Content="Отмена" HorizontalAlignment="Left" Margin="10,20,10,10" Click="CancelBookmarksBtn_Click"></Button>
+                                <Button x:Name="SaveBookmarkBtn" Content="Добавить" HorizontalAlignment="Right" Margin="10,20,10,10" Click="SaveBookmarkBtn_Click"></Button>
+                            </Grid>
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+                <FontIcon Foreground="White" FontFamily="Segoe MDL2 Assets" Glyph="&#xE734;" FontSize="15"
+                          />
+            </Button>
             <Button x:Name="searchBtn" HorizontalAlignment="Stretch" Grid.Column="5" Background="Transparent"
-                    Padding="0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}" Click="searchBtn_Click">
+                    Padding="0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}"
+                    Click="searchBtn_Click">
                 <SymbolIcon Symbol="Find" Foreground="White"/>
+            </Button>
+
+            <Button x:Name="bookmarksBtn" Grid.Column="8" Background="Transparent" HorizontalAlignment="Center"
+                    Padding="0" Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1"
+                    Style="{StaticResource ButtonRevealStyle}" Click="bookmarksBtn_Click">
+                <Button.Flyout>
+                    <Flyout Placement="Bottom" x:Name="flyoutBookmarks">
+                        <Grid>
+                            <StackPanel Width="300" >
+                                <TextBlock Text="Сохраненные закладки" HorizontalAlignment="Center" Margin="0,0,0,15" 
+                                           Foreground="{StaticResource mainfg}"/>
+                                <ListView x:Name="bookmarksFlyoutListView" Height="auto" MaxHeight="600" 
+                                          SelectionMode = "Single" IsItemClickEnabled = "True"
+                                      Background="{x:Null}" ItemClick="bookmarksFlyoutListView_ItemClick">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Height="60">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <BitmapIcon UriSource="{Binding Icon}"
+                                                ShowAsMonochrome="False" Height="20" Width="20"></BitmapIcon>
+                                                    <StackPanel Orientation="Vertical" Margin="0,10,0,0">
+                                                        <TextBlock Text="{Binding Title}" VerticalAlignment="Bottom" FontSize="16"
+                                               HorizontalAlignment="Left" Margin="10,0" FontWeight="Bold"></TextBlock>
+                                                        <TextBlock Grid.Row="1" Text="{Binding Url}" FontSize="12" 
+                                               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                                <Button x:Name="bookmarkSettingBtn" Content="Параметры закладок"
+                                        HorizontalAlignment="Center" Margin="0,15,0,0" Style="{StaticResource ButtonRevealStyle}" Click="bookmarkSettingBtn_Click" />
+                            </StackPanel>
+                        </Grid>
+                    </Flyout>
+                </Button.Flyout>
+                <FontIcon Foreground="White" FontFamily="Segoe MDL2 Assets" Glyph="&#xE728;"/>
             </Button>
             <Button x:Name="historyBtn" Grid.Column="7" Background="Transparent" HorizontalAlignment="Center"
                     Padding="0" Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}"
                     Click="historyBtn_Click">
                 <Button.Flyout>
-                    <Flyout Placement="Bottom">
-                        <StackPanel Width="400">
+                    <Flyout Placement="Bottom" x:Name="flyoutHistory">
+
+                        <StackPanel Width="400" >
                             <TextBlock Text="История" HorizontalAlignment="Center" Margin="0,0,0,15" Foreground="{StaticResource mainfg}"/>
-                            <ListBox x:Name="historyListBox" Background="Transparent" Tapped="historyListBox_Tapped"/>
-                            <Button x:Name="clearHistory" Content="Очистить историю" HorizontalAlignment="Center"></Button>
+                            <ListView x:Name="historyListView" Height="600" SelectionMode = "Single" IsItemClickEnabled = "True"
+                                      Background="Transparent" ItemClick="historyListView_ItemClick" />
+                            <Button x:Name="clearHistory" Content="Очистить историю" Margin="0,10,0,0"
+                                    HorizontalAlignment="Center" Style="{StaticResource ButtonRevealStyle}"></Button>
 
                         </StackPanel>
                     </Flyout>
                 </Button.Flyout>
                 <FontIcon Foreground="White" FontFamily="Segoe MDL2 Assets" Glyph="&#xF738;"/>
             </Button>
-            
-            <Button x:Name="bookmarksBtn" Grid.Column="8" Background="Transparent" HorizontalAlignment="Center"
-                    Padding="0" Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}" >
-                <FontIcon Foreground="White" FontFamily="Segoe MDL2 Assets" Glyph="&#xE728;"/>
-            </Button>
-            
-            <Rectangle Grid.Column="9"  Width="4" Fill="{StaticResource sthBg}" 
-                       Margin="7" Style="{StaticResource ColorPickerBorderStyle}"
+
+            <Rectangle Grid.Column="9"  Width="2" Fill="{StaticResource sthBg}" 
+                       Margin="8" Style="{StaticResource ColorPickerBorderStyle}"
                        ></Rectangle>
             <Button x:Name="settingBtn" Grid.Column="10" HorizontalAlignment="Center" Background="Transparent" Padding="0"
                     Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}"  >
@@ -99,34 +157,30 @@
         </Grid>
 
         <Grid Grid.Row="2">
-            <muxc:ProgressBar x:Name="browserProgress" Height="2" Foreground="{StaticResource mainfg}" >
-                
+            <muxc:ProgressBar x:Name="browserProgress" Height="2" IsIndeterminate="True"
+                              ShowPaused="False" ShowError="False" Visibility="Collapsed" Foreground="{StaticResource appTitleFg}" >
+
             </muxc:ProgressBar>
         </Grid>
-        
-
         <Grid Grid.Row="3">
-            <muxc:TabView x:Name="tabView"  
+            <muxc:TabView x:Name="tabView"
                           AddTabButtonClick="tabView_AddTabButtonClick" TabCloseRequested="tabView_TabCloseRequested"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" 
-                          Background="{StaticResource ResourceKey=sthBg}" SelectionChanged="tabView_SelectionChanged">
+                          Background="{StaticResource ResourceKey=sthBg}" SelectionChanged="tabView_SelectionChanged" >
 
                 <!--<muxc:TabView.TabStripHeader>
                     <muxc:ProgressRing Margin="6,0,2,0" Height="15" Width="15" Foreground="{StaticResource mainfg}" x:Name="progressRing"></muxc:ProgressRing>
 
                 </muxc:TabView.TabStripHeader>-->
-              
+
                 <muxc:TabView.TabItems>
                     <muxc:TabViewItem x:Name="defaultTab" Header="Новая вкладка">
-                        <WebView x:Name="browser" Visibility="Visible" Grid.Row="2" />
+                        <WebView x:Name="browser" Visibility="Visible" Grid.Row="2" x:FieldModifier="Public" NavigationFailed="browser_NavigationFailed" />
+
                     </muxc:TabViewItem>
                 </muxc:TabView.TabItems>
             </muxc:TabView>
         </Grid>
-
-
-
-
     </Grid>
 
 </Page>

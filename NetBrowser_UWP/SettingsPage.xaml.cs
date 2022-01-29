@@ -27,7 +27,10 @@ namespace NetBrowser_UWP
             this.InitializeComponent();
         }
 
-        private void NavigationView_SelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
+        public static int currentMode = 0;
+
+        private void NavigationView_SelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender,
+            Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
         {
             var selectedItem = (muxc.NavigationViewItem)sender.SelectedItem;
             string tag = selectedItem.Tag.ToString();
@@ -37,21 +40,56 @@ namespace NetBrowser_UWP
                 if(tag == "mainItem")
                 {
                     contentFrame.Navigate(typeof(MainItemPageSettings), null, args.RecommendedNavigationTransitionInfo);
+                    currentMode = 0;
                 }
                 else if(tag == "personalizeItem")
                 {
                     contentFrame.Navigate(typeof(PersonalizePageSettings), null, args.RecommendedNavigationTransitionInfo);
+                    currentMode = 1;
                 }
                 else if (tag == "searchItem")
                 {
                     contentFrame.Navigate(typeof(SearchSystemPageSettings), null, args.RecommendedNavigationTransitionInfo);
+                    currentMode = 2;
                 }
                 else if (tag == "aboutBrowserItem")
                 {
                     contentFrame.Navigate(typeof(AboutAppPage), null, args.RecommendedNavigationTransitionInfo);
+                    currentMode = 4;
+                }
+                else if(tag == "bookmarksItem")
+                {
+                    contentFrame.Navigate(typeof(BookmarksPage), null, args.RecommendedNavigationTransitionInfo);
+                    currentMode = 3;
+                }
+                else if(tag == "settingFileOpen")
+                {
+                    DataTransfer.LoadXmlFile();
                 }
             }
             
+        }
+
+        private void settingsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            switch (currentMode)
+            {
+                case 0:
+                    contentFrame.Navigate(typeof(MainItemPageSettings), null);
+                    break;
+                case 1:
+                    contentFrame.Navigate(typeof(PersonalizePageSettings), null);
+                    break;
+                case 2:
+                    contentFrame.Navigate(typeof(SearchSystemPageSettings), null);
+                    break;
+                case 3:
+                    contentFrame.Navigate(typeof(BookmarksPage), null);
+                    break;
+                case 4:
+                    contentFrame.Navigate(typeof(AboutAppPage), null);
+                    break;
+            }
         }
     }
 }

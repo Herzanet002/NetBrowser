@@ -114,5 +114,7 @@ namespace NetBrowser_UWP
             //TODO: Сохранить состояние приложения и остановить все фоновые операции
             deferral.Complete();
         }
+
+       
     }
 }

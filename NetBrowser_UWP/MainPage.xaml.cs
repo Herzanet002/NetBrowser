@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using muxc = Microsoft.UI.Xaml.Controls;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x419
@@ -15,13 +20,19 @@ namespace NetBrowser_UWP
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private static muxc.TabViewItem currentSelectedTab = null;
-        private static WebView currentSelectedWeb = null;
+        public static muxc.TabViewItem currentSelectedTab = null;
+        public static WebView currentSelectedWeb = null;
         private static readonly Uri homeUrl = new Uri("https://google.com");
         private static muxc.TabViewItem setTab = null;
+        public List<BookmarkDetails> bookmarksList;
+
+        public static MainPage mainPage;
         public MainPage()
         {
             this.InitializeComponent();
+            DataAccess dataAccess = new DataAccess();
+            dataAccess.CreateSettingsFile();
+            mainPage = this;
             browser = new WebView(WebViewExecutionMode.SeparateProcess);
             browser.Navigate(homeUrl);
             browser.NavigationCompleted += browser_NavigationCompleted;
@@ -29,8 +40,10 @@ namespace NetBrowser_UWP
             browser.NavigationStarting += browser_NavigationStarting;
             browser.ContainsFullScreenElementChanged += webView_ContainsFullScreenElementChanged;
             defaultTab.Content = browser;
+            
 
         }
+       
 
         private void backButton_Click(object sender, RoutedEventArgs e)
         {
@@ -68,14 +81,15 @@ namespace NetBrowser_UWP
             searchBox.Text = currentSelectedWeb.Source.ToString();
             //progressRing.IsActive = true;
             browserProgress.IsEnabled = true;
-            browserProgress.IsIndeterminate = true;
+            browserProgress.Visibility = Visibility.Visible;
+
 
         }
-
+        
         private void browser_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
             browserProgress.IsEnabled = false;
-            browserProgress.IsIndeterminate = false;
+            browserProgress.Visibility = Visibility.Collapsed;
             try
             {
                 appTitle.Text = "NetBrowser" + " | " + sender.DocumentTitle;
@@ -86,9 +100,9 @@ namespace NetBrowser_UWP
                 //progressRing.IsActive = false;
 
 
-                //DataTransfer dataTransfer = new DataTransfer();
-                //if (!string.IsNullOrEmpty(searchBox.Text))
-                //    dataTransfer.SaveHistory(searchBox.Text, currentSelectedWeb.DocumentTitle, currentSelectedWeb.Source.AbsoluteUri);
+                DataTransfer dataTransfer = new DataTransfer();
+                if (!string.IsNullOrEmpty(searchBox.Text))
+                    dataTransfer.SaveHistory(currentSelectedWeb.DocumentTitle, currentSelectedWeb.Source.AbsoluteUri);
             }
             catch { }
 
@@ -99,25 +113,13 @@ namespace NetBrowser_UWP
         {
 
             args.Handled = true;
-            WebView wb = new WebView(WebViewExecutionMode.SeparateProcess);
-            wb.Navigate(args.Uri);
-            wb.NavigationCompleted += browser_NavigationCompleted;
-            wb.NewWindowRequested += browser_NewWindowRequested;
-            wb.NavigationStarting += browser_NavigationStarting;
-            wb.ContainsFullScreenElementChanged += webView_ContainsFullScreenElementChanged;
-            var newTab = new muxc.TabViewItem
-            {
-                Header = sender.DocumentTitle.ToString(),
-                Content = wb
-            };
-
-            tabView.TabItems.Add(newTab);
-            tabView.SelectedItem = newTab;
-
+            CreateNewWebTab();
+            SearchWeb(args.Uri);
 
         }
 
-        private void tabView_AddTabButtonClick(muxc.TabView sender, object args)
+        
+        private void CreateNewWebTab()
         {
             WebView wb = new WebView(WebViewExecutionMode.SeparateProcess);
             wb.Navigate(homeUrl);
@@ -132,13 +134,38 @@ namespace NetBrowser_UWP
 
             };
 
-            sender.TabItems.Add(newTab);
-            sender.SelectedItem = newTab;
+            tabView.TabItems.Add(newTab);
+            tabView.SelectedItem = newTab;
+        }
+
+        public void CreateNewWebTab(string url)
+        {
+            WebView wb = new WebView(WebViewExecutionMode.SeparateProcess);
+            wb.Navigate(new Uri(url));
+            wb.NavigationCompleted += browser_NavigationCompleted;
+            wb.NewWindowRequested += browser_NewWindowRequested;
+            wb.NavigationStarting += browser_NavigationStarting;
+            wb.ContainsFullScreenElementChanged += webView_ContainsFullScreenElementChanged;
+            var newTab = new muxc.TabViewItem
+            {
+                Header = wb.DocumentTitle,
+                Content = wb,
+
+            };
+
+            tabView.TabItems.Add(newTab);
+            tabView.SelectedItem = newTab;
+        }
+
+        private void tabView_AddTabButtonClick(muxc.TabView sender, object args)
+        {
+            CreateNewWebTab();
         }
 
         private void tabView_TabCloseRequested(muxc.TabView sender, muxc.TabViewTabCloseRequestedEventArgs args)
         {
             sender.TabItems.Remove(args.Tab);
+            
         }
 
         private void webView_ContainsFullScreenElementChanged(WebView sender, object args)
@@ -155,7 +182,7 @@ namespace NetBrowser_UWP
             }
         }
 
-        private void SearchWeb()
+        public void SearchWeb()
         {
             if (searchBox.Text.Contains("https://"))
             {
@@ -168,7 +195,7 @@ namespace NetBrowser_UWP
 
             else if (searchBox.Text == "app://settings")
             {
-                AddSettingsTab();
+                AddSettingsTab(0);
             }
 
             else
@@ -177,10 +204,10 @@ namespace NetBrowser_UWP
             }
         }
 
-        private void SearchWeb(Uri uri)
+        public void SearchWeb(Uri uri)
         {
 
-            currentSelectedWeb.Source = uri;
+            currentSelectedWeb.Navigate(uri);
 
 
         }
@@ -189,6 +216,7 @@ namespace NetBrowser_UWP
             try
             {
                 currentSelectedTab = tabView.SelectedItem as muxc.TabViewItem;
+                currentSelectedWeb = currentSelectedTab.Content as WebView;
                 if (currentSelectedTab == setTab)
                 {
                     appTitle.Text = "NetBrowser | Настройки";
@@ -197,8 +225,12 @@ namespace NetBrowser_UWP
                 else if (currentSelectedTab != null)
                 {
                     currentSelectedWeb = currentSelectedTab.Content as WebView;
-                    appTitle.Text = "NetBrowser" + " | " + currentSelectedWeb.DocumentTitle;
-                    searchBox.Text = currentSelectedWeb.Source.AbsoluteUri;
+                    if(currentSelectedWeb.DocumentTitle != null)
+                    {
+                        appTitle.Text = "NetBrowser" + " | " + currentSelectedWeb.DocumentTitle;
+                        searchBox.Text = currentSelectedWeb.Source.AbsoluteUri;
+                    }
+                    
                 }
 
 
@@ -206,10 +238,9 @@ namespace NetBrowser_UWP
             }
             catch (Exception) { };
 
-
         }
 
-        private void AddSettingsTab()
+        private void AddSettingsTab(int mode)
         {
             setTab = new muxc.TabViewItem
             {
@@ -220,35 +251,170 @@ namespace NetBrowser_UWP
             Frame setFrame = new Frame();
             setTab.Content = setFrame;
             setFrame.Navigate(typeof(SettingsPage));
-
+            SettingsPage.currentMode = mode;
 
             tabView.TabItems.Add(setTab);
             tabView.SelectedItem = setTab;
+            
         }
         private void settingsBtn_Click(object sender, RoutedEventArgs e)
         {
             if (!tabView.TabItems.Contains(setTab))
-                AddSettingsTab();
+                AddSettingsTab(0);
         }
 
-        private void historyBtn_Click(object sender, RoutedEventArgs e)
+        private async void historyBtn_Click(object sender, RoutedEventArgs e)
         {
-            historyListBox.Items.Clear();
+            historyListView.Items.Clear();
+            DataTransfer dataTransfer = new DataTransfer();
+            List<string> historyList = await dataTransfer.GetHistory("url");
 
 
-            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
-            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
-            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
-            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
-            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
-            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
-            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
-            historyListBox.Items.Add("https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts");
+            for (int i = historyList.Count - 1; i >= 0; i--)
+            {
+                historyListView.Items.Add(historyList[i]);
+
+            }
+
         }
 
-        private void historyListBox_Tapped(object sender, TappedRoutedEventArgs e)
+        private void CreateErrorLoadPage(string url)
         {
-            SearchWeb(new Uri(historyListBox.SelectedItem.ToString()));
+            WebView webView = new WebView();
+            try
+            {
+                webView.Navigate(new Uri(url));
+            }
+            catch (Exception ex)
+            {
+                ErrorLoadPage.error = ex.Message;
+            }
+            var errorTab = new muxc.TabViewItem
+            {
+                Header = "Ошибка",
+                IconSource = new muxc.SymbolIconSource() { Symbol = Symbol.Cancel }
+
+            };
+            Frame setFrame = new Frame();
+            errorTab.Content = setFrame;
+            setFrame.Navigate(typeof(ErrorLoadPage));
+            
+            
+
+            tabView.TabItems.Add(errorTab);
+            tabView.SelectedItem = errorTab;
+        }
+
+        private async void historyListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+
+            string url = e.ClickedItem.ToString();
+            bool isUri = Uri.IsWellFormedUriString(url, UriKind.Absolute);
+            if (isUri)
+            {
+                CreateNewWebTab();
+                SearchWeb(new Uri(url));
+                flyoutHistory.Hide();
+            }
+            else
+            {
+                CreateErrorLoadPage(url);
+                flyoutHistory.Hide();
+                var dialogError = new ContentDialog();
+                dialogError.Title = "Неверная ссылка";
+                dialogError.Content = "Ссылка " + url + " недействительна или неверна";
+                dialogError.CloseButtonText = "Закрыть";
+                
+                await dialogError.ShowAsync();
+                
+
+            }
+        }
+
+        private void addBookmarksBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bookmarkTitle.Text = currentSelectedWeb.DocumentTitle;
+            bookmarkUrl.Text = currentSelectedWeb.Source.AbsoluteUri.ToString();
+
+        }
+
+        private void CancelBookmarksBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bookmarkFlyout.Hide();
+        }
+
+        private async void SaveBookmarkBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (bookmarkTitle.Text != String.Empty && bookmarkUrl.Text != String.Empty &&
+                Uri.IsWellFormedUriString(bookmarkUrl.Text, UriKind.Absolute))
+            {
+                DataTransfer dataTransfer = new DataTransfer();
+                dataTransfer.SaveBookmark(bookmarkTitle.Text, bookmarkUrl.Text);
+
+                var fontIcon = new FontIcon();
+                fontIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                fontIcon.FontSize = 16;
+                fontIcon.Glyph = "\xE735";
+                addbookmarksBtn.Content = fontIcon;
+                bookmarkFlyout.Hide();
+            }
+            else
+            {
+                var dialogError = new ContentDialog();
+                dialogError.Title = "Неверные данные";
+                dialogError.Content = "Введите верные параметры";
+                dialogError.CloseButtonText = "Закрыть";
+
+                await dialogError.ShowAsync();
+                
+            }
+            
+        }
+
+        private void searchBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            addbookmarksBtn.Margin = new Thickness(20, 0, 45, 0);
+        }
+
+        private void searchBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            addbookmarksBtn.Margin = new Thickness(20, 0, 20, 0);
+        }
+
+        public async void GetBookmarks()
+        {
+            DataTransfer dataTransfer = new DataTransfer();
+            List<BookmarkDetails> bookmarks = await dataTransfer.GetBookmarkList();
+
+            bookmarks.Reverse();
+            bookmarksFlyoutListView.ItemsSource = bookmarks;
+
+        }
+        private void bookmarksBtn_Click(object sender, RoutedEventArgs e)
+        {
+            GetBookmarks();
+        }
+
+        private void bookmarkSettingBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+            AddSettingsTab(3);
+            flyoutBookmarks.Hide();
+        }
+
+        private void bookmarksFlyoutListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            BookmarkDetails a = (BookmarkDetails)e.ClickedItem;
+            CreateNewWebTab();
+            SearchWeb(new Uri(a.Url));
+           
+            flyoutBookmarks.Hide();
+            
+        }
+
+        private void browser_NavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
+        {
+            Debug.WriteLine(sender.ToString());
         }
     }
 }
