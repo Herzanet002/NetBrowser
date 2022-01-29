@@ -22,7 +22,7 @@
 
         <TextBlock Grid.Row="0" x:Name="appTitle" Text="NetBrowser" VerticalAlignment="Center" Margin="15,0"  
                    Foreground="{StaticResource ResourceKey=appTitleFg}" FontSize="14" />
-        <TextBlock Grid.Row="0" Text="ver.0.1.22.01" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,150,0" FontSize="12"
+        <TextBlock Grid.Row="0" Text="ver.0.1.29.22" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,150,0" FontSize="12"
                    Foreground="{StaticResource ResourceKey=betaFg}"/>
 
         <Grid x:Name="navBar" Grid.Row="1" HorizontalAlignment="Stretch" >
