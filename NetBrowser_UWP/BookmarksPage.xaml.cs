@@ -1,21 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using muxc = Microsoft.UI.Xaml.Controls;
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace NetBrowser_UWP
@@ -25,12 +12,13 @@ namespace NetBrowser_UWP
     /// </summary>
     public sealed partial class BookmarksPage : Page
     {
-        public string oldUrl;
-        public string oldTitle;
-        
+        public static string oldUrl;
+        public static  string oldTitle;
+        public static List<BookmarkDetails> bookmarks;
         public BookmarksPage()
         {
             this.InitializeComponent();
+            this.DataContext = this;
 
         }
 
@@ -42,8 +30,8 @@ namespace NetBrowser_UWP
         public async void GetBookmarks()
         {
             DataTransfer dataTransfer = new DataTransfer();
-            List<BookmarkDetails> bookmarks = await dataTransfer.GetBookmarkList();
-            
+            bookmarks = await dataTransfer.GetBookmarkList();
+
             bookmarksListView.ItemsSource = bookmarks;
         }
 
@@ -56,6 +44,9 @@ namespace NetBrowser_UWP
         }
         private void Open_Click(object sender, RoutedEventArgs e)
         {
+            BookmarkDetails selectedBookmark = bookmarksListView.SelectedItem as BookmarkDetails;
+            MainPage.CreateNewWebTab();
+            MainPage.SearchWeb(new Uri(selectedBookmark.Url));
             
         }
         private async void Edit_Click(object sender, RoutedEventArgs e)
@@ -66,18 +57,23 @@ namespace NetBrowser_UWP
             bookmarkNewUrl.Text = selectedBookmark.Url;
             editDialog.DefaultButton = ContentDialogButton.Primary;
             editDialog.PrimaryButtonClick += EditDialog_PrimaryButtonClick;
+
             await editDialog.ShowAsync();
+            GetBookmarks();
+            
+            
         }
 
+        private MainPage MainPage
+        {
+            get { return (Window.Current.Content as Frame)?.Content as MainPage; }
+        }
         private void EditDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var newTitle = bookmarkNewTitle.Text;
             var newUrl = bookmarkNewUrl.Text;
             DataTransfer dataTransfer = new DataTransfer();
             dataTransfer.EditBookmark(oldUrl, newUrl, newTitle);
-            GetBookmarks();
-           
-
         }
 
         private async void Remove_Click(object sender, RoutedEventArgs e)
@@ -92,18 +88,15 @@ namespace NetBrowser_UWP
             deleteDialog.PrimaryButtonClick += DeleteDialog_PrimaryButtonClick;
             await deleteDialog.ShowAsync();
 
-        }
-
-        private void DeleteDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            DataTransfer dataTransfer = new DataTransfer();
-            BookmarkDetails bookmarkDetails = bookmarksListView.SelectedItem as BookmarkDetails;
-            dataTransfer.RemoveBookmark(bookmarkDetails.Url);
-            
             GetBookmarks();
         }
 
+        private async void DeleteDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            DataTransfer dataTransfer = new DataTransfer();
+            BookmarkDetails bookmarkDetails = bookmarksListView.SelectedItem as BookmarkDetails;
+            await dataTransfer.RemoveBookmark(bookmarkDetails.Url);
+        }
 
-        
     }
 }

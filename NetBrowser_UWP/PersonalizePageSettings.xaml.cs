@@ -25,6 +25,15 @@ namespace NetBrowser_UWP
         public PersonalizePageSettings()
         {
             this.InitializeComponent();
+            ThemeChooserGridView.SelectedIndex = Convert.ToInt32(App.ThemeMode)-1;
+        }
+
+        private void ThemeChooserGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DataTransfer dataTransfer = new DataTransfer();
+            int selectedThemeMode = ThemeChooserGridView.SelectedIndex + 1;
+            dataTransfer.SaveCurrentTheme(selectedThemeMode.ToString());
+            App.ThemeManager.LoadThemeByMode(selectedThemeMode.ToString());
         }
     }
 }

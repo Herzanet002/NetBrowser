@@ -62,9 +62,13 @@ namespace NetBrowser_UWP
                     contentFrame.Navigate(typeof(BookmarksPage), null, args.RecommendedNavigationTransitionInfo);
                     currentMode = 3;
                 }
-                else if(tag == "settingFileOpen")
+                else if(tag == "historyFileOpen")
                 {
-                    DataTransfer.LoadXmlFile();
+                    DataTransfer.LoadXmlFile("history.xml");
+                }
+                else if (tag == "bookmarksFileOpen")
+                {
+                    DataTransfer.LoadXmlFile("bookmarks.xml");
                 }
             }
             

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using Windows.UI.Popups;
+using System.Threading.Tasks;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using muxc = Microsoft.UI.Xaml.Controls;
@@ -16,7 +14,7 @@ using muxc = Microsoft.UI.Xaml.Controls;
 namespace NetBrowser_UWP
 {
     /// <summary>
-    /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
+    /// Главная страница браузера, в котором отображается весь контент
     /// </summary>
     public sealed partial class MainPage : Page
     {
@@ -24,15 +22,31 @@ namespace NetBrowser_UWP
         public static WebView currentSelectedWeb = null;
         private static readonly Uri homeUrl = new Uri("https://google.com");
         private static muxc.TabViewItem setTab = null;
-        public List<BookmarkDetails> bookmarksList;
+        public static List<BookmarkDetails> bookmarksList;
+        public static FontFamily SegoeFluent = new FontFamily("/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons");
 
-        public static MainPage mainPage;
+        public static FontIcon activeIcon = new FontIcon
+        {
+            FontFamily = SegoeFluent,
+            FontSize = 14,
+            Foreground = Application.Current.Resources["BookmarkAdded"] as Brush,
+            Glyph = "\xE735"
+        };
+        public static FontIcon unactiveIcon = new FontIcon()
+        {
+            FontFamily = SegoeFluent,
+            FontSize = 14,
+            Glyph = "\xE734"
+        };
         public MainPage()
         {
             this.InitializeComponent();
-            DataAccess dataAccess = new DataAccess();
-            dataAccess.CreateSettingsFile();
-            mainPage = this;
+            //DataAccess dataAccess = new DataAccess();
+            //dataAccess.CreateHistoryFile();
+            //dataAccess.CreateBookmarksFile();
+
+            GetBookmarks();
+
             browser = new WebView(WebViewExecutionMode.SeparateProcess);
             browser.Navigate(homeUrl);
             browser.NavigationCompleted += browser_NavigationCompleted;
@@ -40,10 +54,10 @@ namespace NetBrowser_UWP
             browser.NavigationStarting += browser_NavigationStarting;
             browser.ContainsFullScreenElementChanged += webView_ContainsFullScreenElementChanged;
             defaultTab.Content = browser;
-            
+
 
         }
-       
+
 
         private void backButton_Click(object sender, RoutedEventArgs e)
         {
@@ -71,21 +85,18 @@ namespace NetBrowser_UWP
 
         }
 
-        private void searchBtn_Click(object sender, RoutedEventArgs e)
-        {
-            SearchWeb();
-        }
+        private void searchBtn_Click(object sender, RoutedEventArgs e) => SearchWeb();
+
 
         private void browser_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
             searchBox.Text = currentSelectedWeb.Source.ToString();
-            //progressRing.IsActive = true;
             browserProgress.IsEnabled = true;
             browserProgress.Visibility = Visibility.Visible;
 
 
         }
-        
+
         private void browser_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
             browserProgress.IsEnabled = false;
@@ -97,12 +108,10 @@ namespace NetBrowser_UWP
                 currentSelectedTab.Header = sender.DocumentTitle;
                 currentSelectedTab.IconSource = new muxc.BitmapIconSource() { UriSource = icoURI, ShowAsMonochrome = false };
                 searchBox.Text = sender.Source.AbsoluteUri;
-                //progressRing.IsActive = false;
-
-
                 DataTransfer dataTransfer = new DataTransfer();
                 if (!string.IsNullOrEmpty(searchBox.Text))
                     dataTransfer.SaveHistory(currentSelectedWeb.DocumentTitle, currentSelectedWeb.Source.AbsoluteUri);
+                setBookmarkButtonAppearance();
             }
             catch { }
 
@@ -111,15 +120,12 @@ namespace NetBrowser_UWP
 
         private void browser_NewWindowRequested(WebView sender, WebViewNewWindowRequestedEventArgs args)
         {
-
             args.Handled = true;
             CreateNewWebTab();
             SearchWeb(args.Uri);
-
         }
 
-        
-        private void CreateNewWebTab()
+        public void CreateNewWebTab()
         {
             WebView wb = new WebView(WebViewExecutionMode.SeparateProcess);
             wb.Navigate(homeUrl);
@@ -157,16 +163,11 @@ namespace NetBrowser_UWP
             tabView.SelectedItem = newTab;
         }
 
-        private void tabView_AddTabButtonClick(muxc.TabView sender, object args)
-        {
-            CreateNewWebTab();
-        }
+        private void tabView_AddTabButtonClick(muxc.TabView sender, object args) => CreateNewWebTab();
 
-        private void tabView_TabCloseRequested(muxc.TabView sender, muxc.TabViewTabCloseRequestedEventArgs args)
-        {
-            sender.TabItems.Remove(args.Tab);
-            
-        }
+
+        private void tabView_TabCloseRequested(muxc.TabView sender, muxc.TabViewTabCloseRequestedEventArgs args) => sender.TabItems.Remove(args.Tab);
+
 
         private void webView_ContainsFullScreenElementChanged(WebView sender, object args)
         {
@@ -204,11 +205,90 @@ namespace NetBrowser_UWP
             }
         }
 
-        public void SearchWeb(Uri uri)
+        public void SearchWeb(Uri uri) => currentSelectedWeb.Navigate(uri);
+
+        public async void GetBookmarks()
+        {
+            DataTransfer dataTransfer = new DataTransfer();
+            bookmarksList = await dataTransfer.GetBookmarkList();
+
+            bookmarksList.Reverse();
+            bookmarksFlyoutListView.ItemsSource = bookmarksList;
+
+        }
+
+        private void setBookmarkButtonAppearance()
         {
 
-            currentSelectedWeb.Navigate(uri);
+            GetBookmarks();
+            if (bookmarksList != null)
+            {
 
+                bool isExistsBookmark = false;
+
+
+                bookmarksList.ForEach(bookmark =>
+                {
+                    if (bookmark != null)
+                        if (bookmark.Url == currentSelectedWeb.Source.AbsoluteUri)
+                            isExistsBookmark = true;
+                });
+                if (isExistsBookmark)
+                {
+                    addbookmarksBtn.Content = activeIcon;
+                    DeleteBookmarkBtn.Visibility = Visibility.Visible;
+                }
+
+                else
+                {
+                    addbookmarksBtn.Content = unactiveIcon;
+                    DeleteBookmarkBtn.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private void CancelBookmarksBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bookmarkFlyout.Hide();
+        }
+
+        private async void SaveBookmarkBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (bookmarkTitle.Text != String.Empty && bookmarkUrl.Text != String.Empty &&
+                Uri.IsWellFormedUriString(bookmarkUrl.Text, UriKind.Absolute))
+            {
+                DataTransfer dataTransfer = new DataTransfer();
+                dataTransfer.SaveBookmark(bookmarkTitle.Text, bookmarkUrl.Text);
+                bookmarkFlyout.Hide();
+                addbookmarksBtn.Content = activeIcon;
+                DeleteBookmarkBtn.Visibility = Visibility.Visible;
+
+            }
+            else
+            {
+                var dialogError = new ContentDialog();
+                dialogError.Title = "Неверные данные";
+                dialogError.Content = "Введите верные параметры";
+                dialogError.CloseButtonText = "Закрыть";
+
+                await dialogError.ShowAsync();
+
+            }
+
+        }
+
+        private async void DeleteBookmarkBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DataTransfer dataTransfer = new DataTransfer();
+
+            var result = await dataTransfer.RemoveBookmark(currentSelectedWeb.Source.AbsoluteUri);
+
+            if (result)
+            {
+                addbookmarksBtn.Content = unactiveIcon;
+                DeleteBookmarkBtn.Visibility = Visibility.Collapsed;
+                bookmarkFlyout.Hide();
+            }
 
         }
         private void tabView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -224,19 +304,16 @@ namespace NetBrowser_UWP
                 }
                 else if (currentSelectedTab != null)
                 {
-                    currentSelectedWeb = currentSelectedTab.Content as WebView;
-                    if(currentSelectedWeb.DocumentTitle != null)
+                    if (currentSelectedWeb.DocumentTitle != null)
                     {
+
                         appTitle.Text = "NetBrowser" + " | " + currentSelectedWeb.DocumentTitle;
                         searchBox.Text = currentSelectedWeb.Source.AbsoluteUri;
+                        setBookmarkButtonAppearance();
                     }
-                    
                 }
-
-
-
             }
-            catch (Exception) { };
+            catch { };
 
         }
 
@@ -255,7 +332,7 @@ namespace NetBrowser_UWP
 
             tabView.TabItems.Add(setTab);
             tabView.SelectedItem = setTab;
-            
+
         }
         private void settingsBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -265,16 +342,10 @@ namespace NetBrowser_UWP
 
         private async void historyBtn_Click(object sender, RoutedEventArgs e)
         {
-            historyListView.Items.Clear();
             DataTransfer dataTransfer = new DataTransfer();
-            List<string> historyList = await dataTransfer.GetHistory("url");
-
-
-            for (int i = historyList.Count - 1; i >= 0; i--)
-            {
-                historyListView.Items.Add(historyList[i]);
-
-            }
+            List<HistoryItemDetails> historyList = await dataTransfer.GetHistory("url");
+            historyList.Reverse();
+            historyListView.ItemsSource = historyList;
 
         }
 
@@ -298,17 +369,14 @@ namespace NetBrowser_UWP
             Frame setFrame = new Frame();
             errorTab.Content = setFrame;
             setFrame.Navigate(typeof(ErrorLoadPage));
-            
-            
-
             tabView.TabItems.Add(errorTab);
             tabView.SelectedItem = errorTab;
         }
 
         private async void historyListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-
-            string url = e.ClickedItem.ToString();
+            HistoryItemDetails historyItem = e.ClickedItem as HistoryItemDetails;
+            string url = historyItem.Url.ToString();
             bool isUri = Uri.IsWellFormedUriString(url, UriKind.Absolute);
             if (isUri)
             {
@@ -324,9 +392,8 @@ namespace NetBrowser_UWP
                 dialogError.Title = "Неверная ссылка";
                 dialogError.Content = "Ссылка " + url + " недействительна или неверна";
                 dialogError.CloseButtonText = "Закрыть";
-                
+
                 await dialogError.ShowAsync();
-                
 
             }
         }
@@ -335,65 +402,10 @@ namespace NetBrowser_UWP
         {
             bookmarkTitle.Text = currentSelectedWeb.DocumentTitle;
             bookmarkUrl.Text = currentSelectedWeb.Source.AbsoluteUri.ToString();
-
         }
 
-        private void CancelBookmarksBtn_Click(object sender, RoutedEventArgs e)
-        {
-            bookmarkFlyout.Hide();
-        }
+        private void bookmarksBtn_Click(object sender, RoutedEventArgs e) => GetBookmarks();
 
-        private async void SaveBookmarkBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (bookmarkTitle.Text != String.Empty && bookmarkUrl.Text != String.Empty &&
-                Uri.IsWellFormedUriString(bookmarkUrl.Text, UriKind.Absolute))
-            {
-                DataTransfer dataTransfer = new DataTransfer();
-                dataTransfer.SaveBookmark(bookmarkTitle.Text, bookmarkUrl.Text);
-
-                var fontIcon = new FontIcon();
-                fontIcon.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                fontIcon.FontSize = 16;
-                fontIcon.Glyph = "\xE735";
-                addbookmarksBtn.Content = fontIcon;
-                bookmarkFlyout.Hide();
-            }
-            else
-            {
-                var dialogError = new ContentDialog();
-                dialogError.Title = "Неверные данные";
-                dialogError.Content = "Введите верные параметры";
-                dialogError.CloseButtonText = "Закрыть";
-
-                await dialogError.ShowAsync();
-                
-            }
-            
-        }
-
-        private void searchBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            addbookmarksBtn.Margin = new Thickness(20, 0, 45, 0);
-        }
-
-        private void searchBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            addbookmarksBtn.Margin = new Thickness(20, 0, 20, 0);
-        }
-
-        public async void GetBookmarks()
-        {
-            DataTransfer dataTransfer = new DataTransfer();
-            List<BookmarkDetails> bookmarks = await dataTransfer.GetBookmarkList();
-
-            bookmarks.Reverse();
-            bookmarksFlyoutListView.ItemsSource = bookmarks;
-
-        }
-        private void bookmarksBtn_Click(object sender, RoutedEventArgs e)
-        {
-            GetBookmarks();
-        }
 
         private void bookmarkSettingBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -407,14 +419,16 @@ namespace NetBrowser_UWP
             BookmarkDetails a = (BookmarkDetails)e.ClickedItem;
             CreateNewWebTab();
             SearchWeb(new Uri(a.Url));
-           
+
             flyoutBookmarks.Hide();
-            
+
         }
 
         private void browser_NavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
         {
             Debug.WriteLine(sender.ToString());
         }
+
+
     }
 }

@@ -22,7 +22,7 @@
         <TextBlock HorizontalTextAlignment="Center" VerticalAlignment="Center" Text="NetBrowser" 
                    Foreground="White" FontSize="30" Grid.Row="0"/>
         <TextBlock HorizontalTextAlignment="Center" VerticalAlignment="Center" 
-                       Text="Версия 0.1.29.22" Foreground="White" FontSize="20" Grid.Row="1"/>
+                       Text="{StaticResource appVersion}" Foreground="White" FontSize="20" Grid.Row="1"/>
 
     </Grid>
 </Page>

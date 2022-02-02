@@ -32,16 +32,36 @@ namespace NetBrowser_UWP
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            DataAccess dataAccess = new DataAccess();
+            dataAccess.CreateHistoryFile();
+            dataAccess.CreateBookmarksFile();
+            dataAccess.CreateConfigFile();
         }
+        public static ThemeManager ThemeManager
+        => (ThemeManager)App.Current.Resources["ThemeManager"];
 
+        public static string ThemeMode;
         /// <summary>
         /// Вызывается при обычном запуске приложения пользователем. Будут использоваться другие точки входа,
         /// например, если приложение запускается для открытия конкретного файла.
         /// </summary>
         /// <param name="e">Сведения о запросе и обработке запуска.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        /// 
+
+        protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
+            DataTransfer dataTransfer = new DataTransfer();
+            string mode = await dataTransfer.GetCurrentTheme();
+            if (mode != string.Empty) { 
+                ThemeManager.LoadThemeByMode(mode);
+                ThemeMode = mode;
+            }
+            else
+            {
+                ThemeManager.LoadThemeByMode("1");
+                ThemeMode = "1";
+            }
 
             // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
             // только обеспечьте активность окна
@@ -82,7 +102,6 @@ namespace NetBrowser_UWP
             SolidColorBrush mainBg = Application.Current.Resources["mainBg"] as SolidColorBrush;
             if (titleBar != null)
             {
-                
                 titleBar.BackgroundColor = mainBg.Color;
                 titleBar.ButtonBackgroundColor = mainBg.Color;
                 titleBar.ButtonHoverForegroundColor = mainBg.Color;

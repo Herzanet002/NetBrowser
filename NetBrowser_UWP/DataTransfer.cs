@@ -11,13 +11,14 @@ namespace NetBrowser_UWP
 {
     public class DataTransfer
     {
-        static string fileName = "settings.xml";
-
+        private static string SettingsFileName = "configs.xml";
+        private static string BookmarksFileName = "bookmarks.xml";
+        private static string HistoryFileName = "history.xml";
         public async void SaveHistory(string title, string url)
         {
             try
             {
-                var doc = await DocumentLoad().AsAsyncOperation(); //Load the Xml file
+                var doc = await DocumentLoad(HistoryFileName).AsAsyncOperation(); //Load the Xml file
 
                 var history = doc.GetElementsByTagName("history");
 
@@ -32,18 +33,18 @@ namespace NetBrowser_UWP
                 elSiteName.InnerText = title;
                 elUrl.InnerText = url;
 
-                SaveDoc(doc);
+                SaveDoc(doc, HistoryFileName);
             }
             catch { };
         }
 
-        public async Task<XmlDocument> DocumentLoad()
+        public async Task<XmlDocument> DocumentLoad(string configFileName)
         {
             XmlDocument result = null;
 
             await Task.Run(async () =>
             {
-                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileName);
+                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(configFileName);
                 XmlDocument doc = await XmlDocument.LoadFromFileAsync(file);
                 doc.Normalize();
                 result = doc;
@@ -51,20 +52,22 @@ namespace NetBrowser_UWP
             return result;
         }
 
-        private async void SaveDoc(XmlDocument doc)
+
+
+        private async void SaveDoc(XmlDocument doc, string configFileName)
         {
-            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileName);
+            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(configFileName);
             await doc.SaveToFileAsync(file);
         }
 
-        public async Task<List<string>> GetHistory(string Source)
+        public async Task<List<HistoryItemDetails>> GetHistory(string Source)
         {
-            List<string> list_of_history = new List<string>();
+            List<HistoryItemDetails> list_of_history = new List<HistoryItemDetails>();
             await Task.Run(async () =>
             {
-                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileName);
+                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(HistoryFileName);
                 XmlDocument doc = await XmlDocument.LoadFromFileAsync(file);
-                
+
                 var historyItem = doc.GetElementsByTagName("historyitem");
                 for (int i = 0; i < historyItem.Count; i++)
                 {
@@ -73,7 +76,12 @@ namespace NetBrowser_UWP
                     {
                         if (historyItemChild[j].NodeName == Source)
                         {
-                            list_of_history.Add(historyItemChild[j].InnerText);
+
+                            list_of_history.Add(new HistoryItemDetails
+                            {
+                                Url = historyItemChild[j].InnerText,
+                                Title = historyItemChild[j].PreviousSibling.InnerText
+                            });
                         }
                     }
                 }
@@ -85,8 +93,8 @@ namespace NetBrowser_UWP
 
         public async void SaveBookmark(string title, string url)
         {
-            var doc = await DocumentLoad();
-           
+            var doc = await DocumentLoad(BookmarksFileName);
+
             var bookmarks = doc.GetElementsByTagName("bookmarks");
 
             var bookmark = bookmarks[0].AppendChild(doc.CreateElement("bookmark"));
@@ -98,25 +106,61 @@ namespace NetBrowser_UWP
             bookmarkTitle.InnerText = title;
             bookmarkIcon.InnerText = "https://www.google.com/s2/favicons?domain=" + url;
 
-            SaveDoc(doc);
+            SaveDoc(doc, BookmarksFileName);
         }
 
-        public async static void LoadXmlFile()
+        public async static void LoadXmlFile(string configFileName)
         {
-            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileName);
+            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(configFileName);
             await Launcher.LaunchFileAsync(file);
         }
 
+        public async Task<string> GetCurrentTheme()
+        {
+            string mode = string.Empty;
+            await Task.Run(async () =>
+            {
+                var doc = await DocumentLoad(SettingsFileName);
+
+                var theme = doc.GetElementsByTagName("CurrentThemeMode");
+
+
+                foreach (var item in theme)
+                {
+                    mode = item.Attributes[0].InnerText;
+                }
+
+            });
+            return mode;
+        }
+
+        public async void SaveCurrentTheme(string mode)
+        {
+
+            var doc = await DocumentLoad(SettingsFileName);
+
+            var theme = doc.GetElementsByTagName("CurrentThemeMode");
+
+
+            foreach (var item in theme)
+            {
+                item.Attributes[0].InnerText = mode;
+            }
+
+            SaveDoc(doc, SettingsFileName);
+
+
+        }
         public async Task<List<BookmarkDetails>> GetBookmarkList()
         {
             List<BookmarkDetails> list = new List<BookmarkDetails>();
 
             await Task.Run(async () =>
             {
-                var doc = await DocumentLoad();
-               
+                var doc = await DocumentLoad(BookmarksFileName);
+
                 var bookmark = doc.GetElementsByTagName("bookmark");
-                for(int i=0; i < bookmark.Count; i++)
+                for (int i = 0; i < bookmark.Count; i++)
                 {
                     var children = bookmark[i].ChildNodes;
 
@@ -124,58 +168,56 @@ namespace NetBrowser_UWP
                     string returnTitle = string.Empty;
                     string returnIcon = string.Empty;
 
-                    if(bookmark[i].NodeName == "bookmark")
+                    if (bookmark[i].NodeName == "bookmark")
                     {
-                        for(int j = 0; j<children.Count; j++)
+                        for (int j = 0; j < children.Count; j++)
                         {
-                            if(children[j].NodeName == "url")
+                            if (children[j].NodeName == "url")
                                 returnUrl = children[j].InnerText;
-                            if(children[j].NodeName == "title")
+                            if (children[j].NodeName == "title")
                                 returnTitle = children[j].InnerText;
-                            if(children[j].NodeName == "icon")
+                            if (children[j].NodeName == "icon")
                                 returnIcon = children[j].InnerText;
                         }
                     }
 
-                    if(returnUrl != string.Empty && returnTitle!= string.Empty)
+                    if (returnUrl != string.Empty && returnTitle != string.Empty)
                     {
-                        list.Add(new BookmarkDetails { Title = returnTitle, Url = returnUrl, Icon=returnIcon});
+                        list.Add(new BookmarkDetails { Title = returnTitle, Url = returnUrl, Icon = returnIcon });
                     }
                 }
             });
             return list;
         }
 
-        public async void RemoveBookmark(string url)
+        public async Task<bool> RemoveBookmark(string url)
         {
-            var doc = await DocumentLoad();
-           
+            var doc = await DocumentLoad(BookmarksFileName);
+            var result = false;
             var bookmark = doc.GetElementsByTagName("bookmark");
-            for(int i = 0; i < bookmark.Count; i++)
+            for (int i = 0; i < bookmark.Count; i++)
             {
                 var child = bookmark[i].ChildNodes;
 
-                for(int j = 0; j < child.Count; j++)
+                for (int j = 0; j < child.Count; j++)
                 {
-                    if(child[j].NodeName == "url")
+                    if (child[j].NodeName == "url")
                     {
-                        if(child[j].InnerText == url)
+                        if (child[j].InnerText == url)
                         {
                             child[j].ParentNode.ParentNode.RemoveChild(bookmark[i]);
-                            
-                            
+                            result = true;
                         }
-                        
                     }
                 }
             }
-            SaveDoc(doc);
+            SaveDoc(doc, BookmarksFileName);
+            return result;
         }
-        
+
         public async void EditBookmark(string oldUrl, string newUrl, string newTitle)
         {
-            var doc = await DocumentLoad();
-            
+            var doc = await DocumentLoad(BookmarksFileName);
             var bookmark = doc.GetElementsByTagName("bookmark");
             for (int i = 0; i < bookmark.Count; i++)
             {
@@ -187,27 +229,27 @@ namespace NetBrowser_UWP
                     {
                         if (child[j].InnerText == oldUrl)
                         {
-                            var child1 = child[j].NextSibling.NextSibling;//title
-                            var child2 = child1.NextSibling.NextSibling;//icon
-                            
-                            
-                            child1.InnerText = newTitle;
-                            child2.InnerText = "https://www.google.com/s2/favicons?domain=" + newUrl;
+                            try
+                            {
+                                var child0 = child[j]; //url                        
+                                var child1 = child0.NextSibling; //title
+                                var child2 = child1.NextSibling; //icon
+
+                                child0.InnerText = newUrl;
+                                child1.InnerText = newTitle;
+                                child2.InnerText = "https://www.google.com/s2/favicons?domain=" + newUrl;
+                            }
+                            catch { };
+
                         }
 
                     }
                 }
             }
-            SaveDoc(doc);
+            SaveDoc(doc, BookmarksFileName);
         }
-        
+
     }
 
-    public class BookmarkDetails
-    {
-        public string Title { get; set; }
-        public string Url { get; set; }
 
-        public string Icon { get; set; }
-    }
 }
