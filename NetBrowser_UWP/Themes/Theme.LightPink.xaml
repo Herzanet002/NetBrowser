@@ -6,7 +6,7 @@
     <SolidColorBrush x:Key="SecondBrush" Color="#FFF1E3E1"/>
     <SolidColorBrush x:Key="ThirdBrush" Color="#FFD5C8C7"/>
     <SolidColorBrush x:Key="AppTitleBrush" Color="#B2751630"/>
-    <SolidColorBrush x:Key="ForegroundBrush" Color="#FFEFEF"/>
+    <SolidColorBrush x:Key="ForegroundBrush" Color="#FF353535"/>
     <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FF292929"/>
     <SolidColorBrush x:Key="SearchBoxForeground" Color="#FF313131"/>
 </ResourceDictionary>

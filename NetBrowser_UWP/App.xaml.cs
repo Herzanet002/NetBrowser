@@ -40,6 +40,7 @@ namespace NetBrowser_UWP
         public static ThemeManager ThemeManager
         => (ThemeManager)App.Current.Resources["ThemeManager"];
 
+        public static ApplicationViewTitleBar TitleBar;
         public static string ThemeMode;
         /// <summary>
         /// Вызывается при обычном запуске приложения пользователем. Будут использоваться другие точки входа,
@@ -98,15 +99,8 @@ namespace NetBrowser_UWP
             {
                 coreTitleBar.ExtendViewIntoTitleBar = true;
             }
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            SolidColorBrush mainBg = Application.Current.Resources["mainBg"] as SolidColorBrush;
-            if (titleBar != null)
-            {
-                titleBar.BackgroundColor = mainBg.Color;
-                titleBar.ButtonBackgroundColor = mainBg.Color;
-                titleBar.ButtonHoverForegroundColor = mainBg.Color;
-
-            }
+            TitleBar = ApplicationView.GetForCurrentView().TitleBar;
+            
         }
 
         

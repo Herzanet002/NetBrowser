@@ -122,6 +122,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BackgroundBindingHelper.cs" />
     <Compile Include="BookmarkDetails.cs" />
     <Compile Include="BookmarksPage.xaml.cs">
       <DependentUpon>BookmarksPage.xaml</DependentUpon>
@@ -131,6 +132,7 @@
     <Compile Include="ErrorLoadPage.xaml.cs">
       <DependentUpon>ErrorLoadPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ForegroundBindingHelper.cs" />
     <Compile Include="HistoryItemDetails.cs" />
     <Compile Include="MainItemPageSettings.xaml.cs">
       <DependentUpon>MainItemPageSettings.xaml</DependentUpon>
@@ -148,7 +150,7 @@
     <Compile Include="SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ThemeManager.cs" />
+    <Compile Include="Themes\ThemeManager.cs" />
     <Compile Include="WebItem.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +255,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.8.0-prerelease.220118001</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Web.WebView2">
+      <Version>1.0.1133-prerelease</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

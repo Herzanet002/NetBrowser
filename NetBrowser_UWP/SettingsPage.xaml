@@ -19,36 +19,37 @@
                              SelectionChanged="NavigationView_SelectionChanged">
 
             <muxc:NavigationView.MenuItems>
-                <muxc:NavigationViewItem Content="Общие" Tag="mainItem">
+                
+                <muxc:NavigationViewItem Content="Общие" Tag="mainItem" Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE74C;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
-                
-                <muxc:NavigationViewItem Content="Персонализация" Tag="personalizeItem" >
+
+                <muxc:NavigationViewItem Content="Персонализация" Tag="personalizeItem" Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" >
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE771;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem Content="Поисковая система" Tag="searchItem">
+                <muxc:NavigationViewItem Content="Поисковая система" Tag="searchItem" Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE721;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
 
-                <muxc:NavigationViewItem Content="Закладки" Tag="bookmarksItem" x:Name="bookmarksNavItem" >
+                <muxc:NavigationViewItem Content="Закладки" Tag="bookmarksItem" x:Name="bookmarksNavItem" Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" >
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE728;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
 
-                <muxc:NavigationViewItem Content="Открыть файл истории" Tag="historyFileOpen" >
+                <muxc:NavigationViewItem Content="Открыть файл истории" Tag="historyFileOpen" Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" >
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE8E5;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
 
-                <muxc:NavigationViewItem Content="Открыть файл закладок" Tag="bookmarksFileOpen" >
+                <muxc:NavigationViewItem Content="Открыть файл закладок" Tag="bookmarksFileOpen" Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" >
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE8E5;"/>
                     </muxc:NavigationViewItem.Icon>
@@ -57,7 +58,7 @@
             </muxc:NavigationView.MenuItems>
 
             <muxc:NavigationView.FooterMenuItems>
-                <muxc:NavigationViewItem Content="О браузере" Tag="aboutBrowserItem">
+                <muxc:NavigationViewItem Content="О браузере" Tag="aboutBrowserItem" Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE946;"/>
                     </muxc:NavigationViewItem.Icon>

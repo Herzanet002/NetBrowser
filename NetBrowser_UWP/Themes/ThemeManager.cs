@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -20,20 +17,20 @@ namespace NetBrowser_UWP
         public const string PinkRedThemePath = "ms-appx:///Themes/Theme.LightPink.xaml";
         public const string DarkTheme = "ms-appx:///Themes/Theme.Dark.xaml";
 
-        private ResourceDictionary _currentThemeDictionary;
+        private static ResourceDictionary _currentThemeDictionary;
+       
 
+        public static string CurrentTheme { get; private set; }
 
-        public string CurrentTheme { get; private set; }
+        public static Brush BackgroundBrush => _currentThemeDictionary[nameof(BackgroundBrush)] as Brush;
+        public static Brush SecondBrush => _currentThemeDictionary[nameof(SecondBrush)] as Brush;
+        public static Brush ThirdBrush => _currentThemeDictionary[nameof(ThirdBrush)] as Brush;
 
-        public Brush BackgroundBrush => _currentThemeDictionary[nameof(BackgroundBrush)] as Brush;
-        public Brush SecondBrush => _currentThemeDictionary[nameof(SecondBrush)] as Brush;
-        public Brush ThirdBrush => _currentThemeDictionary[nameof(ThirdBrush)] as Brush;
+        public static Brush AppTitleBrush => _currentThemeDictionary[nameof(AppTitleBrush)] as Brush;
+        public static Brush ForegroundBrush => _currentThemeDictionary[nameof(ForegroundBrush)] as Brush;
+        public static Brush NavigationButtonBrush => _currentThemeDictionary[nameof(NavigationButtonBrush)] as Brush;
 
-        public Brush AppTitleBrush => _currentThemeDictionary[nameof(AppTitleBrush)] as Brush;
-        public Brush ForegroundBrush => _currentThemeDictionary[nameof(ForegroundBrush)] as Brush;
-        public Brush NavigationButtonBrush => _currentThemeDictionary[nameof(NavigationButtonBrush)] as Brush; 
-
-        public Brush SearchBoxForeground => _currentThemeDictionary[nameof(SearchBoxForeground)] as Brush;
+        public static Brush SearchBoxForeground => _currentThemeDictionary[nameof(SearchBoxForeground)] as Brush;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
@@ -45,7 +42,14 @@ namespace NetBrowser_UWP
             _currentThemeDictionary = new ResourceDictionary();
             App.LoadComponent(_currentThemeDictionary, new Uri(path));
             CurrentTheme = Path.GetFileNameWithoutExtension(path);
+            SolidColorBrush mainBg = ThemeManager.BackgroundBrush as SolidColorBrush;
+            if (App.TitleBar != null)
+            {
+                App.TitleBar.BackgroundColor = mainBg.Color;
+                App.TitleBar.ButtonBackgroundColor = mainBg.Color;
+                App.TitleBar.ButtonHoverForegroundColor = mainBg.Color;
 
+            }
             RaisePropertyChanged();
         }
 
@@ -56,7 +60,7 @@ namespace NetBrowser_UWP
                 case "1":
                     CurrentTheme = LightThemePath;
                     LoadTheme(LightThemePath);
-                    App.ThemeMode= mode;
+                    App.ThemeMode = mode;
                     break;
                 case "2":
                     CurrentTheme = DarkTheme;
@@ -81,7 +85,7 @@ namespace NetBrowser_UWP
             }
         }
 
-            public async Task LoadThemeFromFile(StorageFile file)
+        public async Task LoadThemeFromFile(StorageFile file)
         {
             string xaml = await FileIO.ReadTextAsync(file);
             _currentThemeDictionary = XamlReader.Load(xaml) as ResourceDictionary;

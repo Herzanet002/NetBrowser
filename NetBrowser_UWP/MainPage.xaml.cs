@@ -337,7 +337,12 @@ namespace NetBrowser_UWP
         private void settingsBtn_Click(object sender, RoutedEventArgs e)
         {
             if (!tabView.TabItems.Contains(setTab))
+            {
                 AddSettingsTab(0);
+                
+            }
+                
+
         }
 
         private async void historyBtn_Click(object sender, RoutedEventArgs e)

@@ -31,6 +31,7 @@
                 <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="35"/>
                 <ColumnDefinition Width="500*"/>
                 <ColumnDefinition Width="35" />
                 <ColumnDefinition Width="100*"/>
@@ -53,21 +54,25 @@
                     BorderThickness="1"  Style="{StaticResource ButtonRevealStyle}" Click="refreshBtn_Click" HorizontalAlignment="Center">
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE72C;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
+            <Button x:Name="homeBtn" Grid.Column="4" Background="Transparent" Padding="0" Width="30" Height="30" 
+                    BorderThickness="1"  Style="{StaticResource ButtonRevealStyle}" Click="refreshBtn_Click" HorizontalAlignment="Center">
+                <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE80F;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
+            </Button>
 
             <!--SearchBox Item-->
             <TextBox Style="{StaticResource SearchBoxStyle}" x:Name="searchBox" PlaceholderText="Поиск..."   
-                      KeyDown="searchBox_KeyDown" Grid.Row="1" Grid.Column="4" FontFamily="{StaticResource Segoe Fluent}"
-                     Background="{Binding ThirdBrush, Source={StaticResource ThemeManager}}"
-                     Foreground="{Binding SearchBoxForeground, Source={StaticResource ThemeManager}}">
+                      KeyDown="searchBox_KeyDown" Grid.Row="1" Grid.Column="5" FontFamily="{StaticResource Segoe Fluent}"
+                     
+                     >
             </TextBox>
             <Button x:Name="SSLBtn" Background="Transparent" HorizontalAlignment="Left" Margin="15,0,0,2"
-                    Padding="0" Width="30" Height="25" BorderBrush="Transparent" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="4"
+                    Padding="0" Width="30" Height="25" BorderBrush="Transparent" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="5"
                     VerticalAlignment="Center" >
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE72E;" Foreground="ForestGreen" FontSize="14"></FontIcon>
 
             </Button>
             <Button x:Name="addbookmarksBtn" Background="Transparent" HorizontalAlignment="Right" Margin="0,0,20,2"
-                    Padding="0" Width="30" Height="25" BorderBrush="Transparent" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="4"
+                    Padding="0" Width="30" Height="25" BorderBrush="Transparent" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="5"
                     VerticalAlignment="Center" Click="addBookmarksBtn_Click" >
                 <Button.Flyout>
                     <Flyout Placement="Bottom" x:Name="bookmarkFlyout">
@@ -88,7 +93,7 @@
                 <FontIcon Foreground="White" FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE734;" FontSize="14" />
             </Button>
             
-            <Button x:Name="searchBtn" HorizontalAlignment="Stretch" Grid.Column="5" Background="Transparent"
+            <Button x:Name="searchBtn" HorizontalAlignment="Stretch" Grid.Column="6" Background="Transparent"
                     Padding="0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}"
                     Click="searchBtn_Click">
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" Glyph="&#xE721;"/>
@@ -131,7 +136,7 @@
                 </Button.Flyout>
                 <FontIcon Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE728;"/>
             </Button>
-            <Button x:Name="historyBtn" Grid.Column="7" Background="Transparent" HorizontalAlignment="Center"
+            <Button x:Name="historyBtn" Grid.Column="9" Background="Transparent" HorizontalAlignment="Center"
                     Padding="0" Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}"
                     Click="historyBtn_Click">
                 <Button.Flyout>
@@ -165,10 +170,10 @@
                 <FontIcon Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xF738;"/>
             </Button>
 
-            <Rectangle Grid.Column="9"  Width="2" Fill="{Binding SecondBrush, Source={StaticResource ThemeManager}}" 
+            <Rectangle Grid.Column="10"  Width="2" Fill="{Binding SecondBrush, Source={StaticResource ThemeManager}}" 
                        Margin="8" Style="{StaticResource ColorPickerBorderStyle}"
                        ></Rectangle>
-            <Button x:Name="settingBtn" Grid.Column="10" HorizontalAlignment="Center" Background="Transparent" Padding="0"
+            <Button x:Name="settingBtn" Grid.Column="11" HorizontalAlignment="Center" Background="Transparent" Padding="0"
                     Margin="0,0,0,0" Width="30" Height="30" BorderThickness="1" Style="{StaticResource ButtonRevealStyle}"  >
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE713;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"></FontIcon>
                 <Button.Flyout>
@@ -190,7 +195,8 @@
             <muxc:TabView x:Name="tabView"
                           AddTabButtonClick="tabView_AddTabButtonClick" TabCloseRequested="tabView_TabCloseRequested"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" 
-                          Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}" SelectionChanged="tabView_SelectionChanged" >
+                          Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}" SelectionChanged="tabView_SelectionChanged" 
+                          Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}">
 
 
                 <!--<muxc:TabView.TabStripHeader>
@@ -199,7 +205,7 @@
                 </muxc:TabView.TabStripHeader>-->
 
                 <muxc:TabView.TabItems>
-                    <muxc:TabViewItem x:Name="defaultTab" Header="Новая вкладка">
+                    <muxc:TabViewItem x:Name="defaultTab" Header="Новая вкладка" >
                         <WebView x:Name="browser" Visibility="Visible" Grid.Row="2"/>
 
                     </muxc:TabViewItem>
