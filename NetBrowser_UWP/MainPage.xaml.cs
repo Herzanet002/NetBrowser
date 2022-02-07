@@ -20,7 +20,7 @@ namespace NetBrowser_UWP
     {
         public static muxc.TabViewItem currentSelectedTab = null;
         public static WebView currentSelectedWeb = null;
-        private static readonly Uri homeUrl = new Uri("https://google.com");
+        private static readonly Uri homeUrl = new Uri("https://bing.com");
         private static muxc.TabViewItem setTab = null;
         public static List<BookmarkDetails> bookmarksList;
         public static FontFamily SegoeFluent = new FontFamily("/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons");
@@ -41,19 +41,18 @@ namespace NetBrowser_UWP
         public MainPage()
         {
             this.InitializeComponent();
-            //DataAccess dataAccess = new DataAccess();
-            //dataAccess.CreateHistoryFile();
-            //dataAccess.CreateBookmarksFile();
-
             GetBookmarks();
-
-            browser = new WebView(WebViewExecutionMode.SeparateProcess);
-            browser.Navigate(homeUrl);
+            ThemeManager.SetRequestedTheme();
+            browser = new WebView(WebViewExecutionMode.SeparateProcess)
+            {
+                Source = homeUrl
+            };
             browser.NavigationCompleted += browser_NavigationCompleted;
             browser.NewWindowRequested += browser_NewWindowRequested;
             browser.NavigationStarting += browser_NavigationStarting;
             browser.ContainsFullScreenElementChanged += webView_ContainsFullScreenElementChanged;
             defaultTab.Content = browser;
+            
 
 
         }
@@ -416,6 +415,7 @@ namespace NetBrowser_UWP
         {
 
             AddSettingsTab(3);
+            
             flyoutBookmarks.Hide();
         }
 
@@ -434,6 +434,10 @@ namespace NetBrowser_UWP
             Debug.WriteLine(sender.ToString());
         }
 
-
+        private void backButton_ActualThemeChanged(FrameworkElement sender, object args)
+        {
+            Console.WriteLine("");
+            
+        }
     }
 }

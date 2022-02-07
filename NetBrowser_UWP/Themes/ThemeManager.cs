@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
@@ -14,11 +15,13 @@ namespace NetBrowser_UWP
 
         public const string DarkBlueThemePath = "ms-appx:///Themes/Theme.DarkBlue.xaml";
         public const string LightThemePath = "ms-appx:///Themes/Theme.Light.xaml";
-        public const string PinkRedThemePath = "ms-appx:///Themes/Theme.LightPink.xaml";
-        public const string DarkTheme = "ms-appx:///Themes/Theme.Dark.xaml";
+        public const string LightPinkThemePath = "ms-appx:///Themes/Theme.LightPink.xaml";
+        public const string DarkThemePath = "ms-appx:///Themes/Theme.Dark.xaml";
+        public const string LightBlueThemeParh = "ms-appx:///Themes/Theme.LightBlue.xaml";
+        public const string DarkNavyBlue = "ms-appx:///Themes/Theme.Dark.NavyBlue.xaml";
 
         private static ResourceDictionary _currentThemeDictionary;
-       
+        public static int ThemeMode = 0;
 
         public static string CurrentTheme { get; private set; }
 
@@ -53,34 +56,67 @@ namespace NetBrowser_UWP
             RaisePropertyChanged();
         }
 
+
+        public static void SetRequestedTheme()
+        {
+            FrameworkElement frameworkElement = Window.Current.Content as FrameworkElement;
+            if (frameworkElement != null)
+            {
+                frameworkElement.RequestedTheme = (ElementTheme)ThemeMode;
+            }
+        }
+
         public void LoadThemeByMode(string mode)
         {
             switch (mode)
             {
                 case "1":
                     CurrentTheme = LightThemePath;
+                    ThemeMode = 1;
                     LoadTheme(LightThemePath);
+
                     App.ThemeMode = mode;
+
                     break;
                 case "2":
-                    CurrentTheme = DarkTheme;
-                    LoadTheme(DarkTheme);
+                    CurrentTheme = DarkThemePath;
+                    ThemeMode = 2;
+                    LoadTheme(DarkThemePath);
+
                     App.ThemeMode = mode;
                     break;
                 case "3":
                     CurrentTheme = DarkBlueThemePath;
+                    ThemeMode = 2;
                     LoadTheme(DarkBlueThemePath);
                     App.ThemeMode = mode;
+
                     break;
                 case "4":
-                    CurrentTheme = PinkRedThemePath;
-                    LoadTheme(PinkRedThemePath);
+                    CurrentTheme = LightPinkThemePath;
+                    ThemeMode = 1;
+                    LoadTheme(LightPinkThemePath);
+                    App.ThemeMode = mode;
+                    break;
+                case "5":
+                    CurrentTheme = LightBlueThemeParh;
+                    ThemeMode = 1;
+                    LoadTheme(LightBlueThemeParh);
+                    App.ThemeMode = mode;
+                    break;
+                case "6":
+                    CurrentTheme = DarkNavyBlue;
+                    ThemeMode = 2;
+                    LoadTheme(DarkNavyBlue);
                     App.ThemeMode = mode;
                     break;
 
+
                 default:
                     CurrentTheme = DarkBlueThemePath;
+                    ThemeMode = 0;
                     LoadTheme(DarkBlueThemePath);
+
                     break;
             }
         }

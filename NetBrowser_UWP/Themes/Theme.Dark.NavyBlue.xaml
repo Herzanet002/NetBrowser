@@ -1,11 +1,12 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <x:String x:Key="NameOfTheme">Серо-голубая</x:String>
-    <SolidColorBrush x:Key="BackgroundBrush" Color="#FF2A3441"/>
-    <SolidColorBrush x:Key="SecondBrush" Color="#FF445469"/>
-    <SolidColorBrush x:Key="ThirdBrush" Color="#FF364354"/>
-    <SolidColorBrush x:Key="AppTitleBrush" Color="#7F97C1EF"/>
+    
+    <x:String x:Key="NameOfTheme">Темно-синяя</x:String>
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#FF072B47"/>
+    <SolidColorBrush x:Key="SecondBrush" Color="#FF0C4C7D"/>
+    <SolidColorBrush x:Key="ThirdBrush" Color="#FF093A60"/>
+    <SolidColorBrush x:Key="AppTitleBrush" Color="#7F7BA5D4"/>
     <SolidColorBrush x:Key="ForegroundBrush" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FFEFEF"/>
     <SolidColorBrush x:Key="SearchBoxForeground" Color="#FFEFEF"/>

@@ -34,6 +34,7 @@ namespace NetBrowser_UWP
             int selectedThemeMode = ThemeChooserGridView.SelectedIndex + 1;
             dataTransfer.SaveCurrentTheme(selectedThemeMode.ToString());
             App.ThemeManager.LoadThemeByMode(selectedThemeMode.ToString());
+            ThemeManager.SetRequestedTheme();
         }
     }
 }

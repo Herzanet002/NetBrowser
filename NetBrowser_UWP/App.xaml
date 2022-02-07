@@ -5,6 +5,8 @@
     xmlns:local="using:NetBrowser_UWP" 
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:binding="using:NetBrowser_UWP.BindingHelpers"
+
+
     >
     <Application.Resources>
 
@@ -28,12 +30,8 @@
             <SolidColorBrush x:Key="BookmarkAdded" Color="#FF3F85B9"></SolidColorBrush>
             <SolidColorBrush x:Key="PersonalizeSubstrateBrush" Color="#FF252525"></SolidColorBrush>
             <SolidColorBrush x:Key="Foreground" Color="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}"></SolidColorBrush>
-            <x:String x:Key="appVersion" >ver.0.1.29.22</x:String>
+            <x:String x:Key="appVersion" >ver.0.2.06.22</x:String>
             <FontFamily x:Key="Segoe Fluent">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
-
-
-
-
 
             <Style x:Key="SearchBoxStyle" TargetType="TextBox">
 
@@ -55,8 +53,8 @@
                 <Setter Property="Height" Value="32"></Setter>
                 <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
                 <Setter Property="TextWrapping" Value="NoWrap"></Setter>
-                <Setter Property="binding:BackgroundBindingHelper.Background" Value="ThirdBrush"></Setter>
-                <Setter Property="binding:ForegroundBindingHelper.Foreground" Value="ForegroundBrush"></Setter>
+                <!--<Setter Property="binding:BackgroundBindingHelper.Background" Value="ThirdBrush"></Setter>
+                <Setter Property="binding:ForegroundBindingHelper.Foreground" Value="ForegroundBrush"></Setter>-->
                 <Setter Property="SelectionFlyout" Value="{StaticResource TextControlCommandBarSelectionFlyout}"/>
                 <Setter Property="CornerRadius" Value="3"/>
                 <Setter Property="Margin" Value="10,0,10,0"></Setter>
@@ -108,7 +106,7 @@
                                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding PlaceholderForeground, RelativeSource={RelativeSource Mode=TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForegroundPointerOver}}"/>
                                                 </ObjectAnimationUsingKeyFrames>
                                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="Foreground">
-                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="White"/>
+                                                    <DiscreteObjectKeyFrame  KeyTime="0" Value="{ThemeResource TextControlForegroundFocused}"/>
                                                 </ObjectAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </VisualState>
@@ -146,7 +144,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-
+            
 
 
 

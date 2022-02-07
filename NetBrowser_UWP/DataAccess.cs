@@ -27,12 +27,12 @@ namespace NetBrowser_UWP
                         writer.WriteEndElement();
                         writer.WriteStartElement("bookmarks");
                         writer.WriteEndElement();
-                        writer.WriteStartElement("searchEngine");
-                        writer.WriteStartElement("google");
-                        writer.WriteAttributeString("prefix", "https://google.com/search?q=");
-                        writer.WriteEndElement();
-                        writer.WriteEndElement();
-                        writer.WriteEndElement();
+                        //writer.WriteStartElement("searchEngine");
+                        //writer.WriteStartElement("google");
+                        //writer.WriteAttributeString("prefix", "https://google.com/search?q=");
+                        //writer.WriteEndElement();
+                        //writer.WriteEndElement();
+                        //writer.WriteEndElement();
                         writer.WriteEndDocument();
                         writer.Flush();
                         await writer.FlushAsync();
@@ -95,6 +95,7 @@ namespace NetBrowser_UWP
                         writer.WriteStartDocument();
                         writer.WriteStartElement("CurrentThemeMode");
                         writer.WriteAttributeString("Mode", "1");
+                        writer.WriteAttributeString("ThemePath", "LightThemePath");
                         writer.WriteEndElement();
                         writer.WriteEndDocument();
                         writer.Flush();
