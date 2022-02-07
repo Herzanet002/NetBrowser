@@ -75,6 +75,11 @@ namespace NetBrowser_UWP
             currentSelectedWeb.Refresh();
         }
 
+        private void homeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            currentSelectedWeb.Navigate(homeUrl);
+        }
+
         private void searchBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
@@ -136,6 +141,7 @@ namespace NetBrowser_UWP
             {
                 Header = wb.DocumentTitle,
                 Content = wb,
+                
 
             };
 
@@ -429,15 +435,6 @@ namespace NetBrowser_UWP
 
         }
 
-        private void browser_NavigationFailed(object sender, WebViewNavigationFailedEventArgs e)
-        {
-            Debug.WriteLine(sender.ToString());
-        }
-
-        private void backButton_ActualThemeChanged(FrameworkElement sender, object args)
-        {
-            Console.WriteLine("");
-            
-        }
+        
     }
 }

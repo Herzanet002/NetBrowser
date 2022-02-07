@@ -8,7 +8,7 @@ namespace NetBrowser_UWP
 {
     public class DataAccess
     {
-        public async void CreateHistoryFile()
+        public static async void CreateHistoryFile()
         {
             try
             {
@@ -48,7 +48,7 @@ namespace NetBrowser_UWP
             }
         }
 
-        public async void CreateBookmarksFile()
+        public static async void CreateBookmarksFile()
         {
             try
             {
@@ -78,7 +78,7 @@ namespace NetBrowser_UWP
 
             }
         }
-        public async void CreateConfigFile()
+        public static async void CreateConfigFile()
         {
             try
             {

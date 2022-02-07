@@ -115,9 +115,9 @@ namespace NetBrowser_UWP
             await Launcher.LaunchFileAsync(file);
         }
 
-        public async Task<string> GetCurrentTheme()
+        public async Task<int> GetCurrentTheme()
         {
-            string mode = string.Empty;
+            int mode = 1;
             await Task.Run(async () =>
             {
                 var doc = await DocumentLoad(SettingsFileName);
@@ -127,7 +127,7 @@ namespace NetBrowser_UWP
 
                 foreach (var item in theme)
                 {
-                    mode = item.Attributes[0].InnerText;
+                    mode = Convert.ToInt32(item.Attributes[0].InnerText);
                 }
 
             });

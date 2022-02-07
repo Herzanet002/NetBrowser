@@ -46,7 +46,7 @@
             </Grid.ColumnDefinitions>
 
             <Button x:Name="backButton" Grid.Column="1" Background="Transparent" Padding="0" Width="30" Height ="30"
-                    BorderThickness="1" Style="{StaticResource ButtonRevealStyle}" Click="backButton_Click" HorizontalAlignment="Center" ActualThemeChanged="backButton_ActualThemeChanged">
+                    BorderThickness="1" Style="{StaticResource ButtonRevealStyle}" Click="backButton_Click" HorizontalAlignment="Center">
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xF0D3;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
             <Button x:Name="forwardBtn" Grid.Column="2" Background="Transparent" Padding="0" Width="30" Height="30" 
@@ -58,7 +58,7 @@
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE72C;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
             <Button x:Name="homeBtn" Grid.Column="4" Background="Transparent" Padding="0" Width="30" Height="30" 
-                    BorderThickness="1"  Style="{StaticResource ButtonRevealStyle}" Click="refreshBtn_Click" HorizontalAlignment="Center">
+                    BorderThickness="1"  Style="{StaticResource ButtonRevealStyle}" Click="homeBtn_Click" HorizontalAlignment="Center">
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE80F;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
 
@@ -202,7 +202,7 @@
                           Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}" SelectionChanged="tabView_SelectionChanged" 
                           Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}">
                 <muxc:TabView.TabItems>
-                    <muxc:TabViewItem  x:Name="defaultTab" Header="Новая вкладка">
+                    <muxc:TabViewItem x:Name="defaultTab" Header="Новая вкладка">
                         <WebView x:Name="browser" Visibility="Visible" Grid.Row="2" DefaultBackgroundColor="#FF1B1B1B" />
 
                     </muxc:TabViewItem>

@@ -25,7 +25,7 @@ namespace NetBrowser_UWP
         public SettingsPage()
         {
             this.InitializeComponent();
-            ThemeManager.SetRequestedTheme();
+
         }
 
         public static int currentMode = 0;

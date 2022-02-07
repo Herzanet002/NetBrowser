@@ -32,16 +32,16 @@ namespace NetBrowser_UWP
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            DataAccess dataAccess = new DataAccess();
-            dataAccess.CreateHistoryFile();
-            dataAccess.CreateBookmarksFile();
-            dataAccess.CreateConfigFile();
+
+            DataAccess.CreateHistoryFile();
+            DataAccess.CreateBookmarksFile();
+            DataAccess.CreateConfigFile();
         }
         public static ThemeManager ThemeManager
         => (ThemeManager)App.Current.Resources["ThemeManager"];
 
         public static ApplicationViewTitleBar TitleBar;
-        public static string ThemeMode;
+        public static int ThemeMode;
         /// <summary>
         /// Вызывается при обычном запуске приложения пользователем. Будут использоваться другие точки входа,
         /// например, если приложение запускается для открытия конкретного файла.
@@ -52,17 +52,12 @@ namespace NetBrowser_UWP
         protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
+            TitleBar = ApplicationView.GetForCurrentView().TitleBar;
             DataTransfer dataTransfer = new DataTransfer();
-            string mode = await dataTransfer.GetCurrentTheme();
-            if (mode != string.Empty) { 
-                ThemeManager.LoadThemeByMode(mode);
-                ThemeMode = mode;
-            }
-            else
-            {
-                ThemeManager.LoadThemeByMode("1");
-                ThemeMode = "1";
-            }
+            int mode = await dataTransfer.GetCurrentTheme();
+            ThemeManager.LoadThemeByMode(mode);
+            ThemeMode = mode;
+
 
             // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
             // только обеспечьте активность окна
@@ -99,11 +94,10 @@ namespace NetBrowser_UWP
             {
                 coreTitleBar.ExtendViewIntoTitleBar = true;
             }
-            TitleBar = ApplicationView.GetForCurrentView().TitleBar;
-            
+
         }
 
-        
+
         /// <summary>
         /// Вызывается в случае сбоя навигации на определенную страницу
         /// </summary>
@@ -128,6 +122,6 @@ namespace NetBrowser_UWP
             deferral.Complete();
         }
 
-       
+
     }
 }

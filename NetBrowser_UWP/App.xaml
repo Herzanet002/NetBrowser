@@ -5,6 +5,7 @@
     xmlns:local="using:NetBrowser_UWP" 
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:binding="using:NetBrowser_UWP.BindingHelpers"
+    xmlns:media="using:Microsoft.UI.Xaml.Media"
 
 
     >
@@ -24,15 +25,18 @@
             <SolidColorBrush x:Key="mainfg" Color="#FFEFEF"/>
             <SolidColorBrush x:Key="betaFg" Color="#FF6BD6DE"/>
             <SolidColorBrush x:Key="errorBg" Color="#FF381E1E"/>
+            <media:AcrylicBrush x:Key="CustomAcrylicInAppLuminosity" BackgroundSource="Backdrop"
+            TintOpacity="0.640000030398369" TintLuminosityOpacity="0.472000022418797" TintColor="SkyBlue" FallbackColor="SkyBlue" />
             <SolidColorBrush x:Key="transparentFg" Color="#4CFFFFFF"/>
             <SolidColorBrush x:Key="searchBoxBg" Color="#FF282828"></SolidColorBrush>
             <SolidColorBrush x:Key="searchBoxFocusedBrush" Color="#FF63ADE5"></SolidColorBrush>
             <SolidColorBrush x:Key="BookmarkAdded" Color="#FF3F85B9"></SolidColorBrush>
             <SolidColorBrush x:Key="PersonalizeSubstrateBrush" Color="#FF252525"></SolidColorBrush>
             <SolidColorBrush x:Key="Foreground" Color="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}"></SolidColorBrush>
-            <x:String x:Key="appVersion" >ver.0.2.06.22</x:String>
+            <x:String x:Key="appVersion" >ver.0.2.07.22</x:String>
             <FontFamily x:Key="Segoe Fluent">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
 
+            
             <Style x:Key="SearchBoxStyle" TargetType="TextBox">
 
                 <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}"/>
@@ -133,7 +137,7 @@
 
                                 </VisualStateManager.VisualStateGroups>
                                 <ContentPresenter x:Name="HeaderContentPresenter" ContentTemplate="{TemplateBinding HeaderTemplate}" Grid.Column="0" Content="{TemplateBinding Header}" Grid.ColumnSpan="2" Foreground="{ThemeResource TextControlHeaderForeground}" FontWeight="Normal" Margin="{ThemeResource TextBoxTopHeaderMargin}" Grid.Row="0" TextWrapping="Wrap" VerticalAlignment="Top" Visibility="Collapsed" x:DeferLoadStrategy="Lazy"/>
-                                <Border x:Name="BorderElement" Background="{TemplateBinding Background}" BorderBrush="{StaticResource thBg}" BorderThickness="2" CornerRadius="{TemplateBinding CornerRadius}" Grid.Column="0" Grid.ColumnSpan="2" Control.IsTemplateFocusTarget="True" MinWidth="{ThemeResource TextControlThemeMinWidth}" MinHeight="{ThemeResource TextControlThemeMinHeight}" Grid.RowSpan="1" Grid.Row="1"/>
+                                <Border x:Name="BorderElement" Background="{TemplateBinding Background}" BorderBrush="{Binding SearchBoxBorderBrush, Source={StaticResource ThemeManager} }" BorderThickness="2" CornerRadius="{TemplateBinding CornerRadius}" Grid.Column="0" Grid.ColumnSpan="2" Control.IsTemplateFocusTarget="True" MinWidth="{ThemeResource TextControlThemeMinWidth}" MinHeight="{ThemeResource TextControlThemeMinHeight}" Grid.RowSpan="1" Grid.Row="1"/>
                                 <ScrollViewer x:Name="ContentElement" AutomationProperties.AccessibilityView="Raw" Grid.Column="0" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}" IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}" IsTabStop="False" IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}" IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Grid.Row="1" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}" ZoomMode="Disabled"/>
                                 <TextBlock x:Name="PlaceholderTextContentPresenter" Grid.Column="0" Grid.ColumnSpan="2" Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource Mode=TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForeground}}" IsHitTestVisible="False" Margin="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" Grid.Row="1" TextAlignment="{TemplateBinding TextAlignment}" TextWrapping="{TemplateBinding TextWrapping}" Text="{TemplateBinding PlaceholderText}"/>
 

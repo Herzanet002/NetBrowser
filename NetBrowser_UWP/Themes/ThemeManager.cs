@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
@@ -12,13 +13,6 @@ namespace NetBrowser_UWP
 {
     public sealed class ThemeManager : INotifyPropertyChanged
     {
-
-        public const string DarkBlueThemePath = "ms-appx:///Themes/Theme.DarkBlue.xaml";
-        public const string LightThemePath = "ms-appx:///Themes/Theme.Light.xaml";
-        public const string LightPinkThemePath = "ms-appx:///Themes/Theme.LightPink.xaml";
-        public const string DarkThemePath = "ms-appx:///Themes/Theme.Dark.xaml";
-        public const string LightBlueThemeParh = "ms-appx:///Themes/Theme.LightBlue.xaml";
-        public const string DarkNavyBlue = "ms-appx:///Themes/Theme.Dark.NavyBlue.xaml";
 
         private static ResourceDictionary _currentThemeDictionary;
         public static int ThemeMode = 0;
@@ -35,6 +29,8 @@ namespace NetBrowser_UWP
 
         public static Brush SearchBoxForeground => _currentThemeDictionary[nameof(SearchBoxForeground)] as Brush;
 
+        public static Brush SearchBoxBorderBrush => _currentThemeDictionary[nameof(SearchBoxBorderBrush)] as Brush;
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
                     => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -45,12 +41,14 @@ namespace NetBrowser_UWP
             _currentThemeDictionary = new ResourceDictionary();
             App.LoadComponent(_currentThemeDictionary, new Uri(path));
             CurrentTheme = Path.GetFileNameWithoutExtension(path);
+            SolidColorBrush foreground = ThemeManager.NavigationButtonBrush as SolidColorBrush;
             SolidColorBrush mainBg = ThemeManager.BackgroundBrush as SolidColorBrush;
             if (App.TitleBar != null)
             {
-                App.TitleBar.BackgroundColor = mainBg.Color;
-                App.TitleBar.ButtonBackgroundColor = mainBg.Color;
-                App.TitleBar.ButtonHoverForegroundColor = mainBg.Color;
+                App.TitleBar.BackgroundColor = Colors.Transparent;
+                App.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                App.TitleBar.ButtonHoverForegroundColor = Colors.Transparent;
+                App.TitleBar.ButtonForegroundColor = foreground.Color;
 
             }
             RaisePropertyChanged();
@@ -66,59 +64,16 @@ namespace NetBrowser_UWP
             }
         }
 
-        public void LoadThemeByMode(string mode)
+        public void LoadThemeByMode(int mode)
         {
-            switch (mode)
-            {
-                case "1":
-                    CurrentTheme = LightThemePath;
-                    ThemeMode = 1;
-                    LoadTheme(LightThemePath);
+            (string, int) Theme = Constants.Constants.Themes[mode];
+            string themePath = Theme.Item1;
+            CurrentTheme = themePath;
+            ThemeMode = Theme.Item2;
+            LoadTheme(themePath);
 
-                    App.ThemeMode = mode;
+            App.ThemeMode = mode;
 
-                    break;
-                case "2":
-                    CurrentTheme = DarkThemePath;
-                    ThemeMode = 2;
-                    LoadTheme(DarkThemePath);
-
-                    App.ThemeMode = mode;
-                    break;
-                case "3":
-                    CurrentTheme = DarkBlueThemePath;
-                    ThemeMode = 2;
-                    LoadTheme(DarkBlueThemePath);
-                    App.ThemeMode = mode;
-
-                    break;
-                case "4":
-                    CurrentTheme = LightPinkThemePath;
-                    ThemeMode = 1;
-                    LoadTheme(LightPinkThemePath);
-                    App.ThemeMode = mode;
-                    break;
-                case "5":
-                    CurrentTheme = LightBlueThemeParh;
-                    ThemeMode = 1;
-                    LoadTheme(LightBlueThemeParh);
-                    App.ThemeMode = mode;
-                    break;
-                case "6":
-                    CurrentTheme = DarkNavyBlue;
-                    ThemeMode = 2;
-                    LoadTheme(DarkNavyBlue);
-                    App.ThemeMode = mode;
-                    break;
-
-
-                default:
-                    CurrentTheme = DarkBlueThemePath;
-                    ThemeMode = 0;
-                    LoadTheme(DarkBlueThemePath);
-
-                    break;
-            }
         }
 
         public async Task LoadThemeFromFile(StorageFile file)
@@ -137,6 +92,7 @@ namespace NetBrowser_UWP
             OnPropertyChanged(nameof(AppTitleBrush));
             OnPropertyChanged(nameof(ForegroundBrush));
             OnPropertyChanged(nameof(NavigationButtonBrush));
+            OnPropertyChanged(nameof(SearchBoxBorderBrush));
             OnPropertyChanged(nameof(CurrentTheme));
         }
     }
