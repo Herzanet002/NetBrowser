@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace NetBrowser_UWP.Constants
 {
@@ -26,6 +29,22 @@ namespace NetBrowser_UWP.Constants
             {5, (LightBlueThemePath,1) },
             {6, (DarkNavyBlue, 2) },
             {7, (DarkAcrylic, 2) },
+        };
+
+        public static FontFamily SegoeFluent = new FontFamily("/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons");
+
+        public static FontIcon activeIcon = new FontIcon
+        {
+            FontFamily = SegoeFluent,
+            FontSize = 14,
+            Foreground = Application.Current.Resources["BookmarkAdded"] as Brush,
+            Glyph = "\xE735"
+        };
+        public static FontIcon unactiveIcon = new FontIcon()
+        {
+            FontFamily = SegoeFluent,
+            FontSize = 14,
+            Glyph = "\xE734"
         };
     }
 }

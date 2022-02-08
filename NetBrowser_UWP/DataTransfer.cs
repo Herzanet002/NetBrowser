@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
@@ -9,12 +7,12 @@ using Windows.System;
 
 namespace NetBrowser_UWP
 {
-    public class DataTransfer
+    public static class DataTransfer
     {
         private static string SettingsFileName = "configs.xml";
         private static string BookmarksFileName = "bookmarks.xml";
         private static string HistoryFileName = "history.xml";
-        public async void SaveHistory(string title, string url)
+        public static async void SaveHistory(string title, string url)
         {
             try
             {
@@ -38,7 +36,7 @@ namespace NetBrowser_UWP
             catch { };
         }
 
-        public async Task<XmlDocument> DocumentLoad(string configFileName)
+        public static async Task<XmlDocument> DocumentLoad(string configFileName)
         {
             XmlDocument result = null;
 
@@ -54,13 +52,13 @@ namespace NetBrowser_UWP
 
 
 
-        private async void SaveDoc(XmlDocument doc, string configFileName)
+        private static async void SaveDoc(XmlDocument doc, string configFileName)
         {
             var file = await ApplicationData.Current.LocalFolder.GetFileAsync(configFileName);
             await doc.SaveToFileAsync(file);
         }
 
-        public async Task<List<HistoryItemDetails>> GetHistory(string Source)
+        public static async Task<List<HistoryItemDetails>> GetHistory(string Source)
         {
             List<HistoryItemDetails> list_of_history = new List<HistoryItemDetails>();
             await Task.Run(async () =>
@@ -91,7 +89,7 @@ namespace NetBrowser_UWP
 
         }
 
-        public async void SaveBookmark(string title, string url)
+        public static async void SaveBookmark(string title, string url)
         {
             var doc = await DocumentLoad(BookmarksFileName);
 
@@ -115,15 +113,13 @@ namespace NetBrowser_UWP
             await Launcher.LaunchFileAsync(file);
         }
 
-        public async Task<int> GetCurrentTheme()
+        public static async Task<int> GetCurrentTheme()
         {
             int mode = 1;
             await Task.Run(async () =>
             {
                 var doc = await DocumentLoad(SettingsFileName);
-
                 var theme = doc.GetElementsByTagName("CurrentThemeMode");
-
 
                 foreach (var item in theme)
                 {
@@ -134,13 +130,10 @@ namespace NetBrowser_UWP
             return mode;
         }
 
-        public async void SaveCurrentTheme(string mode)
+        public static async void SaveCurrentTheme(string mode)
         {
-
             var doc = await DocumentLoad(SettingsFileName);
-
             var theme = doc.GetElementsByTagName("CurrentThemeMode");
-
 
             foreach (var item in theme)
             {
@@ -148,10 +141,8 @@ namespace NetBrowser_UWP
             }
 
             SaveDoc(doc, SettingsFileName);
-
-
         }
-        public async Task<List<BookmarkDetails>> GetBookmarkList()
+        public static async Task<List<BookmarkDetails>> GetBookmarkList()
         {
             List<BookmarkDetails> list = new List<BookmarkDetails>();
 
@@ -190,7 +181,7 @@ namespace NetBrowser_UWP
             return list;
         }
 
-        public async Task<bool> RemoveBookmark(string url)
+        public static async Task<bool> RemoveBookmark(string url)
         {
             var doc = await DocumentLoad(BookmarksFileName);
             var result = false;
@@ -215,7 +206,7 @@ namespace NetBrowser_UWP
             return result;
         }
 
-        public async void EditBookmark(string oldUrl, string newUrl, string newTitle)
+        public static async void EditBookmark(string oldUrl, string newUrl, string newTitle)
         {
             var doc = await DocumentLoad(BookmarksFileName);
             var bookmark = doc.GetElementsByTagName("bookmark");

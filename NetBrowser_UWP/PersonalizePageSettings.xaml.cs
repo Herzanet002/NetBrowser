@@ -18,9 +18,9 @@ namespace NetBrowser_UWP
 
         private void ThemeChooserGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DataTransfer dataTransfer = new DataTransfer();
+           
             int selectedThemeMode = ThemeChooserGridView.SelectedIndex + 1;
-            dataTransfer.SaveCurrentTheme(selectedThemeMode.ToString());
+            DataTransfer.SaveCurrentTheme(selectedThemeMode.ToString());
             App.ThemeManager.LoadThemeByMode(selectedThemeMode);
             ThemeManager.SetRequestedTheme();
         }

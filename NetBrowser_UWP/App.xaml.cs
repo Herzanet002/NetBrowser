@@ -53,8 +53,8 @@ namespace NetBrowser_UWP
         {
             Frame rootFrame = Window.Current.Content as Frame;
             TitleBar = ApplicationView.GetForCurrentView().TitleBar;
-            DataTransfer dataTransfer = new DataTransfer();
-            int mode = await dataTransfer.GetCurrentTheme();
+            
+            int mode = await DataTransfer.GetCurrentTheme();
             ThemeManager.LoadThemeByMode(mode);
             ThemeMode = mode;
 

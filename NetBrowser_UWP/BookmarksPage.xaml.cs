@@ -29,8 +29,8 @@ namespace NetBrowser_UWP
 
         public async void GetBookmarks()
         {
-            DataTransfer dataTransfer = new DataTransfer();
-            bookmarks = await dataTransfer.GetBookmarkList();
+            
+            bookmarks = await DataTransfer.GetBookmarkList();
 
             bookmarksListView.ItemsSource = bookmarks;
         }
@@ -72,8 +72,8 @@ namespace NetBrowser_UWP
         {
             var newTitle = bookmarkNewTitle.Text;
             var newUrl = bookmarkNewUrl.Text;
-            DataTransfer dataTransfer = new DataTransfer();
-            dataTransfer.EditBookmark(oldUrl, newUrl, newTitle);
+            
+            DataTransfer.EditBookmark(oldUrl, newUrl, newTitle);
         }
 
         private async void Remove_Click(object sender, RoutedEventArgs e)
@@ -93,9 +93,8 @@ namespace NetBrowser_UWP
 
         private async void DeleteDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            DataTransfer dataTransfer = new DataTransfer();
             BookmarkDetails bookmarkDetails = bookmarksListView.SelectedItem as BookmarkDetails;
-            await dataTransfer.RemoveBookmark(bookmarkDetails.Url);
+            await DataTransfer.RemoveBookmark(bookmarkDetails.Url);
         }
 
     }

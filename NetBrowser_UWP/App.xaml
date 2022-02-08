@@ -51,7 +51,7 @@
                 <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
                 <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
                 <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
-                <Setter Property="Padding" Value="40,5,45,0"/>
+                <Setter Property="Padding" Value="75,5,45,0"/>
                 <Setter Property="UseSystemFocusVisuals" Value="{ThemeResource IsApplicationFocusVisualKindReveal}"/>
                 <Setter Property="ContextFlyout" Value="{StaticResource TextControlCommandBarContextFlyout}"/>
                 <Setter Property="Height" Value="32"></Setter>
