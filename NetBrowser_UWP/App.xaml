@@ -29,7 +29,7 @@
             <SolidColorBrush x:Key="BookmarkAdded" Color="#FF3F85B9"></SolidColorBrush>
             <!--<SolidColorBrush x:Key="PersonalizeSubstrateBrush" Color="#FF252525"></SolidColorBrush>-->
             <!--<SolidColorBrush x:Key="Foreground" Color="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}"></SolidColorBrush>-->
-            <x:String x:Key="AppVersion" >ver.0.2.07.22</x:String>
+            <x:String x:Key="AppVersion" >ver.0.2.13.22</x:String>
             <x:String x:Key="SearchBoxPlaceholderText" >Поиск...</x:String>
             <FontFamily x:Key="Segoe Fluent">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
 
