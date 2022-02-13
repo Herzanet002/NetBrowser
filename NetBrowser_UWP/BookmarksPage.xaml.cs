@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using NetBrowser_UWP.Annotations;
+
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace NetBrowser_UWP
@@ -10,11 +14,22 @@ namespace NetBrowser_UWP
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
-    public sealed partial class BookmarksPage : Page
+    // ReSharper disable once RedundantExtendsListEntry
+    public sealed partial class BookmarksPage : Page, INotifyPropertyChanged
     {
-        public static string oldUrl;
-        public static  string oldTitle;
-        public static List<BookmarkDetails> bookmarks;
+        private static string _oldUrl;
+        private List<BookmarkDetails> _bookmarksList;
+
+        public List<BookmarkDetails> BookmarksList
+        {
+
+            get => _bookmarksList;
+            set
+            {
+                _bookmarksList = value;
+                OnPropertyChanged(nameof(BookmarksList));
+            }
+        }
         public BookmarksPage()
         {
             this.InitializeComponent();
@@ -29,51 +44,52 @@ namespace NetBrowser_UWP
 
         public async void GetBookmarks()
         {
-            
-            bookmarks = await DataTransfer.GetBookmarkList();
 
-            bookmarksListView.ItemsSource = bookmarks;
+            BookmarksList = await DataTransfer.GetBookmarkList();
+
+            bookmarksListView.ItemsSource = BookmarksList;
         }
 
         private void bookmarksListView_Tapped(object sender, TappedRoutedEventArgs e)
         {
             bookmarkMenuFlyout.ShowAt(bookmarksListView, e.GetPosition(bookmarksListView));
-            BookmarkDetails selectedBookmark = bookmarksListView.SelectedItem as BookmarkDetails;
-            oldUrl = selectedBookmark.Url;
-            oldTitle = selectedBookmark.Title;
+            // ReSharper disable once InvertIf
+            if (bookmarksListView.SelectedItem is BookmarkDetails selectedBookmark)
+            {
+                _oldUrl = selectedBookmark.Url;
+            }
         }
         private void Open_Click(object sender, RoutedEventArgs e)
         {
-            BookmarkDetails selectedBookmark = bookmarksListView.SelectedItem as BookmarkDetails;
             MainPage.CreateNewWebTab();
-            MainPage.SearchWeb(new Uri(selectedBookmark.Url));
-            
+            if (bookmarksListView.SelectedItem is BookmarkDetails selectedBookmark) MainPage.SearchWeb(new Uri(selectedBookmark.Url));
         }
         private async void Edit_Click(object sender, RoutedEventArgs e)
         {
             ContentDialog editDialog = editingBookmarkDialog;
-            BookmarkDetails selectedBookmark = bookmarksListView.SelectedItem as BookmarkDetails;
-            bookmarkNewTitle.Text = selectedBookmark.Title;
-            bookmarkNewUrl.Text = selectedBookmark.Url;
+            if (bookmarksListView.SelectedItem is BookmarkDetails selectedBookmark)
+            {
+                bookmarkNewTitle.Text = selectedBookmark.Title;
+                bookmarkNewUrl.Text = selectedBookmark.Url;
+            }
+
             editDialog.DefaultButton = ContentDialogButton.Primary;
             editDialog.PrimaryButtonClick += EditDialog_PrimaryButtonClick;
 
             await editDialog.ShowAsync();
             GetBookmarks();
-            
-            
+
+
         }
 
-        private MainPage MainPage
-        {
-            get { return (Window.Current.Content as Frame)?.Content as MainPage; }
-        }
+        private static MainPage MainPage => (Window.Current.Content as Frame)?.Content as MainPage;
+
         private void EditDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var newTitle = bookmarkNewTitle.Text;
             var newUrl = bookmarkNewUrl.Text;
-            
-            DataTransfer.EditBookmark(oldUrl, newUrl, newTitle);
+
+            DataTransfer.EditBookmark(_oldUrl, newUrl, newTitle);
         }
 
         private async void Remove_Click(object sender, RoutedEventArgs e)
@@ -93,9 +109,15 @@ namespace NetBrowser_UWP
 
         private async void DeleteDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            BookmarkDetails bookmarkDetails = bookmarksListView.SelectedItem as BookmarkDetails;
-            await DataTransfer.RemoveBookmark(bookmarkDetails.Url);
+            if (bookmarksListView.SelectedItem is BookmarkDetails bookmarkDetails) await DataTransfer.RemoveBookmark(bookmarkDetails.Url);
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

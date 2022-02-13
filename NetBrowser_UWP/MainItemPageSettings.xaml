@@ -7,8 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     
-    x:Name="mainPageSettings"
-    RequestedTheme="Dark">
+    x:Name="mainPageSettings">
 
     <Grid>
         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Общие" Foreground="White" FontSize="50"/>

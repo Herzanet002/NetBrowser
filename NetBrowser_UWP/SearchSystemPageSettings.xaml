@@ -6,11 +6,28 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    RequestedTheme="Dark"
-    x:Name="searchPageSettings">
+    Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls" d:DataContext="{d:DesignInstance Type=local:SearchSystemPageSettings}"
+    x:Name="searchPageSettings" Loaded="searchPageSettings_Loaded">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="150" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="Поисковая система" FontSize="40" Grid.Row="0"
+                   Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="50,30,0,20"/>
+        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Выбор движка" FontSize="26" Grid.Row="1" 
+                   Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="70,0,0,0" />
         
-        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Поиск" Foreground="White" FontSize="50"/>
+        <ComboBox Grid.Row="2" Margin="80,10,0,0" 
+                  ItemsSource="{Binding ListOfEngines, UpdateSourceTrigger=PropertyChanged}"
+                  MinWidth="250" DropDownClosed="comboboxSearchEngine_DropDownClosed" 
+                  SelectedItem="{Binding CurrentEngine, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                  DisplayMemberPath="Name">
+        </ComboBox>
+
     </Grid>
 </Page>

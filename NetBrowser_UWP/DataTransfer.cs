@@ -4,14 +4,34 @@ using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.System;
+using NetBrowser_UWP.Annotations;
 
 namespace NetBrowser_UWP
 {
-    public static class DataTransfer
+    public class DataTransfer
     {
-        private static string SettingsFileName = "configs.xml";
-        private static string BookmarksFileName = "bookmarks.xml";
-        private static string HistoryFileName = "history.xml";
+        private const string SettingsFileName = "configs.xml";
+        private const string BookmarksFileName = "bookmarks.xml";
+        private const string HistoryFileName = "history.xml";
+
+        private DataTransfer()
+        {
+
+        }
+        private static DataTransfer _instance = null;
+        private static readonly object Threadlock = new object();
+
+        public static DataTransfer Source
+        {
+            get
+            {
+
+                lock (Threadlock)
+                {
+                    return _instance ?? (_instance = new DataTransfer());
+                }
+            }
+        }
         public static async void SaveHistory(string title, string url)
         {
             try
@@ -33,7 +53,12 @@ namespace NetBrowser_UWP
 
                 SaveDoc(doc, HistoryFileName);
             }
-            catch { };
+            catch
+            {
+                // ignored
+            }
+
+
         }
 
         public static async Task<XmlDocument> DocumentLoad(string configFileName)
@@ -58,7 +83,7 @@ namespace NetBrowser_UWP
             await doc.SaveToFileAsync(file);
         }
 
-        public static async Task<List<HistoryItemDetails>> GetHistory(string Source)
+        public static async Task<List<HistoryItemDetails>> GetHistory(string source)
         {
             List<HistoryItemDetails> list_of_history = new List<HistoryItemDetails>();
             await Task.Run(async () =>
@@ -72,7 +97,7 @@ namespace NetBrowser_UWP
                     var historyItemChild = historyItem[i].ChildNodes;
                     for (int j = 0; j < historyItemChild.Count; j++)
                     {
-                        if (historyItemChild[j].NodeName == Source)
+                        if (historyItemChild[j].NodeName == source)
                         {
 
                             list_of_history.Add(new HistoryItemDetails
@@ -230,7 +255,12 @@ namespace NetBrowser_UWP
                                 child1.InnerText = newTitle;
                                 child2.InnerText = "https://www.google.com/s2/favicons?domain=" + newUrl;
                             }
-                            catch { };
+                            catch
+                            {
+                                // ignored
+                            }
+
+
 
                         }
 
@@ -240,7 +270,74 @@ namespace NetBrowser_UWP
             SaveDoc(doc, BookmarksFileName);
         }
 
+        public static async Task<List<SearchEngineItem>> GetSearchEngineList()
+        {
+            List<SearchEngineItem> engineList = new List<SearchEngineItem>();
+            await Task.Run(async () =>
+            {
+                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(SettingsFileName);
+                XmlDocument doc = await XmlDocument.LoadFromFileAsync(file);
+
+                var searchEngine = doc.GetElementsByTagName("searchEngine");
+                foreach (var t in searchEngine)
+                {
+                    var searchChild = t.ChildNodes;
+
+                    foreach (var child in searchChild)
+                    {
+                        if (child.NodeName != "engine") continue;
+                        SearchEngineItem engineItem = new SearchEngineItem
+                        {
+                            Prefix = child.Attributes.GetNamedItem("prefix")?.InnerText,
+                            Name = child.Attributes.GetNamedItem("name")?.InnerText,
+                            Mode = child.Attributes.GetNamedItem("mode")?.InnerText,
+                            HomePage = child.Attributes.GetNamedItem("homePage")?.InnerText
+                        };
+                        engineList.Add(engineItem);
+                    }
+                }
+            });
+            return engineList;
+        }
+
+        public static async Task<SearchEngineItem> GetCurrentEngine()
+        {
+
+            SearchEngineItem current = new SearchEngineItem();
+            await Task.Run(async () =>
+            {
+                var engines = await GetSearchEngineList();
+                foreach (var engine in engines)
+                {
+                    if (engine.Mode == "1")
+                        current = engine;
+                }
+            });
+            return current;
+
+
+        }
+
+        public static async void ChangeSearchEngine([CanBeNull] string newEngine)
+        {
+            if (newEngine == null) return;
+            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(SettingsFileName);
+            XmlDocument doc = await XmlDocument.LoadFromFileAsync(file);
+
+            var searchEngine = doc.GetElementsByTagName("searchEngine");
+            foreach (var engine in searchEngine)
+            {
+                var searchChild = engine.ChildNodes;
+
+                foreach (var child in searchChild)
+                {
+                    var attr = child.Attributes;
+                    if (child.NodeName != "engine") continue;
+
+                    attr.GetNamedItem("mode").InnerText = attr.GetNamedItem("name")?.InnerText == newEngine ? "1" : "0";
+                }
+            }
+            SaveDoc(doc, SettingsFileName);
+        }
     }
-
-
 }

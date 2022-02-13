@@ -16,25 +16,22 @@ namespace NetBrowser_UWP
                 using (IRandomAccessStream writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
                     Stream stream = writeStream.AsStreamForWrite();
-                    XmlWriterSettings settings = new XmlWriterSettings();
-                    settings.Async = true;
-                    settings.Indent = true;
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
+                        Async = true,
+                        Indent = true
+                    };
 
                     using (XmlWriter writer = XmlWriter.Create(stream, settings))
                     {
-                        writer.WriteStartDocument();
+                        await writer.WriteStartDocumentAsync();
                         writer.WriteStartElement("history");
-                        writer.WriteEndElement();
+                        await writer.WriteEndElementAsync();
                         writer.WriteStartElement("bookmarks");
-                        writer.WriteEndElement();
-                        //writer.WriteStartElement("searchEngine");
-                        //writer.WriteStartElement("google");
-                        //writer.WriteAttributeString("prefix", "https://google.com/search?q=");
-                        //writer.WriteEndElement();
-                        //writer.WriteEndElement();
-                        //writer.WriteEndElement();
-                        writer.WriteEndDocument();
-                        writer.Flush();
+                        await writer.WriteEndElementAsync();
+
+                        await writer.WriteEndDocumentAsync();
+                        await writer.FlushAsync();
                         await writer.FlushAsync();
 
 
@@ -44,7 +41,7 @@ namespace NetBrowser_UWP
             }
             catch
             {
-
+                // ignored
             }
         }
 
@@ -56,16 +53,18 @@ namespace NetBrowser_UWP
                 using (IRandomAccessStream writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
                     Stream stream = writeStream.AsStreamForWrite();
-                    XmlWriterSettings settings = new XmlWriterSettings();
-                    settings.Async = true;
-                    settings.Indent = true;
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
+                        Async = true,
+                        Indent = true
+                    };
 
                     using (XmlWriter writer = XmlWriter.Create(stream, settings))
                     {
-                        writer.WriteStartDocument();
+                        await writer.WriteStartDocumentAsync();
                         writer.WriteStartElement("bookmarks");
-                        writer.WriteEndDocument();
-                        writer.Flush();
+                        await writer.WriteEndDocumentAsync();
+                        await writer.FlushAsync();
                         await writer.FlushAsync();
 
 
@@ -75,7 +74,7 @@ namespace NetBrowser_UWP
             }
             catch
             {
-
+                // ignored
             }
         }
         public static async void CreateConfigFile()
@@ -86,19 +85,40 @@ namespace NetBrowser_UWP
                 using (IRandomAccessStream writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
                     Stream stream = writeStream.AsStreamForWrite();
-                    XmlWriterSettings settings = new XmlWriterSettings();
-                    settings.Async = true;
-                    settings.Indent = true;
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
+                        Async = true,
+                        Indent = true
+                    };
 
                     using (XmlWriter writer = XmlWriter.Create(stream, settings))
                     {
-                        writer.WriteStartDocument();
+                        await writer.WriteStartDocumentAsync();
+                        writer.WriteStartElement("Configurations");
                         writer.WriteStartElement("CurrentThemeMode");
                         writer.WriteAttributeString("Mode", "1");
-                        writer.WriteAttributeString("ThemePath", "LightThemePath");
-                        writer.WriteEndElement();
-                        writer.WriteEndDocument();
-                        writer.Flush();
+                        await writer.WriteEndElementAsync();
+                        writer.WriteStartElement("searchEngine");
+                        writer.WriteStartElement("engine");
+                        writer.WriteAttributeString("prefix", "https://google.com/search?q=");
+                        writer.WriteAttributeString("name", "Google");
+                        writer.WriteAttributeString("mode", "1");
+                        writer.WriteAttributeString("homePage", "https://www.google.ru/");
+                        await writer.WriteEndElementAsync();
+                        writer.WriteStartElement("engine");
+                        writer.WriteAttributeString("prefix", "https://yandex.ru/search/?text=");
+                        writer.WriteAttributeString("name", "Яндекс");
+                        writer.WriteAttributeString("mode", "0");
+                        writer.WriteAttributeString("homePage", "https://yandex.ru/");
+                        await writer.WriteEndElementAsync();
+                        writer.WriteStartElement("engine");
+                        writer.WriteAttributeString("prefix", "https://bing.com/search?q=");
+                        writer.WriteAttributeString("name", "Bing");
+                        writer.WriteAttributeString("mode", "0");
+                        writer.WriteAttributeString("homePage", "https://www.bing.ru/");
+                        await writer.WriteEndElementAsync();
+                        await writer.WriteEndElementAsync();
+                        await writer.WriteEndDocumentAsync();
                         await writer.FlushAsync();
 
 
@@ -108,7 +128,7 @@ namespace NetBrowser_UWP
             }
             catch
             {
-
+                // ignored
             }
         }
     }

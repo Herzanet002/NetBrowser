@@ -1,21 +1,18 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using System.Threading.Tasks;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
+// ReSharper disable once CheckNamespace
 namespace NetBrowser_UWP
 {
     public sealed class ThemeManager : INotifyPropertyChanged
     {
 
         private static ResourceDictionary _currentThemeDictionary;
-        public static int ThemeMode = 0;
+        public static int ThemeMode = 1;
 
         public static string CurrentTheme { get; private set; }
 
@@ -39,16 +36,16 @@ namespace NetBrowser_UWP
         public void LoadTheme(string path)
         {
             _currentThemeDictionary = new ResourceDictionary();
-            App.LoadComponent(_currentThemeDictionary, new Uri(path));
+            Application.LoadComponent(_currentThemeDictionary, new Uri(path));
             CurrentTheme = Path.GetFileNameWithoutExtension(path);
             SolidColorBrush foreground = ThemeManager.NavigationButtonBrush as SolidColorBrush;
-            SolidColorBrush mainBg = ThemeManager.BackgroundBrush as SolidColorBrush;
+
             if (App.TitleBar != null)
             {
                 App.TitleBar.BackgroundColor = Colors.Transparent;
                 App.TitleBar.ButtonBackgroundColor = Colors.Transparent;
                 App.TitleBar.ButtonHoverForegroundColor = Colors.Transparent;
-                App.TitleBar.ButtonForegroundColor = foreground.Color;
+                App.TitleBar.ButtonForegroundColor = foreground?.Color;
 
             }
             RaisePropertyChanged();
@@ -57,8 +54,7 @@ namespace NetBrowser_UWP
 
         public static void SetRequestedTheme()
         {
-            FrameworkElement frameworkElement = Window.Current.Content as FrameworkElement;
-            if (frameworkElement != null)
+            if (Window.Current.Content is FrameworkElement frameworkElement)
             {
                 frameworkElement.RequestedTheme = (ElementTheme)ThemeMode;
             }
@@ -66,23 +62,14 @@ namespace NetBrowser_UWP
 
         public void LoadThemeByMode(int mode)
         {
-            (string, int) Theme = Constants.Constants.Themes[mode];
-            string themePath = Theme.Item1;
+            (string, int) theme = Constants.Constants.Themes[mode];
+            string themePath = theme.Item1;
             CurrentTheme = themePath;
-            ThemeMode = Theme.Item2;
+            ThemeMode = theme.Item2;
             LoadTheme(themePath);
 
             App.ThemeMode = mode;
 
-        }
-
-        public async Task LoadThemeFromFile(StorageFile file)
-        {
-            string xaml = await FileIO.ReadTextAsync(file);
-            _currentThemeDictionary = XamlReader.Load(xaml) as ResourceDictionary;
-            CurrentTheme = Path.GetFileNameWithoutExtension(file.Path);
-
-            RaisePropertyChanged();
         }
         private void RaisePropertyChanged()
         {

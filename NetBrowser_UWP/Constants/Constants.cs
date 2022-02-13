@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -31,16 +27,21 @@ namespace NetBrowser_UWP.Constants
             {7, (DarkAcrylic, 2) },
         };
 
+        //public static Dictionary<string, string> SearchEnginesDictionary = new Dictionary<string, string>()
+        //{
+        //    {"Google", ""}
+        //}
+
         public static FontFamily SegoeFluent = new FontFamily("/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons");
 
-        public static FontIcon activeIcon = new FontIcon
+        public static FontIcon ActiveIcon = new FontIcon
         {
             FontFamily = SegoeFluent,
             FontSize = 14,
             Foreground = Application.Current.Resources["BookmarkAdded"] as Brush,
             Glyph = "\xE735"
         };
-        public static FontIcon unactiveIcon = new FontIcon()
+        public static FontIcon UnactiveIcon = new FontIcon()
         {
             FontFamily = SegoeFluent,
             FontSize = 14,

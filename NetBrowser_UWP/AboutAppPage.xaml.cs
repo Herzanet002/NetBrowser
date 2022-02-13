@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -29,10 +18,12 @@ namespace NetBrowser_UWP
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            var dialogError = new ContentDialog();
-            dialogError.Title = "Проверка обновлений";
-            dialogError.Content = "Обновления не найдены";
-            dialogError.CloseButtonText = "Закрыть";
+            var dialogError = new ContentDialog
+            {
+                Title = "Проверка обновлений",
+                Content = "Обновления не найдены",
+                CloseButtonText = "Закрыть"
+            };
 
             await dialogError.ShowAsync();
         }

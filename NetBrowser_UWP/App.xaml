@@ -6,9 +6,7 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:binding="using:NetBrowser_UWP.BindingHelpers"
     xmlns:media="using:Microsoft.UI.Xaml.Media"
-
-
-    >
+    xmlns:themes="using:NetBrowser_UWP">
     <Application.Resources>
 
         <ResourceDictionary>
@@ -17,26 +15,34 @@
                 <!--<ResourceDictionary  x:Name="ThemeDarkDictionary" Source="/Themes/Theme.Dark.xaml"/>
                 <ResourceDictionary x:Name="ThemeLightDictionary" Source="/Themes/Theme.Light.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>
-            <local:ThemeManager x:Key="ThemeManager" />
-            <SolidColorBrush x:Key="mainBg" Color="#FF2A3441"/>
+            <themes:ThemeManager x:Key="ThemeManager" />
+            <!--<SolidColorBrush x:Key="mainBg" Color="#FF2A3441"/>
             <SolidColorBrush x:Key="sthBg" Color="#FF364354"/>
             <SolidColorBrush x:Key="thBg" Color="#FF445469"/>
             <SolidColorBrush x:Key="appTitleFg" Color="#7F97C1EF"/>
             <SolidColorBrush x:Key="mainfg" Color="#FFEFEF"/>
-            <SolidColorBrush x:Key="betaFg" Color="#FF6BD6DE"/>
+            <SolidColorBrush x:Key="betaFg" Color="#FF6BD6DE"/>-->
             <SolidColorBrush x:Key="errorBg" Color="#FF381E1E"/>
-            <media:AcrylicBrush x:Key="CustomAcrylicInAppLuminosity" BackgroundSource="Backdrop"
-            TintOpacity="0.640000030398369" TintLuminosityOpacity="0.472000022418797" TintColor="SkyBlue" FallbackColor="SkyBlue" />
             <SolidColorBrush x:Key="transparentFg" Color="#4CFFFFFF"/>
             <SolidColorBrush x:Key="searchBoxBg" Color="#FF282828"></SolidColorBrush>
             <SolidColorBrush x:Key="searchBoxFocusedBrush" Color="#FF63ADE5"></SolidColorBrush>
             <SolidColorBrush x:Key="BookmarkAdded" Color="#FF3F85B9"></SolidColorBrush>
-            <SolidColorBrush x:Key="PersonalizeSubstrateBrush" Color="#FF252525"></SolidColorBrush>
-            <SolidColorBrush x:Key="Foreground" Color="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}"></SolidColorBrush>
-            <x:String x:Key="appVersion" >ver.0.2.07.22</x:String>
+            <!--<SolidColorBrush x:Key="PersonalizeSubstrateBrush" Color="#FF252525"></SolidColorBrush>-->
+            <!--<SolidColorBrush x:Key="Foreground" Color="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}"></SolidColorBrush>-->
+            <x:String x:Key="AppVersion" >ver.0.2.07.22</x:String>
+            <x:String x:Key="SearchBoxPlaceholderText" >Поиск...</x:String>
             <FontFamily x:Key="Segoe Fluent">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
 
-            
+            <Style x:Name="NavigationBarButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"></Setter>
+                <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+                <Setter Property="Padding" Value="0"></Setter>
+                <Setter Property="Width" Value="30"></Setter>
+                <Setter Property="Height" Value="30"></Setter>
+                <Setter Property="BorderThickness" Value="1"></Setter>
+
+            </Style>
+
             <Style x:Key="SearchBoxStyle" TargetType="TextBox">
 
                 <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}"/>
@@ -51,7 +57,7 @@
                 <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
                 <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
                 <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
-                <Setter Property="Padding" Value="75,5,45,0"/>
+                <Setter Property="Padding" Value="40,5,45,0"/>
                 <Setter Property="UseSystemFocusVisuals" Value="{ThemeResource IsApplicationFocusVisualKindReveal}"/>
                 <Setter Property="ContextFlyout" Value="{StaticResource TextControlCommandBarContextFlyout}"/>
                 <Setter Property="Height" Value="32"></Setter>

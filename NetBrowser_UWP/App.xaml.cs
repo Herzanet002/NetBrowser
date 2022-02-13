@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace NetBrowser_UWP
@@ -42,6 +32,9 @@ namespace NetBrowser_UWP
 
         public static ApplicationViewTitleBar TitleBar;
         public static int ThemeMode;
+
+        public static SearchEngineItem CurrentWebEngine;
+
         /// <summary>
         /// Вызывается при обычном запуске приложения пользователем. Будут использоваться другие точки входа,
         /// например, если приложение запускается для открытия конкретного файла.
@@ -49,15 +42,13 @@ namespace NetBrowser_UWP
         /// <param name="e">Сведения о запросе и обработке запуска.</param>
         /// 
 
-        protected async override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
             TitleBar = ApplicationView.GetForCurrentView().TitleBar;
-            
             int mode = await DataTransfer.GetCurrentTheme();
             ThemeManager.LoadThemeByMode(mode);
             ThemeMode = mode;
-
 
             // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
             // только обеспечьте активность окна

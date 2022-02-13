@@ -5,7 +5,6 @@
     xmlns:local="using:NetBrowser_UWP"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    
     mc:Ignorable="d"
     Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
     x:Name="personalizationPageSettings">
@@ -17,7 +16,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="Персонализация" FontSize="40" Grid.Row="0"
-                   Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="50,20,0,20"/>
+                   Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="50,30,0,20"/>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Выбор темы" FontSize="26" Grid.Row="1" 
                    Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="70,0,0,0" />
         <Grid Grid.Row="2" Margin="50,20,50,20" >
