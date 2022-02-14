@@ -151,7 +151,7 @@ namespace NetBrowser_UWP
                 _currentSelectedTab.IconSource = new muxc.BitmapIconSource
                 { UriSource = icoUri, ShowAsMonochrome = false };
                 SetSearchBoxStatus(sender.Source.AbsoluteUri);
-                if (!string.IsNullOrEmpty(SearchBoxText))
+                if (!string.IsNullOrEmpty(SearchBoxText) && _currentSelectedTab.Header.ToString()!="Параметры")
                     DataTransfer.SaveHistory(_currentSelectedWeb.DocumentTitle, _currentSelectedWeb.Source.AbsoluteUri);
                 SetBookmarkButtonAppearance();
             }

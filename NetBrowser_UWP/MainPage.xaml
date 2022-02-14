@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:NetBrowser_UWP"
-    xmlns:control="using:Microsoft.UI.Xaml.Controls"
+    
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -19,7 +19,7 @@
 
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
-            <TextBlock Grid.Row="0" Text="{Binding Path=AppTitleText, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="15,0"  
+            <TextBlock Grid.Row="0" Text="{x:Bind AppTitleText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalAlignment="Center" Margin="15,0"  
                    Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}" FontSize="14" />
             <TextBlock Grid.Row="0" Text="{StaticResource AppVersion}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,150,0" FontSize="12"
                    Foreground="{StaticResource ResourceKey=transparentFg}"/>
@@ -60,13 +60,14 @@
             <!--SearchBox Item-->
             <TextBox Style="{StaticResource SearchBoxStyle}" PlaceholderText="{StaticResource SearchBoxPlaceholderText}"   
                       KeyDown="searchBox_KeyDown" Grid.Row="1" Grid.Column="5" FontFamily="{StaticResource Segoe Fluent}"
-                      Text="{Binding Path=SearchBoxText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                      Text="{Binding SearchBoxText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                       >
+                
             </TextBox>
-
+            <!--Text="{Binding Path=SearchBoxText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"-->
             <Button x:Name="SslBtn" Background="Transparent" HorizontalAlignment="Left" Margin="16,0,0,2"
                     Padding="0" Width="30" Height="25" BorderBrush="Transparent" VerticalContentAlignment="Center" Grid.Row="1" Grid.Column="5"
-                    VerticalAlignment="Center">
+                    VerticalAlignment="Center" >
                 <StackPanel Orientation="Horizontal">
 
                     <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE72E;" Foreground="ForestGreen" FontSize="14"></FontIcon>
@@ -194,18 +195,17 @@
 
         </muxc:ProgressBar>
         <Grid Grid.Row="3" Background="#FF1B1B1B" >
-            <control:TabView x:Name="TabsControl" 
+            <muxc:TabView x:Name="TabsControl" 
                           AddTabButtonClick="tabView_AddTabButtonClick" TabCloseRequested="tabView_TabCloseRequested"
                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"  
                           Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}" SelectionChanged="tabView_SelectionChanged" 
                           Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}">
                 <muxc:TabView.TabItems>
                     <muxc:TabViewItem x:Name="DefaultTab" Header="Новая вкладка">
-                        <WebView x:Name="Browser" Visibility="Visible" Grid.Row="2" DefaultBackgroundColor="#FF1B1B1B" />
-
+                        <WebView x:Name="Browser" Visibility="Visible" DefaultBackgroundColor="#FF1B1B1B" />
                     </muxc:TabViewItem>
                 </muxc:TabView.TabItems>
-            </control:TabView>
+            </muxc:TabView>
         </Grid>
     </Grid>
 

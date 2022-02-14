@@ -12,8 +12,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <controls:XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
-                <!--<ResourceDictionary  x:Name="ThemeDarkDictionary" Source="/Themes/Theme.Dark.xaml"/>
-                <ResourceDictionary x:Name="ThemeLightDictionary" Source="/Themes/Theme.Light.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>
             <themes:ThemeManager x:Key="ThemeManager" />
             <!--<SolidColorBrush x:Key="mainBg" Color="#FF2A3441"/>
@@ -32,6 +30,7 @@
             <x:String x:Key="AppVersion" >ver.0.2.13.22</x:String>
             <x:String x:Key="SearchBoxPlaceholderText" >Поиск...</x:String>
             <FontFamily x:Key="Segoe Fluent">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
+            <CornerRadius x:Key="OverlayCornerRadius">5,5,5,5</CornerRadius>
 
             <Style x:Name="NavigationBarButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
                 <Setter Property="Background" Value="Transparent"></Setter>
@@ -42,6 +41,8 @@
                 <Setter Property="BorderThickness" Value="1"></Setter>
 
             </Style>
+
+            
 
             <Style x:Key="SearchBoxStyle" TargetType="TextBox">
 

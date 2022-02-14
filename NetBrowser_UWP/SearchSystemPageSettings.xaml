@@ -7,8 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls" d:DataContext="{d:DesignInstance Type=local:SearchSystemPageSettings}"
-    x:Name="searchPageSettings" Loaded="searchPageSettings_Loaded">
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls" d:DataContext="{d:DesignInstance Type=local:SearchSystemPageSettings}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -28,6 +27,7 @@
                   SelectedItem="{Binding CurrentEngine, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                   DisplayMemberPath="Name">
         </ComboBox>
-
+       
+        
     </Grid>
 </Page>

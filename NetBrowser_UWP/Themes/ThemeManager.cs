@@ -12,7 +12,7 @@ namespace NetBrowser_UWP
     {
 
         private static ResourceDictionary _currentThemeDictionary;
-        public static int ThemeMode = 1;
+        public static int ThemeMode;
 
         public static string CurrentTheme { get; private set; }
 

@@ -1,10 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using NetBrowser_UWP.Annotations;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using NetBrowser_UWP.Annotations;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -45,21 +45,20 @@ namespace NetBrowser_UWP
         {
             this.InitializeComponent();
             DataContext = this;
+            GetEngines();
+
         }
 
-        private async void searchPageSettings_Loaded(object sender, RoutedEventArgs e)
+        public async void GetEngines()
         {
             ListOfEngines = new ObservableCollection<SearchEngineItem>(await DataTransfer.GetSearchEngineList());
 
             var selectedEngine = from item in ListOfEngines
-                                 where item.Mode == "1"
-                                 select item;
-            CurrentEngine = selectedEngine.First();
-
-
-
+                where item.Mode == "1"
+                select item;
+            CurrentEngine = selectedEngine.FirstOrDefault();
         }
-
+        
         private void comboboxSearchEngine_DropDownClosed(object sender, object e)
         {
             DataTransfer.ChangeSearchEngine(CurrentEngine.Name);
