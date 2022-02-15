@@ -11,16 +11,17 @@
     x:Name="settingsPage" Loaded="settingsPage_Loaded">
 
     <Grid>
-        <muxc:NavigationView PaneDisplayMode="Auto"
+        <muxc:NavigationView PaneDisplayMode="Top"
                              IsSettingsVisible="False"
                              PaneTitle="Настройки"
-                             x:Name="navViewSettings"
-                             RequestedTheme="Dark"
                              SelectionChanged="NavigationView_SelectionChanged"
-                             IsBackEnabled="True">
-            <!--Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}"-->
+                             IsBackEnabled="True"
+                             >
+            <muxc:NavigationView.AutoSuggestBox>
+                <AutoSuggestBox QueryIcon="Find" AutomationProperties.Name="Search" />
+            </muxc:NavigationView.AutoSuggestBox>
             <muxc:NavigationView.MenuItems>
-                
+
                 <muxc:NavigationViewItem Content="Общие" Tag="mainItem" >
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE74C;"/>
@@ -64,11 +65,11 @@
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE946;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
-            </muxc:NavigationView.FooterMenuItems>
-            
-            
+                <muxc:NavigationViewItem Content="Помощь" Icon="Help" />
 
-            <Frame x:Name="contentFrame">
+            </muxc:NavigationView.FooterMenuItems>
+
+            <Frame x:Name="ContentFrame">
                 <Grid>
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Настройки" Foreground="White" FontSize="50"/>
                 </Grid>

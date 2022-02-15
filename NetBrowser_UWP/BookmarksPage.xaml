@@ -6,9 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls" d:DataContext="{d:DesignInstance Type=local:BookmarksPage}"
-    Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
-    x:Name="bookmarksPage" Loaded="bookmarksPage_Loaded">
+    d:DataContext="{d:DesignInstance Type=local:BookmarksPage}"
+    Loaded="bookmarksPage_Loaded">
 
 
     <Grid>
@@ -17,25 +16,27 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="Закладки" FontSize="40" Grid.Row="0"
-                   Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="50,30,0,20"/>
-        
+                   Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}"
+                   Margin="50,30,0,20"/>
+
         <Grid Grid.Row="1" Margin="50,0,0,0">
-            <ListView Background="{x:Null}" x:Name="bookmarksListView"
+            <ListView Background="{x:Null}" x:Name="bookmarksListView" ItemsSource="{Binding BookmarksList,
+                UpdateSourceTrigger=PropertyChanged}"
                   IsItemClickEnabled="True" SelectionMode="Single" IsTapEnabled="True" Tapped="bookmarksListView_Tapped" >
                 <ListView.Resources>
                     <MenuFlyout x:Name="bookmarkMenuFlyout" Placement="Bottom">
                         <MenuFlyout.Items>
-                            <MenuFlyoutItem x:Name="Open" Text="Открыть закладку" Click="Open_Click"   >
+                            <MenuFlyoutItem Text="Открыть закладку" Click="Open_Click"   >
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE774;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Name="Edit"  Text="Редактировать" Click="Edit_Click">
+                            <MenuFlyoutItem Text="Редактировать" Click="Edit_Click">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEB7E;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Name="Remove" Text="Удалить" Click="Remove_Click"  >
+                            <MenuFlyoutItem Text="Удалить" Click="Remove_Click"  >
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8D9;"/>
                                 </MenuFlyoutItem.Icon>
@@ -45,7 +46,6 @@
                     </MenuFlyout>
                 </ListView.Resources>
                 <ListView.ItemTemplate>
-
                     <DataTemplate>
                         <Grid Height="60">
                             <StackPanel Orientation="Horizontal">
@@ -53,9 +53,14 @@
                                                 ShowAsMonochrome="False" Height="20" Width="20"></BitmapIcon>
                                 <StackPanel Orientation="Vertical" Margin="0,10,0,0">
                                     <TextBlock Text="{Binding Title}" VerticalAlignment="Bottom" FontSize="16"
-                                               HorizontalAlignment="Left" Margin="10,0" FontWeight="Bold" Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}"></TextBlock>
-                                    <TextBlock Grid.Row="1" Text="{Binding Url}" FontSize="12" 
-                                               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0" Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}"/>
+                                               HorizontalAlignment="Left" Margin="10,0" FontWeight="Bold"
+                                               Foreground="{Binding ForegroundBrush, 
+                                        Source={StaticResource ThemeManager}}"></TextBlock>
+
+                                    <TextBlock Text="{Binding Url}" FontSize="12" 
+                                               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0" 
+                                               Foreground="{Binding ForegroundBrush, 
+                                        Source={StaticResource ThemeManager}}"/>
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
@@ -63,23 +68,25 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
-        
+
         <ContentDialog x:Name="editingBookmarkDialog" VerticalAlignment="Stretch"
                        Title="Редактирование закладки"
                        PrimaryButtonText="OK" Grid.Row="1"
-                       SecondaryButtonText="Отмена" RequestedTheme="Dark" IsPrimaryButtonEnabled="True">
+                       SecondaryButtonText="Отмена" IsPrimaryButtonEnabled="True">
 
             <StackPanel >
-                <TextBox x:Name="bookmarkNewTitle" Header="Заголовок" VerticalContentAlignment="Center" Margin="0,10,0,0"
-                         TextWrapping="NoWrap" PlaceholderText="Название сайта"></TextBox>
-                <TextBox x:Name="bookmarkNewUrl" Header="Ссылка" VerticalContentAlignment="Center" Margin="0,10,0,0"
-                         TextWrapping="NoWrap" PlaceholderText="Ссылка на сайт"></TextBox>
+                <TextBox Header="Заголовок" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                         TextWrapping="NoWrap" PlaceholderText="Название сайта"
+                         Text="{Binding BookmarkNewTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <TextBox Header="Ссылка" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                         TextWrapping="NoWrap" Text="{Binding BookmarkNewUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         PlaceholderText="Ссылка на сайт"></TextBox>
 
             </StackPanel>
-            
+
         </ContentDialog>
 
     </Grid>
 
-    
+
 </Page>

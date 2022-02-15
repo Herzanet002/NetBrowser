@@ -62,7 +62,7 @@ namespace NetBrowser_UWP
         private void comboboxSearchEngine_DropDownClosed(object sender, object e)
         {
             DataTransfer.ChangeSearchEngine(CurrentEngine.Name);
-            App.CurrentWebEngine = CurrentEngine;
+           App.CurrentWebEngine = CurrentEngine;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

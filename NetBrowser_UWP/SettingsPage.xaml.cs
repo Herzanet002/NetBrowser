@@ -1,5 +1,6 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using muxc = Microsoft.UI.Xaml.Controls;
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -30,23 +31,23 @@ namespace NetBrowser_UWP
                 switch (tag)
                 {
                     case "mainItem":
-                        contentFrame.Navigate(typeof(MainItemPageSettings), null, args.RecommendedNavigationTransitionInfo);
+                        ContentFrame.Navigate(typeof(MainItemPageSettings), null, new EntranceNavigationTransitionInfo());
                         CurrentMode = 0;
                         break;
                     case "personalizeItem":
-                        contentFrame.Navigate(typeof(PersonalizePageSettings), null, args.RecommendedNavigationTransitionInfo);
+                        ContentFrame.Navigate(typeof(PersonalizePageSettings), null, new EntranceNavigationTransitionInfo());
                         CurrentMode = 1;
                         break;
                     case "searchItem":
-                        contentFrame.Navigate(typeof(SearchSystemPageSettings), null, args.RecommendedNavigationTransitionInfo);
+                        ContentFrame.Navigate(typeof(SearchSystemPageSettings), null, new EntranceNavigationTransitionInfo());
                         CurrentMode = 2;
                         break;
                     case "aboutBrowserItem":
-                        contentFrame.Navigate(typeof(AboutAppPage), null, args.RecommendedNavigationTransitionInfo);
+                        ContentFrame.Navigate(typeof(AboutAppPage), null, new EntranceNavigationTransitionInfo());
                         CurrentMode = 4;
                         break;
                     case "bookmarksItem":
-                        contentFrame.Navigate(typeof(BookmarksPage), null, args.RecommendedNavigationTransitionInfo);
+                        ContentFrame.Navigate(typeof(BookmarksPage), null, new EntranceNavigationTransitionInfo());
                         CurrentMode = 3;
                         break;
                     case "historyFileOpen":
@@ -65,19 +66,19 @@ namespace NetBrowser_UWP
             switch (CurrentMode)
             {
                 case 0:
-                    contentFrame.Navigate(typeof(MainItemPageSettings), null);
+                    ContentFrame.Navigate(typeof(MainItemPageSettings), null);
                     break;
                 case 1:
-                    contentFrame.Navigate(typeof(PersonalizePageSettings), null);
+                    ContentFrame.Navigate(typeof(PersonalizePageSettings), null);
                     break;
                 case 2:
-                    contentFrame.Navigate(typeof(SearchSystemPageSettings), null);
+                    ContentFrame.Navigate(typeof(SearchSystemPageSettings), null);
                     break;
                 case 3:
-                    contentFrame.Navigate(typeof(BookmarksPage), null);
+                    ContentFrame.Navigate(typeof(BookmarksPage), null);
                     break;
                 case 4:
-                    contentFrame.Navigate(typeof(AboutAppPage), null);
+                    ContentFrame.Navigate(typeof(AboutAppPage), null);
                     break;
             }
         }

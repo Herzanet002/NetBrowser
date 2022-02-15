@@ -6,11 +6,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{StaticResource errorBg}">
+    Background="{StaticResource ErrorBg}">
 
     <Grid>
         <TextBlock Text="Не удалось загрузить страницу" Foreground="White" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-        <TextBlock x:Name="errorMessage" Foreground="MediumVioletRed" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,200,0,0"/>
+        <TextBlock  Foreground="MediumVioletRed" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,200,0,0"/>
 
     </Grid>
 </Page>

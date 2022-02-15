@@ -132,7 +132,7 @@ namespace NetBrowser_UWP
             SaveDoc(doc, BookmarksFileName);
         }
 
-        public async static void LoadXmlFile(string configFileName)
+        public static async void LoadXmlFile(string configFileName)
         {
             var file = await ApplicationData.Current.LocalFolder.GetFileAsync(configFileName);
             await Launcher.LaunchFileAsync(file);

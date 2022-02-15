@@ -18,8 +18,9 @@ namespace NetBrowser_UWP
     public sealed partial class BookmarksPage : Page, INotifyPropertyChanged
     {
         private static string _oldUrl;
-        private List<BookmarkDetails> _bookmarksList;
-
+        private static List<BookmarkDetails> _bookmarksList;
+        private static string _bookmarkNewTitle;
+        private static string _bookmarkNewUrl;
         public List<BookmarkDetails> BookmarksList
         {
 
@@ -28,6 +29,26 @@ namespace NetBrowser_UWP
             {
                 _bookmarksList = value;
                 OnPropertyChanged(nameof(BookmarksList));
+            }
+        }
+
+        public string BookmarkNewTitle
+        {
+            get => _bookmarkNewTitle;
+            set
+            {
+                _bookmarkNewTitle = value;
+                OnPropertyChanged(nameof(BookmarkNewTitle));
+            }
+        }
+
+        public string BookmarkNewUrl
+        {
+            get => _bookmarkNewUrl;
+            set
+            {
+                _bookmarkNewUrl = value;
+                OnPropertyChanged(nameof(BookmarkNewUrl));
             }
         }
         public BookmarksPage()
@@ -44,16 +65,13 @@ namespace NetBrowser_UWP
 
         public async void GetBookmarks()
         {
-
             BookmarksList = await DataTransfer.GetBookmarkList();
 
-            bookmarksListView.ItemsSource = BookmarksList;
         }
 
         private void bookmarksListView_Tapped(object sender, TappedRoutedEventArgs e)
         {
             bookmarkMenuFlyout.ShowAt(bookmarksListView, e.GetPosition(bookmarksListView));
-            // ReSharper disable once InvertIf
             if (bookmarksListView.SelectedItem is BookmarkDetails selectedBookmark)
             {
                 _oldUrl = selectedBookmark.Url;
@@ -69,8 +87,8 @@ namespace NetBrowser_UWP
             ContentDialog editDialog = editingBookmarkDialog;
             if (bookmarksListView.SelectedItem is BookmarkDetails selectedBookmark)
             {
-                bookmarkNewTitle.Text = selectedBookmark.Title;
-                bookmarkNewUrl.Text = selectedBookmark.Url;
+                BookmarkNewTitle = selectedBookmark.Title;
+                BookmarkNewUrl = selectedBookmark.Url;
             }
 
             editDialog.DefaultButton = ContentDialogButton.Primary;
@@ -86,10 +104,8 @@ namespace NetBrowser_UWP
 
         private void EditDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var newTitle = bookmarkNewTitle.Text;
-            var newUrl = bookmarkNewUrl.Text;
 
-            DataTransfer.EditBookmark(_oldUrl, newUrl, newTitle);
+            DataTransfer.EditBookmark(_oldUrl, BookmarkNewUrl, BookmarkNewTitle);
         }
 
         private async void Remove_Click(object sender, RoutedEventArgs e)

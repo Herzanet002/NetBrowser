@@ -14,7 +14,9 @@ namespace NetBrowser_UWP.Constants
         public const string LightBlueThemePath = "ms-appx:///Themes/Theme.LightBlue.xaml";
         public const string DarkNavyBlue = "ms-appx:///Themes/Theme.Dark.NavyBlue.xaml";
         public const string DarkAcrylic = "ms-appx:///Themes/Theme.Dark.Acrylic.xaml";
+        public const string LightAcrylic = "ms-appx:///Themes/Theme.Light.Acrylic.xaml";
 
+        public static SearchEngineItem CurrentWebEngine;
 
         public static Dictionary<int, (string, int)> Themes = new Dictionary<int, (string, int)>()
         {
@@ -25,12 +27,8 @@ namespace NetBrowser_UWP.Constants
             {5, (LightBlueThemePath,1) },
             {6, (DarkNavyBlue, 2) },
             {7, (DarkAcrylic, 2) },
+            {8, (LightAcrylic, 1) },
         };
-
-        //public static Dictionary<string, string> SearchEnginesDictionary = new Dictionary<string, string>()
-        //{
-        //    {"Google", ""}
-        //}
 
         public static FontFamily SegoeFluent = new FontFamily("/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons");
 

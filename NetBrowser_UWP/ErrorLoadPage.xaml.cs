@@ -26,7 +26,7 @@ namespace NetBrowser_UWP
         public ErrorLoadPage()
         {
             this.InitializeComponent();
-            errorMessage.Text = error;
+            
 
         }
         

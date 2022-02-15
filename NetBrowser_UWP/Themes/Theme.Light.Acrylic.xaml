@@ -1,0 +1,25 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:media="using:Microsoft.UI.Xaml.Media">
+
+    <x:String x:Key="NameOfTheme">Светлая акриловая</x:String>
+    <media:AcrylicBrush x:Key="BackgroundBrush" BackgroundSource="HostBackdrop"
+                        TintOpacity="0.65" TintColor="#FFF1F1F1"  />
+
+
+
+    <media:AcrylicBrush x:Key="SecondBrush" BackgroundSource="HostBackdrop"
+                        TintOpacity="0.7" TintColor="Gainsboro"  />
+
+    <media:AcrylicBrush x:Key="ThirdBrush" BackgroundSource="HostBackdrop"
+                        TintOpacity="0.3" TintColor="#FFB5B5B5"  />
+
+    <SolidColorBrush x:Key="AppTitleBrush" Color="#7F0E0E0E"/>
+    <SolidColorBrush x:Key="ForegroundBrush" Color="#FF424242"/>
+    <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FF2F2F2F"/>
+    <SolidColorBrush x:Key="SearchBoxForeground" Color="#FF2B2B2B"/>
+
+    <media:AcrylicBrush x:Key="SearchBoxBorderBrush" BackgroundSource="HostBackdrop"
+                        TintOpacity="0.8" TintLuminosityOpacity="0.15" TintColor="#FFB2BACA" />
+</ResourceDictionary>

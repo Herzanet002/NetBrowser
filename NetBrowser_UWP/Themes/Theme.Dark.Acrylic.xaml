@@ -13,7 +13,7 @@
             TintOpacity="0.8" TintColor="#FF333333"  />
 
     <media:AcrylicBrush x:Key="ThirdBrush" BackgroundSource="HostBackdrop"
-            TintOpacity="0.305000014486723" TintColor="#FF000000"  />
+            TintOpacity="0.3" TintColor="#FF000000"  />
 
     <SolidColorBrush x:Key="AppTitleBrush" Color="#7FFFFFFF"/>
     <SolidColorBrush x:Key="ForegroundBrush" Color="#FFFFFF"/>
@@ -21,6 +21,6 @@
     <SolidColorBrush x:Key="SearchBoxForeground" Color="#FFEFEF"/>
 
     <media:AcrylicBrush x:Key="SearchBoxBorderBrush" BackgroundSource="HostBackdrop"
-            TintOpacity="0.827000039280392" TintLuminosityOpacity="0.135000006412156" TintColor="#FF508094" />
+            TintOpacity="0.8" TintLuminosityOpacity="0.15" TintColor="#FFC7D6DC" />
 
 </ResourceDictionary>

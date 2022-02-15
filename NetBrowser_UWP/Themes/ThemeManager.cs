@@ -38,7 +38,7 @@ namespace NetBrowser_UWP
             _currentThemeDictionary = new ResourceDictionary();
             Application.LoadComponent(_currentThemeDictionary, new Uri(path));
             CurrentTheme = Path.GetFileNameWithoutExtension(path);
-            SolidColorBrush foreground = ThemeManager.NavigationButtonBrush as SolidColorBrush;
+            SolidColorBrush foreground = NavigationButtonBrush as SolidColorBrush;
 
             if (App.TitleBar != null)
             {
@@ -62,10 +62,9 @@ namespace NetBrowser_UWP
 
         public void LoadThemeByMode(int mode)
         {
-            (string, int) theme = Constants.Constants.Themes[mode];
-            string themePath = theme.Item1;
+            var (themePath, themeMode) = Constants.Constants.Themes[mode];
             CurrentTheme = themePath;
-            ThemeMode = theme.Item2;
+            ThemeMode = themeMode;
             LoadTheme(themePath);
 
             App.ThemeMode = mode;
