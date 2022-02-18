@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using NetBrowser_UWP.Annotations;
 
@@ -69,23 +70,15 @@ namespace NetBrowser_UWP
 
         }
 
-        private void bookmarksListView_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            bookmarkMenuFlyout.ShowAt(bookmarksListView, e.GetPosition(bookmarksListView));
-            if (bookmarksListView.SelectedItem is BookmarkDetails selectedBookmark)
-            {
-                _oldUrl = selectedBookmark.Url;
-            }
-        }
         private void Open_Click(object sender, RoutedEventArgs e)
         {
             MainPage.CreateNewWebTab();
-            if (bookmarksListView.SelectedItem is BookmarkDetails selectedBookmark) MainPage.SearchWeb(new Uri(selectedBookmark.Url));
+            if (BookmarksListView.SelectedItem is BookmarkDetails selectedBookmark) MainPage.SearchWeb(new Uri(selectedBookmark.Url));
         }
         private async void Edit_Click(object sender, RoutedEventArgs e)
         {
             ContentDialog editDialog = editingBookmarkDialog;
-            if (bookmarksListView.SelectedItem is BookmarkDetails selectedBookmark)
+            if (BookmarksListView.SelectedItem is BookmarkDetails selectedBookmark)
             {
                 BookmarkNewTitle = selectedBookmark.Title;
                 BookmarkNewUrl = selectedBookmark.Url;
@@ -125,7 +118,7 @@ namespace NetBrowser_UWP
 
         private async void DeleteDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (bookmarksListView.SelectedItem is BookmarkDetails bookmarkDetails) await DataTransfer.RemoveBookmark(bookmarkDetails.Url);
+            if (BookmarksListView.SelectedItem is BookmarkDetails bookmarkDetails) await DataTransfer.RemoveBookmark(bookmarkDetails.Url);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -134,6 +127,21 @@ namespace NetBrowser_UWP
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void BookmarksListView_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var flyout = FlyoutBase.GetAttachedFlyout((FrameworkElement)sender);
+            var options = new FlyoutShowOptions()
+            {
+                Position = e.GetPosition((FrameworkElement)sender),
+                ShowMode = FlyoutShowMode.Transient
+            };
+            flyout?.ShowAt((FrameworkElement)sender, options);
+            if (BookmarksListView.SelectedItem is BookmarkDetails selectedBookmark)
+            {
+                _oldUrl = selectedBookmark.Url;
+            }
         }
     }
 }

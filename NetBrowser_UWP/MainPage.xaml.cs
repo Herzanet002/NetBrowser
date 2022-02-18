@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net;
+using System.Net.Security;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -149,6 +152,7 @@ namespace NetBrowser_UWP
             
         }
 
+
         //Event handler when the web page is loaded
         private void browser_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
@@ -174,9 +178,9 @@ namespace NetBrowser_UWP
                     SetSearchBoxStatus(sender.Source.AbsoluteUri);
                     SetBookmarkButtonAppearance();
                 }
-                
             }
         }
+
 
         //Event handler for opening a new page in a new tab
         private void browser_NewWindowRequested(WebView sender, WebViewNewWindowRequestedEventArgs args)
@@ -250,7 +254,7 @@ namespace NetBrowser_UWP
 
         public void SearchWeb()
         {
-            if (SearchBoxText.Contains("https://"))
+            if (SearchBoxText.Contains("https://") || SearchBoxText.Contains("http://"))
                 _currentSelectedWeb.Source = new Uri(SearchBoxText);
             else if (_currentSelectedTab == null)
             {

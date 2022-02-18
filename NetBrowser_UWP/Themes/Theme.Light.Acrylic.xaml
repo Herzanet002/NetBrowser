@@ -5,7 +5,7 @@
 
     <x:String x:Key="NameOfTheme">Светлая акриловая</x:String>
     <media:AcrylicBrush x:Key="BackgroundBrush" BackgroundSource="HostBackdrop"
-                        TintOpacity="0.65" TintColor="#FFF1F1F1"  />
+                        TintOpacity="0.65" FallbackColor="#FF4C5056" TintColor="#FFF1F1F1"  />
 
 
 
