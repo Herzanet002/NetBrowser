@@ -12,9 +12,9 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40px"/>
-            <RowDefinition Height="40px"/>
-            <RowDefinition Height="5px"/>
+            <RowDefinition Height="38px"/>
+            <RowDefinition Height="38px"/>
+            <RowDefinition Height="4px"/>
             <RowDefinition/>
 
         </Grid.RowDefinitions>
@@ -24,8 +24,6 @@
             <TextBlock Grid.Row="0" Text="{StaticResource AppVersion}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,150,0" FontSize="12"
                    Foreground="{StaticResource ResourceKey=TransparentFg}"/>
         </Grid>
-
-
 
         <Grid Grid.Row="1" HorizontalAlignment="Stretch" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}" >
             <Grid.ColumnDefinitions>
@@ -43,6 +41,7 @@
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
+            
 
             <Button Grid.Column="1" Style="{StaticResource NavigationBarButtonStyle}" Click="backButton_Click">
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xF0D3;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>

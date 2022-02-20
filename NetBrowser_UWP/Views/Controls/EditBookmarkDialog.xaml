@@ -1,0 +1,30 @@
+﻿<ContentDialog
+    x:Class="NetBrowser_UWP.ViewModels.Controls.EditBookmarkDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:NetBrowser_UWP.ViewModels.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:NetBrowser_UWP.ViewModels"
+    mc:Ignorable="d"
+    Style="{StaticResource ContentDialogStyle}"
+    Title="Редактирование закладки"
+    PrimaryButtonText="ОК"
+    SecondaryButtonText="Отмена"
+    PrimaryButtonCommand="{Binding SaveEditedBookmarkCommand}">
+    <ContentDialog.DataContext>
+        <viewmodels:BookmarksPageViewModel/>
+    </ContentDialog.DataContext>
+    <Grid>
+        <StackPanel>
+            <TextBox Header="Заголовок" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                     TextWrapping="NoWrap" PlaceholderText="Название сайта"
+                     Text="{Binding BookmarkNewTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <TextBox Header="Ссылка" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                     TextWrapping="NoWrap" Text="{Binding BookmarkNewUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="Ссылка на сайт"></TextBox>
+
+        </StackPanel>
+
+    </Grid>
+</ContentDialog>

@@ -6,11 +6,13 @@ using System.Net;
 using System.Net.Security;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using System.ServiceModel;
 using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using NetBrowser_UWP.Models;
 using muxc = Microsoft.UI.Xaml.Controls;
 
 
@@ -437,6 +439,7 @@ namespace NetBrowser_UWP
             {
                 CreateErrorLoadPage(url);
                 FlyoutHistory.Hide();
+                
                 var dialogError = new ContentDialog
                 {
                     Title = "Неверная ссылка",

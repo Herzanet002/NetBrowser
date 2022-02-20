@@ -63,8 +63,8 @@
     <Style x:Key="TabViewItemStyle" TargetType="controls:TabViewItem">
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
-        <Setter Property="MinHeight" Value="{ThemeResource TabViewItemMinHeight}" />
-        <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
+        <Setter Property="MinHeight" Value="34" />
+        <Setter Property="CornerRadius" Value="5" />
         <Setter Property="BorderThickness" Value="{ThemeResource TabViewItemBorderThickness}" />
         <Setter Property="BorderBrush" Value="{ThemeResource TabViewItemBorderBrush}" />
 

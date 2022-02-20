@@ -1,6 +1,7 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
+using NetBrowser_UWP.Views.Settings;
 using muxc = Microsoft.UI.Xaml.Controls;
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -26,37 +27,35 @@ namespace NetBrowser_UWP
             var selectedItem = (muxc.NavigationViewItem)sender.SelectedItem;
             string tag = selectedItem.Tag.ToString();
 
-            if (!args.IsSettingsSelected)
+            if (args.IsSettingsSelected) return;
+            switch (tag)
             {
-                switch (tag)
-                {
-                    case "mainItem":
-                        ContentFrame.Navigate(typeof(MainItemPageSettings), null, new EntranceNavigationTransitionInfo());
-                        CurrentMode = 0;
-                        break;
-                    case "personalizeItem":
-                        ContentFrame.Navigate(typeof(PersonalizePageSettings), null, new EntranceNavigationTransitionInfo());
-                        CurrentMode = 1;
-                        break;
-                    case "searchItem":
-                        ContentFrame.Navigate(typeof(SearchSystemPageSettings), null, new EntranceNavigationTransitionInfo());
-                        CurrentMode = 2;
-                        break;
-                    case "aboutBrowserItem":
-                        ContentFrame.Navigate(typeof(AboutAppPage), null, new EntranceNavigationTransitionInfo());
-                        CurrentMode = 4;
-                        break;
-                    case "bookmarksItem":
-                        ContentFrame.Navigate(typeof(BookmarksPage), null, new EntranceNavigationTransitionInfo());
-                        CurrentMode = 3;
-                        break;
-                    case "historyFileOpen":
-                        DataTransfer.LoadXmlFile("history.xml");
-                        break;
-                    case "bookmarksFileOpen":
-                        DataTransfer.LoadXmlFile("bookmarks.xml");
-                        break;
-                }
+                case "mainItem":
+                    ContentFrame.Navigate(typeof(MainItemPageSettings), null, new EntranceNavigationTransitionInfo());
+                    CurrentMode = 0;
+                    break;
+                case "personalizeItem":
+                    ContentFrame.Navigate(typeof(PersonalizePageSettings), null, new EntranceNavigationTransitionInfo());
+                    CurrentMode = 1;
+                    break;
+                case "searchItem":
+                    ContentFrame.Navigate(typeof(SearchSystemPageSettings), null, new EntranceNavigationTransitionInfo());
+                    CurrentMode = 2;
+                    break;
+                case "aboutBrowserItem":
+                    ContentFrame.Navigate(typeof(AboutAppPage), null, new EntranceNavigationTransitionInfo());
+                    CurrentMode = 4;
+                    break;
+                case "bookmarksItem":
+                    ContentFrame.Navigate(typeof(BookmarksPage), null, new EntranceNavigationTransitionInfo());
+                    CurrentMode = 3;
+                    break;
+                case "historyFileOpen":
+                    DataTransfer.LoadXmlFile("history.xml");
+                    break;
+                case "bookmarksFileOpen":
+                    DataTransfer.LoadXmlFile("bookmarks.xml");
+                    break;
             }
 
         }

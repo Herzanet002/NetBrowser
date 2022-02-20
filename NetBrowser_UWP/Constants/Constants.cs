@@ -2,6 +2,7 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using NetBrowser_UWP.Models;
 
 namespace NetBrowser_UWP.Constants
 {

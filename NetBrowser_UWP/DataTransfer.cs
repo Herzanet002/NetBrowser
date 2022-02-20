@@ -5,6 +5,7 @@ using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.System;
 using NetBrowser_UWP.Annotations;
+using NetBrowser_UWP.Models;
 
 namespace NetBrowser_UWP
 {

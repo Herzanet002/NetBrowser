@@ -122,9 +122,14 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BackgroundBindingHelper.cs" />
-    <Compile Include="BookmarkDetails.cs" />
-    <Compile Include="BookmarksPage.xaml.cs">
+    <Compile Include="BindingHelpers\BackgroundBindingHelper.cs" />
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Models\BookmarkDetails.cs" />
+    <Compile Include="ViewModels\SearchSystemPageViewModel.cs" />
+    <Compile Include="Views\Controls\DeleteBookmarkDialog.xaml.cs">
+      <DependentUpon>DeleteBookmarkDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BookmarksPage.xaml.cs">
       <DependentUpon>BookmarksPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\Constants.cs" />
@@ -133,8 +138,8 @@
     <Compile Include="ErrorLoadPage.xaml.cs">
       <DependentUpon>ErrorLoadPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ForegroundBindingHelper.cs" />
-    <Compile Include="HistoryItemDetails.cs" />
+    <Compile Include="BindingHelpers\ForegroundBindingHelper.cs" />
+    <Compile Include="Models\HistoryItemDetails.cs" />
     <Compile Include="MainItemPageSettings.xaml.cs">
       <DependentUpon>MainItemPageSettings.xaml</DependentUpon>
     </Compile>
@@ -146,8 +151,8 @@
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SearchEngineItem.cs" />
-    <Compile Include="SearchSystemPageSettings.xaml.cs">
+    <Compile Include="Models\SearchEngineItem.cs" />
+    <Compile Include="Views\Settings\SearchSystemPageSettings.xaml.cs">
       <DependentUpon>SearchSystemPageSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="SettingsPage.xaml.cs">
@@ -155,7 +160,10 @@
     </Compile>
     <Compile Include="Themes\ThemeManager.cs" />
     <Compile Include="ViewModels\Base\ViewModel.cs" />
-    <Compile Include="WebItem.cs" />
+    <Compile Include="ViewModels\BookmarksPageViewModel.cs" />
+    <Compile Include="Views\Controls\EditBookmarkDialog.xaml.cs">
+      <DependentUpon>EditBookmarkDialog.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -213,7 +221,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BookmarksPage.xaml">
+    <Page Include="Views\Controls\DeleteBookmarkDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BookmarksPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -233,7 +245,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SearchSystemPageSettings.xaml">
+    <Page Include="Views\Settings\SearchSystemPageSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -281,6 +293,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Controls\EditBookmarkDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
@@ -294,6 +310,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
       <Version>1.0.1133-prerelease</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
+      <Version>2.0.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
