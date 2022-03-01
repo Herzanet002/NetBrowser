@@ -54,14 +54,10 @@
                                                 ShowAsMonochrome="False" Height="20" Width="20"></BitmapIcon>
                                 <StackPanel Orientation="Vertical" Margin="0,10,0,0">
                                     <TextBlock Text="{Binding Title}" VerticalAlignment="Bottom" FontSize="16"
-                                               HorizontalAlignment="Left" Margin="10,0" FontWeight="Bold"
-                                               Foreground="{Binding ForegroundBrush, 
-                                        Source={StaticResource ThemeManager}}"></TextBlock>
+                                               HorizontalAlignment="Left" Margin="10,0" FontWeight="Bold"/>
 
                                     <TextBlock Text="{Binding Url}" FontSize="12" 
-                                               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0" 
-                                               Foreground="{Binding ForegroundBrush, 
-                                        Source={StaticResource ThemeManager}}"/>
+                                               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0" />
                                 </StackPanel>
                             </StackPanel>
                         </Grid>

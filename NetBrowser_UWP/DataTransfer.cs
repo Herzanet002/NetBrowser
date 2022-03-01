@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
@@ -33,24 +34,30 @@ namespace NetBrowser_UWP
                 }
             }
         }
-        public static async void SaveHistory(string title, string url)
+        public static async void SaveHistory(string title, string url, string hour, string date)
         {
             try
             {
-                var doc = await DocumentLoad(HistoryFileName).AsAsyncOperation(); //Load the Xml file
+                var doc = await DocumentLoad(HistoryFileName).AsAsyncOperation(); 
 
                 var history = doc.GetElementsByTagName("history");
 
-                XmlElement elSiteName = doc.CreateElement("siteName");
-                XmlElement elUrl = doc.CreateElement("url");
+                XmlElement siteElement = doc.CreateElement("siteName");
+                XmlElement siteUrl = doc.CreateElement("url");
+                XmlElement timeElement = doc.CreateElement("hour");
+                XmlElement dateElement = doc.CreateElement("date");
 
                 var historyItem = history[0].AppendChild(doc.CreateElement("historyitem"));
 
-                historyItem.AppendChild(elSiteName);
-                historyItem.AppendChild(elUrl);
+                historyItem.AppendChild(siteElement);
+                historyItem.AppendChild(siteUrl);
+                historyItem.AppendChild(timeElement);
+                historyItem.AppendChild(dateElement);
 
-                elSiteName.InnerText = title;
-                elUrl.InnerText = url;
+                siteElement.InnerText = title;
+                siteUrl.InnerText = url;
+                timeElement.InnerText = hour;
+                dateElement.InnerText = date;
 
                 SaveDoc(doc, HistoryFileName);
             }
@@ -58,8 +65,32 @@ namespace NetBrowser_UWP
             {
                 // ignored
             }
+        }
 
+        public static async void SaveSearchTerm(string title)
+        {
+            try
+            {
+                if (title == string.Empty) return;
+                var doc = await DocumentLoad(HistoryFileName).AsAsyncOperation();
 
+                var history = doc.GetElementsByTagName("history");
+
+                XmlElement elSiteName = doc.CreateElement("termName");
+
+                var historyItem = history[0].AppendChild(doc.CreateElement("searchTerm"));
+
+                historyItem.AppendChild(elSiteName);
+
+                elSiteName.InnerText = title;
+
+                SaveDoc(doc, HistoryFileName);
+
+            }
+            catch
+            {
+                // ignored
+            }
         }
 
         public static async Task<XmlDocument> DocumentLoad(string configFileName)
@@ -86,33 +117,49 @@ namespace NetBrowser_UWP
 
         public static async Task<List<HistoryItemDetails>> GetHistory(string source)
         {
-            List<HistoryItemDetails> list_of_history = new List<HistoryItemDetails>();
+            List<HistoryItemDetails> listOfHistory = new List<HistoryItemDetails>();
             await Task.Run(async () =>
             {
                 var file = await ApplicationData.Current.LocalFolder.GetFileAsync(HistoryFileName);
                 XmlDocument doc = await XmlDocument.LoadFromFileAsync(file);
 
                 var historyItem = doc.GetElementsByTagName("historyitem");
-                for (int i = 0; i < historyItem.Count; i++)
+                foreach (var item in historyItem)
                 {
-                    var historyItemChild = historyItem[i].ChildNodes;
-                    for (int j = 0; j < historyItemChild.Count; j++)
+                    var historyItemChild = item.ChildNodes;
+                    foreach (var child in historyItemChild)
                     {
-                        if (historyItemChild[j].NodeName == source)
+                        if (child.NodeName == source)
                         {
 
-                            list_of_history.Add(new HistoryItemDetails
+                            listOfHistory.Add(new HistoryItemDetails
                             {
-                                Url = historyItemChild[j].InnerText,
-                                Title = historyItemChild[j].PreviousSibling.InnerText
+                                Url = child.InnerText,
+                                Title = child.PreviousSibling.InnerText,
+                                Time = child.NextSibling.InnerText,
+                                Date = child.NextSibling.NextSibling.InnerText
                             });
                         }
                     }
                 }
 
             });
-            return list_of_history;
+            return listOfHistory;
+        }
 
+        public static async Task<List<string>> GetSearchTerm()
+        {
+            var listOfTerms = new List<string>();
+            await Task.Run(async () =>
+            {
+                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(HistoryFileName);
+                XmlDocument doc = await XmlDocument.LoadFromFileAsync(file);
+
+                var historyItem = doc.GetElementsByTagName("searchTerm");
+                listOfTerms.AddRange(from item in historyItem from child in item.ChildNodes where
+                    child.NodeName == "termName" select child.InnerText);
+            });
+            return listOfTerms;
         }
 
         public static async void SaveBookmark(string title, string url)
@@ -170,7 +217,7 @@ namespace NetBrowser_UWP
         }
         public static async Task<List<BookmarkDetails>> GetBookmarkList()
         {
-            List<BookmarkDetails> list = new List<BookmarkDetails>();
+            var list = new List<BookmarkDetails>();
 
             await Task.Run(async () =>
             {
@@ -232,6 +279,54 @@ namespace NetBrowser_UWP
             return result;
         }
 
+        public static async Task<bool> ClearHistoryFile()
+        {
+            try
+            {
+                var doc = await DocumentLoad(HistoryFileName);
+                var root = doc.DocumentElement;
+                var isSuccess = false;
+                while (root.ChildNodes.Count > 0)
+                    root.RemoveChild(root.ChildNodes[0]);
+
+                if (root.ChildNodes.Count == 0)
+                    isSuccess = true;
+                
+                SaveDoc(doc, HistoryFileName);
+                return isSuccess;
+            }
+            catch
+            {
+                throw new Exception("Clear history file error");
+            }
+        }
+
+        public static async Task<bool> RemoveHistoryItem(string time)
+        {
+            var doc = await DocumentLoad(HistoryFileName);
+            var root = doc.DocumentElement;
+            var result = false;
+            var history = doc.GetElementsByTagName("historyitem"); 
+            for (int i = 0; i < history.Count; i++)
+            {
+                var child = history[i].ChildNodes;
+
+                for (int j = 0; j < child.Count; j++)
+                {
+                    if (child[j].NodeName == "hour")
+                    {
+                        if (child[j].InnerText == time)
+                        {
+                            root.RemoveChild(history[i]);
+                            result = true;
+                        }
+                    }
+
+                }
+            }
+            SaveDoc(doc, HistoryFileName);
+            return result;
+        }
         public static async void EditBookmark(string oldUrl, string newUrl, string newTitle)
         {
             var doc = await DocumentLoad(BookmarksFileName);
@@ -260,11 +355,7 @@ namespace NetBrowser_UWP
                             {
                                 // ignored
                             }
-
-
-
                         }
-
                     }
                 }
             }

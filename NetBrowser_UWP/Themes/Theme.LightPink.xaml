@@ -9,5 +9,5 @@
     <SolidColorBrush x:Key="ForegroundBrush" Color="#FF353535"/>
     <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FF292929"/>
     <SolidColorBrush x:Key="SearchBoxForeground" Color="#FF313131"/>
-    <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="#FF445469"/>
+    <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="#FF881C44"/>
 </ResourceDictionary>

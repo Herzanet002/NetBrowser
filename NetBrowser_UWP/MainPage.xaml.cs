@@ -1,18 +1,17 @@
 ﻿using NetBrowser_UWP.Annotations;
+using NetBrowser_UWP.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Net;
-using System.Net.Security;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using System.ServiceModel;
+using System.Security.Cryptography;
 using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using NetBrowser_UWP.Models;
 using muxc = Microsoft.UI.Xaml.Controls;
 
 
@@ -32,11 +31,12 @@ namespace NetBrowser_UWP
 
         private static muxc.TabViewItem _settingsTab;
         private static List<BookmarkDetails> _bookmarksList;
+        private static IEnumerable<string> _searchTermList;
 
         private string _appTitleText;
         private string _searchBoxText;
 
-        private Visibility _visibilityProgressBar;
+        private static Visibility _visibilityProgressBar;
 
         #endregion
 
@@ -79,15 +79,21 @@ namespace NetBrowser_UWP
             ThemeManager.SetRequestedTheme();
             SetCurrentEngine();
             DataContext = this;
-
+            GetSearchTermList();
             CreateNewWebTab();
 
+        }
+
+        public async void GetSearchTermList()
+        {
+            _searchTermList =  await DataTransfer.GetSearchTerm();
+            _searchTermList = new HashSet<string>(_searchTermList.Reverse());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName][NotNull] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] [NotNull] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -98,6 +104,7 @@ namespace NetBrowser_UWP
         {
             SearchBoxText = message;
         }
+
         public static async void SetCurrentEngine()
         {
             App.CurrentWebEngine = await DataTransfer.GetCurrentEngine();
@@ -130,15 +137,75 @@ namespace NetBrowser_UWP
         }
 
         //Search in the browser using the enter key
-        private void searchBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void AutoSuggestBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter) SearchWeb();
+            GetSearchTermList();
+        }
+
+        private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            var queryForSearch = string.Empty;
+
+            if (args.ChosenSuggestion != null)
+                queryForSearch = args.ChosenSuggestion.ToString();
+
+            else if (!string.IsNullOrEmpty(args.QueryText))
+                queryForSearch = args.QueryText;
+            
+            SearchWeb(queryForSearch);
+            DataTransfer.SaveSearchTerm(queryForSearch);
+            
+
+        }
+        private static List<string> AutoSuggestListFill(string suggestBoxText)
+        {
+            var suitableItems = from item in _searchTermList
+                where item.ToLower().Contains(suggestBoxText.ToLower()) select item;
+
+            var enumerableList = suitableItems.ToList();
+            if (enumerableList.Count == 0)
+            {
+                enumerableList.Add("Искать в " + App.CurrentWebEngine.Name + " " + suggestBoxText);
+            }
+
+            if (suggestBoxText.Length != 0) return enumerableList;
+
+            var recentlySearch = new List<string>();
+            if (_searchTermList.ToList().Count < 10)
+            {
+                recentlySearch = _searchTermList.ToList();
+            }
+            else
+            {
+                recentlySearch.AddRange(_searchTermList.ToList().GetRange(0, 8));
+            }
+
+            suitableItems = recentlySearch;
+
+            return suitableItems.ToList();
+        }
+
+        private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                sender.ItemsSource = AutoSuggestListFill(sender.Text);
+            }
+            //GetSearchTermList();
+            
+        }
+
+        private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            //SetSearchBoxStatus(_currentSelectedWeb.Source.ToString());
         }
 
         //Browser search button functionality
         private void searchBtn_Click(object sender, RoutedEventArgs e)
         {
-            SearchWeb();
+            if (SearchBoxText == null) return;
+            DataTransfer.SaveSearchTerm(SearchBoxText);
+            SearchWeb(SearchBoxText);
         }
 
         private void SetProgressBarStatus(bool isEnabled)
@@ -149,34 +216,35 @@ namespace NetBrowser_UWP
         //Event handler for the webpage start loading event
         private void browser_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
-            SetSearchBoxStatus(_currentSelectedWeb.Source.ToString());
-            SetProgressBarStatus(true);
-            
-        }
+            //Добавить иконку загрузки на вкладку
 
+            
+            SetProgressBarStatus(true);
+            _currentSelectedWeb.Focus(FocusState.Programmatic);
+        }
 
         //Event handler when the web page is loaded
         private void browser_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
             foreach (muxc.TabViewItem tabItem in TabsControl.TabItems)
             {
-                if (tabItem.Content == sender && sender!=null && args.IsSuccess)
+                if (tabItem.Content == sender && sender != null && args.IsSuccess)
                 {
                     SetProgressBarStatus(false);
-                   
+
                     var icoUri = new Uri("https://www.google.com/s2/favicons?domain=" + sender.Source);
                     tabItem.Header = sender.DocumentTitle;
                     tabItem.IconSource = new muxc.BitmapIconSource
-                        { UriSource = icoUri, ShowAsMonochrome = false };
-                    
+                        {UriSource = icoUri, ShowAsMonochrome = false};
                     if (!string.IsNullOrEmpty(SearchBoxText) && tabItem.Header.ToString() != "Параметры")
-                        DataTransfer.SaveHistory(sender.DocumentTitle, sender.Source.AbsoluteUri);
-                    
+                        DataTransfer.SaveHistory(sender.DocumentTitle, sender.Source.AbsoluteUri,
+                            DateTime.Now.ToLongTimeString(), DateTime.Now.ToShortDateString());
+
                 }
 
-                if (_currentSelectedTab.Content == sender && sender!=null)
+                if (_currentSelectedTab.Content == sender && sender != null)
                 {
-                    AppTitleText = "NetBrowser" + " | " + sender?.DocumentTitle;
+                    AppTitleText = Application.Current.Resources["AppName"] + " | " + sender?.DocumentTitle;
                     SetSearchBoxStatus(sender.Source.AbsoluteUri);
                     SetBookmarkButtonAppearance();
                 }
@@ -189,7 +257,7 @@ namespace NetBrowser_UWP
         {
             args.Handled = true;
             CreateNewWebTab();
-            SearchWeb(args.Uri);
+            SearchWeb(args.Uri.AbsoluteUri);
         }
 
 
@@ -202,11 +270,12 @@ namespace NetBrowser_UWP
             newWebView.NavigationStarting += browser_NavigationStarting;
             newWebView.Focus(FocusState.Programmatic);
             newWebView.ContainsFullScreenElementChanged += webView_ContainsFullScreenElementChanged;
+            newWebView.Tapped += (sender, args) => newWebView.Focus(FocusState.Programmatic);
             var newTab = new muxc.TabViewItem
             {
-                Header = newWebView.DocumentTitle == string.Empty? "Загрузка...":newWebView.DocumentTitle,
+                Header = newWebView.DocumentTitle == string.Empty ? "Загрузка..." : newWebView.DocumentTitle,
                 Content = newWebView,
-                IconSource = new muxc.SymbolIconSource(){Symbol = Symbol.More},
+                IconSource = new muxc.SymbolIconSource() {Symbol = Symbol.More},
                 Style = Application.Current.Resources["TabViewItemStyle"] as Style
             };
 
@@ -214,50 +283,70 @@ namespace NetBrowser_UWP
             TabsControl.SelectedItem = newTab;
 
         }
-
-
         private void tabView_AddTabButtonClick(muxc.TabView sender, object args)
         {
             CreateNewWebTab();
         }
 
-        private void tabView_TabCloseRequested(muxc.TabView sender, muxc.TabViewTabCloseRequestedEventArgs args)
+        private void CloseWebViewItemRequested(ContentControl tab, muxc.TabView view = null)
         {
-
-            foreach (muxc.TabViewItem tabItem in TabsControl.TabItems)
+            if (tab.Content is WebView webContent)
             {
-                var t = tabItem.Content as WebView;
-                if (t == args.Tab.Content && t!=null)
-                {
-                    
-                }
+                webContent.Source = new Uri("about:blank");
+                view?.TabItems.Remove(tab);
+                tab.Content = null;
+                SetProgressBarStatus(false);
             }
 
-            sender.TabItems.Remove(args.Tab);
-            if(_currentSelectedTab==null)
-            {
-                AppTitleText = "NetBrowser";
-                SearchBoxText = string.Empty;;
-
-            }
-            SetProgressBarStatus(false);
+            if (_currentSelectedTab != null) return;
+            AppTitleText = Application.Current.Resources["AppName"].ToString();
+            SearchBoxText = string.Empty;
 
         }
+        private void NewTabKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            args.Handled = true;
+            CreateNewWebTab();
+        }
 
+        private void tabView_TabCloseRequested(muxc.TabView sender, muxc.TabViewTabCloseRequestedEventArgs args)
+        {
+            CloseWebViewItemRequested(args.Tab, sender);
+        }
+        
+
+        private void CloseTabKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            args.Handled = true;
+            if(args.Element is not muxc.TabView invokedTabView) return;
+            if (!((muxc.TabViewItem) invokedTabView.SelectedItem).IsClosable) return;
+            if (invokedTabView.TabItems[invokedTabView.SelectedIndex] is muxc.TabViewItem tabItem)
+                CloseWebViewItemRequested(tabItem, invokedTabView);
+        }
 
         private static void webView_ContainsFullScreenElementChanged(WebView sender, object args)
         {
-            var applicationView = ApplicationView.GetForCurrentView();
-
-            if (sender.ContainsFullScreenElement)
-                applicationView.TryEnterFullScreenMode();
-            else if (applicationView.IsFullScreenMode) applicationView.ExitFullScreenMode();
+            var view = ApplicationView.GetForCurrentView();
+            if (view.IsFullScreenMode)
+            {
+                view.ExitFullScreenMode();
+                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
+                // The SizeChanged event will be raised when the exit from full-screen mode is complete.
+            }
+            else
+            {
+                if (view.TryEnterFullScreenMode())
+                {
+                    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
+                    // The SizeChanged event will be raised when the entry to full-screen mode is complete.
+                }
+            }
         }
 
-        public void SearchWeb()
+        public void SearchWeb(string uri)
         {
             if (SearchBoxText.Contains("https://") || SearchBoxText.Contains("http://"))
-                _currentSelectedWeb.Source = new Uri(SearchBoxText);
+                _currentSelectedWeb.Source = new Uri(uri);
             else if (_currentSelectedTab == null)
             {
                 CreateNewWebTab();
@@ -267,12 +356,7 @@ namespace NetBrowser_UWP
                 AddSettingsTab(0);
 
             else
-                _currentSelectedWeb.Source = new Uri(App.CurrentWebEngine.Prefix + SearchBoxText);
-        }
-
-        public void SearchWeb(Uri uri)
-        {
-            _currentSelectedWeb.Navigate(uri);
+                _currentSelectedWeb.Source = new Uri(App.CurrentWebEngine.Prefix + uri);
         }
 
         public async void GetBookmarks()
@@ -287,13 +371,11 @@ namespace NetBrowser_UWP
             GetBookmarks();
             if (_bookmarksList == null) return;
             var isExistsBookmark = false;
-
-
             _bookmarksList.ForEach(bookmark =>
             {
-                if (bookmark != null)
-                    if (bookmark.Url == _currentSelectedWeb.Source.AbsoluteUri)
-                        isExistsBookmark = true;
+                if (bookmark == null) return;
+                if (bookmark.Url == _currentSelectedWeb.Source.AbsoluteUri)
+                    isExistsBookmark = true;
             });
             if (isExistsBookmark)
             {
@@ -376,7 +458,7 @@ namespace NetBrowser_UWP
             _settingsTab = new muxc.TabViewItem
             {
                 Header = "Настройки",
-                IconSource = new muxc.SymbolIconSource { Symbol = Symbol.Setting },
+                IconSource = new muxc.SymbolIconSource {Symbol = Symbol.Setting},
                 Style = Application.Current.Resources["TabViewItemStyle"] as Style
             };
             var setFrame = new Frame();
@@ -415,7 +497,7 @@ namespace NetBrowser_UWP
             var errorTab = new muxc.TabViewItem
             {
                 Header = "Ошибка",
-                IconSource = new muxc.SymbolIconSource { Symbol = Symbol.Cancel }
+                IconSource = new muxc.SymbolIconSource {Symbol = Symbol.Cancel}
             };
             var setFrame = new Frame();
             errorTab.Content = setFrame;
@@ -432,14 +514,14 @@ namespace NetBrowser_UWP
             if (isUri)
             {
                 CreateNewWebTab();
-                if (url != null) SearchWeb(new Uri(url));
+                if (url != null) SearchWeb(url);
                 FlyoutHistory.Hide();
             }
             else
             {
                 CreateErrorLoadPage(url);
                 FlyoutHistory.Hide();
-                
+
                 var dialogError = new ContentDialog
                 {
                     Title = "Неверная ссылка",
@@ -453,6 +535,7 @@ namespace NetBrowser_UWP
 
         private void addBookmarksBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (_currentSelectedWeb == null) return;
             BookmarkTitle.Text = _currentSelectedWeb.DocumentTitle;
             BookmarkUrl.Text = _currentSelectedWeb.Source.AbsoluteUri;
         }
@@ -471,12 +554,17 @@ namespace NetBrowser_UWP
 
         private void bookmarksFlyoutListView_ItemClick(object sender, [NotNull] ItemClickEventArgs e)
         {
-            var a = (BookmarkDetails)e.ClickedItem;
+            var a = (BookmarkDetails) e.ClickedItem;
             CreateNewWebTab();
-            SearchWeb(new Uri(a.Url));
+            SearchWeb(a.Url);
             FlyoutBookmarks.Hide();
         }
+        private void HistorySettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            AddSettingsTab(5);
+            FlyoutHistory.Hide();
+        }
 
-
+        
     }
 }

@@ -50,6 +50,10 @@ namespace NetBrowser_UWP
                     ContentFrame.Navigate(typeof(BookmarksPage), null, new EntranceNavigationTransitionInfo());
                     CurrentMode = 3;
                     break;
+                case "historyItem":
+                    ContentFrame.Navigate(typeof(HistoryPageSettings), null, new EntranceNavigationTransitionInfo());
+                    CurrentMode = 5;
+                    break;
                 case "historyFileOpen":
                     DataTransfer.LoadXmlFile("history.xml");
                     break;
@@ -78,6 +82,9 @@ namespace NetBrowser_UWP
                     break;
                 case 4:
                     ContentFrame.Navigate(typeof(AboutAppPage), null);
+                    break;
+                case 5:
+                    ContentFrame.Navigate(typeof(HistoryPageSettings), null);
                     break;
             }
         }

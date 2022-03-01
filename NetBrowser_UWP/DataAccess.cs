@@ -27,14 +27,8 @@ namespace NetBrowser_UWP
                         await writer.WriteStartDocumentAsync();
                         writer.WriteStartElement("history");
                         await writer.WriteEndElementAsync();
-                        writer.WriteStartElement("bookmarks");
-                        await writer.WriteEndElementAsync();
-
                         await writer.WriteEndDocumentAsync();
                         await writer.FlushAsync();
-                        await writer.FlushAsync();
-
-
                     }
                 }
                 await Windows.System.Launcher.LaunchFileAsync(storageFile);
@@ -44,7 +38,6 @@ namespace NetBrowser_UWP
                 // ignored
             }
         }
-
         public static async void CreateBookmarksFile()
         {
             try
@@ -131,5 +124,7 @@ namespace NetBrowser_UWP
                 // ignored
             }
         }
+        
+        
     }
 }

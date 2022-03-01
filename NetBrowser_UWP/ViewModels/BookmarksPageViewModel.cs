@@ -32,6 +32,7 @@ namespace NetBrowser_UWP.ViewModels
         {
             GetBookmarksAsync();
             EditBookmarkCommand = new Command(ShowDialog, CanExecuteMethod);
+
             SaveEditedBookmarkCommand = new Command(SaveChangedBookmark, CanExecuteMethod);
             OpenBookmarkCommand = new Command(OpenBookmarkInWeb, CanExecuteMethod);
             DeleteBookmarkCommand = new Command(DeleteSelectedBookmark, CanExecuteMethod);
@@ -69,7 +70,7 @@ namespace NetBrowser_UWP.ViewModels
             if (SelectedBookmark != null)
             {
                 MainPage.CreateNewWebTab();
-                MainPage.SearchWeb(new Uri(SelectedBookmark.Url));
+                MainPage.SearchWeb(SelectedBookmark.Url);
             }
            
         }

@@ -1,0 +1,22 @@
+﻿<ContentDialog
+    x:Class="NetBrowser_UWP.Views.Controls.HistoryClearConfirmationDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:NetBrowser_UWP.Views.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
+    mc:Ignorable="d"
+    Title="Очистка журнала истории"
+    PrimaryButtonText="Очистить"
+    SecondaryButtonText="Отмена"
+    PrimaryButtonCommand="{Binding ClearHistoryCommand}"
+    Style="{StaticResource ContentDialogStyle}">
+    <ContentDialog.DataContext>
+        <viewModels:HistoryPageViewModel/>
+    </ContentDialog.DataContext>
+
+    <Grid>
+        <TextBlock Text="Вы действительно хотите очистить журнал истории?"></TextBlock>
+    </Grid>
+</ContentDialog>

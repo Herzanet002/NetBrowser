@@ -5,7 +5,6 @@
     xmlns:local="using:NetBrowser_UWP"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    RequestedTheme="Dark"
     x:Name="aboutAppPage">
 
 
@@ -20,9 +19,9 @@
                 HorizontalAlignment="Center" Margin="0,100,0,0" Style="{StaticResource ButtonRevealStyle}" Click="Button_Click"/>
 
         <TextBlock HorizontalTextAlignment="Center" VerticalAlignment="Center" Text="NetBrowser" 
-                   Foreground="White" FontSize="30" Grid.Row="0"/>
+                   FontSize="30" Grid.Row="0"/>
         <TextBlock HorizontalTextAlignment="Center" VerticalAlignment="Center" 
-                       Text="{StaticResource AppVersion}" Foreground="White" FontSize="20" Grid.Row="1"/>
+                       Text="{StaticResource AppVersion}" FontSize="20" Grid.Row="1"/>
 
     </Grid>
 </Page>
