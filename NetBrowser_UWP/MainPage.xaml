@@ -3,11 +3,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:NetBrowser_UWP"
-    
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls" d:DataContext="{d:DesignInstance Type=local:MainPage}"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls" 
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:actions="using:NetBrowser_UWP.Commands"
+    d:DataContext="{d:DesignInstance Type=local:MainPage}"
     Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
 
     <Grid>
@@ -60,7 +63,7 @@
             <!--SearchBox control-->
             <AutoSuggestBox Style="{StaticResource AutoSuggestBoxTemplate}" PlaceholderText="{StaticResource SearchBoxPlaceholderText}" Grid.Column="5"
                             Text="{Binding SearchBoxText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" TextChanged="AutoSuggestBox_TextChanged"
-                            SuggestionChosen="AutoSuggestBox_SuggestionChosen" GotFocus="AutoSuggestBox_GotFocus" 
+                            GotFocus="AutoSuggestBox_GotFocus"
                             QuerySubmitted="AutoSuggestBox_QuerySubmitted">
             </AutoSuggestBox>
 
@@ -72,26 +75,25 @@
                 </StackPanel>
 
             </Button>
-            <Button x:Name="AddBookmarksButton" Background="Transparent" HorizontalAlignment="Right" Margin="0,0,20,0"
+            <Button Background="Transparent" HorizontalAlignment="Right" Margin="0,0,20,0"
                     Padding="0" Width="28" Height="24" BorderBrush="Transparent" VerticalContentAlignment="Center" Grid.Column="5"
-                    VerticalAlignment="Center" Click="addBookmarksBtn_Click" >
+                    VerticalAlignment="Center" Click="addBookmarksBtn_Click" Content="{Binding AddBookmarkIcon}" >
                 <Button.Flyout>
                     <Flyout Placement="Bottom" x:Name="BookmarkFlyout">
                         <StackPanel Orientation="Vertical" Width="350">
                             <TextBlock Text="Добавить закладку" Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" HorizontalAlignment="Center"></TextBlock>
-                            <TextBox x:Name="BookmarkTitle" Header="Заголовок" VerticalContentAlignment="Center" Margin="0,15,0,0"
+                            <TextBox Text="{Binding BookmarkTitleForSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Header="Заголовок" VerticalContentAlignment="Center" Margin="0,15,0,0"
                          TextWrapping="NoWrap" PlaceholderText="Название сайта"></TextBox>
-                            <TextBox x:Name="BookmarkUrl" Header="Ссылка" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                            <TextBox Text="{Binding BookmarkUrlForSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Header="Ссылка" VerticalContentAlignment="Center" Margin="0,10,0,0"
                          TextWrapping="NoWrap" PlaceholderText="Ссылка на сайт"></TextBox>
                             <Grid>
                                 <Button Content="Отмена" HorizontalAlignment="Left" Margin="10,20,10,10" Click="CancelBookmarksBtn_Click"></Button>
-                                <Button x:Name="DeleteBookmarkBtn" Content="Удалить" HorizontalAlignment="Center" Margin="0,20,30,10" Visibility="Collapsed" Click="DeleteBookmarkBtn_Click"/>
+                                <Button Content="Удалить" HorizontalAlignment="Center" Margin="0,20,30,10" Visibility="{Binding DeleteBookmarkButtonVisibility}" Click="DeleteBookmarkBtn_Click"/>
                                 <Button Content="Добавить" HorizontalAlignment="Right" Margin="10,20,10,10" Click="SaveBookmarkBtn_Click"></Button>
                             </Grid>
                         </StackPanel>
                     </Flyout>
                 </Button.Flyout>
-                <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE734;" FontSize="14" />
             </Button>
 
             <Button Grid.Column="6"
@@ -102,14 +104,13 @@
 
             <Button Grid.Column="8" Style="{StaticResource NavigationBarButtonStyle}" Click="bookmarksBtn_Click">
                 <Button.Flyout>
-                    <Flyout Placement="Bottom" x:Name="FlyoutBookmarks">
+                    <Flyout Placement="Bottom">
                         <Grid>
                             <StackPanel Width="300" >
-                                <TextBlock Text="Сохраненные закладки" HorizontalAlignment="Center" Margin="0,0,0,15" 
+                                <TextBlock Text="Сохраненные закладки" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,15" 
                                            Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}"/>
-                                <ListView x:Name="BookmarksFlyoutListView" Height="auto" MaxHeight="600" 
-                                          SelectionMode = "Single" IsItemClickEnabled = "True"
-                                      Background="{x:Null}" ItemClick="bookmarksFlyoutListView_ItemClick">
+                                <ListView Height="auto" MaxHeight="600" SelectionMode = "Single" IsItemClickEnabled = "True"
+                                          ItemsSource="{Binding BookmarksList}" Background="{x:Null}" ItemClick="bookmarksFlyoutListView_ItemClick">
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
                                             <Grid Height="60">
@@ -131,6 +132,12 @@
                                         HorizontalAlignment="Center" Margin="0,15,0,0" Style="{StaticResource ButtonRevealStyle}" Click="bookmarkSettingBtn_Click" />
                             </StackPanel>
                         </Grid>
+                        <interactivity:Interaction.Behaviors>
+                            <core:DataTriggerBehavior Binding="{Binding IsFlyoutClosed}"
+                                            ComparisonCondition="Equal" Value="True">
+                                <actions:CloseFlyoutAction />
+                            </core:DataTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
                     </Flyout>
                 </Button.Flyout>
                 <FontIcon Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE728;"/>
@@ -138,27 +145,21 @@
             <Button Grid.Column="9" Style="{StaticResource NavigationBarButtonStyle}"
                     Click="historyBtn_Click">
                 <Button.Flyout>
-                    <Flyout Placement="Bottom" x:Name="FlyoutHistory">
+                    <Flyout Placement="Bottom">
                         <StackPanel Width="350" >
-                            <TextBlock Text="История" HorizontalAlignment="Center" Margin="0,10,0,15"
+                            <TextBlock Text="История" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,10,0,15"
                                        Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}"/>
-                            <ListView x:Name="HistoryListView" Height="auto" MaxHeight="600" SelectionMode = "Single" IsItemClickEnabled = "True"
-                                      Background="Transparent" ItemClick="historyListView_ItemClick">
-                                <!--Виртуализация для элементов истории для сокращения ресурсов-->
-                                <ListView.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel VirtualizationMode="Recycling"/>
-                                    </ItemsPanelTemplate>
-                                </ListView.ItemsPanel>
+                            <ListView Height="auto" MaxHeight="600" SelectionMode = "Single" IsItemClickEnabled = "True"
+                                      Background="Transparent" ItemClick="historyListView_ItemClick" ItemsSource="{Binding HistoryList}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Height="50">
                                             <StackPanel Orientation="Horizontal">
                                                 <StackPanel Orientation="Vertical" Margin="0,10,0,0">
                                                     <TextBlock Text="{Binding Title}" VerticalAlignment="Bottom" FontSize="14"
-                                               HorizontalAlignment="Left" Margin="10,0" FontWeight="Bold"></TextBlock>
+                                               HorizontalAlignment="Left" Margin="0,0,10,0" FontWeight="Bold"></TextBlock>
                                                     <TextBlock Grid.Row="1" Text="{Binding Url}" FontSize="11" 
-                                               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0"/>
+                                               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,10,0"/>
                                                 </StackPanel>
                                             </StackPanel>
                                         </Grid>
@@ -169,14 +170,19 @@
                                     HorizontalAlignment="Center" Style="{StaticResource ButtonRevealStyle}" Click="HistorySettingsButton_Click"></Button>
 
                         </StackPanel>
+                        <interactivity:Interaction.Behaviors>
+                            <core:DataTriggerBehavior Binding="{Binding IsFlyoutClosed}"
+                                            ComparisonCondition="Equal" Value="True">
+                                <actions:CloseFlyoutAction />
+                            </core:DataTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
                     </Flyout>
                 </Button.Flyout>
                 <FontIcon Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xF738;"/>
             </Button>
 
-            <Rectangle Grid.Column="10"  Width="2" Fill="{Binding SecondBrush, Source={StaticResource ThemeManager}}" 
-                       Margin="8" Style="{StaticResource ColorPickerBorderStyle}"
-                       ></Rectangle>
+            <Rectangle Grid.Column="10"  Width="2" Fill="{Binding SecondBrush, Source={StaticResource ThemeManager}}" Margin="8"/>
+            
             <Button Grid.Column="11" Style="{StaticResource NavigationBarButtonStyle}">
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE713;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"></FontIcon>
                 <Button.Flyout>

@@ -131,6 +131,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BindingHelpers\BackgroundBindingHelper.cs" />
+    <Compile Include="Commands\CloseFlyoutAction.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Models\BookmarkDetails.cs" />
     <Compile Include="ViewModels\HistoryPageViewModel.cs" />

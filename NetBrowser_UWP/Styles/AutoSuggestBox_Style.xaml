@@ -20,7 +20,7 @@
         <Setter Property="Height" Value="32"></Setter>
         <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
         <Setter Property="TextWrapping" Value="NoWrap"></Setter>
-        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="CornerRadius" Value="5"/>
         <Setter Property="Margin" Value="10,0,10,0"></Setter>
         <Setter Property="Template">
             <Setter.Value>
@@ -106,11 +106,11 @@
         </Setter>
     </Style>
     <Style x:Key="AutoSuggestBoxTemplate" TargetType="AutoSuggestBox">
-        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="TextBoxStyle" Value="{StaticResource AutoSuggestBoxTextBoxStyle}"/>
         <Setter Property="UseSystemFocusVisuals" Value="{ThemeResource IsApplicationFocusVisualKindReveal}"/>
-        <Setter Property="Margin" Value="10,4,10,0"></Setter>
+        <Setter Property="Margin" Value="10,0,10,0"></Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="AutoSuggestBox">
@@ -135,7 +135,7 @@
                                  Canvas.ZIndex="0"/>
                         <Popup x:Name="SuggestionsPopup">
                             <Border x:Name="SuggestionsContainer">
-                                <ListView x:Name="SuggestionsList" CornerRadius="5" 
+                                <ListView x:Name="SuggestionsList" CornerRadius="5" VerticalAlignment="Bottom"
                                           Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
                                           BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}" 
                                           BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}" 
@@ -145,6 +145,12 @@
                                           IsItemClickEnabled="True" Margin="{ThemeResource AutoSuggestListMargin}" 
                                           MaxHeight="{ThemeResource AutoSuggestListMaxHeight}" 
                                           Padding="{ThemeResource AutoSuggestListPadding}">
+                                    <ListView.Header>
+                                        <StackPanel >
+                                            <TextBlock Text="Результаты для поиска:" Margin="20,10,5,0" FontWeight="SemiBold" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" ></TextBlock>
+                                            <Rectangle Height="1" Fill="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" Margin="15,10,15,0"></Rectangle>
+                                        </StackPanel>
+                                    </ListView.Header>
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
                                             <Grid >
@@ -160,7 +166,6 @@
                                     </ListView.ItemTemplate>
                                 </ListView>
                             </Border>
-                            <!--ItemTemplate="{TemplateBinding ItemTemplate}"-->
                         </Popup>
                     </Grid>
                 </ControlTemplate>
