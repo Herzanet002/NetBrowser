@@ -147,8 +147,8 @@
                                           Padding="{ThemeResource AutoSuggestListPadding}">
                                     <ListView.Header>
                                         <StackPanel >
-                                            <TextBlock Text="Результаты для поиска:" Margin="20,10,5,0" FontWeight="SemiBold" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" ></TextBlock>
-                                            <Rectangle Height="1" Fill="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" Margin="15,10,15,0"></Rectangle>
+                                            <TextBlock Opacity="0.7" Text="Результаты для поиска:" Margin="20,10,5,0" FontWeight="SemiBold" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" ></TextBlock>
+                                            <Rectangle Opacity="0.7" Height="1" Fill="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" Margin="15,10,15,0"></Rectangle>
                                         </StackPanel>
                                     </ListView.Header>
                                     <ListView.ItemTemplate>

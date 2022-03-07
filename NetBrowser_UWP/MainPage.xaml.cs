@@ -1,6 +1,7 @@
 ﻿using NetBrowser_UWP.Annotations;
 using NetBrowser_UWP.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace NetBrowser_UWP
         private static List<BookmarkDetails> _bookmarksList;
         private static IEnumerable<string> _searchTermList;
         private static List<HistoryItemDetails> _historyList;
+        private static Dictionary<WebView, bool> _webViewStates = new();
 
         private static string _appTitleText;
         private static string _searchBoxText;
@@ -39,7 +41,9 @@ namespace NetBrowser_UWP
         private static Visibility _visibilityProgressBar;
         private static Visibility _visibilityDeleteBookmarkButton;
         private static FontIcon _addbookmarkIcon;
+        private static FontIcon _refreshButtonIcon;
         private static bool _isFlyoutClosed;
+
         #endregion
 
         public string SearchBoxText
@@ -110,6 +114,16 @@ namespace NetBrowser_UWP
             }
         }
 
+        public FontIcon RefreshButtonIcon
+        {
+            get => _refreshButtonIcon;
+            set
+            {
+                _refreshButtonIcon = value;
+                OnPropertyChanged(nameof(RefreshButtonIcon));
+            }
+        }
+
         public Visibility ProgressBarVisibility
         {
             get => _visibilityProgressBar;
@@ -150,6 +164,7 @@ namespace NetBrowser_UWP
             DataContext = this;
             GetSearchTermList();
             CreateNewWebTab();
+            SetVisualUIElementStates(_currentSelectedWeb);
 
         }
 
@@ -182,21 +197,38 @@ namespace NetBrowser_UWP
         //Browser back button functionality
         private void backButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_currentSelectedWeb.CanGoBack)
+            if (_currentSelectedWeb != null && _currentSelectedWeb.CanGoBack)
                 _currentSelectedWeb.GoBack();
         }
 
         //Browser forward button functionality
         private void forwardBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (_currentSelectedWeb.CanGoForward)
+            if (_currentSelectedWeb != null && _currentSelectedWeb.CanGoForward)
                 _currentSelectedWeb.GoForward();
         }
 
         //Browser refresh button functionality
         private void refreshBtn_Click(object sender, RoutedEventArgs e)
         {
-            _currentSelectedWeb.Refresh();
+            if (_currentSelectedWeb == null) return;
+
+            if (RefreshButtonIcon == Constants.Constants.RefreshButtonIcon)
+            {
+                _currentSelectedWeb.Refresh();
+                _webViewStates[_currentSelectedWeb] = true;
+                SetVisualUIElementStates(_currentSelectedWeb);
+            }
+
+            else
+            {
+                _currentSelectedWeb.Stop();
+                _webViewStates[_currentSelectedWeb] = false;
+                SetVisualUIElementStates(_currentSelectedWeb);
+            }
+
+
+
         }
 
         //Browser home button functionality
@@ -275,23 +307,46 @@ namespace NetBrowser_UWP
             ProgressBarVisibility = isEnabled ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private void SetRefreshButtonIconState(bool isLoading)
+        {
+            RefreshButtonIcon = isLoading ? Constants.Constants.StopLoadButtonIcon : Constants.Constants.RefreshButtonIcon;
+        }
+        private void SetVisualUIElementStates(WebView sender)
+        {
+            if (sender is null || !_webViewStates.ContainsKey(sender)) return;
+            if (_webViewStates[sender] == true)
+            {
+                SetProgressBarStatus(true);
+                SetRefreshButtonIconState(true);
+            }
+            else
+            {
+                SetProgressBarStatus(false);
+                SetRefreshButtonIconState(false);
+            }
+        }
+
         //Event handler for the webpage start loading event
         private void browser_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
+            _webViewStates[sender] = true;
             //Добавить иконку загрузки на вкладку
-            SetProgressBarStatus(true);
+            SetVisualUIElementStates(sender);
             //_currentSelectedWeb.Focus(FocusState.Programmatic);
+            SetBookmarkButtonAppearance();
+
         }
 
         //Event handler when the web page is loaded
         private void browser_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
+            //args isSuccess
             foreach (muxc.TabViewItem tabItem in TabsControl.TabItems)
             {
                 if (tabItem.Content == sender && sender != null && args.IsSuccess)
                 {
-                    SetProgressBarStatus(false);
-
+                    _webViewStates[sender] = false;
+                    SetVisualUIElementStates(sender);
                     var icoUri = new Uri("https://www.google.com/s2/favicons?domain=" + sender.Source);
                     tabItem.Header = sender.DocumentTitle;
                     tabItem.IconSource = new muxc.BitmapIconSource
@@ -331,6 +386,7 @@ namespace NetBrowser_UWP
             //newWebView.Focus(FocusState.Programmatic);
             newWebView.ContainsFullScreenElementChanged += webView_ContainsFullScreenElementChanged;
             newWebView.Tapped += (_, _) => newWebView.Focus(FocusState.Programmatic);
+            _webViewStates.Add(newWebView, true);
             var newTab = new muxc.TabViewItem
             {
                 Header = newWebView.DocumentTitle == string.Empty ? "Загрузка..." : newWebView.DocumentTitle,
@@ -356,8 +412,9 @@ namespace NetBrowser_UWP
                 view?.TabItems.Remove(tab);
                 tab.Content = null;
                 SetProgressBarStatus(false);
+                _webViewStates.Remove(webContent);
             }
-          
+
 
             if (_currentSelectedTab != null)
                 view?.TabItems.Remove(tab);
@@ -366,7 +423,7 @@ namespace NetBrowser_UWP
                 AppTitleText = Application.Current.Resources["AppName"].ToString();
                 SearchBoxText = string.Empty;
             }
-            
+
 
         }
         private void NewTabKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
@@ -432,33 +489,40 @@ namespace NetBrowser_UWP
             BookmarksList = bookmarksListTransfer;
         }
 
-        private void SetBookmarkButtonAppearance()
+        private void SetBookmarkIconState(bool isAccessable)
         {
-            GetBookmarks();
-            if (_bookmarksList == null) return;
-            var isExistsBookmark = false;
-            _bookmarksList.ForEach(bookmark =>
-            {
-                if (bookmark == null) return;
-                if (bookmark.Url == _currentSelectedWeb.Source.AbsoluteUri)
-                    isExistsBookmark = true;
-            });
-            if (isExistsBookmark)
+            if (isAccessable)
             {
                 AddBookmarkIcon = Constants.Constants.ActiveIcon;
                 DeleteBookmarkButtonVisibility = Visibility.Visible;
             }
-
             else
             {
                 AddBookmarkIcon = Constants.Constants.UnactiveIcon;
                 DeleteBookmarkButtonVisibility = Visibility.Collapsed;
             }
         }
+        private void SetBookmarkButtonAppearance()
+        {
+            GetBookmarks();
+            if (BookmarksList == null) return;
+            var isExistsBookmark = false;
+            BookmarksList.ForEach(bookmark =>
+            {
+                if (bookmark == null) return;
+                if (bookmark.Url == _currentSelectedWeb.Source.AbsoluteUri)
+                    isExistsBookmark = true;
+            });
+
+            if (isExistsBookmark)
+                SetBookmarkIconState(true);
+            else
+                SetBookmarkIconState(false);
+        }
 
         private void CancelBookmarksBtn_Click(object sender, RoutedEventArgs e)
         {
-            BookmarkFlyout.Hide();
+            IsFlyoutClosed = true;
         }
 
         private async void SaveBookmarkBtn_Click(object sender, RoutedEventArgs e)
@@ -467,9 +531,8 @@ namespace NetBrowser_UWP
                 Uri.IsWellFormedUriString(BookmarkUrlForSave, UriKind.Absolute))
             {
                 DataTransfer.SaveBookmark(BookmarkTitleForSave, BookmarkUrlForSave);
-                BookmarkFlyout.Hide();
-                AddBookmarkIcon = Constants.Constants.ActiveIcon;
-                DeleteBookmarkButtonVisibility = Visibility.Visible;
+                IsFlyoutClosed = true;
+                SetBookmarkIconState(true);
             }
             else
             {
@@ -489,9 +552,8 @@ namespace NetBrowser_UWP
             var result = await DataTransfer.RemoveBookmark(_currentSelectedWeb.Source.AbsoluteUri);
 
             if (!result) return;
-            AddBookmarkIcon = Constants.Constants.UnactiveIcon;
-            DeleteBookmarkButtonVisibility = Visibility.Collapsed;
-            BookmarkFlyout.Hide();
+            SetBookmarkIconState(false);
+            IsFlyoutClosed = true;
         }
 
         private void tabView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -510,6 +572,7 @@ namespace NetBrowser_UWP
                 {
                     AppTitleText = "NetBrowser" + " | " + _currentSelectedWeb.DocumentTitle;
                     SetSearchBoxStatus(_currentSelectedWeb.Source.AbsoluteUri);
+                    SetVisualUIElementStates(_currentSelectedWeb);
                     SetBookmarkButtonAppearance();
                 }
             }
@@ -581,13 +644,11 @@ namespace NetBrowser_UWP
             {
                 CreateNewWebTab();
                 if (url != null) SearchWeb(url);
-                //FlyoutHistory.Hide();
                 IsFlyoutClosed = true;
             }
             else
             {
                 CreateErrorLoadPage(url);
-                //FlyoutHistory.Hide();
                 IsFlyoutClosed = true;
 
                 var dialogError = new ContentDialog
@@ -617,7 +678,6 @@ namespace NetBrowser_UWP
         {
             AddSettingsTab(3);
             IsFlyoutClosed = true;
-            //FlyoutBookmarks.Hide();
         }
 
         private void bookmarksFlyoutListView_ItemClick(object sender, [NotNull] ItemClickEventArgs e)
@@ -626,12 +686,10 @@ namespace NetBrowser_UWP
             CreateNewWebTab();
             SearchWeb(a.Url);
             IsFlyoutClosed = true;
-            //FlyoutBookmarks.Hide();
         }
         private void HistorySettingsButton_Click(object sender, RoutedEventArgs e)
         {
             AddSettingsTab(5);
-            //FlyoutHistory.Hide();
             IsFlyoutClosed = true;
         }
 

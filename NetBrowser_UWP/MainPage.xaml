@@ -44,7 +44,6 @@
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
-            
 
             <Button Grid.Column="1" Style="{StaticResource NavigationBarButtonStyle}" Click="backButton_Click">
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xF0D3;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
@@ -52,8 +51,7 @@
             <Button Grid.Column="2" Click="forwardBtn_Click" Style="{StaticResource NavigationBarButtonStyle}">
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xF0D2;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
-            <Button Grid.Column="3" Style="{StaticResource NavigationBarButtonStyle}" Click="refreshBtn_Click">
-                <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE72C;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
+            <Button Grid.Column="3" Style="{StaticResource NavigationBarButtonStyle}" Click="refreshBtn_Click" Content="{Binding RefreshButtonIcon}">
             </Button>
             <Button Grid.Column="4" Style="{StaticResource NavigationBarButtonStyle}" Click="homeBtn_Click">
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE80F;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
@@ -79,7 +77,7 @@
                     Padding="0" Width="28" Height="24" BorderBrush="Transparent" VerticalContentAlignment="Center" Grid.Column="5"
                     VerticalAlignment="Center" Click="addBookmarksBtn_Click" Content="{Binding AddBookmarkIcon}" >
                 <Button.Flyout>
-                    <Flyout Placement="Bottom" x:Name="BookmarkFlyout">
+                    <Flyout Placement="Bottom">
                         <StackPanel Orientation="Vertical" Width="350">
                             <TextBlock Text="Добавить закладку" Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" HorizontalAlignment="Center"></TextBlock>
                             <TextBox Text="{Binding BookmarkTitleForSave, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Header="Заголовок" VerticalContentAlignment="Center" Margin="0,15,0,0"
@@ -92,6 +90,12 @@
                                 <Button Content="Добавить" HorizontalAlignment="Right" Margin="10,20,10,10" Click="SaveBookmarkBtn_Click"></Button>
                             </Grid>
                         </StackPanel>
+                        <interactivity:Interaction.Behaviors>
+                            <core:DataTriggerBehavior Binding="{Binding IsFlyoutClosed}"
+                                            ComparisonCondition="Equal" Value="True">
+                                <actions:CloseFlyoutAction />
+                            </core:DataTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
                     </Flyout>
                 </Button.Flyout>
             </Button>
