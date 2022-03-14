@@ -46,12 +46,26 @@ namespace NetBrowser_UWP.ViewModels
             await dialog.ShowAsync();
             GetHistoryAsync();
         }
-        private void OpenCommand_Executed(object param)
+        private async void OpenCommand_Executed(object param)
         {
             if (SelectedItem == null) return;
-            MainPage.CreateNewWebTab();
-            MainPage.SearchWeb(SelectedItem.Url);
-            SelectedItem = null;
+            if (Uri.IsWellFormedUriString(SelectedItem.Url, UriKind.Absolute))
+            {
+                MainPage.CreateNewWebTab();
+                MainPage.SearchWeb(SelectedItem.Url);
+                //SelectedItem = null;
+            }
+            else
+            {
+                var dialogError = new ContentDialog
+                {
+                    Title = "Неверная ссылка",
+                    Content = "Ссылка " + SelectedItem.Url + " недействительна или неверна",
+                    CloseButtonText = "Закрыть"
+                };
+
+                await dialogError.ShowAsync();
+            }
         }
 
         public HistoryPageViewModel()

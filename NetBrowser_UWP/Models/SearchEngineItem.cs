@@ -12,7 +12,7 @@ namespace NetBrowser_UWP.Models
 
         public string Prefix
         {
-            get { return prefix; }
+            get => prefix;
             set
             {
                 prefix = value;
@@ -22,7 +22,7 @@ namespace NetBrowser_UWP.Models
 
         public string Name
         {
-            get { return name; }
+            get => name;
             set
             {
                 name = value;
@@ -31,7 +31,7 @@ namespace NetBrowser_UWP.Models
         }
         public string Mode
         {
-            get { return mode; }
+            get => mode;
             set
             {
                 mode = value;
@@ -40,7 +40,7 @@ namespace NetBrowser_UWP.Models
         }
         public string HomePage
         {
-            get { return homePage; }
+            get => homePage;
             set
             {
                 homePage = value;

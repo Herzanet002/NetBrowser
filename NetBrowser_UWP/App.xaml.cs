@@ -7,6 +7,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using NetBrowser_UWP.Models;
+using System.Threading.Tasks;
 
 namespace NetBrowser_UWP
 {
@@ -42,14 +43,19 @@ namespace NetBrowser_UWP
         /// </summary>
         /// <param name="e">Сведения о запросе и обработке запуска.</param>
         /// 
+        public static async Task SetApplicationTheme()
+        {
+            int mode = await DataTransfer.GetCurrentTheme();
+            ThemeManager.LoadThemeByMode(mode);
+            ThemeMode = mode;
+        }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
             TitleBar = ApplicationView.GetForCurrentView().TitleBar;
-            int mode = await DataTransfer.GetCurrentTheme();
-            ThemeManager.LoadThemeByMode(mode);
-            ThemeMode = mode;
+            await SetApplicationTheme();
+            CurrentWebEngine = await DataTransfer.GetCurrentEngine(); //Set Current Search Engine
 
             // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
             // только обеспечьте активность окна

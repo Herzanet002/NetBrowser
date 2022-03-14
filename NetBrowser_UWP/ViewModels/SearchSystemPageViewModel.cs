@@ -1,8 +1,6 @@
 ﻿using NetBrowser_UWP.Models;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Input;
-using NetBrowser_UWP.Commands;
 
 namespace NetBrowser_UWP.ViewModels
 {
