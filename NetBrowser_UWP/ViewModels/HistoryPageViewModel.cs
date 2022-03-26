@@ -114,7 +114,7 @@ namespace NetBrowser_UWP.ViewModels
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            string[] splitstring = value.ToString().Split(":");
+            var splitstring = value.ToString().Split(":");
             if (splitstring[0].Length == 1) splitstring[0] = "0" + splitstring[0];
             return $"{splitstring[0]}:{splitstring[1]}";
         }

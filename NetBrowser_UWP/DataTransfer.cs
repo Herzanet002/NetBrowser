@@ -175,7 +175,7 @@ namespace NetBrowser_UWP
 
             bookmarkUrl.InnerText = url;
             bookmarkTitle.InnerText = title;
-            bookmarkIcon.InnerText = "https://www.google.com/s2/favicons?domain=" + url;
+            bookmarkIcon.InnerText = "https://www.google.com/s2/favicons?sz=32&domain_url=" + url;
 
             SaveDoc(doc, BookmarksFileName);
         }

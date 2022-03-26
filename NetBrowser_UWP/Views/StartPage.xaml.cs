@@ -26,5 +26,6 @@ namespace NetBrowser_UWP.Views
         {
             this.InitializeComponent();
         }
+
     }
 }

@@ -5,10 +5,121 @@
     xmlns:local="using:NetBrowser_UWP.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
+    xmlns:models="using:NetBrowser_UWP.Models"
     mc:Ignorable="d"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <interactivity:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{Binding LoadedEventCommand}">
+            </core:InvokeCommandAction>
+        </core:EventTriggerBehavior>
 
-    <Grid>
+    </interactivity:Interaction.Behaviors>
+
+
+    <Page.DataContext>
+        <viewModels:StartPageViewModel/>
+    </Page.DataContext>
+
+    <Page.Resources>
+        <viewModels:TitleTextConverter x:Key="TitleTextConverter" />
+        <viewModels:TitleLetterConverter x:Key="TitleLetterConverter" />
+    </Page.Resources>
+    <Grid Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height=".5*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height=".8*"></RowDefinition>
+            
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=".5*"></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width=".5*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent" BorderThickness="2">
+            <Button.Content>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE710;"  />
+                    <TextBlock Text="Добавить" Margin="10,0,0,0"></TextBlock>
+                </StackPanel>
+                
+            </Button.Content>
+        </Button>
+        <Grid Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width=".2*"/>
+
+            </Grid.ColumnDefinitions>
+            <Image VerticalAlignment="Center" Source="{Binding LogoSource, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                   MaxWidth="56" MinWidth="28" HorizontalAlignment="Center" ></Image>
+            <TextBox Grid.Column="1" Margin="5,0,5,0" Height="36" VerticalContentAlignment="Center" BorderThickness="0"
+                     TextWrapping="NoWrap" FontSize="16" 
+                     PlaceholderText="{Binding PlaceholderText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+            </TextBox>
+            <Button Grid.Column="2" Height="36" HorizontalAlignment="Center" BorderThickness="0">
+                <Button.Content>
+                    <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE721;" />
+                </Button.Content>
+            </Button>
+        </Grid>
+
+        <Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="30"
+
+                Background="Transparent" BorderThickness="0" Padding="10">
+            <Button.Content>
+                <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE713;" FontSize="24" />
+            </Button.Content>
+        </Button>
+
+        <RelativePanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10">
+
+            <GridView ItemsSource="{Binding GridViewListSource, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                      SelectedItem="{Binding GridViewSelectedItem, Mode=TwoWay}">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Tapped">
+                        <core:InvokeCommandAction Command="{Binding GridViewItemTappedCommand}">
+                        </core:InvokeCommandAction>
+                    </core:EventTriggerBehavior>
+
+                </interactivity:Interaction.Behaviors>
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="models:BookmarkDetails">
+                        <Grid Width="110" Height="100">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <ToolTipService.Placement>Mouse</ToolTipService.Placement>
+                            <ToolTipService.ToolTip>
+                                <TextBlock Text="{Binding Title}"></TextBlock>
+                            </ToolTipService.ToolTip>
+                            <Grid Grid.Row="0" Width="50" Height="50">
+                                <Rectangle Fill="{Binding ThirdBrush, Source={StaticResource ThemeManager}}" RadiusX="10" RadiusY="10"></Rectangle>
+                                <TextBlock Text="{x:Bind Url, Converter={StaticResource TitleLetterConverter}}" HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" FontSize="24" FontWeight="Bold"></TextBlock>
+
+                            </Grid>
+                            <TextBlock Grid.Row="1"  Text="{Binding Title, Converter={StaticResource TitleTextConverter}}" 
+                                   TextAlignment="Center" FontSize="12" FontWeight="SemiBold" 
+                                    Margin="0,10,0,0" ></TextBlock>
+
+
+
+                        </Grid>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </RelativePanel>
+       
+        
+
 
     </Grid>
 </Page>

@@ -231,6 +231,10 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="Resources\Logos\AppLogo.png" />
+    <Content Include="Resources\Logos\BingLogo.png" />
+    <Content Include="Resources\Logos\GoogleLogo.png" />
+    <Content Include="Resources\Logos\YandexLogo.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -357,6 +361,7 @@
   <ItemGroup>
     <Content Include="Assets\Fonts\Segoe Variable.ttf" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

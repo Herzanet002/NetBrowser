@@ -16,11 +16,10 @@
                 <ResourceDictionary Source="Styles/AutoSuggestBox_Style.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
             <local:ThemeManager x:Key="ThemeManager" />
-            <SolidColorBrush x:Key="ErrorBg" Color="#FF381E1E"/>
             <SolidColorBrush x:Key="TransparentFg" Color="#4CFFFFFF"/>
             <SolidColorBrush x:Key="SearchBoxBg" Color="#FF282828"></SolidColorBrush>
             <SolidColorBrush x:Key="SearchBoxFocusedBrush" Color="#FF63ADE5"></SolidColorBrush>
-            <SolidColorBrush x:Key="BookmarkAdded" Color="#FF3F85B9"></SolidColorBrush>
+            <SolidColorBrush x:Key="BookmarkAdded" Color="#FF246F8D"></SolidColorBrush>
             <x:String x:Key="AppVersion" >ver.0.3.14</x:String>
             <x:String x:Key="AppName" >NetBrowser</x:String>
             <x:String x:Key="SearchBoxPlaceholderText" >Поиск...</x:String>

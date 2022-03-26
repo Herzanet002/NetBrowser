@@ -45,7 +45,8 @@
                 <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="1" Style="{StaticResource NavigationBarButtonStyle}" Click="backButton_Click">
+            <Button Grid.Column="1" Style="{StaticResource NavigationBarButtonStyle}" Click="backButton_Click" ToolTipService.ToolTip="Вернутся назад" 
+                    ToolTipService.Placement="Bottom">
                 <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xF0D3;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
             <Button Grid.Column="2" Click="forwardBtn_Click" Style="{StaticResource NavigationBarButtonStyle}">
@@ -188,10 +189,13 @@
             <Rectangle Grid.Column="10"  Width="2" Fill="{Binding SecondBrush, Source={StaticResource ThemeManager}}" Margin="8"/>
 
             <Button Grid.Column="11" Style="{StaticResource NavigationBarButtonStyle}">
-                <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE713;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"></FontIcon>
+                <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE700;"></FontIcon>
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
                         <MenuFlyoutItem Text="Параметры" Click="settingsBtn_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE713;"></FontIcon>
+                            </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                     </MenuFlyout>
                 </Button.Flyout>
@@ -203,7 +207,7 @@
                           Visibility="{Binding ProgressBarVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}"
                           Grid.Row="2" HorizontalAlignment="Stretch"/>
-        <Grid Grid.Row="3" >
+        <Grid Grid.Row="3">
             <muxc:TabView  x:Name="TabsControl" Style="{StaticResource TabViewStyleTemplate}"
                            SelectedItem="{Binding CurrentSelectedTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                            AddTabButtonClick="tabView_AddTabButtonClick" TabCloseRequested="tabView_TabCloseRequested"
@@ -213,9 +217,6 @@
                     <KeyboardAccelerator Key="N" Modifiers="Control" Invoked="NewTabKeyboardAccelerator_Invoked" />
                     <KeyboardAccelerator Key="E" Modifiers="Control" Invoked="CloseTabKeyboardAccelerator_Invoked" />
                 </muxc:TabView.KeyboardAccelerators>
-
-
-
             </muxc:TabView>
         </Grid>
     </Grid>

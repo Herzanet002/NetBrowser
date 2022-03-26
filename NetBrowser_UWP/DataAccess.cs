@@ -100,7 +100,7 @@ namespace NetBrowser_UWP
                         await writer.WriteEndElementAsync();
                         writer.WriteStartElement("engine");
                         writer.WriteAttributeString("prefix", "https://yandex.ru/search/?text=");
-                        writer.WriteAttributeString("name", "Яндекс");
+                        writer.WriteAttributeString("name", "Yandex");
                         writer.WriteAttributeString("mode", "0");
                         writer.WriteAttributeString("homePage", "https://yandex.ru/");
                         await writer.WriteEndElementAsync();

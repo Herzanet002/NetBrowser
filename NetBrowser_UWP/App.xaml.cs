@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -8,6 +10,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using NetBrowser_UWP.Models;
 using System.Threading.Tasks;
+using NetBrowser_UWP.Annotations;
 
 namespace NetBrowser_UWP
 {
@@ -30,12 +33,28 @@ namespace NetBrowser_UWP
             DataAccess.CreateConfigFile();
         }
         public static ThemeManager ThemeManager
-        => (ThemeManager)App.Current.Resources["ThemeManager"];
+        => (ThemeManager)Current.Resources["ThemeManager"];
 
         public static ApplicationViewTitleBar TitleBar;
         public static int ThemeMode;
+        private static SearchEngineItem _currentWebEngine;
 
-        public static SearchEngineItem CurrentWebEngine;
+        public static SearchEngineItem CurrentWebEngine
+        {
+            get => _currentWebEngine;
+            set
+            {
+                _currentWebEngine = value;
+                OnPropertyChanged(nameof(CurrentWebEngine));
+            }
+        }
+        public static event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        private static void OnPropertyChanged([CallerMemberName] string propertyName = null!)
+        {
+            PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
+        }
 
         /// <summary>
         /// Вызывается при обычном запуске приложения пользователем. Будут использоваться другие точки входа,

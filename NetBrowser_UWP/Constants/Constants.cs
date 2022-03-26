@@ -19,7 +19,7 @@ namespace NetBrowser_UWP.Constants
 
         public static SearchEngineItem CurrentWebEngine;
 
-        public static Dictionary<int, (string, int)> Themes = new Dictionary<int, (string, int)>()
+        public static Dictionary<int, (string, int)> Themes = new()
         {
             {1, (LightThemePath,1) },
             {2, (DarkThemePath,2) },
@@ -31,7 +31,7 @@ namespace NetBrowser_UWP.Constants
             {8, (LightAcrylic, 1) },
         };
 
-        public static FontFamily SegoeFluent = new FontFamily("/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons");
+        public static FontFamily SegoeFluent = new("/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons");
 
         public static FontIcon ActiveIcon = new()
         {
