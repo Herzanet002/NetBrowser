@@ -20,7 +20,7 @@
             <SolidColorBrush x:Key="SearchBoxBg" Color="#FF282828"></SolidColorBrush>
             <SolidColorBrush x:Key="SearchBoxFocusedBrush" Color="#FF63ADE5"></SolidColorBrush>
             <SolidColorBrush x:Key="BookmarkAdded" Color="#FF246F8D"></SolidColorBrush>
-            <x:String x:Key="AppVersion" >ver.0.3.14</x:String>
+            <x:String x:Key="AppVersion" >ver.0.3.26</x:String>
             <x:String x:Key="AppName" >NetBrowser</x:String>
             <x:String x:Key="SearchBoxPlaceholderText" >Поиск...</x:String>
             <x:String x:Key="SuggestBoxSearchText" >Искать в интернете </x:String>
