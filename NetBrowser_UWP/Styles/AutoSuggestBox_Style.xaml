@@ -21,7 +21,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
         <Setter Property="TextWrapping" Value="NoWrap"></Setter>
         <Setter Property="CornerRadius" Value="5"/>
-        <Setter Property="Margin" Value="10,0,10,0"></Setter>
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">

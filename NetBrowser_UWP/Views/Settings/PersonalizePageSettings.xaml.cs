@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Controls;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace NetBrowser_UWP
+namespace NetBrowser_UWP.Views.Settings
 {
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
@@ -16,15 +16,12 @@ namespace NetBrowser_UWP
             ThemeChooserGridView.SelectedIndex = Convert.ToInt32(App.ThemeMode) - 1;
         }
 
-        private void ThemeChooserGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ThemeChooserGridView_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            int selectedThemeMode = ThemeChooserGridView.SelectedIndex + 1;
+            var selectedThemeMode = ThemeChooserGridView.SelectedIndex + 1;
             DataTransfer.SaveCurrentTheme(selectedThemeMode.ToString());
             App.ThemeManager.LoadThemeByMode(selectedThemeMode);
             ThemeManager.SetRequestedTheme();
-
         }
-
-       
     }
 }

@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using NetBrowser_UWP.Models;
 using System.Threading.Tasks;
-using NetBrowser_UWP.Annotations;
+using NetBrowser_UWP.Properties;
 
 namespace NetBrowser_UWP
 {
@@ -31,6 +31,7 @@ namespace NetBrowser_UWP
             DataAccess.CreateHistoryFile();
             DataAccess.CreateBookmarksFile();
             DataAccess.CreateConfigFile();
+            DataAccess.CreateStartPageFile();
         }
         public static ThemeManager ThemeManager
         => (ThemeManager)Current.Resources["ThemeManager"];
@@ -64,14 +65,14 @@ namespace NetBrowser_UWP
         /// 
         public static async Task SetApplicationTheme()
         {
-            int mode = await DataTransfer.GetCurrentTheme();
+            var mode = await DataTransfer.GetCurrentTheme();
             ThemeManager.LoadThemeByMode(mode);
             ThemeMode = mode;
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
+            var rootFrame = Window.Current.Content as Frame;
             TitleBar = ApplicationView.GetForCurrentView().TitleBar;
             await SetApplicationTheme();
             CurrentWebEngine = await DataTransfer.GetCurrentEngine(); //Set Current Search Engine

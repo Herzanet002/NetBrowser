@@ -35,15 +35,14 @@ namespace NetBrowser_UWP.ViewModels
             HistoryList = history;
         }
         
-        private async void ClearHistoryCommand_Executed(object param)
+        private static async void ClearHistoryCommand_Executed(object param)
         {
             await DataTransfer.ClearHistoryFile();
         }
 
         private async void OpenClearDialogCommand_Executed(object param)
         {
-            ContentDialog dialog = new HistoryClearConfirmationDialog();
-            await dialog.ShowAsync();
+            await new HistoryClearConfirmationDialog().ShowAsync();
             GetHistoryAsync();
         }
         private async void OpenCommand_Executed(object param)
@@ -51,9 +50,8 @@ namespace NetBrowser_UWP.ViewModels
             if (SelectedItem == null) return;
             if (Uri.IsWellFormedUriString(SelectedItem.Url, UriKind.Absolute))
             {
-                MainPage.CreateNewWebTab();
-                MainPage.SearchWeb(SelectedItem.Url);
-                //SelectedItem = null;
+                MainPage.CreateNewWebTab(SelectedItem.Url);
+                SelectedItem = null;
             }
             else
             {

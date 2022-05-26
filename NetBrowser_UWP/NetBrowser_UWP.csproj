@@ -8,7 +8,7 @@
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NetBrowser_UWP</RootNamespace>
-    <AssemblyName>NetBrowser_UWP</AssemblyName>
+    <AssemblyName>NetBrowser</AssemblyName>
     <DefaultLanguage>ru-RU</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
@@ -124,7 +124,14 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AboutAppPage.xaml.cs">
+    <Compile Include="Models\SiteItem.cs" />
+    <Compile Include="Resources\AuroraLite.xaml.cs">
+      <DependentUpon>AuroraLite.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\AddNewStartPageItemDialog.xaml.cs">
+      <DependentUpon>AddNewStartPageItemDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\AboutAppPage.xaml.cs">
       <DependentUpon>AboutAppPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
@@ -149,18 +156,18 @@
     <Compile Include="Constants\Constants.cs" />
     <Compile Include="DataAccess.cs" />
     <Compile Include="DataTransfer.cs" />
-    <Compile Include="ErrorLoadPage.xaml.cs">
+    <Compile Include="Views\ErrorLoadPage.xaml.cs">
       <DependentUpon>ErrorLoadPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BindingHelpers\ForegroundBindingHelper.cs" />
     <Compile Include="Models\HistoryItemDetails.cs" />
-    <Compile Include="MainItemPageSettings.xaml.cs">
+    <Compile Include="Views\Settings\MainItemPageSettings.xaml.cs">
       <DependentUpon>MainItemPageSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PersonalizePageSettings.xaml.cs">
+    <Compile Include="Views\Settings\PersonalizePageSettings.xaml.cs">
       <DependentUpon>PersonalizePageSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
@@ -172,7 +179,7 @@
     <Compile Include="Views\Settings\SearchSystemPageSettings.xaml.cs">
       <DependentUpon>SearchSystemPageSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SettingsPage.xaml.cs">
+    <Compile Include="Views\Settings\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Themes\ThemeManager.cs" />
@@ -241,7 +248,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="AboutAppPage.xaml">
+    <Page Include="Resources\AuroraLite.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\AddNewStartPageItemDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\AboutAppPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -261,11 +276,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ErrorLoadPage.xaml">
+    <Page Include="Views\ErrorLoadPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainItemPageSettings.xaml">
+    <Page Include="Views\Settings\MainItemPageSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -273,7 +288,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PersonalizePageSettings.xaml">
+    <Page Include="Views\Settings\PersonalizePageSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -285,7 +300,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SettingsPage.xaml">
+    <Page Include="Views\Settings\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -356,10 +371,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Fonts\Segoe Fluent Icons.ttf" />
+    <Content Include="Resources\Fonts\Segoe Fluent Icons.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Fonts\Segoe Variable.ttf" />
+    <Content Include="Resources\Fonts\Segoe Variable.ttf" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

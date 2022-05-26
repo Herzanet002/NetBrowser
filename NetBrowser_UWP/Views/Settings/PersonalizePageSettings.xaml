@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="NetBrowser_UWP.PersonalizePageSettings"
+    x:Class="NetBrowser_UWP.Views.Settings.PersonalizePageSettings"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:NetBrowser_UWP"
@@ -18,7 +18,7 @@
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Выбор темы" FontSize="26" Grid.Row="1" 
                    Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="70,0,0,0" />
         <Grid Grid.Row="2" Margin="50,20,50,20" >
-            <GridView x:Name="ThemeChooserGridView" SelectionChanged="ThemeChooserGridView_SelectionChanged">
+            <GridView x:Name="ThemeChooserGridView" Tapped="ThemeChooserGridView_Tapped">
                 <GridView.Items>
                     <GridViewItem>
                         <Grid Margin="20,20,20,20" Width="120" Height="100" >

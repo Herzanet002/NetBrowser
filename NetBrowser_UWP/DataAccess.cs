@@ -2,34 +2,31 @@
 using System.IO;
 using System.Xml;
 using Windows.Storage;
-using Windows.Storage.Streams;
 
 namespace NetBrowser_UWP
 {
-    public class DataAccess
+    public static class DataAccess
     {
         public static async void CreateHistoryFile()
         {
             try
             {
                 var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("history.xml");
-                using (IRandomAccessStream writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
+                using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
-                    Stream stream = writeStream.AsStreamForWrite();
-                    XmlWriterSettings settings = new XmlWriterSettings
+                    var stream = writeStream.AsStreamForWrite();
+                    var settings = new XmlWriterSettings
                     {
                         Async = true,
                         Indent = true
                     };
 
-                    using (XmlWriter writer = XmlWriter.Create(stream, settings))
-                    {
-                        await writer.WriteStartDocumentAsync();
-                        writer.WriteStartElement("history");
-                        await writer.WriteEndElementAsync();
-                        await writer.WriteEndDocumentAsync();
-                        await writer.FlushAsync();
-                    }
+                    using var writer = XmlWriter.Create(stream, settings);
+                    await writer.WriteStartDocumentAsync();
+                    writer.WriteStartElement("history");
+                    await writer.WriteEndElementAsync();
+                    await writer.WriteEndDocumentAsync();
+                    await writer.FlushAsync();
                 }
                 await Windows.System.Launcher.LaunchFileAsync(storageFile);
             }
@@ -43,25 +40,21 @@ namespace NetBrowser_UWP
             try
             {
                 var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("bookmarks.xml");
-                using (IRandomAccessStream writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
+                using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
-                    Stream stream = writeStream.AsStreamForWrite();
-                    XmlWriterSettings settings = new XmlWriterSettings
+                    var stream = writeStream.AsStreamForWrite();
+                    var settings = new XmlWriterSettings
                     {
                         Async = true,
                         Indent = true
                     };
 
-                    using (XmlWriter writer = XmlWriter.Create(stream, settings))
-                    {
-                        await writer.WriteStartDocumentAsync();
-                        writer.WriteStartElement("bookmarks");
-                        await writer.WriteEndDocumentAsync();
-                        await writer.FlushAsync();
-                        await writer.FlushAsync();
-
-
-                    }
+                    using var writer = XmlWriter.Create(stream, settings);
+                    await writer.WriteStartDocumentAsync();
+                    writer.WriteStartElement("bookmarks");
+                    await writer.WriteEndDocumentAsync();
+                    await writer.FlushAsync();
+                    await writer.FlushAsync();
                 }
                 await Windows.System.Launcher.LaunchFileAsync(storageFile);
             }
@@ -75,47 +68,43 @@ namespace NetBrowser_UWP
             try
             {
                 var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("configs.xml");
-                using (IRandomAccessStream writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
+                using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
-                    Stream stream = writeStream.AsStreamForWrite();
-                    XmlWriterSettings settings = new XmlWriterSettings
+                    var stream = writeStream.AsStreamForWrite();
+                    var settings = new XmlWriterSettings
                     {
                         Async = true,
                         Indent = true
                     };
 
-                    using (XmlWriter writer = XmlWriter.Create(stream, settings))
-                    {
-                        await writer.WriteStartDocumentAsync();
-                        writer.WriteStartElement("Configurations");
-                        writer.WriteStartElement("CurrentThemeMode");
-                        writer.WriteAttributeString("Mode", "1");
-                        await writer.WriteEndElementAsync();
-                        writer.WriteStartElement("searchEngine");
-                        writer.WriteStartElement("engine");
-                        writer.WriteAttributeString("prefix", "https://google.com/search?q=");
-                        writer.WriteAttributeString("name", "Google");
-                        writer.WriteAttributeString("mode", "1");
-                        writer.WriteAttributeString("homePage", "https://www.google.ru/");
-                        await writer.WriteEndElementAsync();
-                        writer.WriteStartElement("engine");
-                        writer.WriteAttributeString("prefix", "https://yandex.ru/search/?text=");
-                        writer.WriteAttributeString("name", "Yandex");
-                        writer.WriteAttributeString("mode", "0");
-                        writer.WriteAttributeString("homePage", "https://yandex.ru/");
-                        await writer.WriteEndElementAsync();
-                        writer.WriteStartElement("engine");
-                        writer.WriteAttributeString("prefix", "https://bing.com/search?q=");
-                        writer.WriteAttributeString("name", "Bing");
-                        writer.WriteAttributeString("mode", "0");
-                        writer.WriteAttributeString("homePage", "https://www.bing.ru/");
-                        await writer.WriteEndElementAsync();
-                        await writer.WriteEndElementAsync();
-                        await writer.WriteEndDocumentAsync();
-                        await writer.FlushAsync();
-
-
-                    }
+                    using var writer = XmlWriter.Create(stream, settings);
+                    await writer.WriteStartDocumentAsync();
+                    writer.WriteStartElement("Configurations");
+                    writer.WriteStartElement("CurrentThemeMode");
+                    writer.WriteAttributeString("Mode", "1");
+                    await writer.WriteEndElementAsync();
+                    writer.WriteStartElement("searchEngine");
+                    writer.WriteStartElement("engine");
+                    writer.WriteAttributeString("prefix", "https://google.com/search?q=");
+                    writer.WriteAttributeString("name", "Google");
+                    writer.WriteAttributeString("mode", "1");
+                    writer.WriteAttributeString("homePage", "https://www.google.ru/");
+                    await writer.WriteEndElementAsync();
+                    writer.WriteStartElement("engine");
+                    writer.WriteAttributeString("prefix", "https://yandex.ru/search/?text=");
+                    writer.WriteAttributeString("name", "Yandex");
+                    writer.WriteAttributeString("mode", "0");
+                    writer.WriteAttributeString("homePage", "https://yandex.ru/");
+                    await writer.WriteEndElementAsync();
+                    writer.WriteStartElement("engine");
+                    writer.WriteAttributeString("prefix", "https://bing.com/search?q=");
+                    writer.WriteAttributeString("name", "Bing");
+                    writer.WriteAttributeString("mode", "0");
+                    writer.WriteAttributeString("homePage", "https://www.bing.ru/");
+                    await writer.WriteEndElementAsync();
+                    await writer.WriteEndElementAsync();
+                    await writer.WriteEndDocumentAsync();
+                    await writer.FlushAsync();
                 }
                 await Windows.System.Launcher.LaunchFileAsync(storageFile);
             }
@@ -124,7 +113,52 @@ namespace NetBrowser_UWP
                 // ignored
             }
         }
-        
-        
+
+        public static async void CreateStartPageFile()
+        {
+            try
+            {
+                var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("startpage.xml");
+                using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    var stream = writeStream.AsStreamForWrite();
+                    var settings = new XmlWriterSettings
+                    {
+                        Async = true,
+                        Indent = true
+                    };
+
+                    using var writer = XmlWriter.Create(stream, settings);
+                    await writer.WriteStartDocumentAsync();
+                    writer.WriteStartElement("startpage");
+                    writer.WriteStartElement("elements");
+                    writer.WriteStartElement("element");
+                    writer.WriteAttributeString("name", "Yandex");
+                    writer.WriteAttributeString("url", "https://yandex.com/");
+                    await writer.WriteEndElementAsync();
+                    writer.WriteStartElement("element");
+                    writer.WriteAttributeString("name", "Google");
+                    writer.WriteAttributeString("url", "https://google.com/");
+                    await writer.WriteEndElementAsync();
+                    writer.WriteStartElement("element");
+                    writer.WriteAttributeString("name", "Bing");
+                    writer.WriteAttributeString("url", "https://bing.com/");
+                    await writer.WriteEndElementAsync();
+                    writer.WriteStartElement("element");
+                    writer.WriteAttributeString("name", "Gmail");
+                    writer.WriteAttributeString("url", "https://gmail.com/");
+                    await writer.WriteEndElementAsync();
+                    await writer.WriteEndElementAsync();
+                    await writer.WriteEndDocumentAsync();
+                    await writer.FlushAsync();
+                }
+                await Windows.System.Launcher.LaunchFileAsync(storageFile);
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
     }
 }

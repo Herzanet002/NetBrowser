@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="NetBrowser_UWP.SettingsPage"
+    x:Class="NetBrowser_UWP.Views.Settings.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:NetBrowser_UWP"
@@ -11,15 +11,9 @@
     Loaded="settingsPage_Loaded">
 
     <Grid>
-        <muxc:NavigationView 
-                             IsSettingsVisible="False"
-                             PaneTitle="Настройки"
-                             SelectionChanged="NavigationView_SelectionChanged"
-                             IsBackEnabled="True"
-                             >
-            
+        <muxc:NavigationView IsSettingsVisible="False" PaneTitle="Настройки" 
+                             SelectionChanged="NavigationView_SelectionChanged" IsBackEnabled="True">
             <muxc:NavigationView.MenuItems>
-
                 <muxc:NavigationViewItem Content="Общие" Tag="mainItem" >
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE74C;"/>
@@ -69,8 +63,6 @@
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE946;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem Content="Помощь" Icon="Help" />
-
             </muxc:NavigationView.FooterMenuItems>
 
             <Frame x:Name="ContentFrame">

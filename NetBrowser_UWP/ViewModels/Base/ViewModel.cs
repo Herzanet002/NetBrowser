@@ -5,11 +5,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using NetBrowser_UWP.Annotations;
+using NetBrowser_UWP.Properties;
 
 namespace NetBrowser_UWP.ViewModels.Base
 {
-    internal abstract class ViewModel:INotifyPropertyChanged
+    public abstract class ViewModel:INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

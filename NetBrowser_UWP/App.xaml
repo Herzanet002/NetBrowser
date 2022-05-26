@@ -6,9 +6,7 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
     <Application.Resources>
-
         <ResourceDictionary>
-            
             <ResourceDictionary.MergedDictionaries>
                 <controls:XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
                 <ResourceDictionary Source="Styles/TabViewItem_Style.xaml"></ResourceDictionary>
@@ -20,10 +18,14 @@
             <SolidColorBrush x:Key="SearchBoxBg" Color="#FF282828"></SolidColorBrush>
             <SolidColorBrush x:Key="SearchBoxFocusedBrush" Color="#FF63ADE5"></SolidColorBrush>
             <SolidColorBrush x:Key="BookmarkAdded" Color="#FF246F8D"></SolidColorBrush>
-            <x:String x:Key="AppVersion" >ver.0.3.26</x:String>
+
+            
+            <x:String x:Key="AppVersion" >ver.0.5.26</x:String>
             <x:String x:Key="AppName" >NetBrowser</x:String>
             <x:String x:Key="SearchBoxPlaceholderText" >Поиск...</x:String>
-            <x:String x:Key="SuggestBoxSearchText" >Искать в интернете </x:String>
+            <x:String x:Key="SuggestBoxSearchText" >Искать в интернете</x:String>
+            <x:String x:Key="NewTabTitle" >Новая вкладка</x:String>
+            <x:String x:Key="SettingsText" >Настройки</x:String>
             <FontFamily x:Key="Segoe Fluent">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
             <FontFamily x:Key="Segoe Variable">pack://application:,,,/Fonts/#Segoe Variable</FontFamily>
             <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
@@ -36,16 +38,8 @@
                 <Setter Property="BorderThickness" Value="1"></Setter>
 
             </Style>
-            
-           
+
             <Style TargetType="ContentDialog" BasedOn="{StaticResource DefaultContentDialogStyle}" x:Key="ContentDialogStyle"></Style>
-
-
-
-
-
-
-
 
         </ResourceDictionary>
 

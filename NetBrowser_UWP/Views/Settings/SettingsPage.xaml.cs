@@ -1,11 +1,10 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
-using NetBrowser_UWP.Views.Settings;
 using muxc = Microsoft.UI.Xaml.Controls;
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace NetBrowser_UWP
+namespace NetBrowser_UWP.Views.Settings
 {
     /// <summary>
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
@@ -13,46 +12,45 @@ namespace NetBrowser_UWP
     // ReSharper disable once RedundantExtendsListEntry
     public sealed partial class SettingsPage : Page
     {
-        public SettingsPage()
+        private static int _currentMode;
+        public SettingsPage(int mode)
         {
             this.InitializeComponent();
-
+            _currentMode = mode;
         }
-
-        public static int CurrentMode = 0;
 
         private void NavigationView_SelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender,
             Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
         {
             var selectedItem = (muxc.NavigationViewItem)sender.SelectedItem;
-            string tag = selectedItem.Tag.ToString();
+            var tag = selectedItem.Tag.ToString();
 
             if (args.IsSettingsSelected) return;
             switch (tag)
             {
                 case "mainItem":
                     ContentFrame.Navigate(typeof(MainItemPageSettings), null, new EntranceNavigationTransitionInfo());
-                    CurrentMode = 0;
+                    _currentMode = 0;
                     break;
                 case "personalizeItem":
                     ContentFrame.Navigate(typeof(PersonalizePageSettings), null, new EntranceNavigationTransitionInfo());
-                    CurrentMode = 1;
+                    _currentMode = 1;
                     break;
                 case "searchItem":
                     ContentFrame.Navigate(typeof(SearchSystemPageSettings), null, new EntranceNavigationTransitionInfo());
-                    CurrentMode = 2;
+                    _currentMode = 2;
                     break;
                 case "aboutBrowserItem":
                     ContentFrame.Navigate(typeof(AboutAppPage), null, new EntranceNavigationTransitionInfo());
-                    CurrentMode = 4;
+                    _currentMode = 4;
                     break;
                 case "bookmarksItem":
                     ContentFrame.Navigate(typeof(BookmarksPage), null, new EntranceNavigationTransitionInfo());
-                    CurrentMode = 3;
+                    _currentMode = 3;
                     break;
                 case "historyItem":
                     ContentFrame.Navigate(typeof(HistoryPageSettings), null, new EntranceNavigationTransitionInfo());
-                    CurrentMode = 5;
+                    _currentMode = 5;
                     break;
                 case "historyFileOpen":
                     DataTransfer.LoadXmlFile("history.xml");
@@ -66,7 +64,7 @@ namespace NetBrowser_UWP
 
         private void settingsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            switch (CurrentMode)
+            switch (_currentMode)
             {
                 case 0:
                     ContentFrame.Navigate(typeof(MainItemPageSettings), null);

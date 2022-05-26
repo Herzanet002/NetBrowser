@@ -5,10 +5,10 @@ namespace NetBrowser_UWP.Models
 {
     public class SearchEngineItem:INotifyPropertyChanged
     {
-        public string prefix;
-        public string name;
-        public string mode;
-        public string homePage;
+        private string prefix;
+        private string name;
+        private string mode;
+        private string homePage;
 
         public string Prefix
         {
@@ -16,7 +16,7 @@ namespace NetBrowser_UWP.Models
             set
             {
                 prefix = value;
-                OnPropertyChanged("Prefix");
+                OnPropertyChanged(nameof(Prefix));
             }
         }
 
@@ -26,7 +26,7 @@ namespace NetBrowser_UWP.Models
             set
             {
                 name = value;
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
         public string Mode
@@ -35,7 +35,7 @@ namespace NetBrowser_UWP.Models
             set
             {
                 mode = value;
-                OnPropertyChanged("Mode");
+                OnPropertyChanged(nameof(Mode));
             }
         }
         public string HomePage
@@ -44,7 +44,7 @@ namespace NetBrowser_UWP.Models
             set
             {
                 homePage = value;
-                OnPropertyChanged("HomePage");
+                OnPropertyChanged(nameof(HomePage));
             }
         }
 

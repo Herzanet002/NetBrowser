@@ -1,6 +1,5 @@
 ﻿using NetBrowser_UWP.Commands;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.ViewModels.Controls;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
@@ -31,12 +30,11 @@ namespace NetBrowser_UWP.ViewModels
         public BookmarksPageViewModel()
         {
             GetBookmarksAsync();
-            EditBookmarkCommand = new Command(ShowDialog, CanExecuteMethod);
-
-            SaveEditedBookmarkCommand = new Command(SaveChangedBookmark, CanExecuteMethod);
-            OpenBookmarkCommand = new Command(OpenBookmarkInWeb, CanExecuteMethod);
-            DeleteBookmarkCommand = new Command(DeleteSelectedBookmark, CanExecuteMethod);
-            RemoveBookmarkCommand = new Command(RemoveBookmark, CanExecuteMethod);
+            EditBookmarkCommand = new Command(ShowDialog, _ => true);
+            SaveEditedBookmarkCommand = new Command(SaveChangedBookmarkCommand_Executed, _ => true);
+            OpenBookmarkCommand = new Command(OpenBookmarkInWeb, _ => true);
+            DeleteBookmarkCommand = new Command(DeleteSelectedBookmark, _ => true);
+            RemoveBookmarkCommand = new Command(RemoveBookmark, _ => true);
         }
 
         public string BookmarkNewTitle
@@ -69,10 +67,8 @@ namespace NetBrowser_UWP.ViewModels
         {
             if (SelectedBookmark != null)
             {
-                MainPage.CreateNewWebTab();
-                MainPage.SearchWeb(SelectedBookmark.Url);
+                MainPage.CreateNewWebTab(SelectedBookmark.Url);
             }
-           
         }
 
         private async void RemoveBookmark(object parameter)
@@ -95,12 +91,9 @@ namespace NetBrowser_UWP.ViewModels
             GetBookmarksAsync();
         }
 
-        private void SaveChangedBookmark(object parameter) => DataTransfer.EditBookmark(_oldUrl, BookmarkNewUrl, BookmarkNewTitle);
+        private void SaveChangedBookmarkCommand_Executed(object parameter) => DataTransfer.EditBookmark(_oldUrl, BookmarkNewUrl, BookmarkNewTitle);
 
-        private static bool CanExecuteMethod(object parameter)
-        {
-            return true;
-        }
+        
 
 
 
