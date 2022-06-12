@@ -162,10 +162,19 @@ namespace NetBrowser_UWP
             }
         }
 
+        /// <summary>
+        /// INotifyPropertyChanged realization interface
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null!)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         public MainPage()
         {
             InitializeComponent();
-            DataContext = this;
             GetBookmarks();
             ThemeManager.SetRequestedTheme();
             GetSearchTermList();
@@ -179,14 +188,6 @@ namespace NetBrowser_UWP
             searchTermListTransfer.Reverse();
             _searchTermList = new HashSet<string>(searchTermListTransfer);
 
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null!)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         //Browser back button functionality
@@ -355,7 +356,7 @@ namespace NetBrowser_UWP
                     tabItem.Header.ToString() != "Новая вкладка")
                     DataTransfer.SaveHistory(new HistoryItemDetails
                     {
-                        Title = sender.DocumentTitle,
+                        Name = sender.DocumentTitle,
                         Url = sender.Source.AbsoluteUri,
                         Time = DateTime.Now.ToLongTimeString(),
                         Date = DateTime.Now.ToShortDateString()
@@ -610,7 +611,12 @@ namespace NetBrowser_UWP
             if (BookmarkTitleForSave != string.Empty && BookmarkUrlForSave != string.Empty &&
                 Uri.IsWellFormedUriString(BookmarkUrlForSave, UriKind.Absolute))
             {
-                DataTransfer.SaveBookmark(BookmarkTitleForSave, BookmarkUrlForSave);
+                DataTransfer.SaveBookmark(
+                    new BookmarkDetails()
+                    {
+                        Name = BookmarkTitleForSave, 
+                        Url = BookmarkUrlForSave
+                    });
                 IsFlyoutClosed = true;
                 SetBookmarkIconState(true);
             }
@@ -649,30 +655,6 @@ namespace NetBrowser_UWP
             historyListTransfer.Reverse();
             HistoryList = historyListTransfer;
         }
-
-        /*private void CreateErrorLoadPage(string url)
-        {
-            var webView = new WebView();
-            try
-            {
-                webView.Navigate(new Uri(url));
-            }
-            catch (Exception ex)
-            {
-                ErrorLoadPage.error = ex.Message;
-            }
-
-            var errorTab = new muxc.TabViewItem
-            {
-                Header = "Ошибка",
-                IconSource = new muxc.SymbolIconSource { Symbol = Symbol.Cancel }
-            };
-            var setFrame = new Frame();
-            errorTab.Content = setFrame;
-            setFrame.Navigate(typeof(ErrorLoadPage));
-            TabsControl.TabItems.Add(errorTab);
-            TabsControl.SelectedItem = errorTab;
-        }*/
 
         private async void historyListView_ItemClick(object sender, [NotNull] ItemClickEventArgs e)
         {

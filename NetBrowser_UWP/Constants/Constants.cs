@@ -8,27 +8,30 @@ namespace NetBrowser_UWP.Constants
 {
     public static class Constants
     {
-        public const string DarkBlueThemePath = "ms-appx:///Themes/Theme.DarkBlue.xaml";
-        public const string LightThemePath = "ms-appx:///Themes/Theme.Light.xaml";
-        public const string LightPinkThemePath = "ms-appx:///Themes/Theme.LightPink.xaml";
-        public const string DarkThemePath = "ms-appx:///Themes/Theme.Dark.xaml";
-        public const string LightBlueThemePath = "ms-appx:///Themes/Theme.LightBlue.xaml";
-        public const string DarkNavyBlue = "ms-appx:///Themes/Theme.Dark.NavyBlue.xaml";
-        public const string DarkAcrylic = "ms-appx:///Themes/Theme.Dark.Acrylic.xaml";
-        public const string LightAcrylic = "ms-appx:///Themes/Theme.Light.Acrylic.xaml";
+        public const string DARK_BLUE_THEME_PATH = "ms-appx:///Themes/Theme.DarkBlue.xaml";
+        public const string LIGHT_THEME_PATH = "ms-appx:///Themes/Theme.Light.xaml";
+        public const string LIGHT_PINK_THEME_PATH = "ms-appx:///Themes/Theme.LightPink.xaml";
+        public const string DARK_THEME_PATH = "ms-appx:///Themes/Theme.Dark.xaml";
+        public const string LIGHT_BLUE_THEME_PATH = "ms-appx:///Themes/Theme.LightBlue.xaml";
+        public const string DARK_NAVY_BLUE = "ms-appx:///Themes/Theme.Dark.NavyBlue.xaml";
+        public const string DARK_ACRYLIC = "ms-appx:///Themes/Theme.Dark.Acrylic.xaml";
+        public const string LIGHT_ACRYLIC = "ms-appx:///Themes/Theme.Light.Acrylic.xaml";
 
-        public static SearchEngineItem CurrentWebEngine;
+        public const string SETTINGS_FILE_NAME = "configs.xml";
+        public const string BOOKMARKS_FILE_NAME = "bookmarks.xml";
+        public const string HISTORY_FILE_NAME = "history.xml";
+        public const string STARTPAGE_FILE_NAME = "startpage.xml";
 
         public static Dictionary<int, (string, int)> Themes = new()
         {
-            {1, (LightThemePath,1) },
-            {2, (DarkThemePath,2) },
-            {3, (DarkBlueThemePath,2)},
-            {4, (LightPinkThemePath,1) },
-            {5, (LightBlueThemePath,1) },
-            {6, (DarkNavyBlue, 2) },
-            {7, (DarkAcrylic, 2) },
-            {8, (LightAcrylic, 1) },
+            {1, (LIGHT_THEME_PATH,1) },
+            {2, (DARK_THEME_PATH,2) },
+            {3, (DARK_BLUE_THEME_PATH,2)},
+            {4, (LIGHT_PINK_THEME_PATH,1) },
+            {5, (LIGHT_BLUE_THEME_PATH,1) },
+            {6, (DARK_NAVY_BLUE, 2) },
+            {7, (DARK_ACRYLIC, 2) },
+            {8, (LIGHT_ACRYLIC, 1) },
         };
 
         public static FontFamily SegoeFluent = new("/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons");

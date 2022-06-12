@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using Windows.Storage;
+using static NetBrowser_UWP.Constants.Constants;
 
 namespace NetBrowser_UWP
 {
@@ -11,7 +12,7 @@ namespace NetBrowser_UWP
         {
             try
             {
-                var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("history.xml");
+                var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(HISTORY_FILE_NAME);
                 using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
                     var stream = writeStream.AsStreamForWrite();
@@ -39,7 +40,7 @@ namespace NetBrowser_UWP
         {
             try
             {
-                var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("bookmarks.xml");
+                var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(BOOKMARKS_FILE_NAME);
                 using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
                     var stream = writeStream.AsStreamForWrite();
@@ -67,7 +68,7 @@ namespace NetBrowser_UWP
         {
             try
             {
-                var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("configs.xml");
+                var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(SETTINGS_FILE_NAME);
                 using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
                     var stream = writeStream.AsStreamForWrite();
@@ -118,7 +119,7 @@ namespace NetBrowser_UWP
         {
             try
             {
-                var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("startpage.xml");
+                var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(STARTPAGE_FILE_NAME);
                 using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
                     var stream = writeStream.AsStreamForWrite();

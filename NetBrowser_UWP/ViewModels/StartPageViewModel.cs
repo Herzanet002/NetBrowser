@@ -134,53 +134,9 @@ namespace NetBrowser_UWP.ViewModels
         }
     }
 
-    public class TitleTextConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
+    
 
-            var title = value as string;
-            if (title is { Length: > 12 })
-                title = title.Substring(0, 12) + "...";
-            return title;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return DependencyProperty.UnsetValue;
-        }
-    }
-
-    public class TitleLetterConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            var rx = new Regex(@"^((https?|ftp)://)?(www\.)?(?<domain>[^/]+)(/|$)");
-            if (value is not string text) return string.Empty;
-            var match = rx.Match(text);
-            return match.Success ? match.Groups["domain"].Value[0].ToString().ToUpper() : string.Empty;
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return DependencyProperty.UnsetValue;
-        }
-    }
-    public class OpenFlyoutAction : DependencyObject, IAction
-    {
-        public object Execute(object sender, object parameter)
-        {
-            var param = (RightTappedRoutedEventArgs)parameter;
-            var flyout = FlyoutBase.GetAttachedFlyout((FrameworkElement)sender);
-            var options = new FlyoutShowOptions()
-            {
-                Position = param.GetPosition((FrameworkElement)sender),
-                ShowMode = FlyoutShowMode.Standard
-            };
-            flyout?.ShowAt((FrameworkElement)sender, options);
-            return null;
-        }
-    }
+    
+    
 
 }

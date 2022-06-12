@@ -1,13 +1,12 @@
 ﻿using NetBrowser_UWP.Commands;
 using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Views.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using NetBrowser_UWP.Views.Controls;
 
 
 namespace NetBrowser_UWP.ViewModels
@@ -34,7 +33,7 @@ namespace NetBrowser_UWP.ViewModels
             history.Remove(toBeDeleted);
             HistoryList = history;
         }
-        
+
         private static async void ClearHistoryCommand_Executed(object param)
         {
             await DataTransfer.ClearHistoryFile();
@@ -84,7 +83,8 @@ namespace NetBrowser_UWP.ViewModels
         public void GetSearchSuggestions()
         {
             var suitable = from item in HistoryList
-                where item.Title.ToLower().Contains(SearchText.ToLower()) || item.Url.ToLower().Contains(SearchText.ToLower()) select item;
+                           where item.Name.ToLower().Contains(SearchText.ToLower()) || item.Url.ToLower().Contains(SearchText.ToLower())
+                           select item;
             HistoryList = suitable;
 
         }
@@ -108,19 +108,6 @@ namespace NetBrowser_UWP.ViewModels
 
     }
 
-    public class DateTimeToDateConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            var splitstring = value.ToString().Split(":");
-            if (splitstring[0].Length == 1) splitstring[0] = "0" + splitstring[0];
-            return $"{splitstring[0]}:{splitstring[1]}";
-        }
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return DependencyProperty.UnsetValue;
-        }
-    }
 
 }

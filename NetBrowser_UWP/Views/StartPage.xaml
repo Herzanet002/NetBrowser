@@ -10,7 +10,9 @@
     mc:Ignorable="d"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:resources="using:NetBrowser_UWP.Resources">
+    xmlns:resources="using:NetBrowser_UWP.Resources"
+    xmlns:commands="using:NetBrowser_UWP.Commands"
+    xmlns:converters="using:NetBrowser_UWP.Converters">
     <!--<interactivity:Interaction.Behaviors>
         <core:EventTriggerBehavior EventName="Loaded">
             <core:InvokeCommandAction Command="{Binding LoadedEventCommand}">
@@ -24,8 +26,8 @@
     </Page.DataContext>
 
     <Page.Resources>
-        <viewModels:TitleTextConverter x:Key="TitleTextConverter" />
-        <viewModels:TitleLetterConverter x:Key="TitleLetterConverter" />
+        <converters:TitleTextConverter x:Key="TitleTextConverter" />
+        <converters:TitleLetterConverter x:Key="TitleLetterConverter" />
         <StandardUICommand x:Name="DeleteCommand"
                            Command="{Binding GridViewItemDeleteCommand}"
                            Description="Удалить элемент со стартовой страницы" />
@@ -115,7 +117,7 @@
                             </FlyoutBase.AttachedFlyout>
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="RightTapped">
-                                    <viewModels:OpenFlyoutAction/>
+                                    <commands:OpenFlyoutAction/>
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                             <ToolTipService.Placement>Mouse</ToolTipService.Placement>

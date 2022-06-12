@@ -84,7 +84,7 @@ namespace NetBrowser_UWP.ViewModels
         private async void ShowDialog(object parameter)
         {
             _oldUrl = SelectedBookmark?.Url;
-            BookmarkNewTitle = SelectedBookmark?.Title;
+            BookmarkNewTitle = SelectedBookmark?.Name;
             BookmarkNewUrl = SelectedBookmark?.Url;
             ContentDialog dialog = new EditBookmarkDialog();
             await dialog.ShowAsync();

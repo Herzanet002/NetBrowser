@@ -43,7 +43,7 @@
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
 
-                <muxc:NavigationViewItem Content="Открыть файл истории" Tag="historyFileOpen">
+                <!--<muxc:NavigationViewItem Content="Открыть файл истории" Tag="historyFileOpen">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE8E5;"/>
                     </muxc:NavigationViewItem.Icon>
@@ -53,7 +53,7 @@
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE8E5;"/>
                     </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
+                </muxc:NavigationViewItem>-->
 
             </muxc:NavigationView.MenuItems>
 

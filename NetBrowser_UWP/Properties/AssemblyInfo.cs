@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Общие сведения о сборке можно задать с помощью следующего 
 // атрибутов. Отредактируйте значения этих атрибутов, чтобы изменить
 // сведений о сборке.
-[assembly: AssemblyTitle("NetBrowser_UWP")]
+[assembly: AssemblyTitle("NetBrowser")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NetBrowser_UWP")]
+[assembly: AssemblyProduct("NetBrowser")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

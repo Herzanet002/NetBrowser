@@ -7,38 +7,16 @@ using Windows.Storage;
 using Windows.System;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Properties;
-
+using static NetBrowser_UWP.Constants.Constants;
 namespace NetBrowser_UWP
 {
-    public class DataTransfer
+    public static class DataTransfer
     {
-        private const string SETTINGS_FILE_NAME = "configs.xml";
-        private const string BOOKMARKS_FILE_NAME = "bookmarks.xml";
-        private const string HISTORY_FILE_NAME = "history.xml";
-        private const string STARTPAGE_FILE_NAME = "startpage.xml";
-
-        private DataTransfer()
-        {
-
-        }
-        private static DataTransfer _instance;
-        private static readonly object Threadlock = new();
-
-        public static DataTransfer Source
-        {
-            get
-            {
-
-                lock (Threadlock)
-                {
-                    return _instance ?? (_instance = new DataTransfer());
-                }
-            }
-        }
         public static async void SaveHistory(HistoryItemDetails historyItemDetail)
         {
             try
             {
+                if(historyItemDetail.Url=="about:blank") return;
                 var doc = await DocumentLoad(HISTORY_FILE_NAME).AsAsyncOperation(); 
 
                 var history = doc.GetElementsByTagName("history");
@@ -55,7 +33,7 @@ namespace NetBrowser_UWP
                 historyItem.AppendChild(timeElement);
                 historyItem.AppendChild(dateElement);
 
-                siteElement.InnerText = historyItemDetail.Title;
+                siteElement.InnerText = historyItemDetail.Name;
                 siteUrl.InnerText = historyItemDetail.Url;
                 timeElement.InnerText = historyItemDetail.Time;
                 dateElement.InnerText = historyItemDetail.Date;
@@ -108,9 +86,9 @@ namespace NetBrowser_UWP
             return result;
         }
 
-        private static async void SaveDoc(XmlDocument doc, string configFileName)
+        private static async void SaveDoc(XmlDocument doc, string fileName)
         {
-            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(configFileName);
+            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileName);
             await doc.SaveToFileAsync(file);
         }
 
@@ -134,7 +112,7 @@ namespace NetBrowser_UWP
                             listOfHistory.Add(new HistoryItemDetails
                             {
                                 Url = child.InnerText,
-                                Title = child.PreviousSibling.InnerText,
+                                Name = child.PreviousSibling.InnerText,
                                 Time = child.NextSibling.InnerText,
                                 Date = child.NextSibling.NextSibling.InnerText
                             });
@@ -161,7 +139,7 @@ namespace NetBrowser_UWP
             return listOfTerms;
         }
 
-        public static async void SaveBookmark(string title, string url)
+        public static async void SaveBookmark(BookmarkDetails bookmarkDetails)
         {
             var doc = await DocumentLoad(BOOKMARKS_FILE_NAME);
 
@@ -172,9 +150,9 @@ namespace NetBrowser_UWP
             var bookmarkTitle = bookmark.AppendChild(doc.CreateElement("title"));
             var bookmarkIcon = bookmark.AppendChild(doc.CreateElement("icon"));
 
-            bookmarkUrl.InnerText = url;
-            bookmarkTitle.InnerText = title;
-            bookmarkIcon.InnerText = "https://www.google.com/s2/favicons?sz=32&domain_url=" + url;
+            bookmarkUrl.InnerText = bookmarkDetails.Url;
+            bookmarkTitle.InnerText = bookmarkDetails.Name;
+            bookmarkIcon.InnerText = "https://www.google.com/s2/favicons?sz=32&domain_url=" + bookmarkDetails.Url;
 
             SaveDoc(doc, BOOKMARKS_FILE_NAME);
         }
@@ -246,7 +224,7 @@ namespace NetBrowser_UWP
 
                     if (returnUrl != string.Empty && returnTitle != string.Empty)
                     {
-                        list.Add(new BookmarkDetails { Title = returnTitle, Url = returnUrl, Icon = returnIcon });
+                        list.Add(new BookmarkDetails { Name = returnTitle, Url = returnUrl, Icon = returnIcon });
                     }
                 }
             });
