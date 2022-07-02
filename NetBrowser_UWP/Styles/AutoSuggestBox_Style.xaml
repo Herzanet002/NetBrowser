@@ -4,7 +4,8 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
     <Style x:Key="AutoSuggestBoxTextBoxStyle" TargetType="TextBox">
-        <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}"/>
+
+        <Setter Property="Foreground" Value="{Binding SearchBoxForeground, Source={StaticResource ThemeManager}}"/>
         <Setter Property="Background" Value="{ThemeResource TextControlBackground}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}"/>
         <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextControlSelectionHighlightColor}"/>

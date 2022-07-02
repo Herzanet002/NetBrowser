@@ -79,13 +79,6 @@
                             </EventTrigger.Actions>
                         </EventTrigger>
                     </Canvas.Triggers>
-
-
-
-
-
-
-
                     <Path Name="Path4" StrokeThickness="1.33333337306976" Data="M 9.69 0 C 0.64 53.14 -2.18 106.47 1.69 160">
                         <Path.RenderTransform>
                             <TranslateTransform X="600.80" Y="98.98" />
@@ -113,9 +106,6 @@
                             </LinearGradientBrush>
                         </Path.Fill>
                     </Path>
-
-
-
                     <Path Name="Path6_Copy4" Data="M 10.53 0 C -0.60 85.75 -2.66 182.15 3.19 287.87">
                         <Path.RenderTransform>
                             <TransformGroup>
@@ -138,12 +128,7 @@
                             </LinearGradientBrush>
                         </Path.Fill>
                     </Path>
-
-
-
                 </Canvas>
-
-
             </Canvas>
 
             <Canvas Name="Group4" Background="Transparent">
@@ -179,10 +164,6 @@
                         </LinearGradientBrush>
                     </Path.Fill>
                 </Path>
-
-
-
-
                 <Path Name="Path1" StrokeThickness="1.33333337306976" Data="M 89 0 C 31.87 89.58 1.44 209.78 0 365">
                     <Path.RenderTransform>
                         <TranslateTransform X="686.5" Y="17.98" x:Name="BL1" />
@@ -213,14 +194,6 @@
                     </Path.Stroke>
                 </Path>
             </Canvas>
-
-
-
-
-
-
-
-
             <Canvas Name="ThinRays" Background="Transparent">
                 <Canvas Name="BottomLights">
                     <Canvas.Triggers>

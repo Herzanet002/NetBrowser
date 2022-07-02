@@ -13,7 +13,7 @@
                 <ResourceDictionary Source="Styles/TabViewTemplate_Style.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Styles/AutoSuggestBox_Style.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
-            <local:ThemeManager x:Key="ThemeManager" />
+            <local:ThemeManager x:Key="ThemeManager"/>
             <SolidColorBrush x:Key="TransparentFg" Color="#4CFFFFFF"/>
             <SolidColorBrush x:Key="SearchBoxBg" Color="#FF282828"></SolidColorBrush>
             <SolidColorBrush x:Key="SearchBoxFocusedBrush" Color="#FF63ADE5"></SolidColorBrush>

@@ -209,18 +209,16 @@ namespace NetBrowser_UWP
                     var returnTitle = string.Empty;
                     var returnIcon = string.Empty;
 
-                    if (bookmark[i].NodeName == "bookmark")
+                    foreach (var node in children)
                     {
-                        for (var j = 0; j < children.Count; j++)
-                        {
-                            if (children[j].NodeName == "url")
-                                returnUrl = children[j].InnerText;
-                            if (children[j].NodeName == "title")
-                                returnTitle = children[j].InnerText;
-                            if (children[j].NodeName == "icon")
-                                returnIcon = children[j].InnerText;
-                        }
+                        if (node.NodeName == "url")
+                            returnUrl = node.InnerText;
+                        if (node.NodeName == "title")
+                            returnTitle = node.InnerText;
+                        if (node.NodeName == "icon")
+                            returnIcon = node.InnerText;
                     }
+                    
 
                     if (returnUrl != string.Empty && returnTitle != string.Empty)
                     {
