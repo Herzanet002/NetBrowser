@@ -20,13 +20,16 @@
             <RowDefinition Height="36px"/>
             <RowDefinition Height="4px"/>
             <RowDefinition/>
-
         </Grid.RowDefinitions>
+       
         <Grid Grid.Row="0" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
-            <TextBlock Grid.Row="0" Text="{x:Bind AppTitleText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalAlignment="Center" Margin="15,0" 
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition/>
+               
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{x:Bind AppTitleText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalAlignment="Center" Margin="15,0" 
                        Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}" FontSize="14" />
-            <TextBlock Grid.Row="0" Text="{StaticResource AppVersion}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,150,0" FontSize="12"
-                   Foreground="{StaticResource ResourceKey=TransparentFg}"/>
         </Grid>
 
         <Grid Grid.Row="1" HorizontalAlignment="Stretch" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
@@ -61,8 +64,8 @@
 
 
             <!--SearchBox control-->
-            <!--TextChanged="AutoSuggestBox_TextChanged"-->
-            <AutoSuggestBox Style="{StaticResource AutoSuggestBoxTemplate}" PlaceholderText="{StaticResource SearchBoxPlaceholderText}" Grid.Column="5"
+         
+            <AutoSuggestBox Style="{StaticResource AutoSuggestBoxTemplate}" x:Uid="SearchBoxPlaceholderText" Grid.Column="5"
                             Text="{Binding SearchBoxText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
                             
                             GotFocus="AutoSuggestBox_GotFocus"

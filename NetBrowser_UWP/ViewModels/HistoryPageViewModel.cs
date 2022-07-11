@@ -101,7 +101,7 @@ namespace NetBrowser_UWP.ViewModels
 
         public async void GetHistoryAsync()
         {
-            var list = await DataTransfer.GetHistory("url");
+            var list = await DataTransfer.GetHistory();
             list.Reverse();
             HistoryList = list;
         }

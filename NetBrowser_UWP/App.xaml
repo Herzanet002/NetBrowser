@@ -20,12 +20,8 @@
             <SolidColorBrush x:Key="BookmarkAdded" Color="#FF246F8D"></SolidColorBrush>
 
             
-            <x:String x:Key="AppVersion" >ver.0.5.26</x:String>
-            <x:String x:Key="AppName" >NetBrowser</x:String>
-            <x:String x:Key="SearchBoxPlaceholderText" >Поиск...</x:String>
-            <x:String x:Key="SuggestBoxSearchText" >Искать в интернете</x:String>
-            <x:String x:Key="NewTabTitle" >Новая вкладка</x:String>
-            <x:String x:Key="SettingsText" >Настройки</x:String>
+            <x:String x:Key="AppVersion" >ver.0.7.02</x:String>
+
             <FontFamily x:Key="Segoe Fluent">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
             <FontFamily x:Key="Segoe Variable">pack://application:,,,/Fonts/#Segoe Variable</FontFamily>
             <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->

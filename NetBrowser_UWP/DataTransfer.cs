@@ -92,32 +92,24 @@ namespace NetBrowser_UWP
             await doc.SaveToFileAsync(file);
         }
 
-        public static async Task<List<HistoryItemDetails>> GetHistory(string source)
+        public static async Task<List<HistoryItemDetails>> GetHistory()
         {
             var listOfHistory = new List<HistoryItemDetails>();
             await Task.Run(async () =>
             {
-                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(HISTORY_FILE_NAME);
-                var doc = await XmlDocument.LoadFromFileAsync(file);
+                var doc = await DocumentLoad(HISTORY_FILE_NAME);
 
                 var historyItem = doc.GetElementsByTagName("historyitem");
                 foreach (var item in historyItem)
                 {
                     var historyItemChild = item.ChildNodes;
-                    foreach (var child in historyItemChild)
+                    listOfHistory.Add(new HistoryItemDetails
                     {
-                        if (child.NodeName == source)
-                        {
-
-                            listOfHistory.Add(new HistoryItemDetails
-                            {
-                                Url = child.InnerText,
-                                Name = child.PreviousSibling.InnerText,
-                                Time = child.NextSibling.InnerText,
-                                Date = child.NextSibling.NextSibling.InnerText
-                            });
-                        }
-                    }
+                        Name = historyItemChild[0].InnerText,
+                        Url = historyItemChild[1].InnerText,
+                        Time = historyItemChild[2].InnerText,
+                        Date = historyItemChild[3].InnerText,
+                    });
                 }
 
             });

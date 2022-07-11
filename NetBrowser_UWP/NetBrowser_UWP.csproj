@@ -138,6 +138,7 @@
     <Compile Include="Converters\TitleTextConverter.cs" />
     <Compile Include="Converters\TitleLetterConverter.cs" />
     <Compile Include="Models\SiteItem.cs" />
+    <Compile Include="ResourceExtensions.cs" />
     <Compile Include="Resources\AuroraLite.xaml.cs">
       <DependentUpon>AuroraLite.xaml</DependentUpon>
     </Compile>
@@ -393,6 +394,7 @@
     <None Include="ClassDiagram.cd" />
     <None Include="ClassDiagram1.cd" />
     <None Include="NetBrowser_UWP_TemporaryKey.pfx" />
+    <PRIResource Include="Strings\ru-ru\Resources.resw" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

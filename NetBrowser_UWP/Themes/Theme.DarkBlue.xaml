@@ -8,6 +8,6 @@
     <SolidColorBrush x:Key="AppTitleBrush" Color="#7F97C1EF"/>
     <SolidColorBrush x:Key="ForegroundBrush" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FFEFEF"/>
-    <SolidColorBrush x:Key="SearchBoxForeground" Color="#7FFFFFFF"/>
+    <SolidColorBrush x:Key="SearchBoxForeground" Color="White"/>
     <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="#FF445469"/>
 </ResourceDictionary>

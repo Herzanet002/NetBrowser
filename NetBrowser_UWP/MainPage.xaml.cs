@@ -1,17 +1,17 @@
 ﻿using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Properties;
 using NetBrowser_UWP.Views;
+using NetBrowser_UWP.Views.Settings;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using NetBrowser_UWP.Properties;
-using NetBrowser_UWP.Views.Settings;
+using Microsoft.Toolkit.Uwp;
 using muxc = Microsoft.UI.Xaml.Controls;
 
 
@@ -23,7 +23,10 @@ namespace NetBrowser_UWP
     // ReSharper disable once RedundantExtendsListEntry
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
+
         #region PrivateGlobalElementRegion
+
+        private const string FAVICONS_SERVICE = "https://www.google.com/s2/favicons?domain=";
 
         private static muxc.TabViewItem _currentSelectedTab;
         private static WebView _currentSelectedWeb;
@@ -37,7 +40,7 @@ namespace NetBrowser_UWP
         private static string _searchBoxText;
         private static string _bookmarkTitleForSave;
         private static string _bookmarkUrlForSave;
-        
+
 
         private static Visibility _visibilityProgressBar;
         private static Visibility _visibilityDeleteBookmarkButton;
@@ -73,12 +76,10 @@ namespace NetBrowser_UWP
             set
             {
                 _searchBoxText = value;
-                if (value != null)
-                {
-                    SearchBoxItemsCollection = AutoSuggestListFill(value);
-                    OnPropertyChanged(nameof(SearchBoxText));
-                }
-                
+                if (value == null) return;
+                SearchBoxItemsCollection = AutoSuggestListFill(value);
+                OnPropertyChanged(nameof(SearchBoxText));
+
             }
         }
         public List<BookmarkDetails> BookmarksList
@@ -200,7 +201,7 @@ namespace NetBrowser_UWP
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        
+
 
         #endregion
 
@@ -209,7 +210,6 @@ namespace NetBrowser_UWP
             DataContext = this;
             InitializeComponent();
             TabViewItemsList = new ObservableCollection<object>();
-            //GetBookmarksAsync();
             ThemeManager.SetRequestedTheme();
             GetSearchTermList();
             CreateNewWebTab();
@@ -311,14 +311,6 @@ namespace NetBrowser_UWP
             return suitableItems.ToList();
         }
 
-        //private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
-        //{
-        //    if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
-        //    {
-        //        sender.ItemsSource = AutoSuggestListFill(sender.Text);
-        //    }
-        //}
-        //Browser search button functionality
         private void SearchBtn_Click(object sender, RoutedEventArgs e)
         {
             if (SearchBoxText == null) return;
@@ -353,52 +345,51 @@ namespace NetBrowser_UWP
 
         private void SetVisualUiLabels(string appTitleText, string searchBoxText = null)
         {
-            AppTitleText = Application.Current.Resources["AppName"] + " | " + appTitleText;
+            AppTitleText = ResourceExtensions.GetLocalized("AppDisplayName") + " | " + appTitleText;
             SearchBoxText = searchBoxText;
-            
+
 
         }
 
         //Event handler for the webpage start loading event
-        private void browser_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
+        private void Browser_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
             if (!WebViewStates.ContainsKey(sender)) return;
             WebViewStates[sender] = true;
             SetVisualUiElementStates(sender);
-            SetVisualUiLabels("Загрузка...");
+            SetVisualUiLabels(ResourceExtensions.GetLocalized("LoadingString"));
 
             //Добавить иконку загрузки на вкладку
 
         }
 
         //Event handler when the web page is loaded
-        private void browser_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        private void Browser_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
             foreach (muxc.TabViewItem tabItem in TabViewItemsList)
             {
-                if (sender == null || sender.Source == null || tabItem.Content != sender || !args.IsSuccess) continue;
-                var icoUri = new Uri("https://www.google.com/s2/favicons?domain=" + sender.Source);
+                if (sender == null || sender.Source == null || tabItem.Content != sender) continue;
+                var icoUri = new Uri(FAVICONS_SERVICE + sender.Source);
                 tabItem.Header = sender.DocumentTitle;
                 tabItem.IconSource = new muxc.BitmapIconSource
                 {
                     UriSource = icoUri,
                     ShowAsMonochrome = false
                 };
-                if (!string.IsNullOrEmpty(SearchBoxText) && tabItem.Header.ToString() != "Параметры" &&
-                    tabItem.Header.ToString() != "Новая вкладка")
-                    DataTransfer.SaveHistory(new HistoryItemDetails
-                    {
-                        Name = sender.DocumentTitle,
-                        Url = sender.Source.AbsoluteUri,
-                        Time = DateTime.Now.ToLongTimeString(),
-                        Date = DateTime.Now.ToShortDateString()
-                    });
-                        
+
+                DataTransfer.SaveHistory(new HistoryItemDetails
+                {
+                    Name = sender.DocumentTitle,
+                    Url = sender.Source.AbsoluteUri,
+                    Time = DateTime.Now.ToLongTimeString(),
+                    Date = DateTime.Now.ToShortDateString(),
+                });
+
                 WebViewStates[sender] = false;
             }
 
             if (sender == null || sender.Source == null || _currentSelectedWeb != sender) return;
-            SetVisualUiLabels(sender.DocumentTitle, sender.Source?.AbsoluteUri);
+            SetVisualUiLabels(sender.DocumentTitle, sender.Source.AbsoluteUri);
             SetVisualUiElementStates(sender);
 
         }
@@ -414,10 +405,9 @@ namespace NetBrowser_UWP
         {
             var newWebViewInstance = new WebView(WebViewExecutionMode.SeparateProcess);
             WebViewStates.Add(newWebViewInstance, true);
-            newWebViewInstance.NavigationCompleted += browser_NavigationCompleted;
+            newWebViewInstance.NavigationCompleted += Browser_NavigationCompleted;
             newWebViewInstance.NewWindowRequested += Browser_NewWindowRequested;
-            newWebViewInstance.NavigationStarting += browser_NavigationStarting;
-            newWebViewInstance.ContainsFullScreenElementChanged += webView_ContainsFullScreenElementChanged;
+            newWebViewInstance.NavigationStarting += Browser_NavigationStarting;
             newWebViewInstance.Navigate(new Uri(urlToNavigate));
             return newWebViewInstance;
         }
@@ -426,7 +416,7 @@ namespace NetBrowser_UWP
         {
             var newTab = new muxc.TabViewItem
             {
-                Header = string.IsNullOrEmpty(header) ? "Загрузка..." : header,
+                Header = string.IsNullOrEmpty(header) ? ResourceExtensions.GetLocalized("LoadingString") : header,
                 Content = content,
                 IconSource = icon,
                 Style = style
@@ -436,7 +426,7 @@ namespace NetBrowser_UWP
         public void NavigateTo(string address, WebView webViewInstance)
         {
             if (webViewInstance == null) return;
-            
+
             switch (address)
             {
                 case "app://settings":
@@ -447,19 +437,14 @@ namespace NetBrowser_UWP
                     break;
 
                 default:
-                    webViewInstance.Source = address.Contains("https://") || address.Contains("http://") ?  
-                        new Uri(address) : 
+                    webViewInstance.Source = address.Contains("https://") || address.Contains("http://") ?
+                        new Uri(address) :
                         new Uri(App.CurrentWebEngine?.Prefix + address);
 
                     break;
             }
         }
-        /// <summary>
-        /// Creates a new tab instance with WebView content.
-        /// By default url is null and WebView content fills homePage.
-        /// If url is not null, it jumps to url address.
-        /// </summary>
-        /// <param name="url">address</param>
+
         public void CreateNewWebTab(string url = null)
         {
             var newWebView = CreateWebViewInstance(string.IsNullOrEmpty(url) ? App.CurrentWebEngine.HomePage : url);
@@ -473,12 +458,12 @@ namespace NetBrowser_UWP
             CurrentSelectedTab = newTab;
         }
 
-        
+
         public void CreateStartPageTab()
         {
             var startPageTab = new muxc.TabViewItem
             {
-                Header = Application.Current.Resources["NewTabTitle"],
+                Header = ResourceExtensions.GetLocalized("NewTabTitle"),
                 IconSource = new muxc.SymbolIconSource { Symbol = Symbol.NewWindow },
                 Style = Application.Current.Resources["TabViewItemStyle"] as Style,
                 Content = new StartPage()
@@ -490,7 +475,7 @@ namespace NetBrowser_UWP
         {
             var settingsTab = new muxc.TabViewItem
             {
-                Header = Application.Current.Resources["SettingsText"],
+                Header = ResourceExtensions.GetLocalized("SettingsText"),
                 IconSource = new muxc.SymbolIconSource { Symbol = Symbol.Setting },
                 Style = Application.Current.Resources["TabViewItemStyle"] as Style,
                 Content = new SettingsPage(mode)
@@ -525,30 +510,32 @@ namespace NetBrowser_UWP
         {
             if (CurrentSelectedTab is null) return;
             _currentSelectedWeb = CurrentSelectedTab.Content as WebView;
-            
+
             switch (CurrentSelectedTab.Content)
             {
                 case SettingsPage:
-                    SetVisualUiLabels("Настройки", "app://settings"); 
+                    SetVisualUiLabels(ResourceExtensions.GetLocalized("SettingsText"), "app://settings");
                     break;
                 case StartPage:
-                    SetVisualUiLabels("Новая вкладка", string.Empty);
+                    SetVisualUiLabels(ResourceExtensions.GetLocalized("NewTabTitle"), string.Empty);
                     break;
                 default:
                     if (_currentSelectedWeb != null && _currentSelectedWeb.Source != null)
-                        SetVisualUiLabels(_currentSelectedWeb.DocumentTitle, _currentSelectedWeb.Source?.AbsoluteUri);
+                        SetVisualUiLabels(_currentSelectedWeb.DocumentTitle, _currentSelectedWeb.Source.AbsoluteUri);
                     break;
             }
             SetVisualUiElementStates(_currentSelectedWeb);
         }
         private void CloseWebViewItemRequested(ContentControl tab)
         {
-            if (tab.Content is not WebView webContent) return;
-
-            WebViewStates.Remove(webContent);
-            webContent.Source = new Uri(@"about:blank");
+            if (tab.Content is WebView webContent)
+            {
+                WebViewStates.Remove(webContent);
+                webContent.Source = new Uri(@"about:blank");
+                tab.Content = null;
+            }
             TabViewItemsList.Remove(tab);
-            tab.Content = null;
+
 
         }
         private void NewTabKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
@@ -569,20 +556,6 @@ namespace NetBrowser_UWP
             if (!((muxc.TabViewItem)invokedTabView.SelectedItem).IsClosable) return;
             if (invokedTabView.TabItems[invokedTabView.SelectedIndex] is muxc.TabViewItem tabItem)
                 CloseWebViewItemRequested(tabItem);
-        }
-
-        private static void webView_ContainsFullScreenElementChanged(WebView sender, object args)
-        {
-            var view = ApplicationView.GetForCurrentView();
-            if (view.IsFullScreenMode)
-            {
-                view.ExitFullScreenMode();
-                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
-            }
-            else if (view.TryEnterFullScreenMode())
-            {
-                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
-            }
         }
 
 
@@ -639,7 +612,7 @@ namespace NetBrowser_UWP
                 DataTransfer.SaveBookmark(
                     new BookmarkDetails()
                     {
-                        Name = BookmarkTitleForSave, 
+                        Name = BookmarkTitleForSave,
                         Url = BookmarkUrlForSave
                     });
                 IsFlyoutClosed = true;
@@ -674,7 +647,7 @@ namespace NetBrowser_UWP
 
         private async void HistoryBtn_Click(object sender, RoutedEventArgs e)
         {
-            var historyListTransfer = await DataTransfer.GetHistory("url");
+            var historyListTransfer = await DataTransfer.GetHistory();
             var historyListCount = historyListTransfer.Count;
             historyListTransfer = historyListCount <= 100 ? historyListTransfer : historyListTransfer.GetRange(historyListCount - 100, 100);
             historyListTransfer.Reverse();

@@ -105,8 +105,7 @@
                                         HorizontalAlignment="Right">
                                     <Button 
                                         HorizontalAlignment="Right"
-                                        Command="{StaticResource DeleteCommand}"
-                                        CommandParameter="{x:Bind Time}"
+                                        Command="{StaticResource DeleteCommand}" CommandParameter="{x:Bind Time}"
                                         Padding="0"
                                         Style="{StaticResource ButtonRevealStyle}"
                                         Height="28" Width="28">
