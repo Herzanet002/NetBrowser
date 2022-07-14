@@ -1,9 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
+﻿using NetBrowser_UWP.ViewModels;
 using Windows.UI.Xaml.Controls;
-using NetBrowser_UWP.Models;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -19,10 +15,11 @@ namespace NetBrowser_UWP.Views.Settings
         public SearchSystemPageSettings()
         {
             this.InitializeComponent();
+            DataContext = App.GetService<SearchSystemPageViewModel>();
         }
 
 
-        
+
     }
 
 }

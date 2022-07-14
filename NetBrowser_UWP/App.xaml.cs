@@ -1,6 +1,16 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NetBrowser_UWP.Contracts;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Properties;
+using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels;
+using NetBrowser_UWP.Views;
+using NetBrowser_UWP.Views.Controls;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -8,9 +18,6 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using NetBrowser_UWP.Models;
-using System.Threading.Tasks;
-using NetBrowser_UWP.Properties;
 
 namespace NetBrowser_UWP
 {
@@ -28,18 +35,54 @@ namespace NetBrowser_UWP
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-            DataAccess.CreateHistoryFile();
-            DataAccess.CreateBookmarksFile();
-            DataAccess.CreateConfigFile();
-            DataAccess.CreateStartPageFile();
+            _container = ConfigureDependencyInjection();
+            var dataAccessService = GetService<DataAccessService>();
+
+            dataAccessService.InitializeHistoryFile();
+            dataAccessService.InitializeBookmarksFile();
+            dataAccessService.InitializeConfigFile();
+            dataAccessService.InitializeStartPageFile();
         }
-        public static ThemeManager ThemeManager
-        => (ThemeManager)Current.Resources["ThemeManager"];
 
         public static ApplicationViewTitleBar TitleBar;
-        public static int ThemeMode;
+
         private static SearchEngineItem _currentWebEngine;
 
+        private static IServiceProvider _container;
+
+        public static ThemeItem CurrentTheme;
+
+        private IServiceProvider ConfigureDependencyInjection()
+        {
+            var serviceCollection = new ServiceCollection();
+
+            //Services & Managers
+            serviceCollection.AddSingleton<IDataTransferService, DataTransferService>();
+            serviceCollection.AddSingleton<IDataAccessService, DataAccessService>();
+            //serviceCollection.AddSingleton<IThemeManager, ThemeManager>();
+
+            //Pages
+            //serviceCollection.AddTransient<MainPage>();
+            //serviceCollection.AddTransient<StartPage>();
+            //serviceCollection.AddTransient<HistoryPageSettings>();
+            //serviceCollection.AddTransient<BookmarksPage>();
+
+            //Dialogs
+            serviceCollection.AddTransient<AddNewStartPageItemDialog>();
+            serviceCollection.AddTransient<DeleteBookmarkDialog>();
+            serviceCollection.AddTransient<EditBookmarkDialog>();
+            serviceCollection.AddTransient<HistoryClearConfirmationDialog>();
+
+            //ViewModels
+            serviceCollection.AddSingleton<MainPageViewModel>();
+            serviceCollection.AddSingleton<HistoryPageViewModel>();
+            serviceCollection.AddTransient<StartPageViewModel>();
+            serviceCollection.AddSingleton<BookmarksPageViewModel>();
+            serviceCollection.AddSingleton<PersonalizePageViewModel>();
+
+
+            return serviceCollection.BuildServiceProvider();
+        }
         public static SearchEngineItem CurrentWebEngine
         {
             get => _currentWebEngine;
@@ -49,6 +92,12 @@ namespace NetBrowser_UWP
                 OnPropertyChanged(nameof(CurrentWebEngine));
             }
         }
+
+        public static T GetService<T>() where T : class
+        {
+            return ActivatorUtilities.GetServiceOrCreateInstance(_container, typeof(T)) as T;
+        }
+
         public static event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -57,25 +106,22 @@ namespace NetBrowser_UWP
             PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
         }
 
-        /// <summary>
-        /// Вызывается при обычном запуске приложения пользователем. Будут использоваться другие точки входа,
-        /// например, если приложение запускается для открытия конкретного файла.
-        /// </summary>
-        /// <param name="e">Сведения о запросе и обработке запуска.</param>
-        /// 
         public static async Task SetApplicationTheme()
         {
-            var mode = await DataTransfer.GetCurrentTheme();
-            ThemeManager.LoadThemeByMode(mode);
-            ThemeMode = mode;
+            var name = await GetService<IDataTransferService>().GetCurrentTheme();
+            CurrentTheme = ThemeManager.SetRequestedTheme(name);
+
+
         }
 
+        public static ThemeManager ThemeManager => (ThemeManager)Current.Resources["ThemeManager"];
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;
+
             TitleBar = ApplicationView.GetForCurrentView().TitleBar;
             await SetApplicationTheme();
-            CurrentWebEngine = await DataTransfer.GetCurrentEngine(); //Set Current Search Engine
+            CurrentWebEngine = await GetService<IDataTransferService>().GetCurrentSearchEngine(); //Set Current Search Engine
 
             // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
             // только обеспечьте активность окна
@@ -113,32 +159,23 @@ namespace NetBrowser_UWP
                 coreTitleBar.ExtendViewIntoTitleBar = true;
             }
 
+            ThemeManager.SetRequestedElementThemeMode();
+
         }
 
 
-        /// <summary>
-        /// Вызывается в случае сбоя навигации на определенную страницу
-        /// </summary>
-        /// <param name="sender">Фрейм, для которого произошел сбой навигации</param>
-        /// <param name="e">Сведения о сбое навигации</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
-        /// <summary>
-        /// Вызывается при приостановке выполнения приложения.  Состояние приложения сохраняется
-        /// без учета информации о том, будет ли оно завершено или возобновлено с неизменным
-        /// содержимым памяти.
-        /// </summary>
-        /// <param name="sender">Источник запроса приостановки.</param>
-        /// <param name="e">Сведения о запросе приостановки.</param>
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Сохранить состояние приложения и остановить все фоновые операции
             deferral.Complete();
         }
+
 
 
     }

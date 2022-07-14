@@ -1,6 +1,8 @@
 ﻿using NetBrowser_UWP.Models;
 using System.Collections.ObjectModel;
 using System.Linq;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Services;
 
 namespace NetBrowser_UWP.ViewModels
 {
@@ -8,7 +10,7 @@ namespace NetBrowser_UWP.ViewModels
     {
         private static ObservableCollection<SearchEngineItem> _listOfEngines;
         private SearchEngineItem _currentEngine;
-
+        private readonly IDataTransferService _dataTransferService;
         public ObservableCollection<SearchEngineItem> ListOfEngines
         {
             get => _listOfEngines;
@@ -27,17 +29,18 @@ namespace NetBrowser_UWP.ViewModels
 
         private void ChangeSearchEngine()
         {
-            DataTransfer.ChangeSearchEngine(CurrentEngine.Name);
+            _dataTransferService.ChangeSearchEngine(CurrentEngine.Name);
             App.CurrentWebEngine = CurrentEngine;
         }
-        public SearchSystemPageViewModel()
+        public SearchSystemPageViewModel(IDataTransferService dataTransferService)
         {
+            _dataTransferService = dataTransferService;
             GetEngines();
         }
 
         public async void GetEngines()
         {
-            ListOfEngines = new ObservableCollection<SearchEngineItem>(await DataTransfer.GetSearchEngineList());
+            ListOfEngines = new ObservableCollection<SearchEngineItem>(await _dataTransferService.GetSearchEngineList());
 
             var selectedEngine = from item in ListOfEngines
                                  where item.Mode == "1"

@@ -8,6 +8,10 @@ namespace NetBrowser_UWP.Commands
         private readonly Action<object> _execute;
         private Func<object, bool> _canExecute;
 
+        public Command(Action<object> execute)
+        {
+            _execute = execute;
+        }
         public Command(Action<object> execute, Func<object, bool> canExecute)
         {
             _execute = execute;
@@ -17,9 +21,14 @@ namespace NetBrowser_UWP.Commands
 
         public bool CanExecute(object parameter)
         {
-            return true;
+            var canExecute = _canExecute == null || _canExecute(parameter);
+            return canExecute;
         }
-
+        public void RaiseCanExecuteChanged()
+        {
+            if (CanExecuteChanged != null)
+                CanExecuteChanged(this, EventArgs.Empty);
+        }
         public void Execute(object parameter)
         {
             _execute(parameter);

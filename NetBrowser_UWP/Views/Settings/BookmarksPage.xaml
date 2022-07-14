@@ -16,9 +16,6 @@
                    Margin="50,30,0,20"/>
 
         <Grid Grid.Row="1" Margin="50,0,0,0">
-            <Grid.DataContext>
-                <viewmodels:BookmarksPageViewModel/>
-            </Grid.DataContext>
             <ListView Background="{x:Null}" ItemsSource="{Binding BookmarksList,
                 UpdateSourceTrigger=PropertyChanged}" FlyoutBase.AttachedFlyout="{x:Bind BookmarkMenuFlyout}"
                       SelectedItem="{Binding SelectedBookmark, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

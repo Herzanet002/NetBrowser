@@ -1,7 +1,4 @@
-﻿
-
-
-// Документацию по шаблону элемента "Диалоговое окно содержимого" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
+﻿using NetBrowser_UWP.ViewModels;
 
 namespace NetBrowser_UWP.Views.Controls
 {
@@ -10,8 +7,9 @@ namespace NetBrowser_UWP.Views.Controls
         public EditBookmarkDialog()
         {
             this.InitializeComponent();
+            DataContext = App.GetService<BookmarksPageViewModel>();
         }
 
-     
+
     }
 }

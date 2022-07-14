@@ -2,13 +2,15 @@
 using System.IO;
 using System.Xml;
 using Windows.Storage;
+using Windows.UI.Xaml;
+using NetBrowser_UWP.Contracts.Services;
 using static NetBrowser_UWP.Constants.Constants;
 
-namespace NetBrowser_UWP
+namespace NetBrowser_UWP.Services
 {
-    public static class DataAccess
+    public class DataAccessService : IDataAccessService
     {
-        public static async void CreateHistoryFile()
+        public async void InitializeHistoryFile()
         {
             try
             {
@@ -36,7 +38,7 @@ namespace NetBrowser_UWP
                 // ignored
             }
         }
-        public static async void CreateBookmarksFile()
+        public async void InitializeBookmarksFile()
         {
             try
             {
@@ -64,7 +66,7 @@ namespace NetBrowser_UWP
                 // ignored
             }
         }
-        public static async void CreateConfigFile()
+        public async void InitializeConfigFile()
         {
             try
             {
@@ -81,8 +83,9 @@ namespace NetBrowser_UWP
                     using var writer = XmlWriter.Create(stream, settings);
                     await writer.WriteStartDocumentAsync();
                     writer.WriteStartElement("Configurations");
-                    writer.WriteStartElement("CurrentThemeMode");
-                    writer.WriteAttributeString("Mode", "1");
+                    writer.WriteStartElement("CurrentTheme");
+                    writer.WriteAttributeString("Name", "Light");
+                    
                     await writer.WriteEndElementAsync();
                     writer.WriteStartElement("searchEngine");
                     writer.WriteStartElement("engine");
@@ -115,7 +118,7 @@ namespace NetBrowser_UWP
             }
         }
 
-        public static async void CreateStartPageFile()
+        public async void InitializeStartPageFile()
         {
             try
             {

@@ -1,16 +1,11 @@
 ﻿using NetBrowser_UWP.Commands;
+using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Views.Controls;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Microsoft.Xaml.Interactivity;
-using NetBrowser_UWP.Views.Controls;
 
 namespace NetBrowser_UWP.ViewModels
 {
@@ -24,7 +19,6 @@ namespace NetBrowser_UWP.ViewModels
         private static List<SiteItem> _startPageItems;
         private static string _newSiteUrl;
         private static string _newSiteName;
-        private static MainPage MainPage => (Window.Current.Content as Frame)?.Content as MainPage;
         //public ICommand LoadedEventCommand => new Command(StartPageLoadedEvent, _ => true);
         public ICommand GridViewItemDeleteCommand => new Command(GridViewItemDeleteCommand_Executed, _ => true);
         public ICommand SearchButtonTappedCommand => new Command(SearchButtonTappedCommand_Executed, _ => true);
@@ -37,8 +31,12 @@ namespace NetBrowser_UWP.ViewModels
             set
             {
                 Set(ref _gridViewSelectedItem, value);
-                if(value != null)
-                    MainPage.SearchWebFromStartPage(value.Url);
+                if (value != null)
+                {
+                    var mainViewModel = App.GetService<MainPageViewModel>();
+                    mainViewModel.SearchWebFromStartPage(value.Url);
+
+                }
             }
         }
 
@@ -76,7 +74,7 @@ namespace NetBrowser_UWP.ViewModels
         private void GridViewItemDeleteCommand_Executed(object obj)
         {
             if (obj is not SiteItem elem) return;
-            DataTransfer.RemoveSiteOnStartPage(elem);
+            _dataTransferService.RemoveSiteOnStartPage(elem);
             GetStartPageElementsAsync();
         }
 
@@ -85,19 +83,26 @@ namespace NetBrowser_UWP.ViewModels
             if (NewSiteName == string.Empty && NewSiteUrl == string.Empty) return;
             if (!(NewSiteUrl.Contains("http://") || NewSiteUrl.Contains("https://")))
                 NewSiteUrl = "https://" + NewSiteUrl;
-            DataTransfer.AddNewSiteOnStartPage(new SiteItem
+            _dataTransferService.AddNewSiteOnStartPage(new SiteItem
             {
                 Name = NewSiteName,
                 Url = NewSiteUrl,
             });
 
         }
-        public StartPageViewModel()
+        private readonly IDataTransferService _dataTransferService;
+        private readonly MainPageViewModel _mainPageViewModel;
+        public StartPageViewModel(IDataTransferService dataTransferService, MainPageViewModel mainViewModel)
         {
+            _dataTransferService = dataTransferService;
+            _mainPageViewModel = mainViewModel;
+
             GetStartPageElementsAsync();
+
             SearchBoxText = string.Empty;
             NewSiteName = string.Empty;
             NewSiteUrl = string.Empty;
+
             var currentWebEngineName = App.CurrentWebEngine.Name;
             if (currentWebEngineName == null) return;
             LogoSource = new Uri($"ms-appx:///Resources/Logos/{currentWebEngineName}Logo.png");
@@ -116,10 +121,10 @@ namespace NetBrowser_UWP.ViewModels
             if (SearchBoxText == null) return;
             if (SearchBoxText.Contains("https://") || SearchBoxText.Contains("http://"))
             {
-                MainPage.SearchWebFromStartPage(SearchBoxText);
+                _mainPageViewModel.SearchWebFromStartPage(SearchBoxText);
                 return;
             }
-            MainPage.SearchWebFromStartPage(App.CurrentWebEngine.Prefix + SearchBoxText);
+            _mainPageViewModel.SearchWebFromStartPage(App.CurrentWebEngine.Prefix + SearchBoxText);
         }
 
         private async void GetStartPageElementsAsync()
@@ -127,16 +132,17 @@ namespace NetBrowser_UWP.ViewModels
             if (StartPageItems != null)
             {
                 StartPageItems.Clear();
-                StartPageItems = await DataTransfer.GetStartPageElements();
+                StartPageItems = await _dataTransferService.GetStartPageElements();
+                return;
             }
-            StartPageItems = await DataTransfer.GetStartPageElements();
+            StartPageItems = await _dataTransferService.GetStartPageElements();
 
         }
     }
 
-    
 
-    
-    
+
+
+
 
 }

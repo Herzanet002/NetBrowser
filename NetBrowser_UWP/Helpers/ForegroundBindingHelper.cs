@@ -25,7 +25,7 @@ namespace NetBrowser_UWP.BindingHelpers
                 BindingOperations.SetBinding(obj, backgroundproperty, new Binding
                 {
                     Path = new PropertyPath(propertyPath),
-                    Source = App.ThemeManager
+                    //Source = App.ThemeManager
                 });
             }
         }

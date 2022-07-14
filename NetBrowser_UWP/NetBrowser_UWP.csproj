@@ -134,14 +134,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Commands\OpenFlyoutAction.cs" />
+    <Compile Include="Contracts\IThemeManager.cs" />
+    <Compile Include="Contracts\Services\IDataAccessService.cs" />
+    <Compile Include="Contracts\Services\IDataTransferService.cs" />
     <Compile Include="Converters\DateTimeToDateConverter.cs" />
     <Compile Include="Converters\TitleTextConverter.cs" />
     <Compile Include="Converters\TitleLetterConverter.cs" />
     <Compile Include="Models\SiteItem.cs" />
-    <Compile Include="ResourceExtensions.cs" />
+    <Compile Include="Models\ThemeItem.cs" />
+    <Compile Include="Helpers\ResourceExtensions.cs" />
     <Compile Include="Resources\AuroraLite.xaml.cs">
       <DependentUpon>AuroraLite.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\MainPageViewModel.cs" />
+    <Compile Include="ViewModels\PersonalizePageViewModel.cs" />
+    <Compile Include="ViewModels\SettingsPageViewModel.cs" />
     <Compile Include="Views\Controls\AddNewStartPageItemDialog.xaml.cs">
       <DependentUpon>AddNewStartPageItemDialog.xaml</DependentUpon>
     </Compile>
@@ -151,7 +158,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BindingHelpers\BackgroundBindingHelper.cs" />
+    <Compile Include="Helpers\BackgroundBindingHelper.cs" />
     <Compile Include="Commands\CloseFlyoutAction.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Models\BookmarkDetails.cs" />
@@ -168,17 +175,17 @@
       <DependentUpon>BookmarksPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\Constants.cs" />
-    <Compile Include="DataAccess.cs" />
-    <Compile Include="DataTransfer.cs" />
+    <Compile Include="Services\DataAccessService.cs" />
+    <Compile Include="Services\DataTransferService.cs" />
     <Compile Include="Views\ErrorLoadPage.xaml.cs">
       <DependentUpon>ErrorLoadPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BindingHelpers\ForegroundBindingHelper.cs" />
+    <Compile Include="Helpers\ForegroundBindingHelper.cs" />
     <Compile Include="Models\HistoryItemDetails.cs" />
     <Compile Include="Views\Settings\MainItemPageSettings.xaml.cs">
       <DependentUpon>MainItemPageSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainPage.xaml.cs">
+    <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\PersonalizePageSettings.xaml.cs">
@@ -196,7 +203,7 @@
     <Compile Include="Views\Settings\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Themes\ThemeManager.cs" />
+    <Compile Include="Services\Managers\ThemeManager.cs" />
     <Compile Include="ViewModels\Base\ViewModel.cs" />
     <Compile Include="ViewModels\BookmarksPageViewModel.cs" />
     <Compile Include="Views\Controls\EditBookmarkDialog.xaml.cs">
@@ -298,7 +305,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainPage.xaml">
+    <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -368,17 +375,23 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm">
+      <Version>7.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting">
+      <Version>6.0.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.13</Version>
+      <Version>6.2.14</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp">
       <Version>7.1.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.8.0-prerelease.220118001</Version>
+      <Version>2.8.0-prerelease.220712001</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.1210.39</Version>
+      <Version>1.0.1305-prerelease</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.1</Version>
@@ -391,8 +404,6 @@
     <Content Include="Resources\Fonts\Segoe Variable.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="NetBrowser_UWP_TemporaryKey.pfx" />
     <PRIResource Include="Strings\ru-ru\Resources.resw" />
   </ItemGroup>

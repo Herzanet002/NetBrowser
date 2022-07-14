@@ -1,11 +1,11 @@
 ﻿using NetBrowser_UWP.Commands;
+using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Views.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 
@@ -16,8 +16,8 @@ namespace NetBrowser_UWP.ViewModels
         private static IEnumerable<HistoryItemDetails> _historyList;
         private static HistoryItemDetails _selectedItem;
         private static string _searchText;
-        private static MainPage MainPage => (Window.Current.Content as Frame)?.Content as MainPage;
 
+        private readonly IDataTransferService _dataTransferService;
         public ICommand DeleteCommand => new Command(DeleteHistoryCommand_Executed, _ => true);
         public ICommand OpenPageCommand => new Command(OpenCommand_Executed, _ => true);
         public ICommand ClearHistoryCommand => new Command(ClearHistoryCommand_Executed, _ => true);
@@ -27,16 +27,16 @@ namespace NetBrowser_UWP.ViewModels
         {
             if (param is null) return;
             var toBeDeleted = HistoryList.FirstOrDefault(c => c.Time == param.ToString());
-            var wasDeleted = await DataTransfer.RemoveHistoryItem(toBeDeleted?.Time);
+            var wasDeleted = await _dataTransferService.RemoveHistoryItem(toBeDeleted?.Time);
             if (!wasDeleted) return;
             var history = HistoryList.ToList();
             history.Remove(toBeDeleted);
             HistoryList = history;
         }
 
-        private static async void ClearHistoryCommand_Executed(object param)
+        private async void ClearHistoryCommand_Executed(object param)
         {
-            await DataTransfer.ClearHistoryFile();
+            await _dataTransferService.ClearHistoryFile();
         }
 
         private async void OpenClearDialogCommand_Executed(object param)
@@ -49,7 +49,7 @@ namespace NetBrowser_UWP.ViewModels
             if (SelectedItem == null) return;
             if (Uri.IsWellFormedUriString(SelectedItem.Url, UriKind.Absolute))
             {
-                MainPage.CreateNewWebTab(SelectedItem.Url);
+                _mainPageViewModel.CreateNewWebTab(SelectedItem.Url);
                 SelectedItem = null;
             }
             else
@@ -65,8 +65,11 @@ namespace NetBrowser_UWP.ViewModels
             }
         }
 
-        public HistoryPageViewModel()
+        private readonly MainPageViewModel _mainPageViewModel;
+        public HistoryPageViewModel(IDataTransferService dataTransferService, MainPageViewModel mainPageViewModel)
         {
+            _dataTransferService = dataTransferService;
+            _mainPageViewModel = mainPageViewModel;
             GetHistoryAsync();
         }
 
@@ -101,7 +104,7 @@ namespace NetBrowser_UWP.ViewModels
 
         public async void GetHistoryAsync()
         {
-            var list = await DataTransfer.GetHistory();
+            var list = await _dataTransferService.GetHistory();
             list.Reverse();
             HistoryList = list;
         }

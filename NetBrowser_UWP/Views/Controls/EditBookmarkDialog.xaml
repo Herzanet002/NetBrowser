@@ -11,9 +11,6 @@
     PrimaryButtonText="ОК"
     SecondaryButtonText="Отмена"
     PrimaryButtonCommand="{Binding SaveEditedBookmarkCommand}">
-    <ContentDialog.DataContext>
-        <viewmodels:BookmarksPageViewModel/>
-    </ContentDialog.DataContext>
     <Grid>
         <StackPanel>
             <TextBox Header="Заголовок" VerticalContentAlignment="Center" Margin="0,10,0,0"

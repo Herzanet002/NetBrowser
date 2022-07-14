@@ -12,9 +12,6 @@
     PrimaryButtonCommand="{Binding RemoveBookmarkCommand}"
     SecondaryButtonText="Отмена"
     Style="{StaticResource ContentDialogStyle}">
-    <ContentDialog.DataContext>
-        <viewModels:BookmarksPageViewModel/>
-    </ContentDialog.DataContext>
     
     <Grid>
         <TextBlock Text="Вы действительно хотите удалить закладку?"></TextBlock>

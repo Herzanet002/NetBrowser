@@ -1,6 +1,6 @@
 ﻿using Windows.ApplicationModel.Resources;
 
-namespace NetBrowser_UWP;
+namespace NetBrowser_UWP.BindingHelpers;
 
 internal static class ResourceExtensions
 {

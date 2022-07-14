@@ -13,17 +13,7 @@
     xmlns:resources="using:NetBrowser_UWP.Resources"
     xmlns:commands="using:NetBrowser_UWP.Commands"
     xmlns:converters="using:NetBrowser_UWP.Converters">
-    <!--<interactivity:Interaction.Behaviors>
-        <core:EventTriggerBehavior EventName="Loaded">
-            <core:InvokeCommandAction Command="{Binding LoadedEventCommand}">
-            </core:InvokeCommandAction>
-        </core:EventTriggerBehavior>
-    </interactivity:Interaction.Behaviors>-->
-
-
-    <Page.DataContext>
-        <viewModels:StartPageViewModel/>
-    </Page.DataContext>
+    
 
     <Page.Resources>
         <converters:TitleTextConverter x:Key="TitleTextConverter" />

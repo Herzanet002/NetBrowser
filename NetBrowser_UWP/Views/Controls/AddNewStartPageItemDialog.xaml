@@ -12,9 +12,6 @@
     PrimaryButtonText="ОК"
     SecondaryButtonText="Отмена"
     PrimaryButtonCommand="{Binding SaveNewSiteCommand}">
-    <ContentDialog.DataContext>
-        <viewModels:StartPageViewModel/>
-    </ContentDialog.DataContext>
 
     <Grid>
         <StackPanel>
