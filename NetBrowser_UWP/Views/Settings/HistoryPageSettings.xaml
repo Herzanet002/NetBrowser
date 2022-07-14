@@ -11,9 +11,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:converters="using:NetBrowser_UWP.Converters"
     mc:Ignorable="d">
-    <Page.DataContext>
-        <viewModels:HistoryPageViewModel />
-    </Page.DataContext>
+    
     <Page.Resources>
         <x:String x:Key="SearchPlaceholderText">Поиск в журнале истории</x:String>
         <StandardUICommand x:Name="DeleteCommand"

@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Services;
+using NetBrowser_UWP.Views;
 using NetBrowser_UWP.Views.Controls;
 
 namespace NetBrowser_UWP.ViewModels
@@ -27,8 +30,10 @@ namespace NetBrowser_UWP.ViewModels
         public ICommand RemoveBookmarkCommand { get; set; }
         #endregion
 
-        public BookmarksPageViewModel()
+        private readonly IDataTransferService _dataTransferService;
+        public BookmarksPageViewModel(IDataTransferService dataTransferService)
         {
+            _dataTransferService = dataTransferService;
             GetBookmarksAsync();
             EditBookmarkCommand = new Command(ShowDialog, _ => true);
             SaveEditedBookmarkCommand = new Command(SaveChangedBookmarkCommand_Executed, _ => true);
@@ -56,7 +61,7 @@ namespace NetBrowser_UWP.ViewModels
 
         public async void GetBookmarksAsync()
         {
-            BookmarksList = await DataTransfer.GetBookmarkList();
+            BookmarksList = await _dataTransferService.GetBookmarkList();
         }
         public List<BookmarkDetails> BookmarksList
         {
@@ -67,13 +72,13 @@ namespace NetBrowser_UWP.ViewModels
         {
             if (SelectedBookmark != null)
             {
-                MainPage.CreateNewWebTab(SelectedBookmark.Url);
+                // TODO: MainPage.CreateNewWebTab(SelectedBookmark.Url);
             }
         }
 
         private async void RemoveBookmark(object parameter)
         {
-            await DataTransfer.RemoveBookmark(SelectedBookmark.Url);
+            await _dataTransferService.RemoveBookmark(SelectedBookmark.Url);
         }
         private async void DeleteSelectedBookmark(object parameter)
         {
@@ -91,7 +96,7 @@ namespace NetBrowser_UWP.ViewModels
             GetBookmarksAsync();
         }
 
-        private void SaveChangedBookmarkCommand_Executed(object parameter) => DataTransfer.EditBookmark(_oldUrl, BookmarkNewUrl, BookmarkNewTitle);
+        private void SaveChangedBookmarkCommand_Executed(object parameter) => _dataTransferService.EditBookmark(_oldUrl, BookmarkNewUrl, BookmarkNewTitle);
 
         
 

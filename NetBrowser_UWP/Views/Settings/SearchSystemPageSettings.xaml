@@ -27,9 +27,6 @@
                   ItemsSource="{Binding ListOfEngines}"
                   MinWidth="250" SelectedItem="{Binding CurrentEngine, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                   DisplayMemberPath="Name">
-            <ComboBox.DataContext>
-                <viewmodels:SearchSystemPageViewModel/>
-            </ComboBox.DataContext>
         </ComboBox>
        
         

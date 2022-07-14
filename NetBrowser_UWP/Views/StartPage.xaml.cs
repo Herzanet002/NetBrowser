@@ -3,6 +3,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using NetBrowser_UWP.Models;
+using NetBrowser_UWP.ViewModels;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -16,6 +17,7 @@ namespace NetBrowser_UWP.Views
         public StartPage()
         {
             this.InitializeComponent();
+            DataContext = App.GetService<StartPageViewModel>();
         }
     }
 }

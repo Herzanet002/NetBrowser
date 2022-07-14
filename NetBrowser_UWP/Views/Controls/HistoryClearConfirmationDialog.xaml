@@ -12,9 +12,6 @@
     SecondaryButtonText="Отмена"
     PrimaryButtonCommand="{Binding ClearHistoryCommand}"
     Style="{StaticResource ContentDialogStyle}">
-    <ContentDialog.DataContext>
-        <viewModels:HistoryPageViewModel/>
-    </ContentDialog.DataContext>
 
     <Grid>
         <TextBlock Text="Вы действительно хотите очистить журнал истории?"></TextBlock>

@@ -5,14 +5,16 @@ using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI.Xaml;
+using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Properties;
 using static NetBrowser_UWP.Constants.Constants;
-namespace NetBrowser_UWP
+namespace NetBrowser_UWP.Services
 {
-    public static class DataTransfer
+    public class DataTransferService : IDataTransferService
     {
-        public static async void SaveHistory(HistoryItemDetails historyItemDetail)
+        public async void SaveHistory(HistoryItemDetails historyItemDetail)
         {
             try
             {
@@ -46,7 +48,7 @@ namespace NetBrowser_UWP
             }
         }
 
-        public static async void SaveSearchTerm(string title)
+        public async void SaveSearchTerm(string title)
         {
             try
             {
@@ -72,7 +74,7 @@ namespace NetBrowser_UWP
             }
         }
 
-        public static async Task<XmlDocument> DocumentLoad(string configFileName)
+        public async Task<XmlDocument> DocumentLoad(string configFileName)
         {
             XmlDocument result = null;
 
@@ -86,13 +88,13 @@ namespace NetBrowser_UWP
             return result;
         }
 
-        private static async void SaveDoc(XmlDocument doc, string fileName)
+        public async void SaveDoc(XmlDocument doc, string fileName)
         {
             var file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileName);
             await doc.SaveToFileAsync(file);
         }
 
-        public static async Task<List<HistoryItemDetails>> GetHistory()
+        public async Task<List<HistoryItemDetails>> GetHistory()
         {
             var listOfHistory = new List<HistoryItemDetails>();
             await Task.Run(async () =>
@@ -116,7 +118,7 @@ namespace NetBrowser_UWP
             return listOfHistory;
         }
 
-        public static async Task<List<string>> GetSearchTerm()
+        public async Task<List<string>> GetSearchTerm()
         {
             var listOfTerms = new List<string>();
             await Task.Run(async () =>
@@ -131,7 +133,7 @@ namespace NetBrowser_UWP
             return listOfTerms;
         }
 
-        public static async void SaveBookmark(BookmarkDetails bookmarkDetails)
+        public async void SaveBookmark(BookmarkDetails bookmarkDetails)
         {
             var doc = await DocumentLoad(BOOKMARKS_FILE_NAME);
 
@@ -155,36 +157,37 @@ namespace NetBrowser_UWP
             await Launcher.LaunchFileAsync(file);
         }
 
-        public static async Task<int> GetCurrentTheme()
+        public async Task<string> GetCurrentTheme()
         {
-            var mode = 1;
+           
+            var name = string.Empty;
             await Task.Run(async () =>
             {
                 var doc = await DocumentLoad(SETTINGS_FILE_NAME);
-                var theme = doc.GetElementsByTagName("CurrentThemeMode");
+                var theme = doc.GetElementsByTagName("CurrentTheme");
 
                 foreach (var item in theme)
                 {
-                    mode = Convert.ToInt32(item.Attributes[0].InnerText);
+                    name = item.Attributes[0].InnerText;
                 }
 
             });
-            return mode;
+            return name;
         }
 
-        public static async void SaveCurrentTheme(string mode)
+        public async void SaveCurrentTheme(string themeName)
         {
             var doc = await DocumentLoad(SETTINGS_FILE_NAME);
-            var theme = doc.GetElementsByTagName("CurrentThemeMode");
+            var theme = doc.GetElementsByTagName("CurrentTheme");
 
             foreach (var item in theme)
             {
-                item.Attributes[0].InnerText = mode;
+                item.Attributes[0].InnerText = themeName;
             }
 
             SaveDoc(doc, SETTINGS_FILE_NAME);
         }
-        public static async Task<List<BookmarkDetails>> GetBookmarkList()
+        public async Task<List<BookmarkDetails>> GetBookmarkList()
         {
             var list = new List<BookmarkDetails>();
 
@@ -221,7 +224,7 @@ namespace NetBrowser_UWP
             return list;
         }
 
-        public static async Task<bool> RemoveBookmark(string url)
+        public async Task<bool> RemoveBookmark(string url)
         {
             var doc = await DocumentLoad(BOOKMARKS_FILE_NAME);
             var result = false;
@@ -246,7 +249,7 @@ namespace NetBrowser_UWP
             return result;
         }
 
-        public static async Task<bool> ClearHistoryFile()
+        public async Task<bool> ClearHistoryFile()
         {
             try
             {
@@ -268,7 +271,7 @@ namespace NetBrowser_UWP
             }
         }
 
-        public static async Task<bool> RemoveHistoryItem(string time)
+        public async Task<bool> RemoveHistoryItem(string time)
         {
             var doc = await DocumentLoad(HISTORY_FILE_NAME);
             var root = doc.DocumentElement;
@@ -294,7 +297,7 @@ namespace NetBrowser_UWP
             SaveDoc(doc, HISTORY_FILE_NAME);
             return result;
         }
-        public static async void EditBookmark(string oldUrl, string newUrl, string newTitle)
+        public async void EditBookmark(string oldUrl, string newUrl, string newTitle)
         {
             var doc = await DocumentLoad(BOOKMARKS_FILE_NAME);
             var bookmark = doc.GetElementsByTagName("bookmark");
@@ -329,7 +332,7 @@ namespace NetBrowser_UWP
             SaveDoc(doc, BOOKMARKS_FILE_NAME);
         }
 
-        public static async Task<List<SearchEngineItem>> GetSearchEngineList()
+        public async Task<List<SearchEngineItem>> GetSearchEngineList()
         {
             var engineList = new List<SearchEngineItem>();
             await Task.Run(async () =>
@@ -359,7 +362,7 @@ namespace NetBrowser_UWP
             return engineList;
         }
 
-        public static async Task<SearchEngineItem> GetCurrentEngine()
+        public async Task<SearchEngineItem> GetCurrentSearchEngine()
         {
 
             var current = new SearchEngineItem();
@@ -374,7 +377,7 @@ namespace NetBrowser_UWP
             return current;
         }
 
-        public static async Task<List<SiteItem>> GetStartPageElements()
+        public async Task<List<SiteItem>> GetStartPageElements()
         {
             var startPageElements = new List<SiteItem>();
             await Task.Run(async () =>
@@ -402,7 +405,7 @@ namespace NetBrowser_UWP
             return startPageElements;
         }
 
-        public static async void AddNewSiteOnStartPage(SiteItem siteItem)
+        public async void AddNewSiteOnStartPage(SiteItem siteItem)
         {
             var doc = await DocumentLoad(STARTPAGE_FILE_NAME);
 
@@ -416,7 +419,7 @@ namespace NetBrowser_UWP
             SaveDoc(doc, STARTPAGE_FILE_NAME);
         }
 
-        public static async void RemoveSiteOnStartPage(SiteItem siteItem)
+        public async void RemoveSiteOnStartPage(SiteItem siteItem)
         {
             var doc = await DocumentLoad(STARTPAGE_FILE_NAME);
 
@@ -439,7 +442,7 @@ namespace NetBrowser_UWP
 
             SaveDoc(doc, STARTPAGE_FILE_NAME);
         }
-        public static async void ChangeSearchEngine([CanBeNull] string newEngine)
+        public async void ChangeSearchEngine([CanBeNull] string newEngine)
         {
             if (newEngine == null) return;
             var file = await ApplicationData.Current.LocalFolder.GetFileAsync(SETTINGS_FILE_NAME);

@@ -2,6 +2,7 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using NetBrowser_UWP.ViewModels;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -15,6 +16,7 @@ namespace NetBrowser_UWP.Views.Settings
         public HistoryPageSettings()
         {
             this.InitializeComponent();
+            DataContext = App.GetService<HistoryPageViewModel>();
         }
 
         private void ListViewItem_PointerEntered(object sender, PointerRoutedEventArgs e)

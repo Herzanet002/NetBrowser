@@ -1,6 +1,7 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
+using NetBrowser_UWP.Services;
 using muxc = Microsoft.UI.Xaml.Controls;
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -53,10 +54,10 @@ namespace NetBrowser_UWP.Views.Settings
                     _currentMode = 5;
                     break;
                 case "historyFileOpen":
-                    DataTransfer.LoadXmlFile("history.xml");
+                    DataTransferService.LoadXmlFile("history.xml");
                     break;
                 case "bookmarksFileOpen":
-                    DataTransfer.LoadXmlFile("bookmarks.xml");
+                    DataTransferService.LoadXmlFile("bookmarks.xml");
                     break;
             }
 
