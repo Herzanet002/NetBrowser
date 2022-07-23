@@ -12,12 +12,14 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:resources="using:NetBrowser_UWP.Resources"
     xmlns:commands="using:NetBrowser_UWP.Commands"
-    xmlns:converters="using:NetBrowser_UWP.Converters">
+    xmlns:converters="using:NetBrowser_UWP.Converters"
+    d:DataContext="{d:DesignInstance Type=viewModels:StartPageViewModel,IsDesignTimeCreatable=True}">
     
 
     <Page.Resources>
         <converters:TitleTextConverter x:Key="TitleTextConverter" />
         <converters:TitleLetterConverter x:Key="TitleLetterConverter" />
+        <converters:RecentlySearchItemsConverter x:Key="RecentlySearchItemsConverter"/>
         <StandardUICommand x:Name="DeleteCommand"
                            Command="{Binding GridViewItemDeleteCommand}"
                            Description="Удалить элемент со стартовой страницы" />
@@ -28,7 +30,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height=".5*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height=".8*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width=".5*"></ColumnDefinition>
@@ -46,33 +48,7 @@
 
             </Button.Content>
         </Button>
-        <Grid Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width=".2*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width=".2*"/>
-
-            </Grid.ColumnDefinitions>
-            <Image VerticalAlignment="Center" Source="{Binding LogoSource, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                   MaxWidth="56" MinWidth="28" HorizontalAlignment="Center" ></Image>
-            <TextBox Grid.Column="1" Margin="5,0,5,0" Height="36" VerticalContentAlignment="Center" BorderThickness="0"
-                     Text="{Binding SearchBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     TextWrapping="NoWrap" FontSize="16" 
-                     PlaceholderText="{Binding PlaceholderText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-            </TextBox>
-            <Button Grid.Column="2" Height="36" HorizontalAlignment="Center" BorderThickness="0"  Command="{Binding SearchButtonTappedCommand}">
-                <Button.Content>
-                    <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE721;" />
-                </Button.Content>
-            </Button>
-        </Grid>
-
-        <!--<Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="30"
-                Background="Transparent" BorderThickness="0" Padding="10">
-                <Button.Content>
-                    <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE713;" FontSize="24" />
-                </Button.Content>
-            </Button>-->
+        
 
         <RelativePanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10">
             <GridView ItemsSource="{Binding StartPageItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -114,15 +90,56 @@
                             <ToolTipService.ToolTip>
                                 <TextBlock Text="{Binding Name}"></TextBlock>
                             </ToolTipService.ToolTip>
-                            
-                            
-                            
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>
             </GridView>
         </RelativePanel>
 
+        <Grid Row="2" Column="1">
+            <StackPanel >
+                <TextBlock Text="Недавние поисковые запросы:" FontSize="16" FontWeight="SemiBold" />
+                <ListView ItemsSource="{Binding RecentlySearchedItems}" Margin="10">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource RecentlySearchItemsConverter}}"></TextBlock>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ToolTipService.Placement>Mouse</ToolTipService.Placement>
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding }"></TextBlock>
+                    </ToolTipService.ToolTip>
+                </ListView>
+
+            </StackPanel>
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width=".2*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width=".2*"/>
+                </Grid.ColumnDefinitions>
+
+                <Image Source="{Binding LogoSource, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                       MaxWidth="48" MinWidth="28" HorizontalAlignment="Center"></Image>
+                <TextBox Grid.Column="1" Margin="5,0,5,0" Height="36" VerticalContentAlignment="Center" BorderThickness="0"
+                         Text="{Binding SearchBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         TextWrapping="NoWrap" FontSize="16" 
+                         PlaceholderText="{Binding PlaceholderText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                </TextBox>
+                <Button Grid.Column="2" Height="36" HorizontalAlignment="Center" BorderThickness="0"  Command="{Binding SearchButtonTappedCommand}">
+                    <Button.Content>
+                        <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE721;" />
+                    </Button.Content>
+                </Button>
+            </Grid>
+        </Grid>
+        
     </Grid>
+
 
 </Page>

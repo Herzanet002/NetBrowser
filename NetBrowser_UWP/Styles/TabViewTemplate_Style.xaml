@@ -40,6 +40,7 @@
                             <Border x:Name="RightBottomBorderLine" BorderBrush="{ThemeResource TabViewBorderBrush}" BorderThickness="1" Grid.Column="2" Grid.ColumnSpan="2" Height="1" VerticalAlignment="Bottom"/>
                             <ContentPresenter x:Name="LeftContentPresenter" ContentTemplate="{TemplateBinding TabStripHeaderTemplate}" Grid.Column="0" Content="{TemplateBinding TabStripHeader}"/>
                             <primitives:TabViewListView x:Name="TabListView" AllowDrop="{TemplateBinding AllowDropTabs}" CanReorderItems="{TemplateBinding CanReorderTabs}" Grid.Column="1" 
+                                                        ItemContainerStyle="{StaticResource TabViewItemStyle}"
                                                         CanDragItems="{TemplateBinding CanDragTabs}" ItemTemplate="{TemplateBinding TabItemTemplate}" ItemsSource="{TemplateBinding TabItemsSource}"
                                                         ItemTemplateSelector="{TemplateBinding TabItemTemplateSelector}" Padding="0,3,2,4"/>
                             <Border Grid.Column="2" Padding="0,0,20,0" VerticalAlignment="Center" Visibility="{Binding IsAddTabButtonVisible, RelativeSource={RelativeSource Mode=TemplatedParent}}">
@@ -58,7 +59,7 @@
         <Setter Property="Foreground" Value="{ThemeResource TabViewButtonForeground}"/>
         <Setter Property="FontSize" Value="{ThemeResource TabViewItemAddButtonFontSize}"/>
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}"/>
-        <Setter Property="Width" Value="30"/>
+        <Setter Property="Width" Value="28"/>
         <Setter Property="Height" Value="26"/>
         <Setter Property="FocusVisualMargin" Value="-3"/>
         <Setter Property="Template">

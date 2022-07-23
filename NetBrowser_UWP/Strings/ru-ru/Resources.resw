@@ -129,6 +129,9 @@
   <data name="SearchBoxPlaceholderText.PlaceholderText" xml:space="preserve">
     <value>Найти...</value>
   </data>
+  <data name="SearchBoxStyleResultsForSearch.Text" xml:space="preserve">
+    <value>Результаты для поиска</value>
+  </data>
   <data name="SettingsText" xml:space="preserve">
     <value>Параметры</value>
   </data>

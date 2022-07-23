@@ -9,22 +9,26 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using muxc = Microsoft.UI.Xaml.Controls;
+using Microsoft.Web.WebView2.Core;
+using NetBrowser_UWP.Properties;
 
 namespace NetBrowser_UWP.ViewModels
 {
     public class MainPageViewModel : ViewModel
     {
-        #region PrivateGlobalElementRegion
+        #region Private Global Element Region
 
-        private const string FAVICONS_SERVICE = "https://www.google.com/s2/favicons?domain=";
-
+        private const string FAVICONS_SERVICE = "https://www.google.com/s2/favicons?sz=32&domain_url=";
+        //private const string FAVICONS_SERVICE = "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=";
         private static muxc.TabViewItem _currentSelectedTab;
-        private static WebView _currentSelectedWeb;
+        private static muxc.WebView2 _currentSelectedWeb;
 
         private static List<BookmarkDetails> _bookmarksList;
         private static IEnumerable<string> _searchTermList;
@@ -42,13 +46,14 @@ namespace NetBrowser_UWP.ViewModels
         private static FontIcon _addbookmarkIcon;
         private static FontIcon _refreshButtonIcon;
         private static bool _isFlyoutClosed;
-        private ObservableCollection<object> _tabViewItemsList;
+        private ObservableCollection<muxc.TabViewItem> _tabViewItemsList;
         private List<string> _searchBoxItemsCollection;
         private bool _isSearchBoxListOpen;
 
+
         #endregion
 
-        #region Commands
+        #region Commands Region
         public Command BackButtonCommand => new Command(OnBackButtonCommandExecuted, _ => true);
         public Command ForwardButtonCommand => new Command(OnForwardButtonCommandExecuted, _ => true);
         public Command ReloadButtonCommand => new Command(OnReloadButtonCommandExecuted, _ => true);
@@ -75,14 +80,14 @@ namespace NetBrowser_UWP.ViewModels
 
         #endregion
 
-        #region Global Properties
-        public ObservableCollection<object> TabViewItemsList
+        #region Global Properties Region
+        public ObservableCollection<muxc.TabViewItem> TabViewItemsList
         {
             get => _tabViewItemsList;
             set => Set(ref _tabViewItemsList, value);
         }
 
-        public WebView CurrentSelectedWebView
+        public muxc.WebView2 CurrentSelectedWebView
         {
             get => _currentSelectedWeb;
             set => Set(ref _currentSelectedWeb, value);
@@ -178,7 +183,7 @@ namespace NetBrowser_UWP.ViewModels
 
         #endregion
 
-        #region OnCommandExecuted
+        #region On Command Executed Region
 
         private void OnBackButtonCommandExecuted(object sender)
         {
@@ -200,12 +205,12 @@ namespace NetBrowser_UWP.ViewModels
             if (RefreshButtonIcon == Constants.Constants.RefreshButtonIcon)
             {
                 WebViewStates[CurrentSelectedWebView] = true;
-                CurrentSelectedWebView.Refresh();
+                CurrentSelectedWebView.CoreWebView2.Reload();
             }
             else
             {
                 WebViewStates[CurrentSelectedWebView] = false;
-                CurrentSelectedWebView.Stop();
+                CurrentSelectedWebView.CoreWebView2.Stop();
             }
             SetVisualUiElementStates(CurrentSelectedWebView);
         }
@@ -295,7 +300,7 @@ namespace NetBrowser_UWP.ViewModels
         private void OnAddBookmarkButtonCommandExecuted(object sender)
         {
             if (CurrentSelectedWebView == null) return;
-            BookmarkTitleForSave = CurrentSelectedWebView.DocumentTitle;
+            BookmarkTitleForSave = CurrentSelectedWebView.CoreWebView2.DocumentTitle;
             BookmarkUrlForSave = CurrentSelectedWebView.Source.AbsoluteUri;
         }
 
@@ -339,7 +344,7 @@ namespace NetBrowser_UWP.ViewModels
         {
             _dataTransferService = dataTransferService;
 
-            TabViewItemsList = new ObservableCollection<object>();
+            TabViewItemsList = new ObservableCollection<muxc.TabViewItem>();
 
             GetSearchTermList();
             CreateNewWebTab();
@@ -443,81 +448,89 @@ namespace NetBrowser_UWP.ViewModels
             AppTitleText = ResourceExtensions.GetLocalized("AppDisplayName") + " | " + appTitleText;
             SearchBoxText = searchBoxText;
         }
-        private void Browser_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
+        
+
+        private async Task<muxc.WebView2> CreateWebViewInstance(string urlToNavigate)
+        {
+            var newWebViewInstance = new muxc.WebView2();
+            await newWebViewInstance.EnsureCoreWebView2Async();
+            WebViewStates.Add(newWebViewInstance, true);
+            newWebViewInstance.NavigationCompleted += NewWebViewInstance_NavigationCompleted; 
+            newWebViewInstance.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested; 
+            newWebViewInstance.NavigationStarting += NewWebViewInstance_NavigationStarting;
+            newWebViewInstance.CoreWebView2.ServerCertificateErrorDetected += CoreWebView2_ServerCertificateErrorDetected;
+            newWebViewInstance.CoreWebView2.DownloadStarting += CoreWebView2_DownloadStarting;
+            newWebViewInstance.CoreWebView2.Navigate(urlToNavigate);
+            return newWebViewInstance;
+        }
+
+        private void CoreWebView2_DownloadStarting(CoreWebView2 sender, CoreWebView2DownloadStartingEventArgs args)
+        {
+            
+        }
+
+        private void CoreWebView2_ServerCertificateErrorDetected(CoreWebView2 sender, CoreWebView2ServerCertificateErrorDetectedEventArgs args)
+        {
+            
+        }
+
+        private void NewWebViewInstance_NavigationStarting(muxc.WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
         {
             if (!WebViewStates.ContainsKey(sender)) return;
             WebViewStates[sender] = true;
             SetVisualUiElementStates(sender);
-            AppTitleText = ResourceExtensions.GetLocalized("AppDisplayName") + " | " + ResourceExtensions.GetLocalized("LoadingString");
-
+            SetVisualUiLabels(ResourceExtensions.GetLocalized("LoadingString"), args.Uri);
         }
 
-
-        private void Browser_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        private void CoreWebView2_NewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
         {
-            foreach (muxc.TabViewItem tabItem in TabViewItemsList)
-            {
-                if (sender == null || sender.Source == null || tabItem.Content != sender) continue;
-                var icoUri = new Uri(FAVICONS_SERVICE + sender.Source);
-                tabItem.Header = sender.DocumentTitle;
-                tabItem.IconSource = new muxc.BitmapIconSource
+            args.Handled = true;
+            CreateNewWebTab(args.Uri);
+        }
+
+        private void NewWebViewInstance_NavigationCompleted([NotNull] muxc.WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
+        {
+            var rightTab = TabViewItemsList.SingleOrDefault(tab => tab.Content == sender);
+            if(rightTab == null) return;
+
+            var faviconUri = new Uri(FAVICONS_SERVICE + sender.Source);
+                rightTab.Header = sender.CoreWebView2.DocumentTitle;
+                rightTab.IconSource = new muxc.BitmapIconSource
                 {
-                    UriSource = icoUri,
+                    UriSource = faviconUri,
                     ShowAsMonochrome = false
                 };
 
                 _dataTransferService.SaveHistory(new HistoryItemDetails
                 {
-                    Name = sender.DocumentTitle,
+                    Name = sender.CoreWebView2.DocumentTitle,
                     Url = sender.Source.AbsoluteUri,
                     Time = DateTime.Now.ToLongTimeString(),
                     Date = DateTime.Now.ToShortDateString(),
                 });
 
                 WebViewStates[sender] = false;
-            }
 
-            if (sender == null || sender.Source == null || CurrentSelectedWebView != sender) return;
-            SetVisualUiLabels(sender.DocumentTitle, sender.Source.AbsoluteUri);
+            if (sender.Source == null || CurrentSelectedWebView != sender) return;
+            SetVisualUiLabels(sender.CoreWebView2.DocumentTitle, sender.Source.AbsoluteUri);
             SetVisualUiElementStates(sender);
-
+           
         }
 
-        //Event handler for opening a new page in a new tab
-        private void Browser_NewWindowRequested(WebView sender, WebViewNewWindowRequestedEventArgs args)
-        {
-            args.Handled = true;
-            CreateNewWebTab(args.Uri.AbsoluteUri);
-
-        }
-
-        private WebView CreateWebViewInstance(string urlToNavigate)
-        {
-            var newWebViewInstance = new WebView(WebViewExecutionMode.SeparateProcess);
-            WebViewStates.Add(newWebViewInstance, true);
-            newWebViewInstance.NavigationCompleted += Browser_NavigationCompleted;
-            newWebViewInstance.NewWindowRequested += Browser_NewWindowRequested;
-            newWebViewInstance.NavigationStarting += Browser_NavigationStarting;
-            newWebViewInstance.Navigate(new Uri(urlToNavigate));
-            return newWebViewInstance;
-        }
-
-
-        private muxc.TabViewItem CreateTabViewItemInstance(string header, object content, muxc.IconSource icon, Style style)
+        private muxc.TabViewItem CreateTabViewItemInstance(string header, object content, muxc.IconSource icon)
         {
             var newTab = new muxc.TabViewItem
             {
                 Header = string.IsNullOrEmpty(header) ? ResourceExtensions.GetLocalized("LoadingString") : header,
                 Content = content,
                 IconSource = icon,
-                Style = style,
                 IsRightTapEnabled = true
             };
             return newTab;
         }
 
 
-        public void NavigateTo(string address, WebView webViewInstance)
+        public void NavigateTo(string address, muxc.WebView2 webViewInstance)
         {
             if (webViewInstance == null) return;
 
@@ -531,22 +544,20 @@ namespace NetBrowser_UWP.ViewModels
                     break;
 
                 default:
-                    webViewInstance.Source = address.Contains("https://") || address.Contains("http://") ?
+                    webViewInstance.Source = address.StartsWith("https://") || address.StartsWith("http://") ?
                         new Uri(address) :
                         new Uri(App.CurrentWebEngine?.Prefix + address);
-
                     break;
             }
         }
 
-        public void CreateNewWebTab(string url = null)
+        public async void CreateNewWebTab(string url = null)
         {
-            var newWebView = CreateWebViewInstance(string.IsNullOrEmpty(url) ? App.CurrentWebEngine.HomePage : url);
+            var newWebView = await CreateWebViewInstance(string.IsNullOrEmpty(url) ? App.CurrentWebEngine.HomePage : url);
             var newTab = CreateTabViewItemInstance(
-                newWebView.DocumentTitle,
+                newWebView.CoreWebView2.DocumentTitle,
                 newWebView,
-                new muxc.SymbolIconSource() { Symbol = Symbol.More },
-                Application.Current.Resources["TabViewItemStyle"] as Style);
+                new muxc.SymbolIconSource() { Symbol = Symbol.More });
 
             TabViewItemsList.Add(newTab);
             CurrentSelectedTab = newTab;
@@ -555,39 +566,35 @@ namespace NetBrowser_UWP.ViewModels
 
         public void CreateStartPageTab()
         {
-            var startPageTab = new muxc.TabViewItem
-            {
-                Header = ResourceExtensions.GetLocalized("NewTabTitle"),
-                IconSource = new muxc.SymbolIconSource { Symbol = Symbol.NewWindow },
-                Style = Application.Current.Resources["TabViewItemStyle"] as Style,
-                Content = new StartPage()
-            };
+            var startPageTab = CreateTabViewItemInstance(
+                ResourceExtensions.GetLocalized("NewTabTitle"),
+                new StartPage(),
+                new muxc.SymbolIconSource {Symbol = Symbol.NewWindow});
+
             TabViewItemsList.Add(startPageTab);
             CurrentSelectedTab = startPageTab;
         }
+
         public void CreateSettingsTab(int mode = 0)
         {
-            var settingsTab = new muxc.TabViewItem
-            {
-                Header = ResourceExtensions.GetLocalized("SettingsText"),
-                IconSource = new muxc.SymbolIconSource { Symbol = Symbol.Setting },
-                Style = Application.Current.Resources["TabViewItemStyle"] as Style,
-                Content = new SettingsPage(mode)
-            };
+            var settingsTab = CreateTabViewItemInstance(
+                ResourceExtensions.GetLocalized("SettingsText"),
+                new SettingsPage(mode),
+                new muxc.SymbolIconSource { Symbol = Symbol.Setting });
+
             TabViewItemsList.Add(settingsTab);
             CurrentSelectedTab = settingsTab;
 
         }
 
-        public void SearchWebFromStartPage(string url)
+        public async void SearchWebFromStartPage(string url)
         {
-            var newWebView = CreateWebViewInstance(url);
+            var newWebView = await CreateWebViewInstance(url);
 
             var newTab = CreateTabViewItemInstance(
-                newWebView.DocumentTitle,
+                newWebView.CoreWebView2.DocumentTitle,
                 newWebView,
-                new muxc.SymbolIconSource() { Symbol = Symbol.More },
-                Application.Current.Resources["TabViewItemStyle"] as Style);
+                new muxc.SymbolIconSource() { Symbol = Symbol.More });
 
             var previousTab = CurrentSelectedTab;
             TabViewItemsList.Add(newTab);
@@ -596,11 +603,10 @@ namespace NetBrowser_UWP.ViewModels
 
         }
 
-
         private void SelectionChangedTabHandler()
         {
             if (CurrentSelectedTab == null) return;
-            CurrentSelectedWebView = CurrentSelectedTab.Content as WebView;
+            CurrentSelectedWebView = CurrentSelectedTab.Content as muxc.WebView2;
 
             switch (CurrentSelectedTab.Content)
             {
@@ -612,19 +618,17 @@ namespace NetBrowser_UWP.ViewModels
                     break;
                 default:
                     if (CurrentSelectedWebView != null && CurrentSelectedWebView.Source != null)
-                        SetVisualUiLabels(CurrentSelectedWebView.DocumentTitle, CurrentSelectedWebView.Source.AbsoluteUri);
+                        SetVisualUiLabels(CurrentSelectedWebView.CoreWebView2.DocumentTitle, CurrentSelectedWebView.Source.AbsoluteUri);
                     break;
             }
             SetVisualUiElementStates(CurrentSelectedWebView);
         }
         private void CloseTabItemRequested(muxc.TabViewItem tab)
         {
-            if (tab.Content is WebView webContent)
+            if (tab.Content is muxc.WebView2 webContent)
             {
                 WebViewStates.Remove(webContent);
-
-                webContent.Source = new Uri(@"about:blank");
-                tab.Content = null;
+                webContent.Close();
             }
             TabViewItemsList.Remove(tab);
 
@@ -662,22 +666,17 @@ namespace NetBrowser_UWP.ViewModels
         }
         private void SetBookmarkButtonAppearance()
         {
-            if (CurrentSelectedWebView == null)
+            if (CurrentSelectedWebView == null || CurrentSelectedWebView.Source == null)
             {
                 SetBookmarkIconState(false);
                 return;
             }
             GetBookmarksAsync();
             if (BookmarksList == null) return;
-            var isExistsBookmark = false;
-            BookmarksList.ForEach(bookmark =>
-            {
-                if (bookmark == null || CurrentSelectedWebView.Source == null) return;
-                if (bookmark.Url == CurrentSelectedWebView.Source.AbsoluteUri)
-                    isExistsBookmark = true;
-            });
 
-            SetBookmarkIconState(isExistsBookmark);
+            var existableBookmark = BookmarksList.SingleOrDefault(bookmark => bookmark.Url == CurrentSelectedWebView.Source.AbsoluteUri);
+            
+            SetBookmarkIconState(existableBookmark != null);
         }
     }
 }

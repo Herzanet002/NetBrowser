@@ -16,7 +16,8 @@ namespace NetBrowser_UWP.ViewModels
         private static string _placeholderText;
         private static SiteItem _gridViewSelectedItem;
         private static string _searchBoxText;
-        private static List<SiteItem> _startPageItems;
+        private static HashSet<SiteItem> _startPageItems;
+        private static HashSet<string> _recentlySearchedItems;
         private static string _newSiteUrl;
         private static string _newSiteName;
         //public ICommand LoadedEventCommand => new Command(StartPageLoadedEvent, _ => true);
@@ -65,12 +66,16 @@ namespace NetBrowser_UWP.ViewModels
             get => _searchBoxText;
             set => Set(ref _searchBoxText, value);
         }
-        public List<SiteItem> StartPageItems
+        public HashSet<SiteItem> StartPageItems
         {
             get => _startPageItems;
             set => Set(ref _startPageItems, value);
         }
-
+        public HashSet<string> RecentlySearchedItems
+        {
+            get => _recentlySearchedItems;
+            set => Set(ref _recentlySearchedItems, value);
+        }
         private void GridViewItemDeleteCommand_Executed(object obj)
         {
             if (obj is not SiteItem elem) return;
@@ -98,6 +103,7 @@ namespace NetBrowser_UWP.ViewModels
             _mainPageViewModel = mainViewModel;
 
             GetStartPageElementsAsync();
+            GetRecentlySearchedItemsAsync();
 
             SearchBoxText = string.Empty;
             NewSiteName = string.Empty;
@@ -108,6 +114,15 @@ namespace NetBrowser_UWP.ViewModels
             LogoSource = new Uri($"ms-appx:///Resources/Logos/{currentWebEngineName}Logo.png");
             PlaceholderText = "Искать с помощью " + currentWebEngineName;
         }
+
+        private async void GetRecentlySearchedItemsAsync()
+        {
+            var searchTermListTransfer = await _dataTransferService.GetSearchTerm();
+            if (searchTermListTransfer == null) return;
+            searchTermListTransfer.Reverse();
+            RecentlySearchedItems = new HashSet<string>(searchTermListTransfer);
+        }
+
         private async void AddNewSiteCommand_Executed(object obj)
         {
             ContentDialog addSiteDialog = new AddNewStartPageItemDialog();
@@ -132,10 +147,10 @@ namespace NetBrowser_UWP.ViewModels
             if (StartPageItems != null)
             {
                 StartPageItems.Clear();
-                StartPageItems = await _dataTransferService.GetStartPageElements();
+                StartPageItems = new HashSet<SiteItem>(await _dataTransferService.GetStartPageElements());
                 return;
             }
-            StartPageItems = await _dataTransferService.GetStartPageElements();
+            StartPageItems = new HashSet<SiteItem>(await _dataTransferService.GetStartPageElements());
 
         }
     }

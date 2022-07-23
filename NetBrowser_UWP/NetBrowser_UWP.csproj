@@ -138,6 +138,7 @@
     <Compile Include="Contracts\Services\IDataAccessService.cs" />
     <Compile Include="Contracts\Services\IDataTransferService.cs" />
     <Compile Include="Converters\DateTimeToDateConverter.cs" />
+    <Compile Include="Converters\RecentlySearchItemsConverter.cs" />
     <Compile Include="Converters\TitleTextConverter.cs" />
     <Compile Include="Converters\TitleLetterConverter.cs" />
     <Compile Include="Models\SiteItem.cs" />

@@ -85,7 +85,7 @@ namespace NetBrowser_UWP.Constants
         public static FontIcon RefreshButtonIcon = new()
         {
             FontFamily = SegoeFluent,
-            FontSize = 20,
+            FontSize = 18,
             Glyph = "\xE72C"
         };
         public static FontIcon StopLoadButtonIcon = new()
