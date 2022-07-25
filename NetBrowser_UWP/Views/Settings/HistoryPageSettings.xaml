@@ -46,7 +46,7 @@
                     Style="{StaticResource ButtonRevealStyle}" VerticalAlignment="Center" Command="{StaticResource ClearHistoryButtonCommand}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Очистить журнал" Margin="0,0,10,0" FontWeight="SemiBold"></TextBlock>
-                    <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE74D;" FontSize="14" />
+                    <FontIcon Glyph="&#xE74D;" FontSize="14" />
                 </StackPanel>
             </Button>
 
@@ -107,7 +107,7 @@
                                         Padding="0"
                                         Style="{StaticResource ButtonRevealStyle}"
                                         Height="28" Width="28">
-                                        <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE711;" FontSize="14"></FontIcon>
+                                        <FontIcon Glyph="&#xE711;" FontSize="14"></FontIcon>
                                     </Button>
 
                                 </StackPanel>

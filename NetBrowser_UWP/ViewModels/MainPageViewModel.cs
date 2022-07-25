@@ -312,8 +312,8 @@ namespace NetBrowser_UWP.ViewModels
 
         private void OnBookmarksFlyoutListViewItemClickExecuted(object sender)
         {
-            if (sender is not ItemClickEventArgs objArgs) return;
-            if (objArgs.ClickedItem is not BookmarkDetails selectedBookmarkItem) return;
+            if (sender is not ItemClickEventArgs objArgs || 
+                objArgs.ClickedItem is not BookmarkDetails selectedBookmarkItem) return;
             CreateNewWebTab(selectedBookmarkItem.Url);
             IsFlyoutClosed = true;
 
@@ -655,12 +655,12 @@ namespace NetBrowser_UWP.ViewModels
         {
             if (isAccessable)
             {
-                AddBookmarkIcon = Constants.Constants.ActiveIcon;
+                AddBookmarkIcon = Constants.Constants.BookmarkExixstsActiveIcon;
                 DeleteBookmarkButtonVisibility = Visibility.Visible;
             }
             else
             {
-                AddBookmarkIcon = Constants.Constants.UnactiveIcon;
+                AddBookmarkIcon = Constants.Constants.BookmarkExistsUnactiveIcon;
                 DeleteBookmarkButtonVisibility = Visibility.Collapsed;
             }
         }

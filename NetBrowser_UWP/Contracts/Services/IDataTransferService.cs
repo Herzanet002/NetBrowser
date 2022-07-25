@@ -15,11 +15,8 @@ namespace NetBrowser_UWP.Contracts.Services
         public Task<List<HistoryItemDetails>> GetHistory();
         public Task<List<string>> GetSearchTerm();
         public void SaveBookmark(BookmarkDetails bookmarkDetails);
-
         public Task<string> GetCurrentTheme();
-
         public void SaveCurrentTheme(string themeMode);
-
         public Task<List<BookmarkDetails>> GetBookmarkList();
         public Task<bool> RemoveBookmark(string url);
         public Task<bool> ClearHistoryFile();
@@ -31,6 +28,8 @@ namespace NetBrowser_UWP.Contracts.Services
         public void AddNewSiteOnStartPage(SiteItem siteItem);
         public void RemoveSiteOnStartPage(SiteItem siteItem);
         public void ChangeSearchEngine(string newEngine);
+
+
 
 
 

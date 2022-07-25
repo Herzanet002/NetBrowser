@@ -25,17 +25,17 @@
                         <MenuFlyout.Items>
                             <MenuFlyoutItem Text="Открыть закладку" Command="{Binding OpenBookmarkCommand}">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE774;"/>
+                                    <FontIcon Glyph="&#xE774;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutItem Text="Редактировать" Command="{Binding EditBookmarkCommand}">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEB7E;"/>
+                                    <FontIcon Glyph="&#xEB7E;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutItem Text="Удалить" Command="{Binding DeleteBookmarkCommand}"  >
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8D9;"/>
+                                    <FontIcon Glyph="&#xE8D9;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
 

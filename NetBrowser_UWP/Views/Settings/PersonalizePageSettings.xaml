@@ -44,6 +44,19 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </GridView>
+        </Grid>
+        <Grid Row="3" Margin="50,20,50,20" >
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel>
+            <TextBlock Text="Отображать последние поисковые запросы на стартовой странице"/>
+            <ToggleSwitch IsOn="True"/>
+
+
+            </StackPanel>
 
 
         </Grid>

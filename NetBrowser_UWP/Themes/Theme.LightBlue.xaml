@@ -12,5 +12,6 @@
     <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FF2D2D2D"/>
     <SolidColorBrush x:Key="SearchBoxForeground" Color="#FF2D2D2D"/>
     <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="#FF445469"/>
+    <SolidColorBrush x:Key="BookmarkSavedBrush" Color="#FF246F8D"></SolidColorBrush>
 
 </ResourceDictionary>

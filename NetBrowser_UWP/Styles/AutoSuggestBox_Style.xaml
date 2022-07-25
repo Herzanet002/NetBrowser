@@ -3,8 +3,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
-    <Style x:Key="AutoSuggestBoxTextBoxStyle" TargetType="TextBox">
+    <SolidColorBrush x:Key="SearchBoxFocusedBrush" Color="#FF63ADE5"></SolidColorBrush>
 
+    <Style x:Key="AutoSuggestBoxTextBoxStyle" TargetType="TextBox">
         
         <Setter Property="Background" Value="{ThemeResource TextControlBackground}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}"/>
@@ -159,7 +160,7 @@
                                                     <ColumnDefinition Width="20"/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
-                                                <FontIcon HorizontalAlignment="Left" FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE71E;" FontSize="14"
+                                                <FontIcon HorizontalAlignment="Left" Glyph="&#xE71E;" FontSize="14"
                                                           Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
                                                 <TextBlock Grid.Column="1" Text="{Binding}" Margin="10,0,0,0"  />
                                             </Grid>

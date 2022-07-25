@@ -61,12 +61,6 @@ namespace NetBrowser_UWP
             serviceCollection.AddSingleton<IDataAccessService, DataAccessService>();
             //serviceCollection.AddSingleton<IThemeManager, ThemeManager>();
 
-            //Pages
-            //serviceCollection.AddTransient<MainPage>();
-            //serviceCollection.AddTransient<StartPage>();
-            //serviceCollection.AddTransient<HistoryPageSettings>();
-            //serviceCollection.AddTransient<BookmarksPage>();
-
             //Dialogs
             serviceCollection.AddTransient<AddNewStartPageItemDialog>();
             serviceCollection.AddTransient<DeleteBookmarkDialog>();
@@ -110,8 +104,6 @@ namespace NetBrowser_UWP
         {
             var name = await GetService<IDataTransferService>().GetCurrentTheme();
             CurrentTheme = ThemeManager.SetRequestedTheme(name);
-
-
         }
 
         public static ThemeManager ThemeManager => (ThemeManager)Current.Resources["ThemeManager"];

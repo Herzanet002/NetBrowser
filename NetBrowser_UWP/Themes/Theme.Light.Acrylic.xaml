@@ -22,4 +22,5 @@
 
     <media:AcrylicBrush x:Key="SearchBoxBorderBrush" BackgroundSource="HostBackdrop"
                         TintOpacity="0.8" TintLuminosityOpacity="0.15" TintColor="#FFB2BACA" />
+    <SolidColorBrush x:Key="BookmarkSavedBrush" Color="#FF246F8D"></SolidColorBrush>
 </ResourceDictionary>

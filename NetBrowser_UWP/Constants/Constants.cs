@@ -67,30 +67,26 @@ namespace NetBrowser_UWP.Constants
 
         };
 
-        public static FontFamily SegoeFluent = new("/Assets/Fonts/Segoe Fluent Icons.ttf#Segoe Fluent Icons");
 
-        public static FontIcon ActiveIcon = new()
+        public static FontIcon BookmarkExixstsActiveIcon = new()
         {
-            FontFamily = SegoeFluent,
             FontSize = 14,
             Foreground = Application.Current.Resources["BookmarkAdded"] as Brush,
             Glyph = "\xE735"
         };
-        public static FontIcon UnactiveIcon = new()
+        
+        public static FontIcon BookmarkExistsUnactiveIcon = new()
         {
-            FontFamily = SegoeFluent,
             FontSize = 14,
             Glyph = "\xE734"
         };
         public static FontIcon RefreshButtonIcon = new()
         {
-            FontFamily = SegoeFluent,
             FontSize = 18,
             Glyph = "\xE72C"
         };
         public static FontIcon StopLoadButtonIcon = new()
         {
-            FontFamily = SegoeFluent,
             FontSize = 22,
             Glyph = "\xE711"
         };

@@ -42,7 +42,7 @@
                     BorderThickness="2" Command="{Binding AddNewSiteCommand}">
             <Button.Content>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE710;"  />
+                    <FontIcon Glyph="&#xE710;"  />
                     <TextBlock Text="Добавить" Margin="10,0,0,0"></TextBlock>
                 </StackPanel>
 
@@ -76,7 +76,7 @@
                                     <MenuFlyoutItem Text="Удалить" Command="{StaticResource DeleteCommand}" 
                                                     CommandParameter="{x:Bind }">
                                         <MenuFlyoutItem.Icon>
-                                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE74D;"/>
+                                            <FontIcon Glyph="&#xE74D;"/>
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
                                 </MenuFlyout>
@@ -102,12 +102,12 @@
                 <ListView ItemsSource="{Binding RecentlySearchedItems}" Margin="10">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <VirtualizingStackPanel Orientation="Horizontal" />
+                            <VirtualizingStackPanel Orientation="Horizontal"/>
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource RecentlySearchItemsConverter}}"></TextBlock>
+                            <TextBlock Text="{Binding Converter={StaticResource RecentlySearchItemsConverter}}" FontSize="12"></TextBlock>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                     <ToolTipService.Placement>Mouse</ToolTipService.Placement>
@@ -115,7 +115,6 @@
                         <TextBlock Text="{Binding }"></TextBlock>
                     </ToolTipService.ToolTip>
                 </ListView>
-
             </StackPanel>
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
@@ -133,7 +132,7 @@
                 </TextBox>
                 <Button Grid.Column="2" Height="36" HorizontalAlignment="Center" BorderThickness="0"  Command="{Binding SearchButtonTappedCommand}">
                     <Button.Content>
-                        <FontIcon FontFamily="{StaticResource Segoe Fluent}" Glyph="&#xE721;" />
+                        <FontIcon Glyph="&#xE721;" />
                     </Button.Content>
                 </Button>
             </Grid>
