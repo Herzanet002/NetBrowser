@@ -1,12 +1,12 @@
-﻿using NetBrowser_UWP.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Models;
 using System.Collections.ObjectModel;
 using System.Linq;
-using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Services;
 
 namespace NetBrowser_UWP.ViewModels
 {
-    internal class SearchSystemPageViewModel : Base.ViewModel
+    internal class SearchSystemPageViewModel : ObservableObject
     {
         private static ObservableCollection<SearchEngineItem> _listOfEngines;
         private SearchEngineItem _currentEngine;
@@ -14,7 +14,7 @@ namespace NetBrowser_UWP.ViewModels
         public ObservableCollection<SearchEngineItem> ListOfEngines
         {
             get => _listOfEngines;
-            set => Set(ref _listOfEngines, value);
+            set => SetProperty(ref _listOfEngines, value);
         }
 
         public SearchEngineItem CurrentEngine
@@ -22,7 +22,7 @@ namespace NetBrowser_UWP.ViewModels
             get => _currentEngine;
             set
             {
-                Set(ref _currentEngine, value);
+                SetProperty(ref _currentEngine, value);
                 ChangeSearchEngine();
             }
         }

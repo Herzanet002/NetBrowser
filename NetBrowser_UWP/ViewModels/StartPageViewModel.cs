@@ -1,16 +1,18 @@
-﻿using NetBrowser_UWP.Commands;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Views.Controls;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+using Windows.System;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace NetBrowser_UWP.ViewModels
 {
-    public class StartPageViewModel : Base.ViewModel
-
+    public class StartPageViewModel : ObservableObject
     {
         private static Uri _logoSource;
         private static string _placeholderText;
@@ -20,73 +22,87 @@ namespace NetBrowser_UWP.ViewModels
         private static HashSet<string> _recentlySearchedItems;
         private static string _newSiteUrl;
         private static string _newSiteName;
-        //public ICommand LoadedEventCommand => new Command(StartPageLoadedEvent, _ => true);
-        public ICommand GridViewItemDeleteCommand => new Command(GridViewItemDeleteCommand_Executed, _ => true);
-        public ICommand SearchButtonTappedCommand => new Command(SearchButtonTappedCommand_Executed, _ => true);
-        public ICommand AddNewSiteCommand => new Command(AddNewSiteCommand_Executed, _ => true);
-        public ICommand SaveNewSiteCommand => new Command(SaveNewSiteCommand_Executed, _ => true);
+        private bool _isSuggestionBarEnabled;
 
+        public ICommand GridViewItemDeleteCommand => new DelegateCommand<object>(OnGridViewItemDeleteCommandExecuted, _ => true);
+        public ICommand SearchButtonTappedCommand => new DelegateCommand(OnSearchButtonTappedCommandExecuted, () => true);
+        public ICommand AddNewSiteCommand => new DelegateCommand(OnAddNewSiteCommandExecuted, () => true);
+        public ICommand SaveNewSiteCommand => new DelegateCommand(OnSaveNewSiteCommandExecuted, () => true);
+        public ICommand KeyDownCommand => new DelegateCommand<object>(OnKeyDownCommandExecuted, _ => true);
+
+        private void OnKeyDownCommandExecuted(object obj)
+        {
+            if (obj is not KeyRoutedEventArgs { Key: VirtualKey.Enter }) return;
+            OnSearchButtonTappedCommandExecuted();
+        }
+
+
+        public bool IsSuggestionBarEnabled
+        {
+            get => _isSuggestionBarEnabled;
+            set
+            {
+                SetProperty(ref _isSuggestionBarEnabled, value);
+                _localSettingsService.SaveSettingAsync("IsSuggestionBarEnabled", value);
+            }
+        }
         public SiteItem GridViewSelectedItem
         {
             get => _gridViewSelectedItem;
             set
             {
-                Set(ref _gridViewSelectedItem, value);
-                if (value != null)
-                {
-                    var mainViewModel = App.GetService<MainPageViewModel>();
-                    mainViewModel.SearchWebFromStartPage(value.Url);
-
-                }
+                SetProperty(ref _gridViewSelectedItem, value);
+                if (value == null) return;
+                _mainPageViewModel.SearchWebFromStartPage(value.Url);
             }
         }
 
         public string PlaceholderText
         {
             get => _placeholderText;
-            set => Set(ref _placeholderText, value);
+            set => SetProperty(ref _placeholderText, value);
         }
         public string NewSiteUrl
         {
             get => _newSiteUrl;
-            set => Set(ref _newSiteUrl, value);
+            set => SetProperty(ref _newSiteUrl, value);
         }
         public string NewSiteName
         {
             get => _newSiteName;
-            set => Set(ref _newSiteName, value);
+            set => SetProperty(ref _newSiteName, value);
         }
         public Uri LogoSource
         {
             get => _logoSource;
-            set => Set(ref _logoSource, value);
+            set => SetProperty(ref _logoSource, value);
         }
         public string SearchBoxText
         {
             get => _searchBoxText;
-            set => Set(ref _searchBoxText, value);
+            set => SetProperty(ref _searchBoxText, value);
         }
         public HashSet<SiteItem> StartPageItems
         {
             get => _startPageItems;
-            set => Set(ref _startPageItems, value);
+            set => SetProperty(ref _startPageItems, value);
         }
         public HashSet<string> RecentlySearchedItems
         {
             get => _recentlySearchedItems;
-            set => Set(ref _recentlySearchedItems, value);
+            set => SetProperty(ref _recentlySearchedItems, value);
         }
-        private void GridViewItemDeleteCommand_Executed(object obj)
+        private void OnGridViewItemDeleteCommandExecuted(object obj)
         {
             if (obj is not SiteItem elem) return;
             _dataTransferService.RemoveSiteOnStartPage(elem);
             GetStartPageElementsAsync();
         }
 
-        private void SaveNewSiteCommand_Executed(object obj)
+        private void OnSaveNewSiteCommandExecuted()
         {
-            if (NewSiteName == string.Empty && NewSiteUrl == string.Empty) return;
-            if (!(NewSiteUrl.Contains("http://") || NewSiteUrl.Contains("https://")))
+            if (string.IsNullOrEmpty(NewSiteName) || string.IsNullOrEmpty(NewSiteUrl)) return;
+            if (!(NewSiteUrl.StartsWith("http://") || NewSiteUrl.StartsWith("https://")))
                 NewSiteUrl = "https://" + NewSiteUrl;
             _dataTransferService.AddNewSiteOnStartPage(new SiteItem
             {
@@ -97,13 +113,18 @@ namespace NetBrowser_UWP.ViewModels
         }
         private readonly IDataTransferService _dataTransferService;
         private readonly MainPageViewModel _mainPageViewModel;
-        public StartPageViewModel(IDataTransferService dataTransferService, MainPageViewModel mainViewModel)
+        private readonly ILocalSettingsService _localSettingsService;
+        public StartPageViewModel(IDataTransferService dataTransferService, MainPageViewModel mainViewModel, ILocalSettingsService localSettingsService)
         {
             _dataTransferService = dataTransferService;
             _mainPageViewModel = mainViewModel;
+            _localSettingsService = localSettingsService;
+            InitializePageComponents();
+        }
 
-            GetStartPageElementsAsync();
-            GetRecentlySearchedItemsAsync();
+        private async void InitializePageComponents()
+        {
+            IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>("IsSuggestionBarEnabled");
 
             SearchBoxText = string.Empty;
             NewSiteName = string.Empty;
@@ -113,6 +134,9 @@ namespace NetBrowser_UWP.ViewModels
             if (currentWebEngineName == null) return;
             LogoSource = new Uri($"ms-appx:///Resources/Logos/{currentWebEngineName}Logo.png");
             PlaceholderText = "Искать с помощью " + currentWebEngineName;
+
+            GetStartPageElementsAsync();
+            if (IsSuggestionBarEnabled) GetRecentlySearchedItemsAsync();
         }
 
         private async void GetRecentlySearchedItemsAsync()
@@ -123,18 +147,17 @@ namespace NetBrowser_UWP.ViewModels
             RecentlySearchedItems = new HashSet<string>(searchTermListTransfer);
         }
 
-        private async void AddNewSiteCommand_Executed(object obj)
+        private async void OnAddNewSiteCommandExecuted()
         {
             ContentDialog addSiteDialog = new AddNewStartPageItemDialog();
             await addSiteDialog.ShowAsync();
             GetStartPageElementsAsync();
         }
 
-        private void SearchButtonTappedCommand_Executed(object obj)
+        private void OnSearchButtonTappedCommandExecuted()
         {
-
-            if (SearchBoxText == null) return;
-            if (SearchBoxText.Contains("https://") || SearchBoxText.Contains("http://"))
+            if (string.IsNullOrEmpty(SearchBoxText)) return;
+            if (SearchBoxText.StartsWith("https://") || SearchBoxText.StartsWith("http://"))
             {
                 _mainPageViewModel.SearchWebFromStartPage(SearchBoxText);
                 return;
@@ -154,10 +177,5 @@ namespace NetBrowser_UWP.ViewModels
 
         }
     }
-
-
-
-
-
 
 }

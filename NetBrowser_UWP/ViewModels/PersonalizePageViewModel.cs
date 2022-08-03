@@ -1,23 +1,23 @@
-﻿using NetBrowser_UWP.Commands;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.ViewModels.Base;
+using Prism.Commands;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace NetBrowser_UWP.ViewModels
 {
-    public class PersonalizePageViewModel : ViewModel
+    public class PersonalizePageViewModel : ObservableObject
     {
         private ObservableCollection<ThemeItem> _themesList;
         private ThemeItem _selectedTheme;
         private bool _isSuggestionBarEnabled;
 
-        public ICommand SelectThemeCommand => new Command(OnSelectedThemeCommandExecuted, _ => true);
+        public ICommand SelectThemeCommand => new DelegateCommand(OnSelectedThemeCommandExecuted, () => true);
 
-        private void OnSelectedThemeCommandExecuted(object obj)
+        private void OnSelectedThemeCommandExecuted()
         {
-            _dataTransferService.SaveCurrentTheme(SelectedTheme.Name);
+            _localSettingsService.SaveSettingAsync("CurrentTheme", SelectedTheme.Name);
             App.ThemeManager.SetRequestedTheme(SelectedTheme.Name);
             App.ThemeManager.SetRequestedElementThemeMode();
         }
@@ -25,32 +25,41 @@ namespace NetBrowser_UWP.ViewModels
         public ObservableCollection<ThemeItem> ThemesList
         {
             get => _themesList;
-            set => Set(ref _themesList, value);
+            set => SetProperty(ref _themesList, value);
         }
-
+        private readonly ILocalSettingsService _localSettingsService;
         public ThemeItem SelectedTheme
         {
             get => _selectedTheme;
             set
             {
                 if (value == null) return;
-                Set(ref _selectedTheme, value);
+                SetProperty(ref _selectedTheme, value);
             }
         }
 
         public bool IsSuggestionBarEnabled
         {
             get => _isSuggestionBarEnabled;
-            set => Set(ref _isSuggestionBarEnabled, value);
+            set
+            {
+                SetProperty(ref _isSuggestionBarEnabled, value);
+                _localSettingsService.SaveSettingAsync("IsSuggestionBarEnabled", value);
+            }
         }
 
-        private readonly IDataTransferService _dataTransferService;
-        //private readonly IThemeManager _themeManager;
-        public PersonalizePageViewModel(IDataTransferService dataTransferService)
-        {
-            //_themeManager = themeManager;
-            _dataTransferService = dataTransferService;
 
+        public PersonalizePageViewModel(ILocalSettingsService localSettingsService)
+        {
+            _localSettingsService = localSettingsService;
+            InitializePageComponents();
+        }
+
+        public PersonalizePageViewModel(){}
+        
+        private async void InitializePageComponents()
+        {
+            IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>("IsSuggestionBarEnabled");
             ThemesList = new ObservableCollection<ThemeItem>(Constants.Constants.ThemesDictionary.Values);
             SelectedTheme = App.CurrentTheme;
         }

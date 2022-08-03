@@ -1,0 +1,14 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#FF8B8ABB"/>
+    <SolidColorBrush x:Key="SecondBrush" Color="#FFC6C5E8"/>
+    <SolidColorBrush x:Key="ThirdBrush" Color="#FFE0E0F1"/>
+    <SolidColorBrush x:Key="AppTitleBrush" Color="#B2251675"/>
+    <SolidColorBrush x:Key="ForegroundBrush" Color="#FF353535"/>
+    <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FF3D3D3D"/>
+    <SolidColorBrush x:Key="SearchBoxForeground" Color="#FF3D3D3D"/>
+    <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="#FF553790"/>
+    <SolidColorBrush x:Key="BookmarkSavedBrush" Color="#FF246F8D"></SolidColorBrush>
+</ResourceDictionary>

@@ -10,7 +10,8 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:converters="using:NetBrowser_UWP.Converters"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewModels:HistoryPageViewModel,IsDesignTimeCreatable=True}">
     
     <Page.Resources>
         <x:String x:Key="SearchPlaceholderText">Поиск в журнале истории</x:String>
@@ -43,7 +44,8 @@
             <TextBox Grid.Column="1" Height="30" MaxWidth="500" HorizontalAlignment="Stretch" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                      PlaceholderText="{StaticResource SearchPlaceholderText}" Margin="0,0,0,0"></TextBox>
             <Button HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" Grid.Column="2"
-                    Style="{StaticResource ButtonRevealStyle}" VerticalAlignment="Center" Command="{StaticResource ClearHistoryButtonCommand}">
+                     VerticalAlignment="Center" 
+                    Command="{StaticResource ClearHistoryButtonCommand}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Очистить журнал" Margin="0,0,10,0" FontWeight="SemiBold"></TextBlock>
                     <FontIcon Glyph="&#xE74D;" FontSize="14" />
@@ -52,7 +54,7 @@
 
         </Grid>
 
-        <Grid Grid.Row="1" Margin="60,0,60,40">
+        <Grid Grid.Row="1" Margin="60,10,60,40">
             <ListView Background="{x:Null}" ItemsSource="{Binding HistoryList}" SelectionMode="Single"
                       HorizontalAlignment="Left" SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <interactivity:Interaction.Behaviors>

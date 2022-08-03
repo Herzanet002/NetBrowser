@@ -1,18 +1,15 @@
-﻿using NetBrowser_UWP.Commands;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Views.Controls;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Services;
-using NetBrowser_UWP.Views;
-using NetBrowser_UWP.Views.Controls;
 
 namespace NetBrowser_UWP.ViewModels
 {
-    internal class BookmarksPageViewModel : Base.ViewModel
+    internal class BookmarksPageViewModel : ObservableObject
     {
         private static List<BookmarkDetails> _bookmarksList;
         private static string _bookmarkNewTitle;
@@ -20,43 +17,40 @@ namespace NetBrowser_UWP.ViewModels
         private static BookmarkDetails _selectedBookmark;
         private static string _oldUrl;
 
-        private static MainPage MainPage => (Window.Current.Content as Frame)?.Content as MainPage;
-        
+
         #region Commands
-        public ICommand EditBookmarkCommand { get; set; }
-        public ICommand SaveEditedBookmarkCommand { get; set; }
-        public ICommand OpenBookmarkCommand { get; set; }
-        public ICommand DeleteBookmarkCommand { get; set; }
-        public ICommand RemoveBookmarkCommand { get; set; }
+        public ICommand EditBookmarkCommand => new DelegateCommand(OnEditBookmarkCommandExecuted, () => true);
+        public ICommand SaveEditedBookmarkCommand => new DelegateCommand(OnSaveEditedBookmarkCommandExecuted, () => true);
+        public ICommand OpenBookmarkCommand => new DelegateCommand(OnOpenBookmarkInWebCommandExecuted, () => true);
+        public ICommand DeleteBookmarkCommand => new DelegateCommand(OnDeleteSelectedBookmarkCommandExecuted, () => true);
+        public ICommand RemoveBookmarkCommand => new DelegateCommand(OnRemoveBookmarkCommandExecuted, () => true);
         #endregion
 
         private readonly IDataTransferService _dataTransferService;
-        public BookmarksPageViewModel(IDataTransferService dataTransferService)
+        private readonly MainPageViewModel _mainPageViewModel;
+
+        public BookmarksPageViewModel(IDataTransferService dataTransferService, MainPageViewModel mainPageViewModel)
         {
             _dataTransferService = dataTransferService;
+            _mainPageViewModel = mainPageViewModel;
             GetBookmarksAsync();
-            EditBookmarkCommand = new Command(ShowDialog, _ => true);
-            SaveEditedBookmarkCommand = new Command(SaveChangedBookmarkCommand_Executed, _ => true);
-            OpenBookmarkCommand = new Command(OpenBookmarkInWeb, _ => true);
-            DeleteBookmarkCommand = new Command(DeleteSelectedBookmark, _ => true);
-            RemoveBookmarkCommand = new Command(RemoveBookmark, _ => true);
         }
 
         public string BookmarkNewTitle
         {
             get => _bookmarkNewTitle;
-            set => Set(ref _bookmarkNewTitle, value);
+            set => SetProperty(ref _bookmarkNewTitle, value);
         }
         public string BookmarkNewUrl
         {
             get => _bookmarkNewUrl;
-            set => Set(ref _bookmarkNewUrl, value);
+            set => SetProperty(ref _bookmarkNewUrl, value);
         }
 
         public BookmarkDetails SelectedBookmark
         {
             get => _selectedBookmark;
-            set => Set(ref _selectedBookmark, value);
+            set => SetProperty(ref _selectedBookmark, value);
         }
 
         public async void GetBookmarksAsync()
@@ -66,39 +60,36 @@ namespace NetBrowser_UWP.ViewModels
         public List<BookmarkDetails> BookmarksList
         {
             get => _bookmarksList;
-            set => Set(ref _bookmarksList, value);
-        }
-        private void OpenBookmarkInWeb(object parameter)
-        {
-            if (SelectedBookmark != null)
-            {
-                // TODO: MainPage.CreateNewWebTab(SelectedBookmark.Url);
-            }
+            set => SetProperty(ref _bookmarksList, value);
         }
 
-        private async void RemoveBookmark(object parameter)
+        private void OnOpenBookmarkInWebCommandExecuted()
         {
-            await _dataTransferService.RemoveBookmark(SelectedBookmark.Url);
+            _mainPageViewModel.CreateNewWebTab(SelectedBookmark.Url);
+            SelectedBookmark = null;
         }
-        private async void DeleteSelectedBookmark(object parameter)
+
+        private async void OnRemoveBookmarkCommandExecuted()
         {
-            ContentDialog deleteDialog = new DeleteBookmarkDialog();
-            await deleteDialog.ShowAsync();
+            await _dataTransferService.RemoveBookmark(SelectedBookmark);
+        }
+        private async void OnDeleteSelectedBookmarkCommandExecuted()
+        {
+            await new DeleteBookmarkDialog().ShowAsync();
             GetBookmarksAsync();
         }
-        private async void ShowDialog(object parameter)
+        private async void OnEditBookmarkCommandExecuted()
         {
-            _oldUrl = SelectedBookmark?.Url;
-            BookmarkNewTitle = SelectedBookmark?.Name;
-            BookmarkNewUrl = SelectedBookmark?.Url;
-            ContentDialog dialog = new EditBookmarkDialog();
-            await dialog.ShowAsync();
+            _oldUrl = SelectedBookmark.Url;
+            BookmarkNewTitle = SelectedBookmark.Name;
+            BookmarkNewUrl = SelectedBookmark.Url;
+            await new EditBookmarkDialog().ShowAsync();
             GetBookmarksAsync();
         }
 
-        private void SaveChangedBookmarkCommand_Executed(object parameter) => _dataTransferService.EditBookmark(_oldUrl, BookmarkNewUrl, BookmarkNewTitle);
+        private void OnSaveEditedBookmarkCommandExecuted() => _dataTransferService.EditBookmark(_oldUrl, BookmarkNewUrl, BookmarkNewTitle);
 
-        
+
 
 
 

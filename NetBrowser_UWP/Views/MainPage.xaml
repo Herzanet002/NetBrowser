@@ -6,15 +6,77 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls" 
+    xmlns:winUi="using:Microsoft.UI.Xaml.Controls" 
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:actions="using:NetBrowser_UWP.Commands"
     xmlns:models="using:NetBrowser_UWP.Models"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
+    xmlns:converters="using:NetBrowser_UWP.Converters"
     Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
     d:DataContext="{d:DesignInstance Type=viewModels:MainPageViewModel,IsDesignTimeCreatable=True}">
 
     <Grid>
+        <Grid.Resources>
+            <converters:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
+            <Style x:Name="NavigationBarButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"></Setter>
+                <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+                <Setter Property="Padding" Value="0"></Setter>
+                <Setter Property="Width" Value="30"></Setter>
+                <Setter Property="Height" Value="30"></Setter>
+                <Setter Property="BorderThickness" Value="1"></Setter>
+
+                <Setter Property="Foreground" Value="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"></Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Target="RootGrid.(RevealBrush.State)" Value="PointerOver"/>
+                                                <Setter Target="RootGrid.Background" Value="{ThemeResource ButtonRevealBackgroundPointerOver}"/>
+                                                <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ButtonRevealBorderBrushPointerOver}"/>
+                                                <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundPointerOver}"/>
+                                            </VisualState.Setters>
+                                            <Storyboard>
+                                                <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Target="RootGrid.(RevealBrush.State)" Value="Pressed"/>
+                                                <Setter Target="RootGrid.Background" Value="{ThemeResource ButtonRevealBackgroundPressed}"/>
+                                                <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ButtonRevealBorderBrushPressed}"/>
+                                                <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundPressed}"/>
+                                            </VisualState.Setters>
+                                            <Storyboard>
+                                                <PointerDownThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Target="RootGrid.Background" Value="{x:Null}"/>
+                                                <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ButtonRevealBorderBrushDisabled}"/>
+                                                <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundDisabled}"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" CornerRadius="{TemplateBinding CornerRadius}" Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="32px"/>
             <RowDefinition Height="36px"/>
@@ -29,7 +91,6 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Text="{Binding AppTitleText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalAlignment="Center" Margin="15,0" 
                        Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}" FontSize="14" />
-            <PersonPicture Grid.Column="1" Width="24" HorizontalAlignment="Left"></PersonPicture>
         </Grid>
 
         <Grid Grid.Row="1" HorizontalAlignment="Stretch" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
@@ -49,30 +110,39 @@
                 <ColumnDefinition Width="10"/>
             </Grid.ColumnDefinitions>
 
-
+            <!--Back Button-->
             <Button Grid.Column="1" Style="{StaticResource NavigationBarButtonStyle}" ToolTipService.ToolTip="Вернуться назад" 
                     ToolTipService.Placement="Bottom" FontSize="18"
-                    Command="{Binding BackButtonCommand}" >
-                <FontIcon Glyph="&#xF0D3;" FontSize="18"/>
+                    Command="{Binding BackButtonCommand}">
+                <FontIcon Glyph="&#xF0D3;" FontSize="18"  />
             </Button>
-
+            <!--Forward Button-->
             <Button Grid.Column="2" Command="{Binding ForwardButtonCommand}" Style="{StaticResource NavigationBarButtonStyle}"
                     ToolTipService.ToolTip="Перейти вперед" ToolTipService.Placement="Bottom">
                 <FontIcon Glyph="&#xF0D2;" FontSize="18"/>
             </Button>
 
+            <!--Refresh button-->
             <Button Grid.Column="3" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding ReloadButtonCommand}" 
-                    ToolTipService.ToolTip="Обновить стрницу" ToolTipService.Placement="Bottom"
-                    Content="{Binding RefreshButtonIcon}"/>
+                        ToolTipService.ToolTip="Обновить страницу" ToolTipService.Placement="Bottom" Visibility="{Binding IsWebLoading, Converter={StaticResource InvertBooleanConverter}}">
+                <FontIcon Glyph="&#xE72C;" FontSize="18"/>
 
+            </Button>
+            <!--Stop loading button-->
+            <Button Grid.Column="3" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding StopLoadingButtonCommand}" 
+                    ToolTipService.ToolTip="Остановить загрузку" ToolTipService.Placement="Bottom" Visibility="{Binding IsWebLoading}">
+                <FontIcon Glyph="&#xE711;" FontSize="22"/>
+            </Button>
+
+            <!--Home button-->
             <Button Grid.Column="4" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding HomeButtonCommand}"
                     ToolTipService.ToolTip="Домашняя страница" ToolTipService.Placement="Bottom">
                 <FontIcon Glyph="&#xE80F;" FontSize="18"/>
             </Button>
 
-            <!--SearchBox--> 
+            <!--SearchBox-->
             <AutoSuggestBox Style="{StaticResource AutoSuggestBoxTemplate}" x:Uid="SearchBoxPlaceholderText" Grid.Column="5"
-                            Text="{Binding SearchBoxText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                            Text="{Binding SearchBoxText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                             ItemsSource="{Binding SearchBoxItemsCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }">
                 <i:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="TextChanged">
@@ -135,7 +205,7 @@
             <!--Search Button-->
             <Button Grid.Column="6" ToolTipService.ToolTip="Поиск" ToolTipService.Placement="Bottom"
                     Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding SearchButtonCommand}">
-                <FontIcon Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" Glyph="&#xE721;"/>
+                <FontIcon Glyph="&#xE721;"/>
             </Button>
 
             <!--Bookmarks Flyout-->
@@ -178,7 +248,7 @@
                                         </core:EventTriggerBehavior>
                                     </i:Interaction.Behaviors>
                                 </ListView>
-                                
+
                             </StackPanel>
                         </Grid>
                         <i:Interaction.Behaviors>
@@ -189,9 +259,9 @@
                         </i:Interaction.Behaviors>
                     </Flyout>
                 </Button.Flyout>
-                <FontIcon Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" Glyph="&#xE728;"/>
+                <FontIcon Glyph="&#xE728;"/>
             </Button>
-            
+
             <!--History Flyout-->
             <Button Grid.Column="9" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding HistoryButtonCommand}"
                     ToolTipService.ToolTip="Журнал истории" ToolTipService.Placement="Bottom">
@@ -220,13 +290,13 @@
                                                 <ColumnDefinition Width="28"/>
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Orientation="Vertical" Margin="0,6,0,0">
-                                                    <TextBlock Text="{Binding Name}"  FontSize="14"
+                                                <TextBlock Text="{Binding Name}"  FontSize="14"
                                                 HorizontalAlignment="Left" FontWeight="Bold"></TextBlock>
-                                                    <TextBlock Text="{Binding Url}" FontSize="11" 
+                                                <TextBlock Text="{Binding Url}" FontSize="11" 
                                                 HorizontalAlignment="Left" />
-                                                </StackPanel>
+                                            </StackPanel>
                                             <FontIcon Grid.Column="1" Glyph="&#xE76C;" FontSize="14" />
-                                            
+
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -245,7 +315,7 @@
                         </i:Interaction.Behaviors>
                     </Flyout>
                 </Button.Flyout>
-                <FontIcon Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" Glyph="&#xF738;"/>
+                <FontIcon Glyph="&#xF738;"/>
             </Button>
 
 
@@ -253,7 +323,7 @@
 
             <!--Settings button-->
             <Button Grid.Column="11" Style="{StaticResource NavigationBarButtonStyle}" ToolTipService.ToolTip="Параметры" ToolTipService.Placement="Bottom">
-                <FontIcon Glyph="&#xE712;"/>
+                <FontIcon Glyph="&#xE712;" FontSize="18"/>
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
                         <MenuFlyoutItem Text="Параметры" Command="{Binding SettingsButtonCommand}">
@@ -273,16 +343,20 @@
 
         </Grid>
 
-        <muxc:ProgressBar Height="2" IsIndeterminate="True"
+        <winUi:ProgressBar Height="2" IsIndeterminate="True"
                           Visibility="{Binding ProgressBarVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           Foreground="{Binding  AppTitleBrush, Source={StaticResource ThemeManager}}"
                           Grid.Row="2" HorizontalAlignment="Stretch"/>
 
-            <muxc:TabView Grid.Row="3" TabItemsSource="{Binding TabViewItemsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          Style="{StaticResource TabViewStyleTemplate}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                          SelectedItem="{Binding CurrentSelectedTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          AddTabButtonCommand="{Binding AddTabButtonCommand}" 
-                          Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}">
+        <Grid Grid.Row="3">
+            <Grid.Resources>
+                <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+            </Grid.Resources>
+            <winUi:TabView TabItemsSource="{Binding TabViewItemsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           Style="{StaticResource TabViewStyleTemplate}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                           SelectedItem="{Binding CurrentSelectedTab, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           AddTabButtonCommand="{Binding AddTabButtonCommand}" 
+                           Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}">
 
                 <i:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="TabCloseRequested">
@@ -295,8 +369,15 @@
                     <KeyboardAccelerator Key="E" Modifiers="Control" Invoked="CloseTabKeyboardAccelerator_Invoked" />
                 </muxc:TabView.KeyboardAccelerators>-->
                 <!--AddTabButtonClick="TabView_AddTabButtonClick" TabCloseRequested="TabView_TabCloseRequested"-->
-            </muxc:TabView>
-        
+            </winUi:TabView>
+
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding TabViewItemsList.Count, Converter={StaticResource IntToVisibilityConverter}}">
+                <TextBlock Text="Нет открытых вкладок" VerticalAlignment="Center" HorizontalAlignment="Center"  FontSize="24"/>
+                <TextBlock Text="Чтобы начать работу, создайте новую вкладку..." VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"/>
+            </StackPanel>
+        </Grid>
+
+
     </Grid>
 
 </Page>

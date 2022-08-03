@@ -1,6 +1,8 @@
-﻿namespace NetBrowser_UWP.ViewModels
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace NetBrowser_UWP.ViewModels
 {
-    internal class SettingsPageViewModel
+    public class SettingsPageViewModel : ObservableObject
     {
     }
 }

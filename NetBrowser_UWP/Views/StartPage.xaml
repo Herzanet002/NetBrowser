@@ -97,7 +97,8 @@
         </RelativePanel>
 
         <Grid Row="2" Column="1">
-            <StackPanel >
+            <ContentControl Visibility="{Binding IsSuggestionBarEnabled, Mode=TwoWay}">
+            <StackPanel>
                 <TextBlock Text="Недавние поисковые запросы:" FontSize="16" FontWeight="SemiBold" />
                 <ListView ItemsSource="{Binding RecentlySearchedItems}" Margin="10">
                     <ListView.ItemsPanel>
@@ -116,6 +117,7 @@
                     </ToolTipService.ToolTip>
                 </ListView>
             </StackPanel>
+            </ContentControl>
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width=".2*"/>
@@ -129,6 +131,11 @@
                          Text="{Binding SearchBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                          TextWrapping="NoWrap" FontSize="16" 
                          PlaceholderText="{Binding PlaceholderText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="KeyDown">
+                            <core:InvokeCommandAction Command="{Binding KeyDownCommand}" />
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
                 </TextBox>
                 <Button Grid.Column="2" Height="36" HorizontalAlignment="Center" BorderThickness="0"  Command="{Binding SearchButtonTappedCommand}">
                     <Button.Content>

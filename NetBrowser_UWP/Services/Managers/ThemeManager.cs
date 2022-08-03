@@ -30,16 +30,17 @@ namespace NetBrowser_UWP
                     => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
-        public ThemeItem GetRequestedTheme(string name)
+        public ThemeItem GetRequestedTheme(string themeName)
         {
-            return Constants.Constants.ThemesDictionary.ContainsKey(name) ?
-                Constants.Constants.ThemesDictionary[name] :
+            var requestedTheme = themeName == null ? Constants.Constants.LightTheme :
+             Constants.Constants.ThemesDictionary.ContainsKey(themeName) ?
+                Constants.Constants.ThemesDictionary[themeName] :
                 Constants.Constants.LightTheme;
+            return requestedTheme;
         }
 
         public ThemeItem SetRequestedTheme(string themeName)
         {
-
             CurrentTheme = GetRequestedTheme(themeName);
             
             CurrentThemeMode = CurrentTheme.Mode;

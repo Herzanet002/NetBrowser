@@ -16,7 +16,6 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
-                            
                         </Grid.RowDefinitions>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup>
@@ -29,6 +28,8 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+
+                        
                         <Grid Grid.Row="1" x:Name="TabContainerGrid" Background="{TemplateBinding Background}" XYFocusKeyboardNavigation="Enabled">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition x:Name="LeftContentColumn" Width="Auto"/>
@@ -46,9 +47,13 @@
                             <Border Grid.Column="2" Padding="0,0,20,0" VerticalAlignment="Center" Visibility="{Binding IsAddTabButtonVisible, RelativeSource={RelativeSource Mode=TemplatedParent}}">
                                 <Button x:Name="AddButton" Command="{TemplateBinding AddTabButtonCommand}" CommandParameter="{TemplateBinding AddTabButtonCommandParameter}" Content="&#xE710;" HorizontalAlignment="Center" HighContrastAdjustment="None" IsTextScaleFactorEnabled="False" Style="{ThemeResource TabViewButtonStyle}" VerticalAlignment="Center"/>
                             </Border>
+                            
                             <ContentPresenter x:Name="RightContentPresenter" ContentTemplate="{TemplateBinding TabStripFooterTemplate}" Grid.Column="3" Content="{TemplateBinding TabStripFooter}" HorizontalAlignment="Stretch"/>
                         </Grid>
-                        <ContentPresenter Grid.Row="0" x:Name="TabContentPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
+                       
+                        <ContentPresenter Grid.Row="0" x:Name="TabContentPresenter" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" >
+                            
+                        </ContentPresenter>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

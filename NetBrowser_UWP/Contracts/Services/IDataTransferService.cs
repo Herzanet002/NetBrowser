@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
-using Windows.UI.Xaml;
 
 namespace NetBrowser_UWP.Contracts.Services
 {
@@ -18,7 +17,7 @@ namespace NetBrowser_UWP.Contracts.Services
         public Task<string> GetCurrentTheme();
         public void SaveCurrentTheme(string themeMode);
         public Task<List<BookmarkDetails>> GetBookmarkList();
-        public Task<bool> RemoveBookmark(string url);
+        public Task<bool> RemoveBookmark(BookmarkDetails bookmarkDetails);
         public Task<bool> ClearHistoryFile();
         public Task<bool> RemoveHistoryItem(string time);
         public void EditBookmark(string oldUrl, string newUrl, string newTitle);

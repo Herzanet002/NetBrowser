@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NetBrowser_UWP.Contracts;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Properties;
@@ -46,19 +45,18 @@ namespace NetBrowser_UWP
 
         public static ApplicationViewTitleBar TitleBar;
 
-        private static SearchEngineItem _currentWebEngine;
-
         private static IServiceProvider _container;
 
         public static ThemeItem CurrentTheme;
 
-        private IServiceProvider ConfigureDependencyInjection()
+        private static IServiceProvider ConfigureDependencyInjection()
         {
             var serviceCollection = new ServiceCollection();
 
             //Services & Managers
             serviceCollection.AddSingleton<IDataTransferService, DataTransferService>();
             serviceCollection.AddSingleton<IDataAccessService, DataAccessService>();
+            serviceCollection.AddSingleton<ILocalSettingsService, LocalSettingsService>();
             //serviceCollection.AddSingleton<IThemeManager, ThemeManager>();
 
             //Dialogs
@@ -77,36 +75,28 @@ namespace NetBrowser_UWP
 
             return serviceCollection.BuildServiceProvider();
         }
-        public static SearchEngineItem CurrentWebEngine
-        {
-            get => _currentWebEngine;
-            set
-            {
-                _currentWebEngine = value;
-                OnPropertyChanged(nameof(CurrentWebEngine));
-            }
-        }
+
+        public static SearchEngineItem CurrentWebEngine;
 
         public static T GetService<T>() where T : class
         {
             return ActivatorUtilities.GetServiceOrCreateInstance(_container, typeof(T)) as T;
         }
 
-        public static event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        private static void OnPropertyChanged([CallerMemberName] string propertyName = null!)
-        {
-            PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
-        }
 
         public static async Task SetApplicationTheme()
         {
-            var name = await GetService<IDataTransferService>().GetCurrentTheme();
+            var name = await GetService<ILocalSettingsService>().ReadSettingAsync<string>("CurrentTheme");
             CurrentTheme = ThemeManager.SetRequestedTheme(name);
         }
 
         public static ThemeManager ThemeManager => (ThemeManager)Current.Resources["ThemeManager"];
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+        }
+
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;

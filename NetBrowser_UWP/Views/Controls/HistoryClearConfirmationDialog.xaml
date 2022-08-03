@@ -11,7 +11,8 @@
     PrimaryButtonText="Очистить"
     SecondaryButtonText="Отмена"
     PrimaryButtonCommand="{Binding ClearHistoryCommand}"
-    Style="{StaticResource ContentDialogStyle}">
+    Style="{StaticResource ContentDialogStyle}"
+    d:DataContext="{d:DesignInstance Type=viewModels:HistoryPageViewModel,IsDesignTimeCreatable=True}">
 
     <Grid>
         <TextBlock Text="Вы действительно хотите очистить журнал истории?"></TextBlock>

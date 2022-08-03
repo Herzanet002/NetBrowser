@@ -15,15 +15,19 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="50"/>
-            <RowDefinition Height="350"/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
+     
         </Grid.RowDefinitions>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="Персонализация" FontSize="40" Grid.Row="0"
                    Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="50,30,0,20"/>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Выбор темы" FontSize="26" Grid.Row="1" 
                    Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="70,0,0,0" />
 
-        <Grid Grid.Row="2" Margin="50,20,50,20" >
+        <Grid Grid.Row="2" Margin="50,20,50,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
             <GridView ItemsSource="{Binding ThemesList}" 
                       SelectedItem="{Binding SelectedTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <GridView.ItemTemplate>
@@ -33,8 +37,6 @@
                                        RadiusX="3" RadiusY="3" Grid.ColumnSpan="2"  />
                             <Rectangle Fill="{Binding BackgroundBrush}" Width="100" Height="60" Margin="5,5,5,5" VerticalAlignment="Top"/>
                             <Rectangle Fill="{Binding SecondBrush}" Width="100" Height="20" Margin="5,5,5,45" VerticalAlignment="Top"/>
-                            <!--<TextBlock Text="{Binding  Name}"
-                                       VerticalAlignment="Bottom" Margin="0,0,0,5" FontSize="12"></TextBlock>-->
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>
@@ -44,21 +46,11 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </GridView>
-        </Grid>
-        <Grid Row="3" Margin="50,20,50,20" >
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <StackPanel>
-            <TextBlock Text="Отображать последние поисковые запросы на стартовой странице"/>
-            <ToggleSwitch IsOn="True"/>
-
-
+            <StackPanel Grid.Row="1" Margin="20,0">
+                <TextBlock Text="Отображать последние поисковые запросы на стартовой странице"/>
+                <ToggleSwitch IsOn="{Binding IsSuggestionBarEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
-
-
         </Grid>
+       
     </Grid>
 </Page>

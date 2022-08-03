@@ -11,7 +11,8 @@
     Title="Добавить веб-сайт"
     PrimaryButtonText="ОК"
     SecondaryButtonText="Отмена"
-    PrimaryButtonCommand="{Binding SaveNewSiteCommand}">
+    PrimaryButtonCommand="{Binding SaveNewSiteCommand}"
+    d:DataContext="{d:DesignInstance Type=viewModels:StartPageViewModel,IsDesignTimeCreatable=True}">
 
     <Grid>
         <StackPanel>

@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:NetBrowser_UWP.ViewModels"
     mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewmodels:BookmarksPageViewModel,IsDesignTimeCreatable=True}"
     Style="{StaticResource ContentDialogStyle}"
     Title="Редактирование закладки"
     PrimaryButtonText="ОК"

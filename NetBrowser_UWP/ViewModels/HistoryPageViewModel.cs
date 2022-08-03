@@ -1,7 +1,8 @@
-﻿using NetBrowser_UWP.Commands;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Views.Controls;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,19 @@ using Windows.UI.Xaml.Controls;
 
 namespace NetBrowser_UWP.ViewModels
 {
-    internal class HistoryPageViewModel : Base.ViewModel
+    internal class HistoryPageViewModel : ObservableObject
     {
         private static IEnumerable<HistoryItemDetails> _historyList;
         private static HistoryItemDetails _selectedItem;
         private static string _searchText;
 
         private readonly IDataTransferService _dataTransferService;
-        public ICommand DeleteCommand => new Command(DeleteHistoryCommand_Executed, _ => true);
-        public ICommand OpenPageCommand => new Command(OpenCommand_Executed, _ => true);
-        public ICommand ClearHistoryCommand => new Command(ClearHistoryCommand_Executed, _ => true);
-        public ICommand OpenClearDialogCommand => new Command(OpenClearDialogCommand_Executed, _ => true);
+        public ICommand DeleteCommand => new DelegateCommand<object>(OnDeleteHistoryItemCommandExecuted, _ => true);
+        public ICommand OpenPageCommand => new DelegateCommand(OnOpenHistoryItemCommandExecuted, () => true);
+        public ICommand ClearHistoryCommand => new DelegateCommand(OnClearHistoryJournalCommandExecuted, () => true);
+        public ICommand OpenClearDialogCommand => new DelegateCommand(OnOpenClearHistoryJournalDialogCommandExecuted, () => true);
 
-        private async void DeleteHistoryCommand_Executed(object param)
+        private async void OnDeleteHistoryItemCommandExecuted(object param)
         {
             if (param is null) return;
             var toBeDeleted = HistoryList.FirstOrDefault(c => c.Time == param.ToString());
@@ -34,17 +35,17 @@ namespace NetBrowser_UWP.ViewModels
             HistoryList = history;
         }
 
-        private async void ClearHistoryCommand_Executed(object param)
+        private async void OnClearHistoryJournalCommandExecuted()
         {
             await _dataTransferService.ClearHistoryFile();
         }
 
-        private async void OpenClearDialogCommand_Executed(object param)
+        private async void OnOpenClearHistoryJournalDialogCommandExecuted()
         {
             await new HistoryClearConfirmationDialog().ShowAsync();
             GetHistoryAsync();
         }
-        private async void OpenCommand_Executed(object param)
+        private async void OnOpenHistoryItemCommandExecuted()
         {
             if (SelectedItem == null) return;
             if (Uri.IsWellFormedUriString(SelectedItem.Url, UriKind.Absolute))
@@ -78,7 +79,7 @@ namespace NetBrowser_UWP.ViewModels
             get => _searchText;
             set
             {
-                Set(ref _searchText, value);
+                SetProperty(ref _searchText, value);
                 GetSearchSuggestions();
             }
         }
@@ -94,12 +95,12 @@ namespace NetBrowser_UWP.ViewModels
         public IEnumerable<HistoryItemDetails> HistoryList
         {
             get => _historyList;
-            set => Set(ref _historyList, value);
+            set => SetProperty(ref _historyList, value);
         }
         public HistoryItemDetails SelectedItem
         {
             get => _selectedItem;
-            set => Set(ref _selectedItem, value);
+            set => SetProperty(ref _selectedItem, value);
         }
 
         public async void GetHistoryAsync()
