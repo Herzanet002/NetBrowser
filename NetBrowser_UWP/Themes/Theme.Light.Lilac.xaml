@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="#FF8B8ABB"/>
-    <SolidColorBrush x:Key="SecondBrush" Color="#FFC6C5E8"/>
+    <SolidColorBrush x:Key="SecondBrush" Color="#FF9B9AD0"/>
     <SolidColorBrush x:Key="ThirdBrush" Color="#FFE0E0F1"/>
     <SolidColorBrush x:Key="AppTitleBrush" Color="#B2251675"/>
     <SolidColorBrush x:Key="ForegroundBrush" Color="#FF353535"/>

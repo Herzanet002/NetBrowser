@@ -68,7 +68,13 @@
                                         </VisualState>
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
-                                <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" CornerRadius="{TemplateBinding CornerRadius}" Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw"
+                                                  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" 
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}" CornerRadius="{TemplateBinding CornerRadius}" 
+                                                  Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" 
+                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                  Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
                             </Grid>
                         </ControlTemplate>
                     </Setter.Value>
@@ -77,20 +83,24 @@
         </Grid.Resources>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="32px"/>
-            <RowDefinition Height="36px"/>
-            <RowDefinition Height="4px"/>
+            <RowDefinition Height="30px"/>
+            <RowDefinition Height="38px"/>
+            <!--<RowDefinition Height="4px"/>-->
             <RowDefinition/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="180"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{Binding AppTitleText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
-                       VerticalAlignment="Center" Margin="15,0" FontSize="14"
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+               
+                <winUi:ProgressRing Visibility="{Binding ProgressBarVisibility, Mode=TwoWay}" Height="10" Width="10"
+                                    Foreground="{Binding  AppTitleBrush, Source={StaticResource ThemeManager}}">
+                    
+                </winUi:ProgressRing>
+                <TextBlock Text="{Binding AppTitleText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                       VerticalAlignment="Center" Margin="15,0" FontSize="12" HorizontalTextAlignment="Center"
                        Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}"/>
+            </StackPanel>
+            
         </Grid>
 
         <Grid Grid.Row="1" HorizontalAlignment="Stretch" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
@@ -114,30 +124,30 @@
             <Button Grid.Column="1" Style="{StaticResource NavigationBarButtonStyle}" ToolTipService.ToolTip="Вернуться назад" 
                     ToolTipService.Placement="Bottom" FontSize="18" 
                     Command="{Binding BackButtonCommand}">
-                <FontIcon Glyph="&#xF0D3;" FontSize="18" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
+                <FontIcon Glyph="&#xF0D3;" FontSize="18" />
             </Button>
             <!--Forward Button-->
             <Button Grid.Column="2" Command="{Binding ForwardButtonCommand}" Style="{StaticResource NavigationBarButtonStyle}"
                     ToolTipService.ToolTip="Перейти вперед" ToolTipService.Placement="Bottom">
-                <FontIcon Glyph="&#xF0D2;" FontSize="18" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
+                <FontIcon Glyph="&#xF0D2;" FontSize="18" />
             </Button>
 
             <!--Refresh button-->
             <Button Grid.Column="3" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding ReloadButtonCommand}" 
                         ToolTipService.ToolTip="Обновить страницу" ToolTipService.Placement="Bottom" Visibility="{Binding IsWebLoading, Converter={StaticResource InvertBooleanConverter}}">
-                <FontIcon Glyph="&#xE72C;" FontSize="18" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
+                <FontIcon Glyph="&#xE72C;" FontSize="18"/>
 
             </Button>
             <!--Stop loading button-->
             <Button Grid.Column="3" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding StopLoadingButtonCommand}" 
                     ToolTipService.ToolTip="Остановить загрузку" ToolTipService.Placement="Bottom" Visibility="{Binding IsWebLoading}">
-                <FontIcon Glyph="&#xE711;" FontSize="22" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
+                <FontIcon Glyph="&#xE711;" FontSize="22"/>
             </Button>
 
             <!--Home button-->
             <Button Grid.Column="4" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding HomeButtonCommand}"
                     ToolTipService.ToolTip="Домашняя страница" ToolTipService.Placement="Bottom">
-                <FontIcon Glyph="&#xE80F;" FontSize="18" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
+                <FontIcon Glyph="&#xE80F;" FontSize="18"/>
             </Button>
 
             <!--SearchBox-->
@@ -236,7 +246,7 @@
             <!--Search Button-->
             <Button Grid.Column="6" ToolTipService.ToolTip="Поиск" ToolTipService.Placement="Bottom"
                     Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding SearchButtonCommand}">
-                <FontIcon Glyph="&#xE721;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
+                <FontIcon Glyph="&#xE721;"/>
             </Button>
 
             <!--Bookmarks Flyout-->
@@ -290,7 +300,7 @@
                         </i:Interaction.Behaviors>
                     </Flyout>
                 </Button.Flyout>
-                <FontIcon Glyph="&#xE728;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
+                <FontIcon Glyph="&#xE728;"/>
             </Button>
 
             <!--History Flyout-->
@@ -346,7 +356,7 @@
                         </i:Interaction.Behaviors>
                     </Flyout>
                 </Button.Flyout>
-                <FontIcon Glyph="&#xF738;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
+                <FontIcon Glyph="&#xF738;"/>
             </Button>
 
 
@@ -379,12 +389,12 @@
 
         </Grid>
 
-        <winUi:ProgressBar Height="2" IsIndeterminate="True"
+        <!--<winUi:ProgressBar Height="2" IsIndeterminate="True"
                           Visibility="{Binding ProgressBarVisibility, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           Foreground="{Binding  AppTitleBrush, Source={StaticResource ThemeManager}}"
-                          Grid.Row="2" HorizontalAlignment="Stretch"/>
+                          Grid.Row="2" HorizontalAlignment="Stretch"/>-->
 
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="2">
             <Grid.Resources>
                 <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
             </Grid.Resources>

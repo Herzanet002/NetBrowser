@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using NetBrowser_UWP.Contracts.Services;
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace NetBrowser_UWP.Services
 {
     public class WebView2Service : IWebView2Service
     {
-        public ObservableCollection<WebView2> States { get; set; }
+        public ObservableCollection<WebView2> ContainerStates { get; set; }
 
         public WebView2Service()
         {
-            States = new ObservableCollection<WebView2>();
+            ContainerStates = new ObservableCollection<WebView2>();
         }
+
         public event EventHandler<CoreWebView2NavigationCompletedEventArgs> NavigationCompleted;
         public event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;
         public event EventHandler<CoreWebView2NavigationStartingEventArgs> NavigationStarting;
@@ -24,25 +24,36 @@ namespace NetBrowser_UWP.Services
         {
             var instance = new WebView2();
             await instance.EnsureCoreWebView2Async();
-            States.Add(instance);
-            instance.NavigationCompleted += OnNavigationCompleted; 
-            instance.CoreWebView2.NewWindowRequested += OnNewWindowRequested; 
-            instance.NavigationStarting += OnNavigationStarting; 
+            instance.Tag = true;
+            ContainerStates.Add(instance);
+            instance.NavigationCompleted += OnNavigationCompleted;
+            instance.CoreWebView2.NewWindowRequested += OnNewWindowRequested;
+            instance.NavigationStarting += OnNavigationStarting;
             instance.CoreWebView2.Navigate(address);
             return instance;
         }
 
-        private void OnNavigationStarting(WebView2 sender, CoreWebView2NavigationStartingEventArgs args) =>
-            NavigationStarting?.Invoke(this, args);
+        private void OnNavigationStarting(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
+        {
+            sender.Tag = true;
+            NavigationStarting?.Invoke(sender, args);
+        }
+
 
         private void OnNewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
         {
-            NewWindowRequested?.Invoke(this, args);
+            NewWindowRequested?.Invoke(sender, args);
             args.Handled = true;
         }
-            
 
-        private void OnNavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args) => 
-            NavigationCompleted?.Invoke(this, args);
+
+        private void OnNavigationCompleted(WebView2 sender, CoreWebView2NavigationCompletedEventArgs args)
+        {
+            sender.Tag = false;
+            NavigationCompleted?.Invoke(sender, args);
+        }
+
     }
+
+
 }

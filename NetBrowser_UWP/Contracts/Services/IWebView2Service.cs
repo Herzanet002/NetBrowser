@@ -8,7 +8,7 @@ namespace NetBrowser_UWP.Contracts.Services
 {
     public interface IWebView2Service
     {
-        ObservableCollection<WebView2> States { get; set; }
+        ObservableCollection<WebView2> ContainerStates { get; set; }
 
         Task<WebView2> InstantiateWebView2(string address);
 
