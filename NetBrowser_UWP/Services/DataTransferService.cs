@@ -3,12 +3,15 @@ using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Properties;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.System;
+using NetBrowser_UWP.Helpers;
 using static NetBrowser_UWP.Constants.Constants;
 using XmlDocument = Windows.Data.Xml.Dom.XmlDocument;
 
@@ -18,6 +21,11 @@ namespace NetBrowser_UWP.Services
     {
         public async void SaveHistory(HistoryItemDetails historyItemDetail)
         {
+            //var rootFrameDataString = ObjectSerializer<HistoryItemDetails>.ToXml(historyItemDetail);
+            //if (string.IsNullOrEmpty(rootFrameDataString)) return;
+            //var localFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("historyFile.xml",
+            //    CreationCollisionOption.OpenIfExists);
+            //await FileIO.AppendTextAsync(localFile, rootFrameDataString);
             try
             {
                 if (historyItemDetail.Url == "about:blank") return;
@@ -98,6 +106,25 @@ namespace NetBrowser_UWP.Services
 
         public async Task<List<HistoryItemDetails>> GetHistory()
         {
+            //StorageFile localFile;
+            //ObservableCollection<HistoryItemDetails> history = null;
+            //try
+            //{
+            //    localFile = await ApplicationData.Current.LocalFolder.GetFileAsync("historyFile.xml");
+            //}
+            //catch (FileNotFoundException ex)
+            //{
+            //    localFile = null;
+            //}
+            //if (localFile != null)
+            //{
+            //    string localData = await FileIO.ReadTextAsync(localFile);
+
+            //    history = ObjectSerializer<ObservableCollection<HistoryItemDetails>>.FromXml(localData);
+            //}
+
+            //return history;
+
             var listOfHistory = new List<HistoryItemDetails>();
             var doc = await DocumentLoad(HISTORY_FILE_NAME);
 
@@ -117,20 +144,19 @@ namespace NetBrowser_UWP.Services
 
 
             return listOfHistory;
+
         }
 
-        public async Task<List<string>> GetSearchTerm()
+        public async Task<List<SiteItem>> GetSearchTerm()
         {
-            var listOfTerms = new List<string>();
             var doc = await DocumentLoad(HISTORY_FILE_NAME);
-
             var historyItem = doc.GetElementsByTagName("searchTerm");
-            listOfTerms.AddRange(from item in historyItem
-                                 from child in item.ChildNodes
-                                 where child.NodeName == "termName"
-                                 select child.InnerText);
-
-            return listOfTerms;
+            return historyItem.Select(item => item.ChildNodes)
+                .Select(history => new SiteItem()
+                {
+                    Name = history[0].InnerText,
+                })
+                .ToList();
         }
 
         public async void SaveBookmark(BookmarkDetails bookmarkDetails)
@@ -243,7 +269,7 @@ namespace NetBrowser_UWP.Services
             }
         }
 
-        public async Task<bool> RemoveHistoryItem(string time)
+        public async Task<bool> RemoveHistoryItem(HistoryItemDetails historyItem)
         {
             var doc = await DocumentLoad(HISTORY_FILE_NAME);
             var root = doc.DocumentElement;
@@ -257,7 +283,7 @@ namespace NetBrowser_UWP.Services
                 {
                     if (child[j].NodeName == "hour")
                     {
-                        if (child[j].InnerText == time)
+                        if (child[j].InnerText == historyItem.Time)
                         {
                             root.RemoveChild(history[i]);
                             result = true;

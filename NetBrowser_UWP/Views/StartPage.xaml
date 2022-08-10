@@ -97,7 +97,7 @@
         </RelativePanel>
 
         <Grid Row="2" Column="1">
-            <ContentControl Visibility="{Binding IsSuggestionBarEnabled, Mode=TwoWay}">
+            <ContentControl Visibility="{Binding IsSuggestionBarEnabled}">
             <StackPanel>
                 <TextBlock Text="Недавние поисковые запросы:" FontSize="16" FontWeight="SemiBold" />
                 <ListView ItemsSource="{Binding RecentlySearchedItems}" Margin="10">
@@ -107,14 +107,18 @@
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource RecentlySearchItemsConverter}}" FontSize="12"></TextBlock>
-                        </DataTemplate>
+                        <DataTemplate x:DataType="models:SiteItem">
+                            <Grid>
+                                <TextBlock Text="{x:Bind Name, Converter={StaticResource RecentlySearchItemsConverter}}" FontSize="12"></TextBlock>
+                                <ToolTipService.Placement>Mouse</ToolTipService.Placement>
+                                <ToolTipService.ToolTip>
+                                    <TextBlock Text="{x:Bind Name }"></TextBlock>
+                                </ToolTipService.ToolTip>
+                                </Grid>
+                            
+                            </DataTemplate>
                     </ListView.ItemTemplate>
-                    <ToolTipService.Placement>Mouse</ToolTipService.Placement>
-                    <ToolTipService.ToolTip>
-                        <TextBlock Text="{Binding }"></TextBlock>
-                    </ToolTipService.ToolTip>
+                    
                 </ListView>
             </StackPanel>
             </ContentControl>

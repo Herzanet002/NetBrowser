@@ -18,6 +18,7 @@
     <Grid>
         <Grid.Resources>
             <converters:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
+            <converters:DomainNameConverter x:Key="DomainNameConverter"/>
             <Style x:Name="NavigationBarButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
                 <Setter Property="Background" Value="Transparent"></Setter>
                 <Setter Property="HorizontalAlignment" Value="Center"></Setter>
@@ -25,8 +26,6 @@
                 <Setter Property="Width" Value="30"></Setter>
                 <Setter Property="Height" Value="30"></Setter>
                 <Setter Property="BorderThickness" Value="1"></Setter>
-
-                <Setter Property="Foreground" Value="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"></Setter>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -89,8 +88,9 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="180"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{Binding AppTitleText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalAlignment="Center" Margin="15,0" 
-                       Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}" FontSize="14" />
+            <TextBlock Grid.Column="0" Text="{Binding AppTitleText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+                       VerticalAlignment="Center" Margin="15,0" FontSize="14"
+                       Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}"/>
         </Grid>
 
         <Grid Grid.Row="1" HorizontalAlignment="Stretch" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
@@ -112,38 +112,40 @@
 
             <!--Back Button-->
             <Button Grid.Column="1" Style="{StaticResource NavigationBarButtonStyle}" ToolTipService.ToolTip="Вернуться назад" 
-                    ToolTipService.Placement="Bottom" FontSize="18"
+                    ToolTipService.Placement="Bottom" FontSize="18" 
                     Command="{Binding BackButtonCommand}">
-                <FontIcon Glyph="&#xF0D3;" FontSize="18"  />
+                <FontIcon Glyph="&#xF0D3;" FontSize="18" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
             <!--Forward Button-->
             <Button Grid.Column="2" Command="{Binding ForwardButtonCommand}" Style="{StaticResource NavigationBarButtonStyle}"
                     ToolTipService.ToolTip="Перейти вперед" ToolTipService.Placement="Bottom">
-                <FontIcon Glyph="&#xF0D2;" FontSize="18"/>
+                <FontIcon Glyph="&#xF0D2;" FontSize="18" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
 
             <!--Refresh button-->
             <Button Grid.Column="3" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding ReloadButtonCommand}" 
                         ToolTipService.ToolTip="Обновить страницу" ToolTipService.Placement="Bottom" Visibility="{Binding IsWebLoading, Converter={StaticResource InvertBooleanConverter}}">
-                <FontIcon Glyph="&#xE72C;" FontSize="18"/>
+                <FontIcon Glyph="&#xE72C;" FontSize="18" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
 
             </Button>
             <!--Stop loading button-->
             <Button Grid.Column="3" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding StopLoadingButtonCommand}" 
                     ToolTipService.ToolTip="Остановить загрузку" ToolTipService.Placement="Bottom" Visibility="{Binding IsWebLoading}">
-                <FontIcon Glyph="&#xE711;" FontSize="22"/>
+                <FontIcon Glyph="&#xE711;" FontSize="22" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
 
             <!--Home button-->
             <Button Grid.Column="4" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding HomeButtonCommand}"
                     ToolTipService.ToolTip="Домашняя страница" ToolTipService.Placement="Bottom">
-                <FontIcon Glyph="&#xE80F;" FontSize="18"/>
+                <FontIcon Glyph="&#xE80F;" FontSize="18" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
 
             <!--SearchBox-->
             <AutoSuggestBox Style="{StaticResource AutoSuggestBoxTemplate}" x:Uid="SearchBoxPlaceholderText" Grid.Column="5"
                             Text="{Binding SearchBoxText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            UpdateTextOnSelect="True"
                             ItemsSource="{Binding SearchBoxItemsCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }">
+
                 <i:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="TextChanged">
                         <core:InvokeCommandAction Command="{Binding SearchBoxTextChangedCommand}" />
@@ -160,9 +162,17 @@
                     VerticalAlignment="Center">
                 <Button.Flyout>
                     <Flyout>
-                        <Grid>
-                            <TextBlock Text="Подключение защищено"></TextBlock>
-                        </Grid>
+                        <StackPanel Spacing="10">
+                            <StackPanel>
+                                <TextBlock Text="{Binding SearchBoxText, Converter={StaticResource DomainNameConverter}}"
+                                           FontWeight="SemiBold" HorizontalTextAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <FontIcon Glyph="&#xE72E;" FontSize="16"></FontIcon>
+                                <TextBlock Text="Подключение защищено"></TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                        
                     </Flyout>
                 </Button.Flyout>
                 <StackPanel Orientation="Horizontal">
@@ -174,8 +184,29 @@
             <Button Background="Transparent" HorizontalAlignment="Right" Margin="0,0,20,0"
                     Padding="0" Width="28" Height="24" BorderBrush="Transparent" VerticalContentAlignment="Center" Grid.Column="5"
                     VerticalAlignment="Center" Command="{Binding AddBookmarkButtonCommand}"
-                    Content="{Binding AddBookmarkIcon}" 
                     ToolTipService.ToolTip="Добавить страницу в закладки" ToolTipService.Placement="Bottom">
+                <i:Interaction.Behaviors>
+                    <core:DataTriggerBehavior Binding="{Binding IsBookmarksExists}" Value="True" >
+                        <core:DataTriggerBehavior.Actions>
+                            <core:ChangePropertyAction
+                                PropertyName="Content">
+                                <core:ChangePropertyAction.Value>
+                                    <FontIcon Glyph="&#xE735;" FontSize="14" Foreground="{Binding BookmarkSavedBrush, Source={StaticResource ThemeManager}}"></FontIcon>
+                                </core:ChangePropertyAction.Value>
+                            </core:ChangePropertyAction>
+                        </core:DataTriggerBehavior.Actions>
+                    </core:DataTriggerBehavior>
+                    <core:DataTriggerBehavior Binding="{Binding IsBookmarksExists}" Value="False" >
+                        <core:DataTriggerBehavior.Actions>
+                            <core:ChangePropertyAction
+                                PropertyName="Content">
+                                <core:ChangePropertyAction.Value>
+                                    <FontIcon Glyph="&#xE734;" FontSize="14"></FontIcon>
+                                </core:ChangePropertyAction.Value>
+                            </core:ChangePropertyAction>
+                        </core:DataTriggerBehavior.Actions>
+                    </core:DataTriggerBehavior>
+                </i:Interaction.Behaviors>
                 <Button.Flyout>
                     <Flyout Placement="Bottom">
                         <StackPanel Orientation="Vertical" Width="350">
@@ -205,7 +236,7 @@
             <!--Search Button-->
             <Button Grid.Column="6" ToolTipService.ToolTip="Поиск" ToolTipService.Placement="Bottom"
                     Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding SearchButtonCommand}">
-                <FontIcon Glyph="&#xE721;"/>
+                <FontIcon Glyph="&#xE721;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
 
             <!--Bookmarks Flyout-->
@@ -259,7 +290,7 @@
                         </i:Interaction.Behaviors>
                     </Flyout>
                 </Button.Flyout>
-                <FontIcon Glyph="&#xE728;"/>
+                <FontIcon Glyph="&#xE728;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
 
             <!--History Flyout-->
@@ -315,7 +346,7 @@
                         </i:Interaction.Behaviors>
                     </Flyout>
                 </Button.Flyout>
-                <FontIcon Glyph="&#xF738;"/>
+                <FontIcon Glyph="&#xF738;" Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}"/>
             </Button>
 
 
@@ -332,7 +363,12 @@
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
                         <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="Инструменты разработчика">
+                        <MenuFlyoutItem Text="Диспетчер задач" Command="{Binding TaskManagerButtonCommand}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE7C4;"/>
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="Инструменты разработчика" Command="{Binding DeveloperInstrumentsButtonCommand}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xEC7A;"/>
                             </MenuFlyoutItem.Icon>

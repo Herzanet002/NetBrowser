@@ -14,13 +14,13 @@
                 <ResourceDictionary Source="Styles/AutoSuggestBox_Style.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
             <local:ThemeManager x:Key="ThemeManager"/>
-            
+         
            
             
             <SolidColorBrush x:Key="BookmarkAdded" Color="#FF246F8D"></SolidColorBrush>
 
             
-            <x:String x:Key="AppVersion">ver.0.7.23.w2</x:String>
+            <x:String x:Key="AppVersion">ver.0.8.10.w2</x:String>
 
            
 

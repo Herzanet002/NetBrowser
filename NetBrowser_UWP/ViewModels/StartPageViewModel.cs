@@ -19,7 +19,7 @@ namespace NetBrowser_UWP.ViewModels
         private static SiteItem _gridViewSelectedItem;
         private static string _searchBoxText;
         private static HashSet<SiteItem> _startPageItems;
-        private static HashSet<string> _recentlySearchedItems;
+        private static HashSet<SiteItem> _recentlySearchedItems;
         private static string _newSiteUrl;
         private static string _newSiteName;
         private bool _isSuggestionBarEnabled;
@@ -36,16 +36,12 @@ namespace NetBrowser_UWP.ViewModels
             OnSearchButtonTappedCommandExecuted();
         }
 
-
         public bool IsSuggestionBarEnabled
         {
             get => _isSuggestionBarEnabled;
-            set
-            {
-                SetProperty(ref _isSuggestionBarEnabled, value);
-                _localSettingsService.SaveSettingAsync("IsSuggestionBarEnabled", value);
-            }
+            set => SetProperty(ref _isSuggestionBarEnabled, value);
         }
+
         public SiteItem GridViewSelectedItem
         {
             get => _gridViewSelectedItem;
@@ -87,7 +83,7 @@ namespace NetBrowser_UWP.ViewModels
             get => _startPageItems;
             set => SetProperty(ref _startPageItems, value);
         }
-        public HashSet<string> RecentlySearchedItems
+        public HashSet<SiteItem> RecentlySearchedItems
         {
             get => _recentlySearchedItems;
             set => SetProperty(ref _recentlySearchedItems, value);
@@ -114,6 +110,7 @@ namespace NetBrowser_UWP.ViewModels
         private readonly IDataTransferService _dataTransferService;
         private readonly MainPageViewModel _mainPageViewModel;
         private readonly ILocalSettingsService _localSettingsService;
+
         public StartPageViewModel(IDataTransferService dataTransferService, MainPageViewModel mainViewModel, ILocalSettingsService localSettingsService)
         {
             _dataTransferService = dataTransferService;
@@ -144,19 +141,18 @@ namespace NetBrowser_UWP.ViewModels
             var searchTermListTransfer = await _dataTransferService.GetSearchTerm();
             if (searchTermListTransfer == null) return;
             searchTermListTransfer.Reverse();
-            RecentlySearchedItems = new HashSet<string>(searchTermListTransfer);
+            RecentlySearchedItems = new HashSet<SiteItem>(searchTermListTransfer);
         }
 
         private async void OnAddNewSiteCommandExecuted()
         {
-            ContentDialog addSiteDialog = new AddNewStartPageItemDialog();
-            await addSiteDialog.ShowAsync();
+            await new AddNewStartPageItemDialog().ShowAsync();
             GetStartPageElementsAsync();
         }
 
         private void OnSearchButtonTappedCommandExecuted()
         {
-            if (string.IsNullOrEmpty(SearchBoxText)) return;
+            if (string.IsNullOrEmpty(SearchBoxText) || string.IsNullOrWhiteSpace(SearchBoxText)) return;
             if (SearchBoxText.StartsWith("https://") || SearchBoxText.StartsWith("http://"))
             {
                 _mainPageViewModel.SearchWebFromStartPage(SearchBoxText);
@@ -167,14 +163,8 @@ namespace NetBrowser_UWP.ViewModels
 
         private async void GetStartPageElementsAsync()
         {
-            if (StartPageItems != null)
-            {
-                StartPageItems.Clear();
-                StartPageItems = new HashSet<SiteItem>(await _dataTransferService.GetStartPageElements());
-                return;
-            }
+            StartPageItems?.Clear();
             StartPageItems = new HashSet<SiteItem>(await _dataTransferService.GetStartPageElements());
-
         }
     }
 

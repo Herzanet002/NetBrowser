@@ -29,7 +29,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <GridView ItemsSource="{Binding ThemesList}" 
-                      SelectedItem="{Binding SelectedTheme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                      SelectedItem="{Binding SelectedTheme, Mode=TwoWay}">
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="models:ThemeItem">
                         <Grid Margin="15" Width="110" Height="70">
@@ -48,7 +48,7 @@
             </GridView>
             <StackPanel Grid.Row="1" Margin="20,0">
                 <TextBlock Text="Отображать последние поисковые запросы на стартовой странице"/>
-                <ToggleSwitch IsOn="{Binding IsSuggestionBarEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <ToggleSwitch IsOn="{Binding IsSuggestionBarEnabled, Mode=TwoWay}"></ToggleSwitch>
             </StackPanel>
         </Grid>
        

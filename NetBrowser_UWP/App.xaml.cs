@@ -57,6 +57,7 @@ namespace NetBrowser_UWP
             serviceCollection.AddSingleton<IDataTransferService, DataTransferService>();
             serviceCollection.AddSingleton<IDataAccessService, DataAccessService>();
             serviceCollection.AddSingleton<ILocalSettingsService, LocalSettingsService>();
+            serviceCollection.AddSingleton<IWebView2Service, WebView2Service>();
             //serviceCollection.AddSingleton<IThemeManager, ThemeManager>();
 
             //Dialogs

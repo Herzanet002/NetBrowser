@@ -1,5 +1,9 @@
-﻿namespace NetBrowser_UWP.Models
+﻿using System;
+
+namespace NetBrowser_UWP.Models
 {
+
+    [Serializable]
     public class SiteItem
     {
         public string Name { get; set; }

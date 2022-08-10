@@ -68,7 +68,7 @@
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:HistoryItemDetails">
+                    <DataTemplate x:DataType="models:HistoryItemDetails" x:Name="DataTemplate">
                         <UserControl PointerEntered="ListViewItem_PointerEntered"
                                  PointerExited="ListViewItem_PointerExited">
                             <Grid Background="Transparent" Height="50">
@@ -105,7 +105,7 @@
                                         HorizontalAlignment="Right">
                                     <Button 
                                         HorizontalAlignment="Right"
-                                        Command="{StaticResource DeleteCommand}" CommandParameter="{x:Bind Time}"
+                                        Command="{StaticResource DeleteCommand}" CommandParameter="{Binding }"
                                         Padding="0"
                                         Style="{StaticResource ButtonRevealStyle}"
                                         Height="28" Width="28">

@@ -5,9 +5,12 @@ using NetBrowser_UWP.Views.Controls;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using Windows.Storage;
 using Windows.UI.Xaml.Controls;
+using NetBrowser_UWP.Helpers;
 
 
 namespace NetBrowser_UWP.ViewModels
@@ -26,12 +29,10 @@ namespace NetBrowser_UWP.ViewModels
 
         private async void OnDeleteHistoryItemCommandExecuted(object param)
         {
-            if (param is null) return;
-            var toBeDeleted = HistoryList.FirstOrDefault(c => c.Time == param.ToString());
-            var wasDeleted = await _dataTransferService.RemoveHistoryItem(toBeDeleted?.Time);
-            if (!wasDeleted) return;
+            if (param is not HistoryItemDetails historyItem) return;
+            await _dataTransferService.RemoveHistoryItem(historyItem);
             var history = HistoryList.ToList();
-            history.Remove(toBeDeleted);
+            history.Remove(historyItem);
             HistoryList = history;
         }
 
@@ -106,8 +107,10 @@ namespace NetBrowser_UWP.ViewModels
         public async void GetHistoryAsync()
         {
             var list = await _dataTransferService.GetHistory();
+            if (list == null) return;
             list.Reverse();
             HistoryList = list;
+            
         }
 
     }

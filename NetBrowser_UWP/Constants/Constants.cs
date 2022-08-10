@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using NetBrowser_UWP.Models;
+using System.Collections.Generic;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using NetBrowser_UWP.Models;
 
 namespace NetBrowser_UWP.Constants
 {
@@ -31,7 +29,7 @@ namespace NetBrowser_UWP.Constants
         public static ThemeItem LightBlueTheme = new ThemeItem(LIGHT_BLUE_THEME_PATH, ElementTheme.Light);
 
         public static ThemeItem LightAcrylicTheme = new ThemeItem(LIGHT_ACRYLIC_THEME_PATH, ElementTheme.Light);
-        
+
         public static ThemeItem LightLilacTheme = new ThemeItem(LIGHT_LILAC_THEME_PATH, ElementTheme.Light);
 
         // Dark Themes
@@ -57,20 +55,6 @@ namespace NetBrowser_UWP.Constants
             {DarkNavyBlueTheme.Name, DarkNavyBlueTheme},
             {DarkAcrylicTheme.Name, DarkAcrylicTheme},
 
-        };
-
-
-        public static FontIcon BookmarkExixstsActiveIcon = new()
-        {
-            FontSize = 14,
-            Foreground = Application.Current.Resources["BookmarkAdded"] as Brush,
-            Glyph = "\xE735"
-        };
-        
-        public static FontIcon BookmarkExistsUnactiveIcon = new()
-        {
-            FontSize = 14,
-            Glyph = "\xE734"
         };
 
     }

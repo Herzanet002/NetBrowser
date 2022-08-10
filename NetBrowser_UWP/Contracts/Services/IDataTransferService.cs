@@ -1,5 +1,6 @@
 ﻿using NetBrowser_UWP.Models;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 
@@ -12,14 +13,14 @@ namespace NetBrowser_UWP.Contracts.Services
         public void SaveHistory(HistoryItemDetails historyItemDetail);
         public void SaveSearchTerm(string title);
         public Task<List<HistoryItemDetails>> GetHistory();
-        public Task<List<string>> GetSearchTerm();
+        public Task<List<SiteItem>> GetSearchTerm();
         public void SaveBookmark(BookmarkDetails bookmarkDetails);
         public Task<string> GetCurrentTheme();
         public void SaveCurrentTheme(string themeMode);
         public Task<List<BookmarkDetails>> GetBookmarkList();
         public Task<bool> RemoveBookmark(BookmarkDetails bookmarkDetails);
         public Task<bool> ClearHistoryFile();
-        public Task<bool> RemoveHistoryItem(string time);
+        public Task<bool> RemoveHistoryItem(HistoryItemDetails historyItemDetails);
         public void EditBookmark(string oldUrl, string newUrl, string newTitle);
         public Task<List<SearchEngineItem>> GetSearchEngineList();
         public Task<SearchEngineItem> GetCurrentSearchEngine();

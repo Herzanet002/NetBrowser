@@ -3,6 +3,7 @@ using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using Prism.Commands;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace NetBrowser_UWP.ViewModels
@@ -55,8 +56,7 @@ namespace NetBrowser_UWP.ViewModels
             InitializePageComponents();
         }
 
-        public PersonalizePageViewModel(){}
-        
+    
         private async void InitializePageComponents()
         {
             IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>("IsSuggestionBarEnabled");
