@@ -10,7 +10,8 @@ namespace NetBrowser_UWP.Contracts.Services
     {
         ObservableCollection<WebView2> ContainerStates { get; set; }
 
-        Task<WebView2> InstantiateWebView2(string address);
+        Task<WebView2> InstantiateWebView2(string uriToNavigate);
+        string GetCurrentBrowserVersion();
 
         event EventHandler<CoreWebView2NavigationCompletedEventArgs> NavigationCompleted;
         event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;

@@ -16,11 +16,16 @@ namespace NetBrowser_UWP.Services
             ContainerStates = new ObservableCollection<WebView2>();
         }
 
+        public string GetCurrentBrowserVersion() =>
+            CoreWebView2Environment.GetAvailableBrowserVersionString();
+        
+
         public event EventHandler<CoreWebView2NavigationCompletedEventArgs> NavigationCompleted;
         public event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;
         public event EventHandler<CoreWebView2NavigationStartingEventArgs> NavigationStarting;
 
-        public async Task<WebView2> InstantiateWebView2(string address)
+
+        public async Task<WebView2> InstantiateWebView2(string uriToNavigate)
         {
             var instance = new WebView2();
             await instance.EnsureCoreWebView2Async();
@@ -29,7 +34,7 @@ namespace NetBrowser_UWP.Services
             instance.NavigationCompleted += OnNavigationCompleted;
             instance.CoreWebView2.NewWindowRequested += OnNewWindowRequested;
             instance.NavigationStarting += OnNavigationStarting;
-            instance.CoreWebView2.Navigate(address);
+            instance.CoreWebView2.Navigate(uriToNavigate);
             return instance;
         }
 
@@ -42,8 +47,8 @@ namespace NetBrowser_UWP.Services
 
         private void OnNewWindowRequested(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
         {
-            NewWindowRequested?.Invoke(sender, args);
             args.Handled = true;
+            NewWindowRequested?.Invoke(sender, args);
         }
 
 

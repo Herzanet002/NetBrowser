@@ -10,7 +10,7 @@ namespace NetBrowser_UWP.Models
         public string Name { get; set; }
 
         public string Uri { get; set; }
-        public ElementTheme Mode { get; set; }
+        public ElementTheme ThemeMode { get; set; }
         public Brush BackgroundBrush { get; set; }
         public Brush SecondBrush { get; set; }
         public Brush ThirdBrush { get; set; }
@@ -21,14 +21,16 @@ namespace NetBrowser_UWP.Models
         public Brush SearchBoxForeground { get; set; }
         public Brush BookmarkSavedBrush { get; set; }
 
-        public ThemeItem(string path, ElementTheme mode)
+        public ThemeItem(string path)
         {
             Name = Path.GetFileNameWithoutExtension(path);
             Uri = path;
-            Mode = mode;
+  
 
             var resourceDictionary = new ResourceDictionary();
             Application.LoadComponent(resourceDictionary, new Uri(path));
+
+            ThemeMode = (ElementTheme)resourceDictionary[nameof(ThemeMode)];
 
             BackgroundBrush = resourceDictionary[nameof(BackgroundBrush)] as Brush;
             SecondBrush = resourceDictionary[nameof(SecondBrush)] as Brush;
@@ -42,7 +44,7 @@ namespace NetBrowser_UWP.Models
             SearchBoxBorderBrush = resourceDictionary[nameof(SearchBoxBorderBrush)] as Brush;
 
             BookmarkSavedBrush = resourceDictionary[nameof(BookmarkSavedBrush)] as Brush;
-
+            
         }
 
 

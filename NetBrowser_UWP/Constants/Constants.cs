@@ -6,6 +6,10 @@ namespace NetBrowser_UWP.Constants
 {
     public static class Constants
     {
+        public const string FAVICONS_SERVICE = "https://www.google.com/s2/favicons?sz=32&domain_url=";
+
+        //private const string FAVICONS_SERVICE = "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=";
+
         public const string DARK_BLUE_THEME_PATH = "ms-appx:///Themes/Theme.DarkBlue.xaml";
         public const string LIGHT_THEME_PATH = "ms-appx:///Themes/Theme.Light.xaml";
         public const string LIGHT_PINK_THEME_PATH = "ms-appx:///Themes/Theme.LightPink.xaml";
@@ -21,25 +25,29 @@ namespace NetBrowser_UWP.Constants
         public const string HISTORY_FILE_NAME = "history.xml";
         public const string STARTPAGE_FILE_NAME = "startpage.xml";
 
+
+        public const string SETTINGS_ADDRESS = "app://newtab"; 
+        public const string STARTPAGE_ADDRESS = "app://settings";
+
         // Light Themes
-        public static ThemeItem LightTheme = new ThemeItem(LIGHT_THEME_PATH, ElementTheme.Light);
+        public static ThemeItem LightTheme = new ThemeItem(LIGHT_THEME_PATH);
 
-        public static ThemeItem LightPinkTheme = new ThemeItem(LIGHT_PINK_THEME_PATH, ElementTheme.Light);
+        public static ThemeItem LightPinkTheme = new ThemeItem(LIGHT_PINK_THEME_PATH);
 
-        public static ThemeItem LightBlueTheme = new ThemeItem(LIGHT_BLUE_THEME_PATH, ElementTheme.Light);
+        public static ThemeItem LightBlueTheme = new ThemeItem(LIGHT_BLUE_THEME_PATH);
 
-        public static ThemeItem LightAcrylicTheme = new ThemeItem(LIGHT_ACRYLIC_THEME_PATH, ElementTheme.Light);
+        public static ThemeItem LightAcrylicTheme = new ThemeItem(LIGHT_ACRYLIC_THEME_PATH);
 
-        public static ThemeItem LightLilacTheme = new ThemeItem(LIGHT_LILAC_THEME_PATH, ElementTheme.Light);
+        public static ThemeItem LightLilacTheme = new ThemeItem(LIGHT_LILAC_THEME_PATH);
 
         // Dark Themes
-        public static ThemeItem DarkTheme = new ThemeItem(DARK_THEME_PATH, ElementTheme.Dark);
+        public static ThemeItem DarkTheme = new ThemeItem(DARK_THEME_PATH);
 
-        public static ThemeItem DarkBlueTheme = new ThemeItem(DARK_BLUE_THEME_PATH, ElementTheme.Dark);
+        public static ThemeItem DarkBlueTheme = new ThemeItem(DARK_BLUE_THEME_PATH);
 
-        public static ThemeItem DarkNavyBlueTheme = new ThemeItem(DARK_NAVY_BLUE_THEME_PATH, ElementTheme.Dark);
+        public static ThemeItem DarkNavyBlueTheme = new ThemeItem(DARK_NAVY_BLUE_THEME_PATH);
 
-        public static ThemeItem DarkAcrylicTheme = new ThemeItem(DARK_ACRYLIC_THEME_PATH, ElementTheme.Dark);
+        public static ThemeItem DarkAcrylicTheme = new ThemeItem(DARK_ACRYLIC_THEME_PATH);
 
 
 

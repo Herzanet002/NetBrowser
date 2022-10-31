@@ -164,6 +164,15 @@
                                     IsTabStop="False" />
                             </Viewbox>
 
+                            <controls:ProgressRing
+                                Grid.Column="0"
+                                x:Name="LoadingIndicator"
+                                MaxWidth="{ThemeResource TabViewItemHeaderIconSize}"
+                                MaxHeight="{ThemeResource TabViewItemHeaderIconSize}"
+                                Margin="{ThemeResource TabViewItemHeaderIconMargin}"
+                                IsIndeterminate="True"
+                                Visibility="Collapsed" />
+
                             <ContentPresenter
                                 x:Name="ContentPresenter"
                                 Grid.Column="1"

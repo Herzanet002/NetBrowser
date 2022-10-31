@@ -3,15 +3,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <x:String x:Key="NameOfTheme">Светло-голубая</x:String>
-
-    <SolidColorBrush x:Key="BackgroundBrush" Color="#FF516FA3"/>
-    <SolidColorBrush x:Key="SecondBrush" Color="#FF91A8D0"/>
+    <x:Int32 x:Key="ThemeMode">1</x:Int32>
+    
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#FF8BB5CC"/>
+    <SolidColorBrush x:Key="SecondBrush" Color="#FF6FA9C9"/>
     <SolidColorBrush x:Key="ThirdBrush" Color="#FFCADEEA"/>
-    <SolidColorBrush x:Key="AppTitleBrush" Color="#7F001B50"/>
+    <SolidColorBrush x:Key="AppTitleBrush" Color="#CC263C53"/>
     <SolidColorBrush x:Key="ForegroundBrush" Color="#FF2D2D2D"/>
     <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FF2D2D2D"/>
     <SolidColorBrush x:Key="SearchBoxForeground" Color="#FF2D2D2D"/>
     <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="#FF445469"/>
-    <SolidColorBrush x:Key="BookmarkSavedBrush" Color="#FF246F8D"></SolidColorBrush>
+    <SolidColorBrush x:Key="BookmarkSavedBrush" Color="#FF28648C"></SolidColorBrush>
 
 </ResourceDictionary>

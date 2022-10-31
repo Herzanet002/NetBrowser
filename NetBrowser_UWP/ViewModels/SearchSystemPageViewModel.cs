@@ -43,7 +43,7 @@ namespace NetBrowser_UWP.ViewModels
             ListOfEngines = new ObservableCollection<SearchEngineItem>(await _dataTransferService.GetSearchEngineList());
 
             var selectedEngine = from item in ListOfEngines
-                                 where item.Mode == "1"
+                                 where item.IsSelected == "1"
                                  select item;
             CurrentEngine = selectedEngine.FirstOrDefault();
         }

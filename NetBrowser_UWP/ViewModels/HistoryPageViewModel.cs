@@ -1,17 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Views.Controls;
+using NetBrowser_UWP.Views.UserControls;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Windows.Storage;
 using Windows.UI.Xaml.Controls;
-using NetBrowser_UWP.Helpers;
-
 
 namespace NetBrowser_UWP.ViewModels
 {
@@ -46,6 +42,7 @@ namespace NetBrowser_UWP.ViewModels
             await new HistoryClearConfirmationDialog().ShowAsync();
             GetHistoryAsync();
         }
+
         private async void OnOpenHistoryItemCommandExecuted()
         {
             if (SelectedItem == null) return;
@@ -68,6 +65,7 @@ namespace NetBrowser_UWP.ViewModels
         }
 
         private readonly MainPageViewModel _mainPageViewModel;
+
         public HistoryPageViewModel(IDataTransferService dataTransferService, MainPageViewModel mainPageViewModel)
         {
             _dataTransferService = dataTransferService;
@@ -88,16 +86,18 @@ namespace NetBrowser_UWP.ViewModels
         public void GetSearchSuggestions()
         {
             var suitable = from item in HistoryList
-                           where item.Name.ToLower().Contains(SearchText.ToLower()) || item.Url.ToLower().Contains(SearchText.ToLower())
+                           where item.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                                 item.Url.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
                            select item;
             HistoryList = suitable;
-
         }
+
         public IEnumerable<HistoryItemDetails> HistoryList
         {
             get => _historyList;
             set => SetProperty(ref _historyList, value);
         }
+
         public HistoryItemDetails SelectedItem
         {
             get => _selectedItem;
@@ -108,13 +108,9 @@ namespace NetBrowser_UWP.ViewModels
         {
             var list = await _dataTransferService.GetHistory();
             if (list == null) return;
-            list.Reverse();
-            HistoryList = list;
-            
+            var historyItemDetailsEnumerable = list.ToList();
+            historyItemDetailsEnumerable.Reverse();
+            HistoryList = historyItemDetailsEnumerable;
         }
-
     }
-
-
-
 }

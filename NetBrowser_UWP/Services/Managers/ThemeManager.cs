@@ -12,8 +12,7 @@ namespace NetBrowser_UWP
     public sealed class ThemeManager : INotifyPropertyChanged, IThemeManager
     {
         public static ThemeItem CurrentTheme;
-        public static ElementTheme CurrentThemeMode;
-        
+
         public static Brush BackgroundBrush => CurrentTheme.BackgroundBrush;
         public static Brush SecondBrush => CurrentTheme.SecondBrush;
         public static Brush ThirdBrush => CurrentTheme.ThirdBrush;
@@ -32,29 +31,25 @@ namespace NetBrowser_UWP
 
         public ThemeItem GetRequestedTheme(string themeName)
         {
-            var requestedTheme = themeName == null ? Constants.Constants.LightTheme :
+            return themeName == null ? Constants.Constants.LightTheme :
              Constants.Constants.ThemesDictionary.ContainsKey(themeName) ?
                 Constants.Constants.ThemesDictionary[themeName] :
                 Constants.Constants.LightTheme;
-            return requestedTheme;
         }
 
         public ThemeItem SetRequestedTheme(string themeName)
         {
             CurrentTheme = GetRequestedTheme(themeName);
             
-            CurrentThemeMode = CurrentTheme.Mode;
             var foreground = NavigationButtonBrush as SolidColorBrush;
 
             if (App.TitleBar != null)
             {
-                App.TitleBar.BackgroundColor = Colors.Transparent;
                 App.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-                App.TitleBar.ButtonHoverForegroundColor = Colors.Transparent;
                 App.TitleBar.ButtonForegroundColor = foreground?.Color;
-
             }
 
+            SetRequestedElementThemeMode();
             RaisePropertyChanged();
             return CurrentTheme;
         }
@@ -65,7 +60,7 @@ namespace NetBrowser_UWP
         {
             if (Window.Current.Content is FrameworkElement frameworkElement)
             {
-                frameworkElement.RequestedTheme = CurrentThemeMode;
+                frameworkElement.RequestedTheme = CurrentTheme.ThemeMode;
 
             }
         }
@@ -82,8 +77,6 @@ namespace NetBrowser_UWP
             OnPropertyChanged(nameof(SearchBoxBorderBrush));
             OnPropertyChanged(nameof(SearchBoxForeground));
             OnPropertyChanged(nameof(BookmarkSavedBrush));
-            
-            
         }
     }
 }

@@ -4,6 +4,7 @@
     xmlns:media="using:Microsoft.UI.Xaml.Media">
 
     <x:String x:Key="NameOfTheme">Темная акриловая</x:String>
+    <x:Int32 x:Key="ThemeMode">2</x:Int32>
     <media:AcrylicBrush x:Key="BackgroundBrush" BackgroundSource="HostBackdrop"
             TintOpacity="0.7" TintColor="#FF000000"  />
 

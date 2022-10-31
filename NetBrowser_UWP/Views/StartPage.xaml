@@ -13,8 +13,9 @@
     xmlns:resources="using:NetBrowser_UWP.Resources"
     xmlns:commands="using:NetBrowser_UWP.Commands"
     xmlns:converters="using:NetBrowser_UWP.Converters"
+    xmlns:helpers="using:NetBrowser_UWP.Helpers"
     d:DataContext="{d:DesignInstance Type=viewModels:StartPageViewModel,IsDesignTimeCreatable=True}">
-    
+
 
     <Page.Resources>
         <converters:TitleTextConverter x:Key="TitleTextConverter" />
@@ -23,6 +24,10 @@
         <StandardUICommand x:Name="DeleteCommand"
                            Command="{Binding GridViewItemDeleteCommand}"
                            Description="Удалить элемент со стартовой страницы" />
+        <StandardUICommand x:Name="EditCommand"
+                           Command="{Binding EditStartPageItem}"
+                           Description="Изменить элемент стратовой страницы" />
+
 
     </Page.Resources>
 
@@ -39,68 +44,117 @@
         </Grid.ColumnDefinitions>
         <resources:AuroraLite  Canvas.ZIndex="0" Grid.ColumnSpan="3" Grid.RowSpan="3"/>
         <Button Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent" 
-                    BorderThickness="2" Command="{Binding AddNewSiteCommand}">
+                    BorderThickness="1" ToolTipService.ToolTip="{helpers:ResourceString Name=AddNewSite}" Margin="5"
+                    ToolTipService.Placement="Bottom" Padding="6">
             <Button.Content>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <FontIcon Glyph="&#xE710;"  />
-                    <TextBlock Text="Добавить" Margin="10,0,0,0"></TextBlock>
+                    <FontIcon Glyph="&#xE710;"/>
                 </StackPanel>
-
             </Button.Content>
-        </Button>
-        
-
-        <RelativePanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="10">
-            <GridView ItemsSource="{Binding StartPageItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                      SelectedItem="{Binding GridViewSelectedItem, Mode=TwoWay}" 
-                      SelectionMode="Single" IsRightTapEnabled="True">
-                <GridView.ItemTemplate>
-                    <DataTemplate x:DataType="models:SiteItem">
-                        <Grid Width="110" Height="100">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="2*"/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <Grid Grid.Row="0" Width="50" Height="50">
-                                    <Rectangle Fill="{Binding ThirdBrush, Source={StaticResource ThemeManager}}" RadiusX="10" RadiusY="10"></Rectangle>
-                                    <TextBlock Text="{x:Bind Url, Converter={StaticResource TitleLetterConverter}}" HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" FontSize="24" FontWeight="Bold"></TextBlock>
-                                </Grid>
-                                <TextBlock Grid.Row="1"  Text="{Binding Name, Converter={StaticResource TitleTextConverter}}" 
-                                           TextAlignment="Center" FontSize="12" FontWeight="SemiBold" 
-                                           Margin="0,10,0,0" ></TextBlock>
-                            </Grid>
-                            <FlyoutBase.AttachedFlyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Text="Удалить" Command="{StaticResource DeleteCommand}" 
-                                                    CommandParameter="{x:Bind }">
-                                        <MenuFlyoutItem.Icon>
-                                            <FontIcon Glyph="&#xE74D;"/>
-                                        </MenuFlyoutItem.Icon>
-                                    </MenuFlyoutItem>
-                                </MenuFlyout>
-                            </FlyoutBase.AttachedFlyout>
-                            <interactivity:Interaction.Behaviors>
-                                <core:EventTriggerBehavior EventName="RightTapped">
-                                    <commands:OpenFlyoutAction/>
-                                </core:EventTriggerBehavior>
-                            </interactivity:Interaction.Behaviors>
-                            <ToolTipService.Placement>Mouse</ToolTipService.Placement>
-                            <ToolTipService.ToolTip>
-                                <TextBlock Text="{Binding Name}"></TextBlock>
-                            </ToolTipService.ToolTip>
+            <Button.Flyout>
+                <Flyout Placement="Bottom">
+                    <StackPanel Spacing="20" Margin="5">
+                        <TextBlock Text="Добавить веб-сайт" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                        <TextBox Header="Имя" VerticalContentAlignment="Center"
+                                 TextWrapping="NoWrap" PlaceholderText="Название сайта" MinWidth="300"
+                                 Text="{Binding NewSiteName, Mode=TwoWay}"/>
+                        <TextBox Header="URL-адрес" VerticalContentAlignment="Center"
+                                 TextWrapping="NoWrap" Text="{Binding NewSiteUrl, Mode=TwoWay}"
+                                 PlaceholderText="Ссылка на сайт" MinWidth="300"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Добавить" HorizontalAlignment="Left" Command="{Binding SaveNewSiteCommand}"/>
+                            <Button Grid.Column="1" Content="Отмена" Command="{Binding CancelCommand}"  HorizontalAlignment="Right"/>
                         </Grid>
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-            </GridView>
-        </RelativePanel>
+                    </StackPanel>
+                    <interactivity:Interaction.Behaviors>
+                        <core:DataTriggerBehavior Binding="{Binding IsFlyoutClosed}"
+                                              ComparisonCondition="Equal" Value="True">
+                            <commands:CloseFlyoutAction />
+                        </core:DataTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
 
-        <Grid Row="2" Column="1">
-            <ContentControl Visibility="{Binding IsSuggestionBarEnabled}">
+
+        <GridView ItemsSource="{Binding StartPageItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                      SelectedItem="{Binding GridViewSelectedItem, Mode=TwoWay}"  Grid.Row="1" Grid.Column="1" 
+                      SelectionMode="Single">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="models:SiteItem">
+                    <UserControl PointerEntered="GridView_PointerEntered" PointerExited="GridView_PointerExited">
+                        <Grid MinHeight="90" MinWidth="150">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="HoveringStates">
+                                    <VisualState x:Name="HoverButtonsHidden" />
+                                    <VisualState x:Name="HoverButtonsShown">
+                                        <VisualState.Setters>
+                                            <Setter Target="HoverButtons.Visibility"
+                                                    Value="Visible" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                            <Grid Background="{Binding ThirdBrush, Source={StaticResource ThemeManager}}">
+                                <TextBlock Text="{x:Bind Url, Converter={StaticResource TitleLetterConverter}}" HorizontalAlignment="Center"
+                                           VerticalAlignment="Top" FontSize="24" FontWeight="Bold" Padding="5"></TextBlock>
+                                <Button Width="20" Height="18" Padding="0" VerticalAlignment="Top" HorizontalAlignment="Right"
+                                        Margin="5" x:Name="HoverButtons" Visibility="Collapsed" Background="Transparent" 
+                                        BorderThickness="0">
+                                    <Button.Flyout>
+                                        <MenuFlyout Placement="Bottom">
+                                            <MenuFlyoutItem Text="Изменить" Command="{StaticResource EditCommand}" 
+                                                            CommandParameter="{x:Bind }">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE70F;"/>
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem Text="Удалить" Command="{StaticResource DeleteCommand}" 
+                                                            CommandParameter="{x:Bind }">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE74D;"/>
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                    <FontIcon Glyph="&#xE712;"/>
+                                </Button>
+
+                            </Grid>
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" 
+                                        Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}" 
+                                        Padding="10,5,10,5" Height="45">
+                                <TextBlock Text="{x:Bind Name}"/>
+                                <TextBlock Text="{x:Bind Url, Converter={StaticResource TitleTextConverter}}" 
+                                           Style="{ThemeResource CaptionTextBlockStyle}" 
+                                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+
+                            </StackPanel>
+
+                        </Grid>
+                    </UserControl>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid Orientation="{Binding GridViewOrientation}"/>
+                   
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+
+        </GridView>
+
+
+        <ContentControl Grid.Row="2" Grid.Column="1" Visibility="{Binding IsSuggestionBarEnabled}">
             <StackPanel>
                 <TextBlock Text="Недавние поисковые запросы:" FontSize="16" FontWeight="SemiBold" />
-                <ListView ItemsSource="{Binding RecentlySearchedItems}" Margin="10">
+                <ListView ItemsSource="{Binding RecentlySearchedItems}" Margin="10" 
+                          SelectedItem="{Binding SearchBarSelectedItem, Mode=TwoWay}">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <VirtualizingStackPanel Orientation="Horizontal"/>
@@ -109,19 +163,20 @@
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:SiteItem">
                             <Grid>
-                                <TextBlock Text="{x:Bind Name, Converter={StaticResource RecentlySearchItemsConverter}}" FontSize="12"></TextBlock>
+                                <TextBlock Text="{x:Bind Name, Converter={StaticResource RecentlySearchItemsConverter}}"
+                                           FontSize="12"></TextBlock>
                                 <ToolTipService.Placement>Mouse</ToolTipService.Placement>
                                 <ToolTipService.ToolTip>
-                                    <TextBlock Text="{x:Bind Name }"></TextBlock>
+                                    <TextBlock Text="{x:Bind Name}"></TextBlock>
                                 </ToolTipService.ToolTip>
-                                </Grid>
-                            
-                            </DataTemplate>
+                            </Grid>
+                        </DataTemplate>
                     </ListView.ItemTemplate>
-                    
                 </ListView>
             </StackPanel>
-            </ContentControl>
+        </ContentControl>
+
+        <Grid Row="2" Column="1">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width=".2*"/>
@@ -148,8 +203,6 @@
                 </Button>
             </Grid>
         </Grid>
-        
+
     </Grid>
-
-
 </Page>

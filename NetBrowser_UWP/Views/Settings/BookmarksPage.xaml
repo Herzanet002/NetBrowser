@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="using:NetBrowser_UWP.ViewModels"
     mc:Ignorable="d"
+    xmlns:models="using:NetBrowser_UWP.Models"
     d:DataContext="{d:DesignInstance Type=viewmodels:BookmarksPageViewModel,IsDesignTimeCreatable=True}">
 
     <Grid>
@@ -44,16 +45,16 @@
                     </MenuFlyout>
                 </ListView.Resources>
                 <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="models:BookmarkDetails">
                         <Grid Height="60">
                             <StackPanel Orientation="Horizontal">
-                                <BitmapIcon UriSource="{Binding Icon}"
+                                <BitmapIcon UriSource="{x:Bind FaviconUrl}"
                                                 ShowAsMonochrome="False" Height="20" Width="20"></BitmapIcon>
                                 <StackPanel Orientation="Vertical" Margin="0,10,0,0">
-                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Bottom" FontSize="16"
+                                    <TextBlock Text="{x:Bind Name}" VerticalAlignment="Bottom" FontSize="16"
                                                HorizontalAlignment="Left" Margin="10,0" FontWeight="Bold"/>
 
-                                    <TextBlock Text="{Binding Url}" FontSize="12" 
+                                    <TextBlock Text="{x:Bind Url}" FontSize="12" 
                                                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0" />
                                 </StackPanel>
                             </StackPanel>

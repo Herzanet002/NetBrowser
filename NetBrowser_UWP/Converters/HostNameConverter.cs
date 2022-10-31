@@ -1,14 +1,15 @@
 ﻿using System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
 namespace NetBrowser_UWP.Converters
 {
-    public class DomainNameConverter : IValueConverter
+    public class HostNameConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value is not string val) return null;
-            if (string.IsNullOrEmpty(val) || string.IsNullOrWhiteSpace(val)) return null;
+            if (value is not string val) return DependencyProperty.UnsetValue;
+            if (string.IsNullOrWhiteSpace(val)) return DependencyProperty.UnsetValue;
             var uri = new Uri(val);
             return uri.GetLeftPart(UriPartial.Authority);
 

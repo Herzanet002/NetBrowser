@@ -1,5 +1,7 @@
-﻿using Windows.UI.Xaml.Controls;
-using NetBrowser_UWP.ViewModels;
+﻿using NetBrowser_UWP.ViewModels;
+using System.Numerics;
+using Windows.UI.Xaml.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace NetBrowser_UWP.Views
 {
@@ -10,9 +12,9 @@ namespace NetBrowser_UWP.Views
     {
         public MainPage()
         {
-
             InitializeComponent();
-            DataContext = App.GetService<MainPageViewModel>();
+            DataContext = Ioc.Default.GetService<MainPageViewModel>();
+            SearchBox.Translation += new Vector3(0, 0, 32);
         }
 
     }

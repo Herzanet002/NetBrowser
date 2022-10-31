@@ -12,17 +12,13 @@
                 <ResourceDictionary Source="Styles/TabViewItem_Style.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Styles/TabViewTemplate_Style.xaml"></ResourceDictionary>
                 <ResourceDictionary Source="Styles/AutoSuggestBox_Style.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Styles/SearchBarStyle.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Styles/FontSizes.xaml" />
+                <ResourceDictionary Source="Styles/TextBlocks.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <local:ThemeManager x:Key="ThemeManager"/>
-         
-           
-            
-            <SolidColorBrush x:Key="BookmarkAdded" Color="#FF246F8D"></SolidColorBrush>
 
-            
             <x:String x:Key="AppVersion">ver.0.8.10.w2</x:String>
-
-           
 
             <Style TargetType="ContentDialog" BasedOn="{StaticResource DefaultContentDialogStyle}" x:Key="ContentDialogStyle"></Style>
 

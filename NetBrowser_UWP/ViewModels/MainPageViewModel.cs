@@ -1,9 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Uwp;
 using Microsoft.Web.WebView2.Core;
-using NetBrowser_UWP.BindingHelpers;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Properties;
 using NetBrowser_UWP.Views;
 using NetBrowser_UWP.Views.Settings;
 using Prism.Commands;
@@ -11,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,27 +23,24 @@ namespace NetBrowser_UWP.ViewModels
     {
         #region Private Global Element Region
 
-        private const string FAVICONS_SERVICE = "https://www.google.com/s2/favicons?sz=32&domain_url=";
+        private winUI.TabViewItem _selectedTabItem;
+        private winUI.WebView2 _selectedWebView2;
 
-        //private const string FAVICONS_SERVICE = "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=";
-        private static winUI.TabViewItem _currentSelectedTab;
-
-        private static winUI.WebView2 _currentSelectedWeb;
-
-        private static List<BookmarkDetails> _bookmarksList;
-        private static IEnumerable<SiteItem> _searchTermList;
-        private static List<HistoryItemDetails> _historyList;
-
-        private static string _appTitleText;
-        private static string _searchBoxText;
-        private static string _bookmarkTitleForSave;
-        private static string _bookmarkUrlForSave;
-
-        private static Visibility _visibilityProgressBar;
-        private static Visibility _visibilityDeleteBookmarkButton;
-        private static bool _isFlyoutClosed;
+        private ObservableCollection<BookmarkDetails> _bookmarksList;
+        private IList<HistoryItemDetails> _historyList;
         private ObservableCollection<winUI.TabViewItem> _tabViewItemsList;
-        private List<SiteItem> _searchBoxItemsCollection;
+        private IList<string> _searchBoxItemsCollection;
+
+        private string _appTitleText;
+        private string _searchBoxText;
+        private string _bookmarkTitleForSave;
+        private string _bookmarkUrlForSave;
+
+        private Visibility _visibilityDeleteBookmarkButton;
+        private bool _visibilityHomeButton;
+        private bool _isProgressRingActive;
+        private bool _isFlyoutClosed;
+
         private bool _isWebLoading;
         private bool _isBookmarksExists;
 
@@ -85,13 +82,13 @@ namespace NetBrowser_UWP.ViewModels
             set => SetProperty(ref _tabViewItemsList, value);
         }
 
-        public winUI.WebView2 CurrentSelectedWebView
+        public winUI.WebView2 SelectedWebView2
         {
-            get => _currentSelectedWeb;
-            set => SetProperty(ref _currentSelectedWeb, value);
+            get => _selectedWebView2;
+            set => SetProperty(ref _selectedWebView2, value);
         }
 
-        public List<SiteItem> SearchBoxItemsCollection
+        public IList<string> SearchBoxItemsCollection
         {
             get => _searchBoxItemsCollection;
             set => SetProperty(ref _searchBoxItemsCollection, value);
@@ -103,13 +100,13 @@ namespace NetBrowser_UWP.ViewModels
             set => SetProperty(ref _searchBoxText, value);
         }
 
-        public List<BookmarkDetails> BookmarksList
+        public ObservableCollection<BookmarkDetails> BookmarksList
         {
             get => _bookmarksList;
             set => SetProperty(ref _bookmarksList, value);
         }
 
-        public List<HistoryItemDetails> HistoryList
+        public IList<HistoryItemDetails> HistoryList
         {
             get => _historyList;
             set => SetProperty(ref _historyList, value);
@@ -133,10 +130,10 @@ namespace NetBrowser_UWP.ViewModels
             set => SetProperty(ref _bookmarkUrlForSave, value);
         }
 
-        public Visibility ProgressBarVisibility
+        public bool IsProgressRingActive
         {
-            get => _visibilityProgressBar;
-            set => SetProperty(ref _visibilityProgressBar, value);
+            get => _isProgressRingActive;
+            set => SetProperty(ref _isProgressRingActive, value);
         }
 
         public Visibility DeleteBookmarkButtonVisibility
@@ -156,12 +153,12 @@ namespace NetBrowser_UWP.ViewModels
             }
         }
 
-        public winUI.TabViewItem CurrentSelectedTab
+        public winUI.TabViewItem SelectedTabItem
         {
-            get => _currentSelectedTab;
+            get => _selectedTabItem;
             set
             {
-                SetProperty(ref _currentSelectedTab, value);
+                SetProperty(ref _selectedTabItem, value);
                 SelectionChangedTabHandler();
             }
         }
@@ -178,56 +175,58 @@ namespace NetBrowser_UWP.ViewModels
             set => SetProperty(ref _isBookmarksExists, value);
         }
 
+        public bool VisibilityHomeButton
+        {
+            get => _visibilityHomeButton;
+            set
+            {
+                SetProperty(ref _visibilityHomeButton, value);
+                _localSettingsService.SaveSettingAsync("IsHomeButtonEnabled", value);
+            }
+        }
+
         #endregion Global Properties Region
 
         #region On Command Executed Region
 
         private void OnBackButtonCommandExecuted()
         {
-            if (CurrentSelectedWebView is { CanGoBack: true })
-                CurrentSelectedWebView.GoBack();
+            if (SelectedWebView2 is { CanGoBack: true })
+                SelectedWebView2.GoBack();
         }
 
         private void OnForwardButtonCommandExecuted()
         {
-            if (CurrentSelectedWebView is { CanGoForward: true })
-                CurrentSelectedWebView.GoForward();
+            if (SelectedWebView2 is { CanGoForward: true })
+                SelectedWebView2.GoForward();
         }
 
         private void OnReloadButtonCommandExecuted()
         {
-            if (CurrentSelectedWebView == null) return;
-
-            //WebViewStates[CurrentSelectedWebView] = true;
-            CurrentSelectedWebView.CoreWebView2.Reload();
-
-            SetVisualUiElementStates(CurrentSelectedWebView);
+            SelectedWebView2?.CoreWebView2.Reload();
         }
 
         private void OnStopLoadingButtonCommandExecuted()
         {
-            if (CurrentSelectedWebView == null) return;
-
-            //WebViewStates[CurrentSelectedWebView] = false;
-            CurrentSelectedWebView.CoreWebView2.Stop();
-
-            SetVisualUiElementStates(CurrentSelectedWebView);
+            SelectedWebView2?.CoreWebView2.Stop();
         }
 
         private void OnHomeButtonCommandExecuted()
         {
-            if (App.CurrentWebEngine?.HomePage != null && CurrentSelectedWebView != null)
-                NavigateTo(App.CurrentWebEngine.HomePage, CurrentSelectedWebView);
+            if (App.CurrentWebEngine?.HomePage != null
+                && SelectedWebView2 != null)
+            {
+                NavigateTo(App.CurrentWebEngine.HomePage, SelectedWebView2);
+            }
+                
         }
 
         private void OnSearchBoxTextChangedCommandExecuted(object obj)
         {
             if (obj is not AutoSuggestBoxTextChangedEventArgs eventArgs) return;
-
-            var reason = eventArgs.Reason;
-            if (reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            if (eventArgs.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-                SearchBoxItemsCollection = AutoSuggestListFill(SearchBoxText);
+                AutoSuggestListFill();
             }
         }
 
@@ -237,42 +236,47 @@ namespace NetBrowser_UWP.ViewModels
             if (obj is not AutoSuggestBoxQuerySubmittedEventArgs eventArgs) return;
 
             var queryForSearch = string.Empty;
-            if (eventArgs.ChosenSuggestion != null)
-                queryForSearch = eventArgs.ChosenSuggestion.ToString();
-            else if (!(string.IsNullOrEmpty(eventArgs.QueryText) || string.IsNullOrWhiteSpace(eventArgs.QueryText)))
+            if (!string.IsNullOrWhiteSpace(eventArgs.QueryText))
                 queryForSearch = eventArgs.QueryText;
 
-            if (queryForSearch == string.Empty) return;
-            if (CurrentSelectedWebView == null)
+            if (string.IsNullOrWhiteSpace(queryForSearch)) return;
+            if (SelectedWebView2 == null) return;
+
+            NavigateTo(queryForSearch, SelectedWebView2);
+            _dataTransferService.SaveSearchTerm(new SiteItem
             {
-                CreateNewWebTab();
-            }
-            NavigateTo(queryForSearch, CurrentSelectedWebView);
-            _dataTransferService.SaveSearchTerm(queryForSearch);
+                Name = queryForSearch
+            });
         }
 
         private void OnSearchButtonCommandExecuted()
         {
-            if (string.IsNullOrEmpty(SearchBoxText) || string.IsNullOrWhiteSpace(SearchBoxText)) return;
-            NavigateTo(SearchBoxText, CurrentSelectedWebView);
-            _dataTransferService.SaveSearchTerm(SearchBoxText);
+            if (string.IsNullOrWhiteSpace(SearchBoxText)) return;
+            NavigateTo(SearchBoxText, SelectedWebView2);
+            _dataTransferService.SaveSearchTerm(new SiteItem
+            {
+                Name = SearchBoxText
+            });
         }
 
         private void OnSettingsButtonCommandExecuted() => CreateSettingsTab();
 
         private void OnDeveloperInstrumentsButtonCommandExecuted() =>
-            CurrentSelectedWebView?.CoreWebView2.OpenDevToolsWindow();
+            SelectedWebView2?.CoreWebView2.OpenDevToolsWindow();
 
         private void OnTaskManagerButtonCommandExecuted() =>
-            CurrentSelectedWebView?.CoreWebView2.OpenTaskManagerWindow();
+            SelectedWebView2?.CoreWebView2.OpenTaskManagerWindow();
 
         private async void OnHistoryButtonCommandExecuted()
         {
             var historyListTransfer = await _dataTransferService.GetHistory();
-            var historyListCount = historyListTransfer.Count;
-            historyListTransfer = historyListCount <= 100 ? historyListTransfer : historyListTransfer.GetRange(historyListCount - 100, 100);
-            historyListTransfer.Reverse();
-            HistoryList = historyListTransfer;
+
+            const int MAX_DISPLAY_COUNT = 100;
+
+            HistoryList = historyListTransfer.Count <= MAX_DISPLAY_COUNT ?
+                historyListTransfer.Reverse().ToList() :
+                historyListTransfer.Skip(Math.Max(0, historyListTransfer.Count() - MAX_DISPLAY_COUNT)).Reverse().ToList();
+            
         }
 
         private void OnHistoryFlyoutItemClickCommandExecuted(object obj)
@@ -281,10 +285,9 @@ namespace NetBrowser_UWP.ViewModels
             if (objArgs.ClickedItem is HistoryItemDetails selectedHistoryItem)
             {
                 var url = selectedHistoryItem.Url;
-                if (!Uri.IsWellFormedUriString(url, UriKind.Absolute)) return;
                 CreateNewWebTab();
                 if (url != null)
-                    NavigateTo(url, CurrentSelectedWebView);
+                    NavigateTo(url, SelectedWebView2);
             }
 
             IsFlyoutClosed = true;
@@ -292,21 +295,20 @@ namespace NetBrowser_UWP.ViewModels
 
         private void OnBookmarksButtonCommandExecuted() => GetBookmarksAsync();
 
-        private void OnCancelSaveBookmarkCommandExecuted()
-        {
-            IsFlyoutClosed = true;
-        }
+        private void OnCancelSaveBookmarkCommandExecuted() => IsFlyoutClosed = true;
 
         private async void OnSaveBookmarkCommandExecuted()
         {
-            if (BookmarkTitleForSave != string.Empty && BookmarkUrlForSave != string.Empty &&
+            if (!(string.IsNullOrWhiteSpace(BookmarkTitleForSave) || 
+                  string.IsNullOrWhiteSpace(BookmarkUrlForSave)) &&
                 Uri.IsWellFormedUriString(BookmarkUrlForSave, UriKind.Absolute))
             {
                 _dataTransferService.SaveBookmark(
                     new BookmarkDetails()
                     {
                         Name = BookmarkTitleForSave,
-                        Url = BookmarkUrlForSave
+                        Url = BookmarkUrlForSave,
+                        FaviconUrl = Constants.Constants.FAVICONS_SERVICE + BookmarkUrlForSave
                     });
                 IsFlyoutClosed = true;
                 SetBookmarkIconState(true);
@@ -337,9 +339,9 @@ namespace NetBrowser_UWP.ViewModels
 
         private void OnAddBookmarkButtonCommandExecuted()
         {
-            if (CurrentSelectedWebView == null) return;
-            BookmarkTitleForSave = CurrentSelectedWebView.CoreWebView2.DocumentTitle;
-            BookmarkUrlForSave = CurrentSelectedWebView.Source.AbsoluteUri;
+            if (SelectedWebView2 == null) return;
+            BookmarkTitleForSave = SelectedWebView2.CoreWebView2.DocumentTitle;
+            BookmarkUrlForSave = SelectedWebView2.Source.AbsoluteUri;
         }
 
         private void OnBookmarkSettingButtonExecuted()
@@ -350,8 +352,7 @@ namespace NetBrowser_UWP.ViewModels
 
         private void OnBookmarksFlyoutListViewItemClickExecuted(object sender)
         {
-            if (sender is not ItemClickEventArgs objArgs ||
-                objArgs.ClickedItem is not BookmarkDetails selectedBookmarkItem) return;
+            if (sender is not ItemClickEventArgs { ClickedItem: BookmarkDetails selectedBookmarkItem }) return;
             CreateNewWebTab(selectedBookmarkItem.Url);
             IsFlyoutClosed = true;
         }
@@ -374,25 +375,33 @@ namespace NetBrowser_UWP.ViewModels
 
         private readonly IDataTransferService _dataTransferService;
         private readonly IWebView2Service _webView2Service;
+        private readonly ILocalSettingsService _localSettingsService;
 
-        public MainPageViewModel(IDataTransferService dataTransferService, IWebView2Service webView2Service)
+        public MainPageViewModel(IDataTransferService dataTransferService, IWebView2Service webView2Service, ILocalSettingsService localSettingsService)
         {
             _dataTransferService = dataTransferService;
             _webView2Service = webView2Service;
-            TabViewItemsList = new ObservableCollection<winUI.TabViewItem>();
+            _localSettingsService = localSettingsService;
 
             _webView2Service.NavigationStarting += WebViewOnNavigationStarting;
             _webView2Service.NewWindowRequested += WebViewOnNewWindowRequested;
             _webView2Service.NavigationCompleted += WebViewOnNavigationCompleted;
-            GetSearchTermList();
+
+            InitializePageComponents();
             CreateNewWebTab();
             InitializeCommands();
         }
 
+        private async void InitializePageComponents()
+        {
+            TabViewItemsList = new ObservableCollection<winUI.TabViewItem>();
+            VisibilityHomeButton = await _localSettingsService.ReadSettingAsync<bool>("IsHomeButtonEnabled");
+        }
+
         private void InitializeCommands()
         {
-            BackButtonCommand = new DelegateCommand(OnBackButtonCommandExecuted, () => CurrentSelectedWebView is { CanGoBack: true });
-            ForwardButtonCommand = new DelegateCommand(OnForwardButtonCommandExecuted, () => CurrentSelectedWebView is { CanGoForward: true });
+            BackButtonCommand = new DelegateCommand(OnBackButtonCommandExecuted, () => SelectedWebView2 is { CanGoBack: true });
+            ForwardButtonCommand = new DelegateCommand(OnForwardButtonCommandExecuted, () => SelectedWebView2 is { CanGoForward: true });
             ReloadButtonCommand = new DelegateCommand(OnReloadButtonCommandExecuted);
             StopLoadingButtonCommand = new DelegateCommand(OnStopLoadingButtonCommandExecuted);
             HomeButtonCommand = new DelegateCommand(OnHomeButtonCommandExecuted);
@@ -412,50 +421,54 @@ namespace NetBrowser_UWP.ViewModels
             SettingsButtonCommand = new DelegateCommand(OnSettingsButtonCommandExecuted);
             AddTabButtonCommand = new DelegateCommand(OnAddTabButtonCommandExecuted);
             CloseTabButtonCommand = new DelegateCommand<object>(OnCloseTabButtonCommandExecuted);
-            DeveloperInstrumentsButtonCommand = new DelegateCommand(OnDeveloperInstrumentsButtonCommandExecuted, () => CurrentSelectedWebView != null);
-            TaskManagerButtonCommand = new DelegateCommand(OnTaskManagerButtonCommandExecuted, () => CurrentSelectedWebView != null);
+            DeveloperInstrumentsButtonCommand = new DelegateCommand(OnDeveloperInstrumentsButtonCommandExecuted, () => SelectedWebView2 != null);
+            TaskManagerButtonCommand = new DelegateCommand(OnTaskManagerButtonCommandExecuted, () => SelectedWebView2 != null);
         }
 
-        private async void GetSearchTermList()
+        private async Task<IEnumerable<string>> GetSearchTermListAsync()
         {
             var searchTermListTransfer = await _dataTransferService.GetSearchTerm();
-            if (searchTermListTransfer == null) return;
-            searchTermListTransfer.Reverse();
-            _searchTermList = new HashSet<SiteItem>(searchTermListTransfer);
+            var searchTermListReversed = searchTermListTransfer.Reverse();
+
+            return searchTermListReversed.Select(term => term.Name).ToList();
         }
 
-        private static List<SiteItem> AutoSuggestListFill(string suggestBoxText)
+        private async void AutoSuggestListFill()
         {
-            var suitableItems = from item in _searchTermList
-                                where item.Name.ToLower().Contains(suggestBoxText.ToLower())
+            var searchTermList = await GetSearchTermListAsync();
+
+            var enumerable = searchTermList.ToList();
+            var suitableItems = from item in enumerable
+                where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
                                 select item;
 
             var enumerableList = suitableItems.ToList();
+            
             if (enumerableList.Count == 0)
             {
-                enumerableList.Add(new SiteItem
-                {
-                    Name = "Искать в " + App.CurrentWebEngine.Name + " " + suggestBoxText
-                });
+                enumerableList.Add("Искать в " + App.CurrentWebEngine.Name + " " + SearchBoxText);
             }
 
-            if (!(string.IsNullOrEmpty(suggestBoxText) ||
-                  string.IsNullOrWhiteSpace(suggestBoxText)))
-                return enumerableList;
-
-            var recentlySearch = new List<SiteItem>();
-            if (_searchTermList.ToList().Count < 10)
+            if (SearchBoxText.Length != 0)
             {
-                recentlySearch = _searchTermList.ToList();
+                SearchBoxItemsCollection = enumerableList;
+                return;
+            }
+
+            var recentlySearch = new List<string>();
+            if (enumerable.ToList().Count < 10)
+            {
+                recentlySearch = enumerableList;
             }
             else
             {
-                recentlySearch.AddRange(_searchTermList.ToList().GetRange(0, 8));
+                recentlySearch.AddRange(enumerable.GetRange(0, 8));
             }
 
             suitableItems = recentlySearch;
 
-            return suitableItems.ToList();
+            SearchBoxItemsCollection = suitableItems.ToList();
+
         }
 
         private void CommandsRaiseCanExecuteChanged()
@@ -464,46 +477,34 @@ namespace NetBrowser_UWP.ViewModels
             ForwardButtonCommand.RaiseCanExecuteChanged();
         }
 
-        private void SetProgressBarStatus(bool isEnabled)
-        {
-            ProgressBarVisibility = isEnabled ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        private void SetRefreshButtonIconState(bool isLoading)
-        {
-            IsWebLoading = isLoading;
-        }
+        private void SetProgressRingActivity(bool isActive) => IsProgressRingActive = isActive;
+        
 
         private void SetVisualUiElementStates(object sender)
         {
-            var webInstance = sender as winUI.WebView2;
-            if (webInstance == null)
+            if (sender is not winUI.WebView2 webInstance)
             {
-                SetProgressBarStatus(false);
-                SetRefreshButtonIconState(false);
+                SetProgressRingActivity(false);
             }
             else
             {
-                var loadingState = (bool) webInstance.Tag;
-                SetProgressBarStatus(loadingState);
-                SetRefreshButtonIconState(loadingState);
+                var loadingState = (bool)webInstance.Tag;
+                SetProgressRingActivity(loadingState);
             }
             SetBookmarkButtonAppearance();
         }
 
-        private void SetVisualUiLabels(string appTitleText, string searchBoxText = null)
+        private void SetVisualUiLabels(string appTitleText, string searchBoxText)
         {
-            AppTitleText = ResourceExtensions.GetLocalized("AppDisplayName") + " | " + appTitleText;
+            AppTitleText = appTitleText;
             SearchBoxText = searchBoxText;
         }
 
-
         private void WebViewOnNavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs args)
         {
-           
-            SetVisualUiElementStates(sender);
             IsWebLoading = true;
-            SetVisualUiLabels(ResourceExtensions.GetLocalized("LoadingString"), args.Uri);
+            SetVisualUiElementStates(sender);
+            SetVisualUiLabels("LoadingString".GetLocalized(), args.Uri);
         }
 
         private void WebViewOnNewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs args)
@@ -518,7 +519,7 @@ namespace NetBrowser_UWP.ViewModels
             var rightTab = TabViewItemsList.SingleOrDefault(tab => tab.Content == webInstance);
             if (rightTab == null) return;
 
-            var faviconUri = new Uri(FAVICONS_SERVICE + webInstance.Source);
+            var faviconUri = new Uri(Constants.Constants.FAVICONS_SERVICE + webInstance.Source);
             rightTab.Header = webInstance.CoreWebView2.DocumentTitle;
             rightTab.IconSource = new winUI.BitmapIconSource
             {
@@ -534,23 +535,22 @@ namespace NetBrowser_UWP.ViewModels
                 Date = DateTime.Now.ToShortDateString(),
             });
 
-            webInstance.Tag = false;
             IsWebLoading = false;
 
-            if (webInstance.Source == null || CurrentSelectedWebView != sender) return;
+            if (webInstance.Source == null || SelectedWebView2 != sender) return;
             SetVisualUiLabels(webInstance.CoreWebView2.DocumentTitle, webInstance.Source.AbsoluteUri);
             SetVisualUiElementStates(sender);
             CommandsRaiseCanExecuteChanged();
         }
 
-        private winUI.TabViewItem CreateTabViewItemInstance(string header, object content, winUI.IconSource icon)
+        private static winUI.TabViewItem CreateTabViewItemInstance(string header, object content, winUI.IconSource icon)
         {
             var newTab = new winUI.TabViewItem
             {
-                Header = string.IsNullOrEmpty(header) ? ResourceExtensions.GetLocalized("LoadingString") : header,
+                Header = string.IsNullOrWhiteSpace(header) ? "LoadingString".GetLocalized() : header,
                 Content = content,
                 IconSource = icon,
-                IsRightTapEnabled = true
+                IsRightTapEnabled = true,
             };
             return newTab;
         }
@@ -561,98 +561,142 @@ namespace NetBrowser_UWP.ViewModels
 
             switch (address)
             {
-                case "app://settings":
+                case Constants.Constants.SETTINGS_ADDRESS:
                     CreateSettingsTab();
                     break;
 
-                case "app://newtab":
+                case Constants.Constants.STARTPAGE_ADDRESS:
                     CreateStartPageTab();
                     break;
 
                 default:
-                    webViewInstance.Source = address.StartsWith("https://") || address.StartsWith("http://") ?
-                        new Uri(address) :
-                        new Uri(App.CurrentWebEngine.Prefix + address);
+                    webViewInstance.Source = ResolveUri(address);
                     break;
             }
         }
 
+        private static Uri ResolveUri(string address)
+        {
+            address = address.Trim().ToLower();
+            const string PATTERN = @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$";
+            var rgx = new Regex(PATTERN, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            var httpsScheme = string.Concat(Uri.UriSchemeHttps, "://");
+            var httpScheme = string.Concat(Uri.UriSchemeHttp, "://");
+
+            if (rgx.IsMatch(address))
+            {
+                if (!(address.StartsWith(httpScheme) || address.StartsWith(httpsScheme)))
+                {
+                    address = string.Concat(httpsScheme, address);
+                }
+            }
+            else return new Uri(App.CurrentWebEngine.Prefix + address);
+
+            var isUriCreated = Uri.TryCreate(address, UriKind.Absolute, out var uriAddress) &&
+                               (uriAddress.Scheme == Uri.UriSchemeHttp ||
+                                uriAddress.Scheme == Uri.UriSchemeHttps ||
+                                uriAddress.Scheme == Uri.UriSchemeFtp);
+
+            return isUriCreated ? uriAddress : new Uri(App.CurrentWebEngine.Prefix + address);
+        }
+
         public async void CreateNewWebTab(string url = null)
         {
-            var newWebView = await _webView2Service.InstantiateWebView2(string.IsNullOrEmpty(url) ? App.CurrentWebEngine.HomePage : url);
+            var newWebView = await _webView2Service.InstantiateWebView2(string.IsNullOrWhiteSpace(url) ?
+                App.CurrentWebEngine.HomePage :
+                ResolveUri(url).ToString());
+
             var newTab = CreateTabViewItemInstance(
                 newWebView.CoreWebView2.DocumentTitle,
                 newWebView,
                 new winUI.SymbolIconSource() { Symbol = Symbol.More });
 
             TabViewItemsList.Add(newTab);
-            CurrentSelectedTab = newTab;
+            SelectedTabItem = newTab;
         }
 
         public void CreateStartPageTab()
         {
             var startPageTab = CreateTabViewItemInstance(
-                ResourceExtensions.GetLocalized("NewTabTitle"),
+                "NewTab".GetLocalized(),
                 new StartPage(),
-                new winUI.SymbolIconSource { Symbol = Symbol.NewWindow });
+                new winUI.FontIconSource
+                {
+                    Glyph = "\xE737"
+                });
 
             TabViewItemsList.Add(startPageTab);
-            CurrentSelectedTab = startPageTab;
+            SelectedTabItem = startPageTab;
         }
 
         public void CreateSettingsTab(int mode = 0)
         {
+            var alreadyExistsSettingsTab = TabViewItemsList.FirstOrDefault(tab => tab.Content is SettingsPage);
+
+            if (alreadyExistsSettingsTab != null)
+            {
+                SelectedTabItem = alreadyExistsSettingsTab;
+                return;
+            }
+
             var settingsTab = CreateTabViewItemInstance(
-                ResourceExtensions.GetLocalized("SettingsText"),
+                "Settings".GetLocalized(),
                 new SettingsPage(mode),
                 new winUI.SymbolIconSource { Symbol = Symbol.Setting });
 
             TabViewItemsList.Add(settingsTab);
-            CurrentSelectedTab = settingsTab;
+            SelectedTabItem = settingsTab;
         }
 
         public async void SearchWebFromStartPage(string url)
         {
-            var webViewInstance = await _webView2Service.InstantiateWebView2(url);
+            if (string.IsNullOrWhiteSpace(url))
+                return;
+
+            var webViewInstance = await _webView2Service.InstantiateWebView2(ResolveUri(url).ToString());
+            
             var newTab = CreateTabViewItemInstance(
                 webViewInstance.CoreWebView2.DocumentTitle,
                 webViewInstance,
-                new winUI.SymbolIconSource() { Symbol = Symbol.More });
+                new winUI.SymbolIconSource()
+                {
+                    Symbol = Symbol.More
+                });
 
-            TabViewItemsList[TabViewItemsList.IndexOf(CurrentSelectedTab)] = newTab;
-            CurrentSelectedTab = newTab;
+            TabViewItemsList[TabViewItemsList.IndexOf(SelectedTabItem)] = newTab;
+            SelectedTabItem = newTab;
         }
 
         private void SelectionChangedTabHandler()
         {
-            if (CurrentSelectedTab == null)
+            if (SelectedTabItem == null)
             {
-                SetVisualUiLabels(string.Empty, string.Empty);
+                SetVisualUiLabels(null, null);
                 SetVisualUiElementStates(null);
                 return;
             }
-            CurrentSelectedWebView = CurrentSelectedTab.Content as winUI.WebView2;
+            SelectedWebView2 = SelectedTabItem.Content as winUI.WebView2;
 
-            switch (CurrentSelectedTab.Content)
+            switch (SelectedTabItem.Content)
             {
                 case SettingsPage:
-                    SetVisualUiLabels(CurrentSelectedTab.Header.ToString(), "app://settings");
+                    SetVisualUiLabels(SelectedTabItem.Header.ToString(), Constants.Constants.SETTINGS_ADDRESS);
                     break;
 
                 case StartPage:
-                    SetVisualUiLabels(CurrentSelectedTab.Header.ToString(), string.Empty);
+                    SetVisualUiLabels(SelectedTabItem.Header.ToString(), string.Empty);
                     break;
 
                 case winUI.WebView2:
-                    if (CurrentSelectedWebView.Source != null)
-                        SetVisualUiLabels(CurrentSelectedWebView.CoreWebView2.DocumentTitle, CurrentSelectedWebView.Source.AbsoluteUri);
-                    break;
-
-                default:
-                    SetVisualUiLabels(string.Empty, string.Empty);
+                    if (SelectedWebView2.Source != null)
+                        SetVisualUiLabels(SelectedWebView2.CoreWebView2.DocumentTitle, SelectedWebView2.Source.AbsoluteUri);
                     break;
             }
-            SetVisualUiElementStates(CurrentSelectedWebView);
+            if (SelectedWebView2 != null)
+                IsWebLoading = (bool)SelectedWebView2.Tag;
+            SetVisualUiElementStates(SelectedWebView2);
+
             CommandsRaiseCanExecuteChanged();
         }
 
@@ -662,7 +706,8 @@ namespace NetBrowser_UWP.ViewModels
                 webContent.Close();
 
             TabViewItemsList.Remove(tab);
-            if (TabViewItemsList.Count == 0) CurrentSelectedWebView = null;
+            if (TabViewItemsList.Count == 0) 
+                SelectedWebView2 = null;
         }
 
         private void CloseTabKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
@@ -676,9 +721,9 @@ namespace NetBrowser_UWP.ViewModels
 
         private async void GetBookmarksAsync()
         {
-            var bookmarksListTransfer = await _dataTransferService.GetBookmarkList();
-            bookmarksListTransfer.Reverse();
-            BookmarksList = bookmarksListTransfer;
+            var bookmarksListTransfer = await _dataTransferService.GetBookmarksList();
+            var bookmarkDetailsEnumerable = bookmarksListTransfer.Reverse();
+            BookmarksList = new ObservableCollection<BookmarkDetails>(bookmarkDetailsEnumerable);
         }
 
         private void SetBookmarkIconState(bool isAccessable)
@@ -689,7 +734,8 @@ namespace NetBrowser_UWP.ViewModels
 
         private void SetBookmarkButtonAppearance()
         {
-            if (CurrentSelectedWebView == null || CurrentSelectedWebView.Source == null)
+            if (SelectedWebView2 == null || 
+                SelectedWebView2.Source == null)
             {
                 SetBookmarkIconState(false);
                 return;
@@ -697,7 +743,7 @@ namespace NetBrowser_UWP.ViewModels
             GetBookmarksAsync();
             if (BookmarksList == null) return;
 
-            var existableBookmark = BookmarksList.SingleOrDefault(bookmark => bookmark.Url == CurrentSelectedWebView.Source.AbsoluteUri);
+            var existableBookmark = BookmarksList.FirstOrDefault(bookmark => bookmark.Url == SelectedWebView2.Source.AbsoluteUri);
 
             SetBookmarkIconState(existableBookmark != null);
         }

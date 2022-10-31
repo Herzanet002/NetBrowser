@@ -9,12 +9,10 @@ namespace NetBrowser_UWP.Views
     /// </summary>
     public sealed partial class ErrorLoadPage : Page
     {
-        public static string error = string.Empty;
         public ErrorLoadPage()
         {
             this.InitializeComponent();
-            
-
+           
         }
         
     }

@@ -1,18 +1,17 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Uwp.Notifications;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Properties;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels;
 using NetBrowser_UWP.Views;
-using NetBrowser_UWP.Views.Controls;
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
+using Windows.UI.Notifications;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,25 +28,40 @@ namespace NetBrowser_UWP
         /// Инициализирует одноэлементный объект приложения. Это первая выполняемая строка разрабатываемого
         /// кода, поэтому она является логическим эквивалентом main() или WinMain().
         /// </summary>
+        ///
+        public IServiceProvider Services { get; }
+
+        public static ApplicationViewTitleBar TitleBar => ApplicationView.GetForCurrentView().TitleBar;
+
+        public static ThemeItem CurrentTheme;
+
+        public static SearchEngineItem CurrentWebEngine;
+
+        public static ThemeManager ThemeManager =>
+            Current.Resources["ThemeManager"] as ThemeManager;
+
+
         public App()
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            this.UnhandledException += App_UnhandledException;
 
-            _container = ConfigureDependencyInjection();
-            var dataAccessService = GetService<DataAccessService>();
+            this.Services = ConfigureDependencyInjection();
+            Ioc.Default.ConfigureServices(Services);
+            var dataAccessService = Ioc.Default.GetRequiredService<IDataAccessService>();
 
             dataAccessService.InitializeHistoryFile();
             dataAccessService.InitializeBookmarksFile();
             dataAccessService.InitializeConfigFile();
             dataAccessService.InitializeStartPageFile();
+
         }
+        
+        private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        { 
 
-        public static ApplicationViewTitleBar TitleBar;
-
-        private static IServiceProvider _container;
-
-        public static ThemeItem CurrentTheme;
+        }
 
         private static IServiceProvider ConfigureDependencyInjection()
         {
@@ -60,51 +74,36 @@ namespace NetBrowser_UWP
             serviceCollection.AddSingleton<IWebView2Service, WebView2Service>();
             //serviceCollection.AddSingleton<IThemeManager, ThemeManager>();
 
-            //Dialogs
-            serviceCollection.AddTransient<AddNewStartPageItemDialog>();
-            serviceCollection.AddTransient<DeleteBookmarkDialog>();
-            serviceCollection.AddTransient<EditBookmarkDialog>();
-            serviceCollection.AddTransient<HistoryClearConfirmationDialog>();
 
             //ViewModels
             serviceCollection.AddSingleton<MainPageViewModel>();
-            serviceCollection.AddSingleton<HistoryPageViewModel>();
+            serviceCollection.AddTransient<HistoryPageViewModel>();
             serviceCollection.AddTransient<StartPageViewModel>();
-            serviceCollection.AddSingleton<BookmarksPageViewModel>();
-            serviceCollection.AddSingleton<PersonalizePageViewModel>();
+            serviceCollection.AddTransient<BookmarksPageViewModel>();
+            serviceCollection.AddTransient<PersonalizePageViewModel>();
+            serviceCollection.AddTransient<SearchSystemPageViewModel>();
+
+            serviceCollection.AddTransient<AboutAppViewModel>();
 
 
             return serviceCollection.BuildServiceProvider();
         }
 
-        public static SearchEngineItem CurrentWebEngine;
-
-        public static T GetService<T>() where T : class
-        {
-            return ActivatorUtilities.GetServiceOrCreateInstance(_container, typeof(T)) as T;
-        }
-
+        
 
         public static async Task SetApplicationTheme()
         {
-            var name = await GetService<ILocalSettingsService>().ReadSettingAsync<string>("CurrentTheme");
+            var name = await Ioc.Default.GetRequiredService<ILocalSettingsService>()
+                .ReadSettingAsync<string>("CurrentTheme");
             CurrentTheme = ThemeManager.SetRequestedTheme(name);
-        }
-
-        public static ThemeManager ThemeManager => (ThemeManager)Current.Resources["ThemeManager"];
-
-        protected override void OnActivated(IActivatedEventArgs args)
-        {
-            base.OnActivated(args);
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             var rootFrame = Window.Current.Content as Frame;
 
-            TitleBar = ApplicationView.GetForCurrentView().TitleBar;
-            await SetApplicationTheme();
-            CurrentWebEngine = await GetService<IDataTransferService>().GetCurrentSearchEngine(); //Set Current Search Engine
+            //Set Current Search Engine
+            CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataTransferService>().GetCurrentSearchEngine();
 
             // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
             // только обеспечьте активность окна
@@ -122,6 +121,7 @@ namespace NetBrowser_UWP
 
                 // Размещение фрейма в текущем окне
                 Window.Current.Content = rootFrame;
+                await SetApplicationTheme();
             }
 
             if (e.PrelaunchActivated == false)
@@ -136,20 +136,14 @@ namespace NetBrowser_UWP
                 // Обеспечение активности текущего окна
                 Window.Current.Activate();
             }
-            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            if (coreTitleBar != null)
-            {
-                coreTitleBar.ExtendViewIntoTitleBar = true;
-            }
-
-            ThemeManager.SetRequestedElementThemeMode();
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 
         }
-
 
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+
         }
 
         private void OnSuspending(object sender, SuspendingEventArgs e)
@@ -159,7 +153,6 @@ namespace NetBrowser_UWP
             deferral.Complete();
         }
 
-
-
+        
     }
 }

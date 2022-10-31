@@ -6,7 +6,7 @@ namespace NetBrowser_UWP.Converters
 {
     public class TitleTextConverter : IValueConverter
     {
-        private const int MAX_LENGTH = 12;
+        private const int MAX_LENGTH = 18;
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var title = value as string;

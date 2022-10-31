@@ -1,4 +1,5 @@
-﻿using NetBrowser_UWP.ViewModels;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using NetBrowser_UWP.ViewModels;
 using Windows.UI.Xaml.Controls;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
@@ -13,7 +14,7 @@ namespace NetBrowser_UWP.Views.Settings
         public PersonalizePageSettings()
         {
             this.InitializeComponent();
-            DataContext = App.GetService<PersonalizePageViewModel>();
+            DataContext = Ioc.Default.GetRequiredService<PersonalizePageViewModel>();
         }
 
         

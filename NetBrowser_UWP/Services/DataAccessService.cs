@@ -57,7 +57,6 @@ namespace NetBrowser_UWP.Services
                     writer.WriteStartElement("bookmarks");
                     await writer.WriteEndDocumentAsync();
                     await writer.FlushAsync();
-                    await writer.FlushAsync();
                 }
                 await Windows.System.Launcher.LaunchFileAsync(storageFile);
             }
@@ -129,32 +128,40 @@ namespace NetBrowser_UWP.Services
                     var settings = new XmlWriterSettings
                     {
                         Async = true,
-                        Indent = true
+                        Indent = false
                     };
+                    
 
                     using var writer = XmlWriter.Create(stream, settings);
                     await writer.WriteStartDocumentAsync();
-                    writer.WriteStartElement("startpage");
-                    writer.WriteStartElement("elements");
+                    writer.WriteStartElement("startPageElements");
+
                     writer.WriteStartElement("element");
-                    writer.WriteAttributeString("name", "Yandex");
-                    writer.WriteAttributeString("url", "https://yandex.com/");
+
+                    writer.WriteElementString("name", "Yandex");
+                    writer.WriteElementString("url", "https://yandex.com/");
                     await writer.WriteEndElementAsync();
+
                     writer.WriteStartElement("element");
-                    writer.WriteAttributeString("name", "Google");
-                    writer.WriteAttributeString("url", "https://google.com/");
+                    writer.WriteElementString("name", "Google");
+                    writer.WriteElementString("url", "https://google.com/");
                     await writer.WriteEndElementAsync();
+
                     writer.WriteStartElement("element");
-                    writer.WriteAttributeString("name", "Bing");
-                    writer.WriteAttributeString("url", "https://bing.com/");
+                    writer.WriteElementString("name", "Bing");
+                    writer.WriteElementString("url", "https://bing.com/");
                     await writer.WriteEndElementAsync();
+
                     writer.WriteStartElement("element");
-                    writer.WriteAttributeString("name", "Gmail");
-                    writer.WriteAttributeString("url", "https://gmail.com/");
+                    writer.WriteElementString("name", "Gmail");
+                    writer.WriteElementString("url", "https://gmail.com/");
                     await writer.WriteEndElementAsync();
-                    await writer.WriteEndElementAsync();
+
+
+
                     await writer.WriteEndDocumentAsync();
                     await writer.FlushAsync();
+
                 }
                 await Windows.System.Launcher.LaunchFileAsync(storageFile);
             }

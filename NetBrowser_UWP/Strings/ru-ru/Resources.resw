@@ -117,25 +117,76 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddNewSite" xml:space="preserve">
+    <value>Добавить сайт</value>
+  </data>
   <data name="AppDisplayName" xml:space="preserve">
     <value>NetBrowser</value>
+  </data>
+  <data name="AppTitle.Text" xml:space="preserve">
+    <value>NetBrowser | </value>
+  </data>
+  <data name="BackButton.Tooltip" xml:space="preserve">
+    <value>Вернуться назад</value>
+  </data>
+  <data name="BookmarksButton.Tooltip" xml:space="preserve">
+    <value>Закладки</value>
+  </data>
+  <data name="BrowserVersionBlock.Text" xml:space="preserve">
+    <value>Версия браузера: </value>
+  </data>
+  <data name="BuiltOnTechnologyBlock.Text" xml:space="preserve">
+    <value>Построен на технологии Microsoft.Web.WebView2 версии </value>
+  </data>
+  <data name="DeveloperInstruments.Text" xml:space="preserve">
+    <value>Инструменты разработчика</value>
+  </data>
+  <data name="ForwardButton.Tooltip" xml:space="preserve">
+    <value>Перейти вперед</value>
+  </data>
+  <data name="HistoryButton.Tooltip" xml:space="preserve">
+    <value>История</value>
+  </data>
+  <data name="HomeButton.Tooltip" xml:space="preserve">
+    <value>Домашняя страница</value>
   </data>
   <data name="LoadingString" xml:space="preserve">
     <value>Загрузка...</value>
   </data>
-  <data name="NewTabTitle" xml:space="preserve">
+  <data name="NewTab" xml:space="preserve">
     <value>Новая вкладка</value>
   </data>
-  <data name="SearchBoxPlaceholderText.PlaceholderText" xml:space="preserve">
+  <data name="RefreshButton.Tooltip" xml:space="preserve">
+    <value>Обновить страницу</value>
+  </data>
+  <data name="RunOnOpenSourceProject.Text" xml:space="preserve">
+    <value>Браузер работает на основе проекта с открытым кодом</value>
+  </data>
+  <data name="SaveBookmarkButton.Tooltip" xml:space="preserve">
+    <value>Сохранить страницу в закладки</value>
+  </data>
+  <data name="SearchBoxPlaceholder.PlaceholderText" xml:space="preserve">
     <value>Найти...</value>
   </data>
   <data name="SearchBoxStyleResultsForSearch.Text" xml:space="preserve">
     <value>Результаты для поиска</value>
   </data>
-  <data name="SettingsText" xml:space="preserve">
+  <data name="SecurityButton.Tooltip" xml:space="preserve">
+    <value>Посмотреть сведения о сайте</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
     <value>Параметры</value>
+  </data>
+  <data name="SettingsButton.Tooltip" xml:space="preserve">
+    <value>Параметры</value>
+  </data>
+  <data name="StopLoadingButton.Tooltip" xml:space="preserve">
+    <value>Остановить загрузку</value>
   </data>
   <data name="SuggestBoxSearchText" xml:space="preserve">
     <value>Искать в интернете...</value>
+  </data>
+  <data name="TaskManager.Text" xml:space="preserve">
+    <value>Диспетчер задач</value>
   </data>
 </root>

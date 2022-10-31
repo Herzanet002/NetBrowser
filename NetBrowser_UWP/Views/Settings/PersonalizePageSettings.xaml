@@ -12,45 +12,67 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewmodels:PersonalizePageViewModel,IsDesignTimeCreatable=True}">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="*"/>
-     
-        </Grid.RowDefinitions>
-        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="Персонализация" FontSize="40" Grid.Row="0"
-                   Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="50,30,0,20"/>
-        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Выбор темы" FontSize="26" Grid.Row="1" 
-                   Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="70,0,0,0" />
 
-        <Grid Grid.Row="2" Margin="50,20,50,10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <GridView ItemsSource="{Binding ThemesList}" 
+        <Grid.RowDefinitions>
+            <!--Header-->
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="*"/>
+
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Персонализация" Style="{StaticResource PageTitleStyle}" Margin="50,20"/>
+        <ScrollViewer Grid.Row="1" >
+            <StackPanel Spacing="20" Margin="60,0">
+                <StackPanel Spacing="20">
+                <TextBlock Text="Выбор темы" Style="{StaticResource PageSubTitleStyle}" />
+                <GridView ItemsSource="{Binding ThemesList}" 
                       SelectedItem="{Binding SelectedTheme, Mode=TwoWay}">
-                <GridView.ItemTemplate>
-                    <DataTemplate x:DataType="models:ThemeItem">
-                        <Grid Margin="15" Width="110" Height="70">
-                            <Rectangle Fill="{Binding ThirdBrush}" Width="110" Height="70" VerticalAlignment="Top"
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ThemeItem">
+                            <Grid Margin="10" Width="110" Height="70">
+                                <Rectangle Fill="{Binding ThirdBrush}" Width="110" Height="70" VerticalAlignment="Top"
                                        RadiusX="3" RadiusY="3" Grid.ColumnSpan="2"  />
-                            <Rectangle Fill="{Binding BackgroundBrush}" Width="100" Height="60" Margin="5,5,5,5" VerticalAlignment="Top"/>
-                            <Rectangle Fill="{Binding SecondBrush}" Width="100" Height="20" Margin="5,5,5,45" VerticalAlignment="Top"/>
-                        </Grid>
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Tapped">
-                        <core:InvokeCommandAction Command="{Binding SelectThemeCommand}" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </GridView>
-            <StackPanel Grid.Row="1" Margin="20,0">
-                <TextBlock Text="Отображать последние поисковые запросы на стартовой странице"/>
-                <ToggleSwitch IsOn="{Binding IsSuggestionBarEnabled, Mode=TwoWay}"></ToggleSwitch>
+                                <Rectangle Fill="{Binding BackgroundBrush}" Width="100" Height="60" Margin="5,5,5,5" VerticalAlignment="Top"/>
+                                <Rectangle Fill="{Binding SecondBrush}" Width="100" Height="20" Margin="5,5,5,45" VerticalAlignment="Top"/>
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Tapped">
+                            <core:InvokeCommandAction Command="{Binding SelectThemeCommand}" />
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </GridView>
+                </StackPanel>
+
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Стартовая страница" Style="{StaticResource PageSubTitleStyle}"/>
+                    <StackPanel>
+                        <TextBlock Text="Отображать последние поисковые запросы на стартовой странице"/>
+                        <ToggleSwitch IsOn="{Binding IsSuggestionBarEnabled, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock Text="Ориентация плиток"/>
+                        <ComboBox SelectedIndex="{Binding StartPageGridViewOrientation, Mode=TwoWay}" MinWidth="200" 
+                                  Margin="0,10,0,10">
+                            <ComboBoxItem Content="Вертикальная"/>
+                            <ComboBoxItem Content="Горизонтальная"/>
+                        </ComboBox>
+                    </StackPanel>
+                    
+                </StackPanel>
+
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Настройка панели инструментов" Style="{StaticResource PageSubTitleStyle}"/>
+                    <StackPanel>
+                        <TextBlock Text="Показать кнопку домашней страницы на панели инструментов"/>
+                        <ToggleSwitch IsOn="{Binding MainViewModel.VisibilityHomeButton, Mode=TwoWay}"></ToggleSwitch>
+                    </StackPanel>
+                    
+                </StackPanel>
             </StackPanel>
-        </Grid>
-       
+        </ScrollViewer>
+
+
     </Grid>
 </Page>

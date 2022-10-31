@@ -3,6 +3,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using NetBrowser_UWP.ViewModels;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -17,7 +18,7 @@ namespace NetBrowser_UWP.Views.Settings
         public BookmarksPage()
         {
             this.InitializeComponent();
-            DataContext = App.GetService<BookmarksPageViewModel>();
+            DataContext = Ioc.Default.GetRequiredService<BookmarksPageViewModel>();
         }
 
         private void BookmarksListView_Tapped(object sender, TappedRoutedEventArgs e)
