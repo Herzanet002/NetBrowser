@@ -82,6 +82,7 @@ namespace NetBrowser_UWP
             serviceCollection.AddTransient<BookmarksPageViewModel>();
             serviceCollection.AddTransient<PersonalizePageViewModel>();
             serviceCollection.AddTransient<SearchSystemPageViewModel>();
+            serviceCollection.AddTransient<NewsPageViewModel>();
 
             serviceCollection.AddTransient<AboutAppViewModel>();
 

@@ -28,6 +28,7 @@ namespace NetBrowser_UWP.Constants
 
         public const string SETTINGS_ADDRESS = "app://newtab"; 
         public const string STARTPAGE_ADDRESS = "app://settings";
+        public const string NEWS_ADDRESS = "app://news";
 
         // Light Themes
         public static ThemeItem LightTheme = new ThemeItem(LIGHT_THEME_PATH);

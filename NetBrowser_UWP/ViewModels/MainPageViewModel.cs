@@ -71,6 +71,7 @@ namespace NetBrowser_UWP.ViewModels
         public DelegateCommand<object> CloseTabButtonCommand { get; private set; }
         public DelegateCommand DeveloperInstrumentsButtonCommand { get; private set; }
         public DelegateCommand TaskManagerButtonCommand { get; private set; }
+        public DelegateCommand NewsContentButtonCommand { get; private set; }
 
         #endregion Commands Region
 
@@ -211,6 +212,11 @@ namespace NetBrowser_UWP.ViewModels
             SelectedWebView2?.CoreWebView2.Stop();
         }
 
+        private void OnNewsContentButtonCommandExecuted()
+        {
+            CreateNewContentTab();
+        }
+
         private void OnHomeButtonCommandExecuted()
         {
             if (App.CurrentWebEngine?.HomePage != null
@@ -218,7 +224,6 @@ namespace NetBrowser_UWP.ViewModels
             {
                 NavigateTo(App.CurrentWebEngine.HomePage, SelectedWebView2);
             }
-                
         }
 
         private void OnSearchBoxTextChangedCommandExecuted(object obj)
@@ -276,7 +281,6 @@ namespace NetBrowser_UWP.ViewModels
             HistoryList = historyListTransfer.Count <= MAX_DISPLAY_COUNT ?
                 historyListTransfer.Reverse().ToList() :
                 historyListTransfer.Skip(Math.Max(0, historyListTransfer.Count() - MAX_DISPLAY_COUNT)).Reverse().ToList();
-            
         }
 
         private void OnHistoryFlyoutItemClickCommandExecuted(object obj)
@@ -299,11 +303,11 @@ namespace NetBrowser_UWP.ViewModels
 
         private async void OnSaveBookmarkCommandExecuted()
         {
-            if (!(string.IsNullOrWhiteSpace(BookmarkTitleForSave) || 
+            if (!(string.IsNullOrWhiteSpace(BookmarkTitleForSave) ||
                   string.IsNullOrWhiteSpace(BookmarkUrlForSave)) &&
                 Uri.IsWellFormedUriString(BookmarkUrlForSave, UriKind.Absolute))
             {
-                _dataTransferService.SaveBookmark(
+                await _dataTransferService.SaveBookmark(
                     new BookmarkDetails()
                     {
                         Name = BookmarkTitleForSave,
@@ -415,6 +419,7 @@ namespace NetBrowser_UWP.ViewModels
             BookmarksItemClickCommand = new DelegateCommand<object>(OnBookmarksFlyoutListViewItemClickExecuted);
             SearchBoxTextChangedCommand = new DelegateCommand<object>(OnSearchBoxTextChangedCommandExecuted);
             SearchBoxQuerySubmittedCommand = new DelegateCommand<object>(OnSearchBoxQuerySubmittedCommandExecuted);
+            NewsContentButtonCommand = new DelegateCommand(OnNewsContentButtonCommandExecuted);
             HistoryButtonCommand = new DelegateCommand(OnHistoryButtonCommandExecuted);
             HistorySettingsButtonCommand = new DelegateCommand(OnHistorySettingsButtonExecuted);
             HistoryItemClickCommand = new DelegateCommand<object>(OnHistoryFlyoutItemClickCommandExecuted);
@@ -439,11 +444,11 @@ namespace NetBrowser_UWP.ViewModels
 
             var enumerable = searchTermList.ToList();
             var suitableItems = from item in enumerable
-                where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
+                                where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
                                 select item;
 
             var enumerableList = suitableItems.ToList();
-            
+
             if (enumerableList.Count == 0)
             {
                 enumerableList.Add("Искать в " + App.CurrentWebEngine.Name + " " + SearchBoxText);
@@ -468,7 +473,6 @@ namespace NetBrowser_UWP.ViewModels
             suitableItems = recentlySearch;
 
             SearchBoxItemsCollection = suitableItems.ToList();
-
         }
 
         private void CommandsRaiseCanExecuteChanged()
@@ -478,7 +482,6 @@ namespace NetBrowser_UWP.ViewModels
         }
 
         private void SetProgressRingActivity(bool isActive) => IsProgressRingActive = isActive;
-        
 
         private void SetVisualUiElementStates(object sender)
         {
@@ -569,6 +572,10 @@ namespace NetBrowser_UWP.ViewModels
                     CreateStartPageTab();
                     break;
 
+                case Constants.Constants.NEWS_ADDRESS:
+                    CreateNewContentTab();
+                    break;
+
                 default:
                     webViewInstance.Source = ResolveUri(address);
                     break;
@@ -655,7 +662,7 @@ namespace NetBrowser_UWP.ViewModels
                 return;
 
             var webViewInstance = await _webView2Service.InstantiateWebView2(ResolveUri(url).ToString());
-            
+
             var newTab = CreateTabViewItemInstance(
                 webViewInstance.CoreWebView2.DocumentTitle,
                 webViewInstance,
@@ -692,6 +699,14 @@ namespace NetBrowser_UWP.ViewModels
                     if (SelectedWebView2.Source != null)
                         SetVisualUiLabels(SelectedWebView2.CoreWebView2.DocumentTitle, SelectedWebView2.Source.AbsoluteUri);
                     break;
+
+                case NewsPage:
+                    SetVisualUiLabels(SelectedTabItem.Header.ToString(), Constants.Constants.NEWS_ADDRESS);
+                    break;
+
+                default:
+                    SetVisualUiLabels(SelectedTabItem.Header.ToString(), string.Empty);
+                    break;
             }
             if (SelectedWebView2 != null)
                 IsWebLoading = (bool)SelectedWebView2.Tag;
@@ -700,13 +715,27 @@ namespace NetBrowser_UWP.ViewModels
             CommandsRaiseCanExecuteChanged();
         }
 
+        private void CreateNewContentTab()
+        {
+            var newsTab = CreateTabViewItemInstance(
+                "News".GetLocalized(),
+                new NewsPage(),
+                new winUI.FontIconSource
+                {
+                    Glyph = "\xE8A1"
+                });
+
+            TabViewItemsList.Add(newsTab);
+            SelectedTabItem = newsTab;
+        }
+
         private void CloseTabItemRequested(winUI.TabViewItem tab)
         {
             if (tab.Content is winUI.WebView2 webContent)
                 webContent.Close();
 
             TabViewItemsList.Remove(tab);
-            if (TabViewItemsList.Count == 0) 
+            if (TabViewItemsList.Count == 0)
                 SelectedWebView2 = null;
         }
 
@@ -734,7 +763,7 @@ namespace NetBrowser_UWP.ViewModels
 
         private void SetBookmarkButtonAppearance()
         {
-            if (SelectedWebView2 == null || 
+            if (SelectedWebView2 == null ||
                 SelectedWebView2.Source == null)
             {
                 SetBookmarkIconState(false);

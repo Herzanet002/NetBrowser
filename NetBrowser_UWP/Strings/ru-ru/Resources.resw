@@ -153,6 +153,9 @@
   <data name="LoadingString" xml:space="preserve">
     <value>Загрузка...</value>
   </data>
+  <data name="News" xml:space="preserve">
+    <value>Новости</value>
+  </data>
   <data name="NewTab" xml:space="preserve">
     <value>Новая вкладка</value>
   </data>

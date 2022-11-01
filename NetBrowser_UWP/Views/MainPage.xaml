@@ -121,6 +121,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <!--Back Button-->
@@ -249,9 +250,11 @@
                 </Button.Flyout>
             </Button>
 
-            
+            <Button Grid.Column="6" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding NewsContentButtonCommand}">
+                <FontIcon Glyph="&#xE8A1;" FontSize="{StaticResource NavigationBarButtonFontSize}"/>
+            </Button>
             <!--Bookmarks Flyout-->
-            <Button Grid.Column="6" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding BookmarksButtonCommand}"
+            <Button Grid.Column="7" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding BookmarksButtonCommand}"
                     ToolTipService.ToolTip="{helpers:ResourceString Name=BookmarksButton/Tooltip}" ToolTipService.Placement="Bottom">
                 <Button.Flyout>
                     <Flyout Placement="Bottom">
@@ -304,7 +307,7 @@
             </Button>
 
             <!--History Flyout-->
-            <Button Grid.Column="7" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding HistoryButtonCommand}"
+            <Button Grid.Column="8" Style="{StaticResource NavigationBarButtonStyle}" Command="{Binding HistoryButtonCommand}"
                     ToolTipService.ToolTip="{helpers:ResourceString Name=HistoryButton/Tooltip}" ToolTipService.Placement="Bottom">
                 <Button.Flyout>
                     <Flyout Placement="Bottom">
@@ -359,11 +362,11 @@
             </Button>
 
 
-            <Rectangle Grid.Column="8" Width="1" Fill="{Binding SecondBrush, Source={StaticResource ThemeManager}}" 
+            <Rectangle Grid.Column="9" Width="1" Fill="{Binding SecondBrush, Source={StaticResource ThemeManager}}" 
                        Margin="10"/>
 
             <!--Settings button-->
-            <Button Grid.Column="9" Style="{StaticResource NavigationBarButtonStyle}" 
+            <Button Grid.Column="10" Style="{StaticResource NavigationBarButtonStyle}" 
                     ToolTipService.ToolTip="{helpers:ResourceString Name=SettingsButton/Tooltip}" ToolTipService.Placement="Bottom">
                 <FontIcon Glyph="&#xE712;" FontSize="{StaticResource NavigationBarButtonFontSize}"/>
                 <Button.Flyout>

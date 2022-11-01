@@ -18,7 +18,7 @@
             </ResourceDictionary.MergedDictionaries>
             <local:ThemeManager x:Key="ThemeManager"/>
 
-            <x:String x:Key="AppVersion">ver.0.8.10.w2</x:String>
+            <x:String x:Key="AppVersion">ver.0.10.31.w2</x:String>
 
             <Style TargetType="ContentDialog" BasedOn="{StaticResource DefaultContentDialogStyle}" x:Key="ContentDialogStyle"></Style>
 
