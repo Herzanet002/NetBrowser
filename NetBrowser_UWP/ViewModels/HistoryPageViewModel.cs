@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
+using NetBrowser_UWP.Services;
 
 namespace NetBrowser_UWP.ViewModels
 {
@@ -18,6 +19,7 @@ namespace NetBrowser_UWP.ViewModels
         private static string _searchText;
 
         private readonly IDataTransferService _dataTransferService;
+        private readonly TabViewService _tabViewService;
         public ICommand DeleteCommand => new DelegateCommand<object>(OnDeleteHistoryItemCommandExecuted, _ => true);
         public ICommand OpenPageCommand => new DelegateCommand(OnOpenHistoryItemCommandExecuted, () => true);
         public ICommand ClearHistoryCommand => new DelegateCommand(OnClearHistoryJournalCommandExecuted, () => true);
@@ -48,7 +50,7 @@ namespace NetBrowser_UWP.ViewModels
             if (SelectedItem == null) return;
             if (Uri.IsWellFormedUriString(SelectedItem.Url, UriKind.Absolute))
             {
-                _mainPageViewModel.CreateNewWebTab(SelectedItem.Url);
+                _tabViewService.CreateNewWebTab(SelectedItem.Url);
                 SelectedItem = null;
             }
             else
@@ -64,12 +66,13 @@ namespace NetBrowser_UWP.ViewModels
             }
         }
 
-        private readonly MainPageViewModel _mainPageViewModel;
+        
 
-        public HistoryPageViewModel(IDataTransferService dataTransferService, MainPageViewModel mainPageViewModel)
+        public HistoryPageViewModel(IDataTransferService dataTransferService, TabViewService tabViewService)
         {
             _dataTransferService = dataTransferService;
-            _mainPageViewModel = mainPageViewModel;
+            _tabViewService = tabViewService;
+
             GetHistoryAsync();
         }
 

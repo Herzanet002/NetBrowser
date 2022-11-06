@@ -3,6 +3,7 @@ using Microsoft.Web.WebView2.Core;
 using NetBrowser_UWP.Contracts.Services;
 using System;
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace NetBrowser_UWP.Services
@@ -58,6 +59,31 @@ namespace NetBrowser_UWP.Services
             NavigationCompleted?.Invoke(sender, args);
         }
 
+        public Uri ResolveUri(string address)
+        {
+            address = address.Trim().ToLower();
+            const string PATTERN = @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$";
+            var rgx = new Regex(PATTERN, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            var httpsScheme = string.Concat(Uri.UriSchemeHttps, "://");
+            var httpScheme = string.Concat(Uri.UriSchemeHttp, "://");
+
+            if (rgx.IsMatch(address))
+            {
+                if (!(address.StartsWith(httpScheme) || address.StartsWith(httpsScheme)))
+                {
+                    address = string.Concat(httpsScheme, address);
+                }
+            }
+            else return new Uri(App.CurrentWebEngine.Prefix + address);
+
+            var isUriCreated = Uri.TryCreate(address, UriKind.Absolute, out var uriAddress) &&
+                               (uriAddress.Scheme == Uri.UriSchemeHttp ||
+                                uriAddress.Scheme == Uri.UriSchemeHttps ||
+                                uriAddress.Scheme == Uri.UriSchemeFtp);
+
+            return isUriCreated ? uriAddress : new Uri(App.CurrentWebEngine.Prefix + address);
+        }
     }
 
 

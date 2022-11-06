@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Views.UserControls;
 using Prism.Commands;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using NetBrowser_UWP.Views.UserControls;
+using NetBrowser_UWP.Services;
 
 namespace NetBrowser_UWP.ViewModels
 {
@@ -28,12 +28,12 @@ namespace NetBrowser_UWP.ViewModels
         #endregion Commands
 
         private readonly IDataTransferService _dataTransferService;
-        private readonly MainPageViewModel _mainPageViewModel;
+        private readonly TabViewService _tabViewService;
 
-        public BookmarksPageViewModel(IDataTransferService dataTransferService, MainPageViewModel mainPageViewModel)
+        public BookmarksPageViewModel(IDataTransferService dataTransferService, TabViewService tabViewService)
         {
             _dataTransferService = dataTransferService;
-            _mainPageViewModel = mainPageViewModel;
+            _tabViewService = tabViewService;
             GetBookmarksAsync();
         }
 
@@ -68,7 +68,7 @@ namespace NetBrowser_UWP.ViewModels
 
         private void OnOpenBookmarkInWebCommandExecuted()
         {
-            _mainPageViewModel.CreateNewWebTab(SelectedBookmark.Url);
+            _tabViewService.CreateNewWebTab(SelectedBookmark.Url);
             SelectedBookmark = null;
         }
 

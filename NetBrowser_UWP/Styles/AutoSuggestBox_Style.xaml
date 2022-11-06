@@ -227,7 +227,7 @@
                         </VisualStateManager.VisualStateGroups>
                         
                         <Border x:Name="BorderElement" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" 
-                                CornerRadius="{TemplateBinding CornerRadius}" Grid.Column="0" Grid.ColumnSpan="3" 
+                                CornerRadius="{TemplateBinding CornerRadius}" Grid.Column="0" Grid.ColumnSpan="3"
                                 Control.IsTemplateFocusTarget="False" MinWidth="{ThemeResource TextControlThemeMinWidth}" 
                                 MinHeight="{ThemeResource TextControlThemeMinHeight}" Grid.RowSpan="1" Grid.Row="1"/>
                         <ContentPresenter x:Name="HeaderContentPresenter" ContentTemplate="{TemplateBinding HeaderTemplate}" 
@@ -293,7 +293,7 @@
                                  PlaceholderText="{TemplateBinding PlaceholderText}" Style="{TemplateBinding TextBoxStyle}" 
                                  UseSystemFocusVisuals="{TemplateBinding UseSystemFocusVisuals}" Width="{TemplateBinding Width}"
                                  Canvas.ZIndex="0" Padding="{TemplateBinding Padding}"/>
-                        <Popup x:Name="SuggestionsPopup">
+                        <Popup x:Name="SuggestionsPopup" Margin="0,10,0,0">
                             <Border x:Name="SuggestionsContainer">
                                 <ListView x:Name="SuggestionsList" CornerRadius="5" VerticalAlignment="Bottom"
                                           Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
@@ -302,7 +302,7 @@
                                           DisplayMemberPath="{TemplateBinding DisplayMemberPath}" 
                                           ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
                                           ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}" 
-                                          IsItemClickEnabled="True" Margin="10" 
+                                          IsItemClickEnabled="True" 
                                           MaxHeight="{ThemeResource AutoSuggestListMaxHeight}" 
                                           Padding="{ThemeResource AutoSuggestListPadding}">
                                     <ListView.Header>

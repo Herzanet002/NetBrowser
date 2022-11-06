@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Toolkit.Uwp.Notifications;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
@@ -11,11 +10,11 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
-using Windows.UI.Notifications;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using NetBrowser_UWP.Views.UserControls;
 
 namespace NetBrowser_UWP
 {
@@ -57,40 +56,41 @@ namespace NetBrowser_UWP
             dataAccessService.InitializeStartPageFile();
 
         }
-        
+
         private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
-        { 
+        {
 
         }
 
         private static IServiceProvider ConfigureDependencyInjection()
         {
-            var serviceCollection = new ServiceCollection();
+            var services = new ServiceCollection();
 
             //Services & Managers
-            serviceCollection.AddSingleton<IDataTransferService, DataTransferService>();
-            serviceCollection.AddSingleton<IDataAccessService, DataAccessService>();
-            serviceCollection.AddSingleton<ILocalSettingsService, LocalSettingsService>();
-            serviceCollection.AddSingleton<IWebView2Service, WebView2Service>();
-            //serviceCollection.AddSingleton<IThemeManager, ThemeManager>();
-
-
+            services.AddSingleton<IDataTransferService, DataTransferService>();
+            services.AddSingleton<IDataAccessService, DataAccessService>();
+            services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
+            services.AddSingleton<IWebView2Service, WebView2Service>();
+            services.AddSingleton<TabViewService>();
+            
+            services.AddScoped<IRssWorkerService, RssWorkerService>();
+            
             //ViewModels
-            serviceCollection.AddSingleton<MainPageViewModel>();
-            serviceCollection.AddTransient<HistoryPageViewModel>();
-            serviceCollection.AddTransient<StartPageViewModel>();
-            serviceCollection.AddTransient<BookmarksPageViewModel>();
-            serviceCollection.AddTransient<PersonalizePageViewModel>();
-            serviceCollection.AddTransient<SearchSystemPageViewModel>();
-            serviceCollection.AddTransient<NewsPageViewModel>();
+            services.AddSingleton<MainPageViewModel>();
+            services.AddTransient<HistoryPageViewModel>();
+            services.AddTransient<StartPageViewModel>();
+            services.AddTransient<BookmarksPageViewModel>();
+            services.AddTransient<PersonalizePageViewModel>();
+            services.AddTransient<SearchSystemPageViewModel>();
+            services.AddTransient<NewsPageViewModel>();
+            services.AddTransient<AboutAppViewModel>();
 
-            serviceCollection.AddTransient<AboutAppViewModel>();
+            services.AddHttpClient("NewsClient");
 
-
-            return serviceCollection.BuildServiceProvider();
+            return services.BuildServiceProvider();
         }
 
-        
+
 
         public static async Task SetApplicationTheme()
         {
@@ -154,6 +154,6 @@ namespace NetBrowser_UWP
             deferral.Complete();
         }
 
-        
+
     }
 }

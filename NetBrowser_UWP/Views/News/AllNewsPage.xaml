@@ -1,0 +1,20 @@
+﻿<Page
+    x:Class="NetBrowser_UWP.Views.News.AllNewsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:NetBrowser_UWP.Views.News"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:controls1="using:Microsoft.UI.Xaml.Controls"
+    xmlns:models="using:NetBrowser_UWP.Models"
+    xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewModels:NewsPageViewModel,IsDesignTimeCreatable=True}"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    
+</Page>
