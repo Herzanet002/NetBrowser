@@ -7,64 +7,62 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
-    Loaded="settingsPage_Loaded">
+    xmlns:helpers="using:NetBrowser_UWP.Helpers"
+    xmlns:settings="using:NetBrowser_UWP.Views.Settings"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
 
     <Grid>
         <muxc:NavigationView IsSettingsVisible="False" PaneTitle="Настройки" 
-                             SelectionChanged="NavigationView_SelectionChanged" IsBackEnabled="True">
+                             IsBackEnabled="True" x:Name="SettingsNavigationView" 
+                             SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
             <muxc:NavigationView.MenuItems>
-                <muxc:NavigationViewItem Content="Общие" Tag="mainItem" >
+                <muxc:NavigationViewItem Content="Общие" helpers:NavigationHelper.NavigateTo="settings:MainItemPageSettings">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE74C;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
 
-                <muxc:NavigationViewItem Content="История" Tag="historyItem">
+                <muxc:NavigationViewItem Content="История" helpers:NavigationHelper.NavigateTo="settings:HistoryPageSettings">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE81C;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
 
-                <muxc:NavigationViewItem Content="Персонализация" Tag="personalizeItem" >
+                <muxc:NavigationViewItem Content="Персонализация" helpers:NavigationHelper.NavigateTo="settings:PersonalizePageSettings">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE771;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem Content="Поисковая система" Tag="searchItem">
+                <muxc:NavigationViewItem Content="Поисковая система" helpers:NavigationHelper.NavigateTo="settings:SearchSystemPageSettings">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE721;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
 
-                <muxc:NavigationViewItem Content="Закладки" Tag="bookmarksItem">
+                <muxc:NavigationViewItem Content="Закладки" helpers:NavigationHelper.NavigateTo="settings:BookmarksPage">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE728;"/>
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
-
-                <muxc:NavigationViewItem Content="Открыть файл истории" Tag="historyFileOpen">
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8E5;"/>
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
-
-                <muxc:NavigationViewItem Content="Открыть файл закладок" Tag="bookmarksFileOpen">
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8E5;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
 
             </muxc:NavigationView.MenuItems>
 
             <muxc:NavigationView.FooterMenuItems>
-                <muxc:NavigationViewItem Content="О браузере" Tag="aboutBrowserItem">
+                <muxc:NavigationViewItem Content="О программе" helpers:NavigationHelper.NavigateTo="settings:AboutAppPage">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE946;"/>
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
             </muxc:NavigationView.FooterMenuItems>
-
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="ItemInvoked">
+                    <core:EventTriggerBehavior.Actions>
+                        <core:InvokeCommandAction Command="{x:Bind ViewModel.NavigationViewItemInvokedCommand}" />
+                    </core:EventTriggerBehavior.Actions>
+                </core:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
             <Frame x:Name="ContentFrame">
                 <Grid>
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Настройки" Foreground="White" FontSize="50"/>

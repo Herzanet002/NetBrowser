@@ -138,7 +138,7 @@ namespace NetBrowser_UWP.Services
 
             var settingsTab = CreateTabViewItemInstance(
                 "Settings".GetLocalized(),
-                new SettingsPage(mode),
+                new SettingsPage(),
                 new SymbolIconSource { Symbol = Symbol.Setting });
 
             AddTabItem(settingsTab);

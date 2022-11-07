@@ -160,7 +160,9 @@ namespace NetBrowser_UWP.ViewModels
         private readonly MainPageViewModel _mainPageViewModel;
         private readonly ILocalSettingsService _localSettingsService;
 
-        public StartPageViewModel(IDataTransferService dataTransferService, MainPageViewModel mainViewModel, ILocalSettingsService localSettingsService)
+        public StartPageViewModel(IDataTransferService dataTransferService,
+            MainPageViewModel mainViewModel, 
+            ILocalSettingsService localSettingsService)
         {
             _dataTransferService = dataTransferService;
             _mainPageViewModel = mainViewModel;

@@ -16,5 +16,113 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewModels:NewsPageViewModel,IsDesignTimeCreatable=True}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    
+    <Page.Resources>
+        <DataTemplate x:Key="NewsGridItemTemplate" x:DataType="models:ContentModel">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <controls:ImageEx Grid.Row="0" Grid.RowSpan="4" Source="{x:Bind ImageUrl}" Stretch="UniformToFill" CornerRadius="8"
+                                   Opacity="0.6">
+                    <controls:ImageEx.Background>
+                        <SolidColorBrush Color="Black"></SolidColorBrush>
+                    </controls:ImageEx.Background>
+                </controls:ImageEx>
+                <TextBlock Grid.Row="0" Text="{x:Bind Feeder}" Foreground="Azure" FontSize="14" FontWeight="SemiBold" Margin="10"></TextBlock>
+                <TextBlock Grid.Row="1" VerticalAlignment="Bottom" Text="{x:Bind Title}" FontSize="20" FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}"
+                           Foreground="White" Margin="10, 0"/>
+                <TextBlock Grid.Row="2" VerticalAlignment="Bottom" Text="{x:Bind Description}" Style="{ThemeResource BodyTextBlockStyle}"
+                                       TextTrimming="CharacterEllipsis" MaxLines="2" Foreground="White" Margin="10, 0"/>
+                <Grid Grid.Row="3" RequestedTheme="Dark">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{x:Bind PubDate}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" 
+                               Margin="10, 10" VerticalAlignment="Bottom"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <AppBarButton Icon="Like" Width="45" Height="45" Foreground="AliceBlue"/>
+                        <AppBarButton Icon="Share" Width="45" Height="45" Command="{Binding ElementName=AdaptiveGrid, Path=DataContext.ShareNewsCommand}"
+                                      CommandParameter="{Binding }" Foreground="AliceBlue"/>
+                        <AppBarSeparator/>
+                        <AppBarButton Width="45" Height="45" Foreground="AliceBlue">
+                            <AppBarButton.Icon>
+                                <FontIcon Glyph="&#xE7BC;"></FontIcon>
+                            </AppBarButton.Icon>
+                        </AppBarButton>
+                        <AppBarButton Width="45" Height="45" Foreground="AliceBlue">
+                            <AppBarButton.Icon>
+                                <FontIcon Glyph="&#xE734;"></FontIcon>
+                            </AppBarButton.Icon>
+                        </AppBarButton>
+
+                    </StackPanel>
+                </Grid>
+
+
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="RotatorTileTemplate" x:DataType="models:ContentModel">
+            <Grid CornerRadius="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Grid.RowSpan="2" CornerRadius="8">
+                    <Border.Background>
+                        <media:AcrylicBrush BackgroundSource="Backdrop"
+                                             TintColor="Black"
+                                             TintOpacity="0.2"
+                                             BlurAmount="5"/>
+                    </Border.Background>
+                </Border>
+                <TextBlock Grid.Row="0" VerticalAlignment="Bottom" Text="{x:Bind Title}" FontSize="22" FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}"
+                           Foreground="White" Margin="40, 0"/>
+                <Grid.Background>
+                    <ImageBrush ImageSource="{x:Bind ImageUrl}" Stretch="UniformToFill" Opacity="0.7"></ImageBrush>
+                </Grid.Background>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="110"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <controls:RotatorTile x:Name="RotatorTile" Grid.Row="0" Margin="35, 10, 35, 0" 
+                              Height="100"
+                              RotationDelay="0:0:5"
+                              Direction="Left"
+                              ItemsSource="{Binding News}"
+                              ItemTemplate="{StaticResource RotatorTileTemplate}"
+                              ui:FrameworkElementExtensions.Cursor="Hand">
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="Tapped">
+                    <core:InvokeCommandAction Command="{Binding RotatorTileClickCommand}" CommandParameter="{Binding ElementName=RotatorTile, Path=CurrentItem}"/>
+                </core:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+        </controls:RotatorTile>
+
+        <Grid Grid.Row="1" Margin="10" CornerRadius="8">
+            <controls1:ProgressRing VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}"
+                                    IsActive="{Binding IsProgressRingActive}"></controls1:ProgressRing>
+            <controls:AdaptiveGridView  ItemsSource="{Binding News}" Padding="15" StretchContentForSingleRow="False"
+                                        OneRowModeEnabled="False"
+                                        ItemHeight="300" x:Name="AdaptiveGrid"
+                                        DesiredWidth="350"
+                                        SelectionMode="Single" ItemTemplate="{StaticResource NewsGridItemTemplate}">
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="Margin" Value="5"/>
+                        <Setter Property="BorderThickness" Value="5"></Setter>
+                    </Style>
+                </GridView.ItemContainerStyle>
+            </controls:AdaptiveGridView>
+        </Grid>
+
+    </Grid>
 </Page>

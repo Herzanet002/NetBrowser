@@ -11,10 +11,14 @@ namespace NetBrowser_UWP.Views.News
     /// </summary>
     public sealed partial class NewsPage : Page
     {
+        public NewsPageViewModel ViewModel { get; set; }
         public NewsPage()
         {
             this.InitializeComponent();
-            DataContext = Ioc.Default.GetRequiredService<NewsPageViewModel>();
+            ViewModel = Ioc.Default.GetRequiredService<NewsPageViewModel>();
+            DataContext = ViewModel;
+            ViewModel.Initialize(MainFrame, NewsNavigationView);
+
         }
 
     }

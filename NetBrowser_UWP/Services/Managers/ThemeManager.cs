@@ -40,7 +40,7 @@ namespace NetBrowser_UWP
         public ThemeItem SetRequestedTheme(string themeName)
         {
             CurrentTheme = GetRequestedTheme(themeName);
-            
+            App.CurrentTheme = CurrentTheme;
             var foreground = NavigationButtonBrush as SolidColorBrush;
 
             if (App.TitleBar != null)

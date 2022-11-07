@@ -71,6 +71,7 @@ namespace NetBrowser_UWP
             services.AddSingleton<IDataAccessService, DataAccessService>();
             services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
             services.AddSingleton<IWebView2Service, WebView2Service>();
+            services.AddTransient<INavigationService, NavigationService>();
             services.AddSingleton<TabViewService>();
             
             services.AddScoped<IRssWorkerService, RssWorkerService>();
@@ -82,6 +83,7 @@ namespace NetBrowser_UWP
             services.AddTransient<BookmarksPageViewModel>();
             services.AddTransient<PersonalizePageViewModel>();
             services.AddTransient<SearchSystemPageViewModel>();
+            services.AddTransient<SettingsPageViewModel>();
             services.AddTransient<NewsPageViewModel>();
             services.AddTransient<AboutAppViewModel>();
 

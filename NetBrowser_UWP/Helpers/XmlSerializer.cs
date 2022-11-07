@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace NetBrowser_UWP.Helpers
 {
-    internal static class ObjectSerializer<T>
+    public static class XmlSerializer<T>
     {
         // Serialize to xml  
         public static string ToXml(T value)
