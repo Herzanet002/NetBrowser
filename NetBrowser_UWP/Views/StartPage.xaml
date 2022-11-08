@@ -27,8 +27,6 @@
         <StandardUICommand x:Name="EditCommand"
                            Command="{Binding EditStartPageItem}"
                            Description="Изменить элемент стратовой страницы" />
-
-
     </Page.Resources>
 
     <Grid>
@@ -42,7 +40,7 @@
             <ColumnDefinition Width="2*"></ColumnDefinition>
             <ColumnDefinition Width=".5*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <resources:AuroraLite  Canvas.ZIndex="0" Grid.ColumnSpan="3" Grid.RowSpan="3"/>
+        <resources:AuroraLite  Canvas.ZIndex="0" Grid.ColumnSpan="3" Grid.RowSpan="3" Visibility="{Binding IsAnimationEnabled}"/>
         <Button Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Transparent" 
                     BorderThickness="1" ToolTipService.ToolTip="{helpers:ResourceString Name=AddNewSite}" Margin="5"
                     ToolTipService.Placement="Bottom" Padding="6">

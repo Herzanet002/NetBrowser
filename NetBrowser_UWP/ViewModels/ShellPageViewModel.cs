@@ -6,6 +6,7 @@ using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views;
+using NetBrowser_UWP.Views.News;
 using NetBrowser_UWP.Views.Settings;
 using Prism.Commands;
 using System;
@@ -17,12 +18,12 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using NetBrowser_UWP.Views.News;
+
 using winUI = Microsoft.UI.Xaml.Controls;
 
 namespace NetBrowser_UWP.ViewModels
 {
-    public class MainPageViewModel : ObservableObject
+    public class ShellPageViewModel : ObservableObject
     {
         #region Private Global Element Region
 
@@ -43,6 +44,8 @@ namespace NetBrowser_UWP.ViewModels
 
         private bool _isWebLoading;
         private bool _isBookmarksExists;
+
+        private INavigationService _navigationService;
 
         #endregion Private Global Element Region
 
@@ -76,10 +79,6 @@ namespace NetBrowser_UWP.ViewModels
         #endregion Commands Region
 
         #region Global Properties Region
-
-
-
-
 
         public IList<string> SearchBoxItemsCollection
         {
@@ -372,10 +371,11 @@ namespace NetBrowser_UWP.ViewModels
         private readonly ILocalSettingsService _localSettingsService;
         private readonly TabViewService _tabViewService;
 
-        public MainPageViewModel(IDataTransferService dataTransferService,
+        public ShellPageViewModel(IDataTransferService dataTransferService,
             IWebView2Service webView2Service,
             ILocalSettingsService localSettingsService,
-            TabViewService tabViewService)
+            TabViewService tabViewService,
+            INavigationService navigationService)
         {
             _dataTransferService = dataTransferService;
             _webView2Service = webView2Service;
@@ -387,6 +387,7 @@ namespace NetBrowser_UWP.ViewModels
             _webView2Service.NewWindowRequested += WebViewOnNewWindowRequested;
             _webView2Service.NavigationCompleted += WebViewOnNavigationCompleted;
 
+            _navigationService = navigationService;
             InitializePageComponents();
             _tabViewService.CreateNewWebTab();
             InitializeCommands();
@@ -400,8 +401,8 @@ namespace NetBrowser_UWP.ViewModels
         private void TabViewServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             OnPropertyChanged(e);
-
         }
+
         private async void InitializePageComponents()
         {
             VisibilityHomeButton = await _localSettingsService.ReadSettingAsync<bool>("IsHomeButtonEnabled");
@@ -440,7 +441,7 @@ namespace NetBrowser_UWP.ViewModels
             var searchTermListTransfer = await _dataTransferService.GetSearchTerm();
             var searchTermListReversed = searchTermListTransfer.Reverse();
 
-            return searchTermListReversed.Select(term => term.Name).ToList();
+            return searchTermListReversed.Select(term => term.Name).ToHashSet();
         }
 
         private async void AutoSuggestListFill()
@@ -527,7 +528,6 @@ namespace NetBrowser_UWP.ViewModels
             var rightTab = _tabViewService.GetTabItemByFilter(tab => tab.Content == webInstance);
             if (rightTab == null) return;
 
-
             var faviconUri = new Uri(Constants.Constants.FAVICONS_SERVICE + webInstance.Source);
             rightTab.Header = webInstance.CoreWebView2.DocumentTitle;
             rightTab.IconSource = new winUI.BitmapIconSource
@@ -551,7 +551,6 @@ namespace NetBrowser_UWP.ViewModels
             SetVisualUiElementStates(sender);
             CommandsRaiseCanExecuteChanged();
         }
-
 
         public void NavigateTo(string address, WebView2 webViewInstance)
         {
@@ -589,7 +588,6 @@ namespace NetBrowser_UWP.ViewModels
                 {
                     Symbol = Symbol.More
                 });
-
 
             _tabViewService.ChangeTabItem(_tabViewService.GetSelectedTabItem(), newTab);
             _tabViewService.ChangeSelectedTabItem(newTab);
@@ -634,8 +632,6 @@ namespace NetBrowser_UWP.ViewModels
 
             CommandsRaiseCanExecuteChanged();
         }
-
-        
 
         private void CloseTabItemRequested(TabViewItem tab)
         {

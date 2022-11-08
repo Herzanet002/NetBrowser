@@ -166,7 +166,7 @@
     <Compile Include="Services\WebView2Service.cs" />
     <Compile Include="ViewModels\AboutAppViewModel.cs" />
     <Compile Include="Helpers\ListExtension.cs" />
-    <Compile Include="ViewModels\MainPageViewModel.cs" />
+    <Compile Include="ViewModels\ShellPageViewModel.cs" />
     <Compile Include="ViewModels\NewsPageViewModel.cs" />
     <Compile Include="ViewModels\PersonalizePageViewModel.cs" />
     <Compile Include="Services\RssWorkerService.cs" />
@@ -209,8 +209,8 @@
     <Compile Include="Views\Settings\MainItemPageSettings.xaml.cs">
       <DependentUpon>MainItemPageSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
+    <Compile Include="Views\ShellPage.xaml.cs">
+      <DependentUpon>ShellPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\PersonalizePageSettings.xaml.cs">
       <DependentUpon>PersonalizePageSettings.xaml</DependentUpon>
@@ -356,7 +356,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MainPage.xaml">
+    <Page Include="Views\ShellPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

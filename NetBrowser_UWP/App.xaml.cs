@@ -77,7 +77,7 @@ namespace NetBrowser_UWP
             services.AddScoped<IRssWorkerService, RssWorkerService>();
             
             //ViewModels
-            services.AddSingleton<MainPageViewModel>();
+            services.AddSingleton<ShellPageViewModel>();
             services.AddTransient<HistoryPageViewModel>();
             services.AddTransient<StartPageViewModel>();
             services.AddTransient<BookmarksPageViewModel>();

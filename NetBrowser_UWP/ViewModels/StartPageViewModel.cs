@@ -24,9 +24,11 @@ namespace NetBrowser_UWP.ViewModels
         private HashSet<SiteItem> _recentlySearchedItems;
         private string _newSiteUrl;
         private string _newSiteName;
+        private int _gridViewOrientation;
+
         private bool _isSuggestionBarEnabled;
         private bool _isFlyoutClosed;
-        private int _gridViewOrientation;
+        private bool _isAnimationEnabled;
 
         public ICommand GridViewItemDeleteCommand => new DelegateCommand<object>(OnGridViewItemDeleteCommandExecuted);
         public ICommand SearchButtonTappedCommand => new DelegateCommand(OnSearchButtonTappedCommandExecuted);
@@ -35,10 +37,14 @@ namespace NetBrowser_UWP.ViewModels
         public ICommand CancelCommand => new DelegateCommand(() => IsFlyoutClosed = true);
         public ICommand EditStartPageItem => new DelegateCommand<object>(OnEditStartPageItem);
 
+        private readonly IDataTransferService _dataTransferService;
+        private readonly ShellPageViewModel _mainPageViewModel;
+        private readonly ILocalSettingsService _localSettingsService;
+
+        //TODO: OnEditStartPageItem
         private void OnEditStartPageItem(object obj)
         {
         }
-
 
         private void OnKeyDownCommandExecuted(object obj)
         {
@@ -51,6 +57,13 @@ namespace NetBrowser_UWP.ViewModels
             get => _isSuggestionBarEnabled;
             set => SetProperty(ref _isSuggestionBarEnabled, value);
         }
+
+        public bool IsAnimationEnabled
+        {
+            get => _isAnimationEnabled;
+            set => SetProperty(ref _isAnimationEnabled, value);
+        }
+
         public bool IsFlyoutClosed
         {
             get => _isFlyoutClosed;
@@ -61,6 +74,7 @@ namespace NetBrowser_UWP.ViewModels
                     IsFlyoutClosed = false;
             }
         }
+
         public SiteItem GridViewSelectedItem
         {
             get => _gridViewSelectedItem;
@@ -71,6 +85,7 @@ namespace NetBrowser_UWP.ViewModels
                 _mainPageViewModel.SearchWebFromStartPage(value.Url);
             }
         }
+
         public SiteItem SearchBarSelectedItem
         {
             get => _searchBarSelectedItem;
@@ -81,46 +96,55 @@ namespace NetBrowser_UWP.ViewModels
                 _mainPageViewModel.SearchWebFromStartPage(value.Name);
             }
         }
+
         public int GridViewOrientation
         {
             get => _gridViewOrientation;
             set => SetProperty(ref _gridViewOrientation, value);
         }
+
         public string PlaceholderText
         {
             get => _placeholderText;
             set => SetProperty(ref _placeholderText, value);
         }
+
         public string NewSiteUrl
         {
             get => _newSiteUrl;
             set => SetProperty(ref _newSiteUrl, value);
         }
+
         public string NewSiteName
         {
             get => _newSiteName;
             set => SetProperty(ref _newSiteName, value);
         }
+
         public Uri LogoSource
         {
             get => _logoSource;
             set => SetProperty(ref _logoSource, value);
         }
+
         public string SearchBoxText
         {
             get => _searchBoxText;
             set => SetProperty(ref _searchBoxText, value);
         }
+
         public ObservableCollection<SiteItem> StartPageItems
         {
             get => _startPageItems;
             set => SetProperty(ref _startPageItems, value);
         }
+
         public HashSet<SiteItem> RecentlySearchedItems
         {
             get => _recentlySearchedItems;
             set => SetProperty(ref _recentlySearchedItems, value);
         }
+
         private async void OnGridViewItemDeleteCommandExecuted(object obj)
         {
             if (obj is not SiteItem elem) return;
@@ -154,14 +178,10 @@ namespace NetBrowser_UWP.ViewModels
             });
             IsFlyoutClosed = true;
             GetStartPageElementsAsync();
-
         }
-        private readonly IDataTransferService _dataTransferService;
-        private readonly MainPageViewModel _mainPageViewModel;
-        private readonly ILocalSettingsService _localSettingsService;
 
         public StartPageViewModel(IDataTransferService dataTransferService,
-            MainPageViewModel mainViewModel, 
+            ShellPageViewModel mainViewModel,
             ILocalSettingsService localSettingsService)
         {
             _dataTransferService = dataTransferService;
@@ -172,7 +192,9 @@ namespace NetBrowser_UWP.ViewModels
 
         private async void InitializePageComponents()
         {
-            IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>("IsSuggestionBarEnabled");
+            IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsSuggestionBarEnabled));
+            IsAnimationEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsAnimationEnabled));
+            GridViewOrientation = await _localSettingsService.ReadSettingAsync<int>("StartPageGridViewOrientation");
 
             var currentWebEngineName = App.CurrentWebEngine.Name;
             if (currentWebEngineName == null) return;
@@ -181,7 +203,6 @@ namespace NetBrowser_UWP.ViewModels
 
             GetStartPageElementsAsync();
             if (IsSuggestionBarEnabled) GetRecentlySearchedItemsAsync();
-            GridViewOrientation = await _localSettingsService.ReadSettingAsync<int>("StartPageGridViewOrientation");
         }
 
         private async void GetRecentlySearchedItemsAsync()
@@ -193,8 +214,6 @@ namespace NetBrowser_UWP.ViewModels
             RecentlySearchedItems = new HashSet<SiteItem>(termListTransfer);
         }
 
-
-
         private void OnSearchButtonTappedCommandExecuted()
         {
             _mainPageViewModel.SearchWebFromStartPage(SearchBoxText);
@@ -205,5 +224,4 @@ namespace NetBrowser_UWP.ViewModels
             StartPageItems = new ObservableCollection<SiteItem>(await _dataTransferService.GetStartPageElements());
         }
     }
-
 }

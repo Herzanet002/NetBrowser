@@ -1,18 +1,16 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Uwp;
+using Microsoft.UI.Xaml.Controls;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Views;
+using NetBrowser_UWP.Views.News;
+using NetBrowser_UWP.Views.Settings;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml.Controls;
-using Windows.Web.UI;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.Web.WebView2.Core;
-using NetBrowser_UWP.Contracts.Services;
-using Microsoft.Toolkit.Uwp;
-using SymbolIconSource = Microsoft.UI.Xaml.Controls.SymbolIconSource;
-using NetBrowser_UWP.Views;
-using NetBrowser_UWP.Views.News;
 using FontIconSource = Microsoft.UI.Xaml.Controls.FontIconSource;
-using NetBrowser_UWP.Views.Settings;
+using SymbolIconSource = Microsoft.UI.Xaml.Controls.SymbolIconSource;
 
 namespace NetBrowser_UWP.Services
 {
@@ -147,6 +145,13 @@ namespace NetBrowser_UWP.Services
 
         public void CreateNewContentTab()
         {
+            var alreadyExistsSettingsTab = GetTabItemByFilter(tab => tab.Content is NewsPage);
+
+            if (alreadyExistsSettingsTab != null)
+            {
+                ChangeSelectedTabItem(alreadyExistsSettingsTab);
+                return;
+            }
             var newsTab = CreateTabViewItemInstance(
                 "News".GetLocalized(),
                 new NewsPage(),

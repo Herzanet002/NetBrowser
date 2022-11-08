@@ -3,12 +3,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:media="using:Microsoft.UI.Xaml.Media">
 
-    <x:String x:Key="NameOfTheme">Светлая акриловая</x:String>
+    <x:String x:Key="NameOfTheme">LightAcrylic</x:String>
     <x:Int32 x:Key="ThemeMode">1</x:Int32>
     <media:AcrylicBrush x:Key="BackgroundBrush" BackgroundSource="HostBackdrop"
-                        TintOpacity="0.65" FallbackColor="#FF4C5056" TintColor="#FFF1F1F1"  />
-
-
+                        TintOpacity="0.6" FallbackColor="#FF8B98AB" TintColor="#FFF1F1F1"/>
 
     <media:AcrylicBrush x:Key="SecondBrush" BackgroundSource="HostBackdrop"
                         TintOpacity="0.7" TintColor="Gainsboro"  />

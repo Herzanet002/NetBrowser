@@ -14,7 +14,7 @@
     xmlns:converters="using:NetBrowser_UWP.Converters"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
     Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
-    d:DataContext="{d:DesignInstance Type=viewModels:MainPageViewModel,IsDesignTimeCreatable=True}"
+    d:DataContext="{d:DesignInstance Type=viewModels:ShellPageViewModel,IsDesignTimeCreatable=True}"
     IsTabStop="True">
 
     <Grid>
@@ -109,7 +109,7 @@
         </Grid>
 
         <Grid Grid.Row="1" HorizontalAlignment="Stretch" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
-              ColumnSpacing="5" Height="44" Margin="10,0,10,0">
+              ColumnSpacing="5" Height="44" Padding="10,0,10,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>

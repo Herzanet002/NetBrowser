@@ -50,6 +50,10 @@
                         <TextBlock Text="Отображать последние поисковые запросы на стартовой странице"/>
                         <ToggleSwitch IsOn="{Binding IsSuggestionBarEnabled, Mode=TwoWay}"/>
                     </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="Показывать анимацию на стартовой странице"/>
+                        <ToggleSwitch IsOn="{Binding IsAnimationEnabled, Mode=TwoWay}"/>
+                    </StackPanel>
 
                     <StackPanel>
                         <TextBlock Text="Ориентация плиток"/>
@@ -70,6 +74,7 @@
                     </StackPanel>
                     
                 </StackPanel>
+
             </StackPanel>
         </ScrollViewer>
 

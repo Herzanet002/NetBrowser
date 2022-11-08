@@ -1,10 +1,9 @@
-﻿using NetBrowser_UWP.Models;
+﻿using NetBrowser_UWP.Contracts;
+using NetBrowser_UWP.Models;
 using System.ComponentModel;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-using NetBrowser_UWP.Contracts;
-
 
 // ReSharper disable once CheckNamespace
 namespace NetBrowser_UWP
@@ -23,11 +22,10 @@ namespace NetBrowser_UWP
         public static Brush SearchBoxBorderBrush => CurrentTheme.SearchBoxBorderBrush;
         public static Brush BookmarkSavedBrush => CurrentTheme.BookmarkSavedBrush;
 
-
         public event PropertyChangedEventHandler PropertyChanged;
+
         private void OnPropertyChanged(string propertyName)
                     => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
 
         public ThemeItem GetRequestedTheme(string themeName)
         {
@@ -41,12 +39,15 @@ namespace NetBrowser_UWP
         {
             CurrentTheme = GetRequestedTheme(themeName);
             App.CurrentTheme = CurrentTheme;
-            var foreground = NavigationButtonBrush as SolidColorBrush;
+
+            var buttonForegroundColor = NavigationButtonBrush as SolidColorBrush;
+            var buttonInactiveBackgroundColor = BackgroundBrush as SolidColorBrush;
 
             if (App.TitleBar != null)
             {
                 App.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-                App.TitleBar.ButtonForegroundColor = foreground?.Color;
+                App.TitleBar.ButtonForegroundColor = buttonForegroundColor?.Color;
+                App.TitleBar.ButtonInactiveBackgroundColor = buttonInactiveBackgroundColor?.Color;
             }
 
             SetRequestedElementThemeMode();
@@ -54,17 +55,13 @@ namespace NetBrowser_UWP
             return CurrentTheme;
         }
 
-
-
         public void SetRequestedElementThemeMode()
         {
             if (Window.Current.Content is FrameworkElement frameworkElement)
             {
                 frameworkElement.RequestedTheme = CurrentTheme.ThemeMode;
-
             }
         }
-
 
         private void RaisePropertyChanged()
         {

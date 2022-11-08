@@ -3,7 +3,6 @@ using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using Prism.Commands;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace NetBrowser_UWP.ViewModels
@@ -14,7 +13,10 @@ namespace NetBrowser_UWP.ViewModels
         private ThemeItem _selectedTheme;
         private bool _isSuggestionBarEnabled;
         private bool _isHomeButtonEnabled;
+        private bool _isAnimationEnabled;
         private int _startPageGridViewOrientation;
+        
+        private readonly ILocalSettingsService _localSettingsService;
 
         public ICommand SelectThemeCommand => new DelegateCommand(OnSelectedThemeCommandExecuted, () => true);
 
@@ -29,7 +31,7 @@ namespace NetBrowser_UWP.ViewModels
             get => _themesList;
             set => SetProperty(ref _themesList, value);
         }
-        private readonly ILocalSettingsService _localSettingsService;
+
         public ThemeItem SelectedTheme
         {
             get => _selectedTheme;
@@ -46,7 +48,17 @@ namespace NetBrowser_UWP.ViewModels
             set
             {
                 SetProperty(ref _isSuggestionBarEnabled, value);
-                _localSettingsService.SaveSettingAsync("IsSuggestionBarEnabled", value);
+                _localSettingsService.SaveSettingAsync(nameof(IsSuggestionBarEnabled), value);
+            }
+        }
+
+        public bool IsAnimationEnabled
+        {
+            get => _isAnimationEnabled;
+            set
+            {
+                SetProperty(ref _isAnimationEnabled, value);
+                _localSettingsService.SaveSettingAsync(nameof(IsAnimationEnabled), value);
             }
         }
 
@@ -56,7 +68,7 @@ namespace NetBrowser_UWP.ViewModels
             set
             {
                 SetProperty(ref _startPageGridViewOrientation, value);
-                _localSettingsService.SaveSettingAsync("StartPageGridViewOrientation", value);
+                _localSettingsService.SaveSettingAsync(nameof(StartPageGridViewOrientation), value);
             }
         }
 
@@ -66,24 +78,25 @@ namespace NetBrowser_UWP.ViewModels
             set
             {
                 SetProperty(ref _isHomeButtonEnabled, value);
-                _localSettingsService.SaveSettingAsync("IsHomeButtonEnabled", value);
+                _localSettingsService.SaveSettingAsync(nameof(IsHomeButtonEnabled), value);
             }
         }
 
-        public MainPageViewModel MainViewModel { get; }
-        public PersonalizePageViewModel(ILocalSettingsService localSettingsService, MainPageViewModel mainPageViewModel)
+        public ShellPageViewModel MainViewModel { get; }
+
+        public PersonalizePageViewModel(ILocalSettingsService localSettingsService, ShellPageViewModel mainPageViewModel)
         {
             _localSettingsService = localSettingsService;
             MainViewModel = mainPageViewModel;
             InitializePageComponents();
         }
 
-    
         private async void InitializePageComponents()
         {
-            IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>("IsSuggestionBarEnabled");
-            IsHomeButtonEnabled = await _localSettingsService.ReadSettingAsync<bool>("IsHomeButtonEnabled");
-            StartPageGridViewOrientation = await _localSettingsService.ReadSettingAsync<int>("StartPageGridViewOrientation");
+            IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsSuggestionBarEnabled));
+            IsHomeButtonEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsHomeButtonEnabled));
+            IsAnimationEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsAnimationEnabled));
+            StartPageGridViewOrientation = await _localSettingsService.ReadSettingAsync<int>(nameof(StartPageGridViewOrientation));
             ThemesList = new ObservableCollection<ThemeItem>(Constants.Constants.ThemesDictionary.Values);
             SelectedTheme = App.CurrentTheme;
         }

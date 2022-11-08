@@ -13,7 +13,7 @@ namespace NetBrowser_UWP.Views
         public MainPage()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<MainPageViewModel>();
+            DataContext = Ioc.Default.GetService<ShellPageViewModel>();
             SearchBox.Translation += new Vector3(0, 0, 32);
         }
 
