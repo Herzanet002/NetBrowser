@@ -1,7 +1,7 @@
-﻿using NetBrowser_UWP.ViewModels;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using NetBrowser_UWP.ViewModels;
 using System.Numerics;
 using Windows.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace NetBrowser_UWP.Views
 {

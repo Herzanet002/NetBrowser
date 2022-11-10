@@ -139,6 +139,7 @@
     <Compile Include="Contracts\Services\IDataTransferService.cs" />
     <Compile Include="Contracts\Services\ILocalSettingsService.cs" />
     <Compile Include="Contracts\Services\INavigationService.cs" />
+    <Compile Include="Contracts\Services\IVisualElementsService.cs" />
     <Compile Include="Contracts\Services\IWebView2Service.cs" />
     <Compile Include="Contracts\Services\ITabViewService.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
@@ -163,6 +164,7 @@
       <DependentUpon>AuroraLite.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\LocalSettingsService.cs" />
+    <Compile Include="Services\VisualElementsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
     <Compile Include="ViewModels\AboutAppViewModel.cs" />
     <Compile Include="Helpers\ListExtension.cs" />

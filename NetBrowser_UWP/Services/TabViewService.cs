@@ -18,6 +18,7 @@ namespace NetBrowser_UWP.Services
     public class TabViewService : ObservableObject, ITabViewService
     {
         private readonly IWebView2Service _webView2Service;
+        private readonly VisualElementsService _visualElementsService;
         private ObservableCollection<TabViewItem> _tabViewItemsList;
         private TabViewItem _selectedTabItem;
 
@@ -34,6 +35,7 @@ namespace NetBrowser_UWP.Services
             set
             {
                 SetProperty(ref _selectedTabItem, value);
+                SelectionChangedTabHandler();
                 SelectionChangedHandler?.Invoke(_selectedTabItem, E);
             }
         }
@@ -50,9 +52,10 @@ namespace NetBrowser_UWP.Services
             set => SetProperty(ref _selectedWebView2, value);
         }
 
-        public TabViewService(IWebView2Service webView2Service)
+        public TabViewService(IWebView2Service webView2Service, VisualElementsService visualElementsService)
         {
             _webView2Service = webView2Service;
+            _visualElementsService = visualElementsService;
             TabViewItemsList = new ObservableCollection<TabViewItem>();
         }
 
@@ -82,6 +85,54 @@ namespace NetBrowser_UWP.Services
             if (TabViewItemsList.Contains(newItem))
                 SelectedTabItem = newItem;
         }
+
+        private void SelectionChangedTabHandler()
+        {
+            if (SelectedTabItem == null)
+            {
+                _visualElementsService.SetVisualUiLabels(null, null);
+                _visualElementsService.SetProgressRingActivity(false);
+                //_visualElementsService.SetVisualUiElementStates(null, BookmarksList);
+                return;
+            }
+            ChangeSelectedWebView(SelectedTabItem.Content as WebView2);
+
+            switch (SelectedTabItem.Content)
+            {
+                case SettingsPage:
+                    _visualElementsService.SetVisualUiLabels(SelectedTabItem.Header.ToString(), Constants.Constants.SETTINGS_ADDRESS);
+                    break;
+
+                case StartPage:
+                    _visualElementsService.SetVisualUiLabels(SelectedTabItem.Header.ToString(), string.Empty);
+                    break;
+
+                case WebView2:
+                    if (SelectedWebView2?.Source != null)
+                        _visualElementsService.SetVisualUiLabels(SelectedWebView2.CoreWebView2.DocumentTitle, SelectedWebView2.Source.AbsoluteUri);
+                    break;
+
+                case NewsPage:
+                    _visualElementsService.SetVisualUiLabels(SelectedTabItem.Header.ToString(), Constants.Constants.NEWS_ADDRESS);
+                    break;
+
+                default:
+                    _visualElementsService.SetVisualUiLabels(SelectedTabItem.Header.ToString(), string.Empty);
+                    break;
+            }
+
+            if (SelectedWebView2 == null)
+            {
+                _visualElementsService.SetProgressRingActivity(false);
+
+                return;
+            }
+            var isWebLoading = (bool)SelectedWebView2.Tag;
+            _visualElementsService.SetProgressRingActivity(isWebLoading);
+            
+
+        }
+
 
         public TabViewItem CreateTabViewItemInstance<T>(string header, T content, Microsoft.UI.Xaml.Controls.IconSource icon)
         {

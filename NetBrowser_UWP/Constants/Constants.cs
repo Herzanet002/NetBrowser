@@ -26,8 +26,8 @@ namespace NetBrowser_UWP.Constants
         public const string STARTPAGE_FILE_NAME = "startpage.xml";
 
 
-        public const string SETTINGS_ADDRESS = "app://newtab"; 
-        public const string STARTPAGE_ADDRESS = "app://settings";
+        public const string SETTINGS_ADDRESS = "app://settings"; 
+        public const string STARTPAGE_ADDRESS = "app://newtab";
         public const string NEWS_ADDRESS = "app://news";
 
         // Light Themes

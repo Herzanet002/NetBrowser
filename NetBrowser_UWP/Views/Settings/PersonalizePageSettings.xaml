@@ -70,7 +70,7 @@
                     <TextBlock Text="Настройка панели инструментов" Style="{StaticResource PageSubTitleStyle}"/>
                     <StackPanel>
                         <TextBlock Text="Показать кнопку домашней страницы на панели инструментов"/>
-                        <ToggleSwitch IsOn="{Binding MainViewModel.VisibilityHomeButton, Mode=TwoWay}"></ToggleSwitch>
+                        <ToggleSwitch IsOn="{Binding IsHomeButtonEnabled, Mode=TwoWay}"></ToggleSwitch>
                     </StackPanel>
                     
                 </StackPanel>

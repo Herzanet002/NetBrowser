@@ -20,7 +20,6 @@
     <Grid>
         <Grid.Resources>
             <converters:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
-            <converters:HostNameConverter x:Key="DomainNameConverter"/>
             <Style x:Name="NavigationBarButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
                 <Setter Property="Background" Value="Transparent"></Setter>
                 <Setter Property="HorizontalAlignment" Value="Center"></Setter>
@@ -158,7 +157,7 @@
             <AutoSuggestBox x:Name="SearchBox" Style="{StaticResource AutoSuggestBoxTemplate}" Grid.Column="4"
                             Text="{Binding SearchBoxText, Mode=TwoWay}" QueryIcon="Find"
                             ItemsSource="{Binding SearchBoxItemsCollection}" UpdateTextOnSelect="True"
-                            PlaceholderText="{helpers:ResourceString Name=SearchBoxPlaceholder/PlaceholderText}">
+                            PlaceholderText="{helpers:ResourceString Name=SearchBoxPlaceholder/PlaceholderText}" >
                 <AutoSuggestBox.Shadow>
                     <ThemeShadow/>
                 </AutoSuggestBox.Shadow>
@@ -173,32 +172,7 @@
                 </i:Interaction.Behaviors>
             </AutoSuggestBox>
 
-            <!--Security cerificate check button-->
-            <Button Background="Transparent" HorizontalAlignment="Left" Margin="5,0,0,0"
-                    Padding="0" Width="28" Height="24" BorderBrush="Transparent"  Grid.Column="4"
-                    VerticalAlignment="Center" ToolTipService.ToolTip="{helpers:ResourceString Name=SecurityButton/Tooltip}">
-                <Button.Flyout>
-                    <Flyout>
-                        <StackPanel Spacing="10">
-                            <StackPanel>
-                                <TextBlock Text="{Binding SearchBoxText, Converter={StaticResource DomainNameConverter}}"
-                                           FontWeight="SemiBold" HorizontalTextAlignment="Center"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <FontIcon Glyph="&#xE72E;" FontSize="16"></FontIcon>
-                                <TextBlock Text="Подключение защищено"></TextBlock>
-                            </StackPanel>
-                        </StackPanel>
-                        
-                    </Flyout>
-                </Button.Flyout>
-                <StackPanel Orientation="Horizontal">
-                    <FontIcon Glyph="&#xE72E;" Foreground="ForestGreen" FontSize="14"/>
-                </StackPanel>
-            </Button>
-
-        
-            <Button Background="Transparent" HorizontalAlignment="Right" Margin="0,0,35,0"
+            <Button Background="Transparent" HorizontalAlignment="Left" Margin="5,0"
                     Padding="0" Width="28" Height="24" BorderBrush="Transparent" VerticalContentAlignment="Center" Grid.Column="4"
                     VerticalAlignment="Center" Command="{Binding AddBookmarkButtonCommand}"
                     ToolTipService.ToolTip="{helpers:ResourceString Name=SaveBookmarkButton/Tooltip}" ToolTipService.Placement="Bottom">
@@ -227,11 +201,11 @@
                 <Button.Flyout>
                     <Flyout Placement="Bottom">
                         <StackPanel Orientation="Vertical" MinWidth="300">
-                            <TextBlock Text="Добавить закладку" HorizontalAlignment="Center" FontWeight="SemiBold" FontSize="14"
+                            <TextBlock Text="Добавить закладку" HorizontalAlignment="Center" FontWeight="SemiBold"
                                        Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" ></TextBlock>
-                            <TextBox Text="{Binding BookmarkTitleForSave, Mode=TwoWay}" FontSize="12"
+                            <TextBox Text="{Binding BookmarkTitleForSave, Mode=TwoWay}"
                                      Header="Заголовок" Margin="0,15" PlaceholderText="Название сайта"></TextBox>
-                            <TextBox Text="{Binding BookmarkUrlForSave, Mode=TwoWay}" Header="Ссылка" FontSize="12"
+                            <TextBox Text="{Binding BookmarkUrlForSave, Mode=TwoWay}" Header="Ссылка"
                                      Margin="0,10" PlaceholderText="Ссылка на сайт"></TextBox>
                             <Grid>
                                 <Button Content="Отмена" HorizontalAlignment="Left" Margin="10,20,10,10" Command="{Binding CancelSaveBookmarkButtonCommand}"></Button>

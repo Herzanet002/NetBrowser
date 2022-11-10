@@ -4,6 +4,7 @@ using NetBrowser_UWP.Models;
 using Prism.Commands;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using NetBrowser_UWP.Services;
 
 namespace NetBrowser_UWP.ViewModels
 {
@@ -17,6 +18,7 @@ namespace NetBrowser_UWP.ViewModels
         private int _startPageGridViewOrientation;
         
         private readonly ILocalSettingsService _localSettingsService;
+        private readonly VisualElementsService _visualElementsService;
 
         public ICommand SelectThemeCommand => new DelegateCommand(OnSelectedThemeCommandExecuted, () => true);
 
@@ -79,15 +81,14 @@ namespace NetBrowser_UWP.ViewModels
             {
                 SetProperty(ref _isHomeButtonEnabled, value);
                 _localSettingsService.SaveSettingAsync(nameof(IsHomeButtonEnabled), value);
+                _visualElementsService.VisibilityHomeButton = value;
             }
         }
 
-        public ShellPageViewModel MainViewModel { get; }
-
-        public PersonalizePageViewModel(ILocalSettingsService localSettingsService, ShellPageViewModel mainPageViewModel)
+        public PersonalizePageViewModel(ILocalSettingsService localSettingsService, VisualElementsService visualElementsService)
         {
             _localSettingsService = localSettingsService;
-            MainViewModel = mainPageViewModel;
+            _visualElementsService = visualElementsService;
             InitializePageComponents();
         }
 

@@ -73,6 +73,7 @@ namespace NetBrowser_UWP
             services.AddSingleton<IWebView2Service, WebView2Service>();
             services.AddTransient<INavigationService, NavigationService>();
             services.AddSingleton<TabViewService>();
+            services.AddSingleton<VisualElementsService>();
             
             services.AddScoped<IRssWorkerService, RssWorkerService>();
             
