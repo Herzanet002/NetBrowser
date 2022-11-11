@@ -21,14 +21,26 @@
     controls:BackdropMaterial.ApplyToRootOrPageBackground="True">
     
     <Grid>
-        <controls:NavigationView IsBackButtonVisible="Collapsed"
-                                 IsSettingsVisible="True" x:Name="NewsNavigationView" 
+        <controls:NavigationView IsBackButtonVisible="Collapsed" 
+                                 IsSettingsVisible="True" x:Name="NewsNavigationView"
                                  SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
             <controls:NavigationView.MenuItems>
-                <controls:NavigationViewItem Content="Все новости" helpers:NavigationHelper.NavigateTo="local:AllNewsPage" 
+                <controls:NavigationViewItem Content="Основные новости" helpers:NavigationHelper.NavigateTo="local:AllNewsPage" 
                                              FontSize="16">
                     <controls:NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE774;"></FontIcon>
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Список для чтения" helpers:NavigationHelper.NavigateTo="local:ReadingListNewsPage" 
+                                             FontSize="16">
+                    <controls:NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7BC;"></FontIcon>
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItem Content="Избранное" helpers:NavigationHelper.NavigateTo="local:BookmarksNewsPage" 
+                                             FontSize="16">
+                    <controls:NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE728;"></FontIcon>
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
 

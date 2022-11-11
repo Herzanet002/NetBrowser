@@ -25,9 +25,9 @@
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppInstallerUri>D:\repos\Installer</AppInstallerUri>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <PackageCertificateThumbprint>1BF767029BD0E1A6A76581A8071CE86BDAD1CAE8</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>ABBC0A5BDDC4CD318C2222072AA09D0AD86151F8</PackageCertificateThumbprint>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <PackageCertificateKeyFile />
+    <PackageCertificateKeyFile>NetBrowser_UWP_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -165,6 +165,7 @@
     </Compile>
     <Compile Include="Services\LocalSettingsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
+    <Compile Include="Stores\BookmarksStore.cs" />
     <Compile Include="ViewModels\AboutAppViewModel.cs" />
     <Compile Include="Helpers\ListExtension.cs" />
     <Compile Include="ViewModels\ShellPageViewModel.cs" />
@@ -175,8 +176,14 @@
     <Compile Include="Views\News\AllNewsPage.xaml.cs">
       <DependentUpon>AllNewsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\News\BookmarksNewsPage.xaml.cs">
+      <DependentUpon>BookmarksNewsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\News\MainNewsPage.xaml.cs">
       <DependentUpon>MainNewsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\News\ReadingListNewsPage.xaml.cs">
+      <DependentUpon>ReadingListNewsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControls\AddNewStartPageItemDialog.xaml.cs">
       <DependentUpon>AddNewStartPageItemDialog.xaml</DependentUpon>
@@ -301,14 +308,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\GridViewNewsStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\SearchBarStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Styles\TextBlocks.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -321,7 +320,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\News\BookmarksNewsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\News\MainNewsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\News\ReadingListNewsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -489,17 +496,15 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Fonts\Segoe Fluent Icons.ttf" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Resources\Fonts\Segoe Variable.ttf" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\ru-ru\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NetBrowser_UWP_TemporaryKey.pfx" />
+    <Content Include="Resources\Fonts\Segoe Fluent Icons.ttf" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

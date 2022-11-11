@@ -54,6 +54,18 @@ public class NewsPageViewModel : ObservableObject
         get => _selected;
         set => SetProperty(ref _selected, value);
     }
+    private ContentModel _selectedItemInAllNews;
+
+    public ContentModel SelectedItemInAllNews
+    {
+        get => _selectedItemInAllNews;
+        set
+        {
+            SetProperty(ref _selectedItemInAllNews, value);
+            _tabViewService.CreateNewWebTab(value.Link);
+        }
+    }
+
 
     public NewsPageViewModel(IServiceScopeFactory serviceScopeFactory,
         TabViewService tabViewService,
@@ -81,9 +93,16 @@ public class NewsPageViewModel : ObservableObject
         {
             var selectedItem = args.InvokedItemContainer as NavigationViewItem;
 
-            if (selectedItem?.GetValue(NavigationHelper.NavigateToProperty) is Type pageType)
+            try
             {
-                _navigationService.Navigate(pageType, null, args.RecommendedNavigationTransitionInfo);
+                if (selectedItem?.GetValue(NavigationHelper.NavigateToProperty) is Type pageType)
+                {
+                    _navigationService.Navigate(pageType, null, args.RecommendedNavigationTransitionInfo);
+                }
+            }
+            catch (Exception ex)
+            {
+                // ignored
             }
         }
     }

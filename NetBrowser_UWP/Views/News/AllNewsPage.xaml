@@ -90,13 +90,13 @@
     </Page.Resources>
     <Grid Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="110"/>
+            <RowDefinition Height="120"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <controls:RotatorTile x:Name="RotatorTile" Grid.Row="0" Margin="35, 15, 35, 0" 
                               Height="100"
                               RotationDelay="0:0:5"
-                              Direction="Left"
+                              Direction="Left" 
                               ItemsSource="{Binding News}"
                               ItemTemplate="{StaticResource RotatorTileTemplate}"
                               ui:FrameworkElementExtensions.Cursor="Hand">
@@ -113,7 +113,7 @@
             <controls:AdaptiveGridView  ItemsSource="{Binding News}" Padding="15" StretchContentForSingleRow="False"
                                         OneRowModeEnabled="False"
                                         ItemHeight="300" x:Name="AdaptiveGrid"
-                                        DesiredWidth="350"
+                                        DesiredWidth="350" SelectedItem="{Binding SelectedItemInAllNews, Mode=TwoWay}"
                                         SelectionMode="Single" ItemTemplate="{StaticResource NewsGridItemTemplate}">
                 <GridView.ItemContainerStyle>
                     <Style TargetType="GridViewItem">
