@@ -8,7 +8,7 @@
 
   <Identity
     Name="fa65b7fa-4be6-44d6-9c94-67380d0a1bc7"
-    Publisher="CN=herzanet002"
+    Publisher="CN=student"
     Version="1.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="fa65b7fa-4be6-44d6-9c94-67380d0a1bc7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>

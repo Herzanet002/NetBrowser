@@ -25,8 +25,9 @@
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppInstallerUri>D:\repos\Installer</AppInstallerUri>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <PackageCertificateThumbprint>6A062582B82DAACAB96F6F9223BA0C2045C86386</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>1BF767029BD0E1A6A76581A8071CE86BDAD1CAE8</PackageCertificateThumbprint>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <PackageCertificateKeyFile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -494,10 +495,11 @@
     <Content Include="Resources\Fonts\Segoe Variable.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NetBrowser_UWP_TemporaryKey.pfx" />
     <PRIResource Include="Strings\ru-ru\Resources.resw" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="NetBrowser_UWP_TemporaryKey.pfx" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

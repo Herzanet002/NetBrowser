@@ -93,7 +93,7 @@
             <RowDefinition Height="110"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <controls:RotatorTile x:Name="RotatorTile" Grid.Row="0" Margin="35, 10, 35, 0" 
+        <controls:RotatorTile x:Name="RotatorTile" Grid.Row="0" Margin="35, 15, 35, 0" 
                               Height="100"
                               RotationDelay="0:0:5"
                               Direction="Left"
