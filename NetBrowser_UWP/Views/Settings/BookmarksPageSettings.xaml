@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="NetBrowser_UWP.Views.Settings.BookmarksPage"
+    x:Class="NetBrowser_UWP.Views.Settings.BookmarksPageSettings"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:NetBrowser_UWP"

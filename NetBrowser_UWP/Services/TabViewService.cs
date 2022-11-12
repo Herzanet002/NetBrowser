@@ -8,8 +8,10 @@ using NetBrowser_UWP.Views.Settings;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using FontIconSource = Microsoft.UI.Xaml.Controls.FontIconSource;
+using IconSource = Microsoft.UI.Xaml.Controls.IconSource;
 using SymbolIconSource = Microsoft.UI.Xaml.Controls.SymbolIconSource;
 
 namespace NetBrowser_UWP.Services
@@ -83,7 +85,7 @@ namespace NetBrowser_UWP.Services
                 SelectedTabItem = newItem;
         }
 
-        public TabViewItem CreateTabViewItemInstance<T>(string header, T content, Microsoft.UI.Xaml.Controls.IconSource icon)
+        public TabViewItem CreateTabViewItemInstance<T>(string header, T content, IconSource icon)
         {
             var newTab = new TabViewItem
             {
@@ -95,7 +97,7 @@ namespace NetBrowser_UWP.Services
             return newTab;
         }
 
-        public async void CreateNewWebTab(string url = null)
+        public async Task CreateNewWebTab(string url = null)
         {
             var newWebView = await _webView2Service.InstantiateWebView2(string.IsNullOrWhiteSpace(url) ?
                 App.CurrentWebEngine.HomePage :
@@ -124,7 +126,8 @@ namespace NetBrowser_UWP.Services
             ChangeSelectedTabItem(startPageTab);
         }
 
-        public void CreateSettingsTab(int mode = 0)
+        //TODO: Settings
+        public void CreateSettingsTab(Type pageType = default)
         {
             var alreadyExistsSettingsTab = GetTabItemByFilter(tab => tab.Content is SettingsPage);
 
@@ -136,7 +139,7 @@ namespace NetBrowser_UWP.Services
 
             var settingsTab = CreateTabViewItemInstance(
                 "Settings".GetLocalized(),
-                new SettingsPage(),
+                new SettingsPage(pageType),
                 new SymbolIconSource { Symbol = Symbol.Setting });
 
             AddTabItem(settingsTab);

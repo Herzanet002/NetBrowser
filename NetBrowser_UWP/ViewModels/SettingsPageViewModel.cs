@@ -55,14 +55,14 @@ namespace NetBrowser_UWP.ViewModels
             }
         }
 
-        public void Initialize(Frame frame, NavigationView navigationView)
+        public void Initialize(Frame frame, NavigationView navigationView, Type pageType)
         {
             _navigationView = navigationView;
             _navigationService.Frame = frame;
             _navigationService.NavigationFailed += NavigationServiceOnNavigationFailed;
             _navigationService.Navigated += NavigationServiceOnNavigated;
             _navigationView.BackRequested += NavigationViewOnBackRequested;
-            _navigationService.Navigate(typeof(MainItemPageSettings));
+            _navigationService.Navigate(pageType ?? typeof(MainItemPageSettings));
         }
 
         private void NavigationViewOnBackRequested(NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs args)
@@ -72,12 +72,6 @@ namespace NetBrowser_UWP.ViewModels
 
         private void NavigationServiceOnNavigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
         {
-            if (e.SourcePageType == typeof(SettingsPage))
-            {
-                Selected = _navigationView.SettingsItem as NavigationViewItem;
-                return;
-            }
-
             var selectedItem = GetSelectedItem(_navigationView.MenuItems, e.SourcePageType);
             if (selectedItem != null)
             {

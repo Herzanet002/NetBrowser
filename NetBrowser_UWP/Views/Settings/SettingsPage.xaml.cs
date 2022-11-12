@@ -1,10 +1,7 @@
-﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
-using NetBrowser_UWP.Services;
-using muxc = Microsoft.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using NetBrowser_UWP.ViewModels;
+using System;
+using Windows.UI.Xaml.Controls;
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace NetBrowser_UWP.Views.Settings
@@ -16,14 +13,15 @@ namespace NetBrowser_UWP.Views.Settings
     public sealed partial class SettingsPage : Page
     {
         public SettingsPageViewModel ViewModel { get; set; }
-        public SettingsPage()
+        public SettingsPage(Type pageType = default)
         {
             this.InitializeComponent();
             ViewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
             DataContext = ViewModel;
-            ViewModel.Initialize(ContentFrame, SettingsNavigationView);
+            ViewModel.Initialize(ContentFrame, SettingsNavigationView, pageType);
 
         }
+
 
 
     }

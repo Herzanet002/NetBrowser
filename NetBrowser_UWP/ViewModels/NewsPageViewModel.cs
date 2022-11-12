@@ -221,7 +221,7 @@ public class NewsPageViewModel : ObservableObject
                 {
                     Title = element.Title.Text,
                     Description = element.Summary.Text.Trim().Replace("\n", string.Empty),
-                    PubDate = element.PublishDate.DateTime.ToString("g"),
+                    PubDate = element.PublishDate.LocalDateTime.ToString("g"),
                     Link = element.Links[0].Uri.ToString(),
                     ImageUrl = element.Links[1].Uri.ToString(),
                     FeederImageLink = syndicationFeed.ImageUrl.ToString(),

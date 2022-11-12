@@ -96,7 +96,6 @@
                 <winUi:ProgressRing IsActive="{Binding IsProgressRingActive}" Height="10" Width="10"
                                     Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}">
                 </winUi:ProgressRing>
-                <!--<BitmapIcon UriSource="{Binding FaviconUrl}" ShowAsMonochrome="False" Height="16" Width="16"/>-->
                 <TextBlock
                        VerticalAlignment="Center" Margin="15,0" FontSize="12.5" HorizontalTextAlignment="Center"
                        Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}">
@@ -201,19 +200,20 @@
                 </i:Interaction.Behaviors>
                 <Button.Flyout>
                     <Flyout Placement="Bottom">
-                        <StackPanel Orientation="Vertical" MinWidth="300">
+                        <StackPanel Orientation="Vertical" Width="300">
                             <TextBlock Text="Добавить закладку" HorizontalAlignment="Center" FontWeight="SemiBold" FontSize="14"
                                        Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" ></TextBlock>
                             <TextBox Text="{Binding BookmarkTitleForSave, Mode=TwoWay}"
                                      Header="Заголовок" Margin="0,15" PlaceholderText="Название сайта"></TextBox>
                             <TextBox Text="{Binding BookmarkUrlForSave, Mode=TwoWay}" Header="Ссылка"
-                                     Margin="0,10" PlaceholderText="Ссылка на сайт"></TextBox>
-                            <Grid>
-                                <Button Content="Отмена" HorizontalAlignment="Left" Margin="10,20,10,10" Command="{Binding CancelSaveBookmarkButtonCommand}"></Button>
-                                <Button Content="Удалить" HorizontalAlignment="Center" Margin="0,20,30,10"
+                                     Margin="0,10,0,30" PlaceholderText="Ссылка на сайт"></TextBox>
+                            <StackPanel Orientation="Horizontal" Spacing="30">
+                                <Button Content="Отмена" Command="{Binding CancelSaveBookmarkButtonCommand}"></Button>
+                                <Button Content="Удалить"
                                         Visibility="{Binding DeleteBookmarkButtonVisibility}" Command="{Binding DeleteBookmarkButtonCommand}"/>
-                                <Button Content="Добавить" HorizontalAlignment="Right" Margin="10,20,10,10" Command="{Binding SaveBookmarkButtonCommand}"></Button>
-                            </Grid>
+                                <Button Content="Добавить" Command="{Binding SaveBookmarkButtonCommand}" 
+                                        Visibility="{Binding DeleteBookmarkButtonVisibility, Converter={StaticResource InvertBooleanConverter}}"></Button>
+                            </StackPanel>
                         </StackPanel>
                         <i:Interaction.Behaviors>
                             <core:DataTriggerBehavior Binding="{Binding IsFlyoutClosed}"

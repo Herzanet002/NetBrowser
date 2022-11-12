@@ -13,9 +13,9 @@ namespace NetBrowser_UWP.Views.Settings
     /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
     /// </summary>
     // ReSharper disable once RedundantExtendsListEntry
-    public sealed partial class BookmarksPage : Page
+    public sealed partial class BookmarksPageSettings : Page
     {
-        public BookmarksPage()
+        public BookmarksPageSettings()
         {
             this.InitializeComponent();
             DataContext = Ioc.Default.GetRequiredService<BookmarksPageViewModel>();

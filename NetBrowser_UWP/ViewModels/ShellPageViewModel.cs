@@ -15,9 +15,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 using winUI = Microsoft.UI.Xaml.Controls;
 
@@ -37,7 +35,7 @@ namespace NetBrowser_UWP.ViewModels
         private string _bookmarkTitleForSave;
         private string _bookmarkUrlForSave;
 
-        private Visibility _visibilityDeleteBookmarkButton;
+        private bool _visibilityDeleteBookmarkButton;
         private bool _visibilityHomeButton;
         private bool _isProgressRingActive;
         private bool _isFlyoutClosed;
@@ -45,7 +43,6 @@ namespace NetBrowser_UWP.ViewModels
         private bool _isWebLoading;
         private bool _isBookmarksExists;
 
-        private INavigationService _navigationService;
 
         #endregion Private Global Element Region
 
@@ -128,7 +125,7 @@ namespace NetBrowser_UWP.ViewModels
             set => SetProperty(ref _isProgressRingActive, value);
         }
 
-        public Visibility DeleteBookmarkButtonVisibility
+        public bool DeleteBookmarkButtonVisibility
         {
             get => _visibilityDeleteBookmarkButton;
             set => SetProperty(ref _visibilityDeleteBookmarkButton, value);
@@ -207,17 +204,17 @@ namespace NetBrowser_UWP.ViewModels
             }
         }
 
-        private void OnSearchBoxTextChangedCommandExecuted(object obj)
+        private async void OnSearchBoxTextChangedCommandExecuted(object obj)
         {
             if (obj is not AutoSuggestBoxTextChangedEventArgs eventArgs) return;
             if (eventArgs.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-                AutoSuggestListFill();
+                await AutoSuggestListFill();
             }
         }
 
         //TODO: Обновление поисковых запросов
-        private void OnSearchBoxQuerySubmittedCommandExecuted(object obj)
+        private async void OnSearchBoxQuerySubmittedCommandExecuted(object obj)
         {
             if (obj is not AutoSuggestBoxQuerySubmittedEventArgs eventArgs) return;
 
@@ -229,10 +226,10 @@ namespace NetBrowser_UWP.ViewModels
             if (_tabViewService.GetSelectedWebView() == null) return;
 
             NavigateTo(queryForSearch, _tabViewService.GetSelectedWebView());
-            _dataTransferService.SaveSearchTerm(new SiteItem
+            await _dataTransferService.SaveSearchTerm(new SiteItem
             {
                 Name = queryForSearch
-            });
+            }).ConfigureAwait(false);
         }
 
         private void OnSearchButtonCommandExecuted()
@@ -331,7 +328,7 @@ namespace NetBrowser_UWP.ViewModels
 
         private void OnBookmarkSettingButtonExecuted()
         {
-            _tabViewService.CreateSettingsTab(3);
+            _tabViewService.CreateSettingsTab(typeof(BookmarksPageSettings));
             IsFlyoutClosed = true;
         }
 
@@ -344,7 +341,7 @@ namespace NetBrowser_UWP.ViewModels
 
         private void OnHistorySettingsButtonExecuted()
         {
-            _tabViewService.CreateSettingsTab(5);
+            _tabViewService.CreateSettingsTab(typeof(HistoryPageSettings));
             IsFlyoutClosed = true;
         }
 
@@ -374,8 +371,7 @@ namespace NetBrowser_UWP.ViewModels
         public ShellPageViewModel(IDataTransferService dataTransferService,
             IWebView2Service webView2Service,
             ILocalSettingsService localSettingsService,
-            TabViewService tabViewService,
-            INavigationService navigationService)
+            TabViewService tabViewService)
         {
             _dataTransferService = dataTransferService;
             _webView2Service = webView2Service;
@@ -387,7 +383,6 @@ namespace NetBrowser_UWP.ViewModels
             _webView2Service.NewWindowRequested += WebViewOnNewWindowRequested;
             _webView2Service.NavigationCompleted += WebViewOnNavigationCompleted;
 
-            _navigationService = navigationService;
             InitializePageComponents();
             _tabViewService.CreateNewWebTab();
             InitializeCommands();
@@ -396,6 +391,10 @@ namespace NetBrowser_UWP.ViewModels
         private void TabViewServiceSelectionChangedHandler(object sender, SelectionChangedEventHandler e)
         {
             SelectionChangedTabHandler();
+            if (_tabViewService.GetSelectedWebView() != null)
+                IsWebLoading = (bool)_tabViewService.GetSelectedWebView().Tag;
+            SetVisualUiElementStates(_tabViewService.GetSelectedWebView());
+            CommandsRaiseCanExecuteChanged();
         }
 
         private void TabViewServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -444,7 +443,7 @@ namespace NetBrowser_UWP.ViewModels
             return searchTermListReversed.Select(term => term.Name).ToHashSet();
         }
 
-        private async void AutoSuggestListFill()
+        private async Task AutoSuggestListFill()
         {
             var searchTermList = await GetSearchTermListAsync();
 
@@ -576,7 +575,7 @@ namespace NetBrowser_UWP.ViewModels
             }
         }
 
-        public async void SearchWebFromStartPage(string url)
+        public async Task SearchWebFromStartPage(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
                 return;
@@ -626,11 +625,7 @@ namespace NetBrowser_UWP.ViewModels
                     SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(), string.Empty);
                     break;
             }
-            if (_tabViewService.GetSelectedWebView() != null)
-                IsWebLoading = (bool)_tabViewService.GetSelectedWebView().Tag;
-            SetVisualUiElementStates(_tabViewService.GetSelectedWebView());
 
-            CommandsRaiseCanExecuteChanged();
         }
 
         private void CloseTabItemRequested(TabViewItem tab)
@@ -643,16 +638,7 @@ namespace NetBrowser_UWP.ViewModels
                 _tabViewService.ChangeSelectedWebView(null);
         }
 
-        private void CloseTabKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-        {
-            args.Handled = true;
-            if (args.Element is not TabView invokedTabView) return;
-            if (!((TabViewItem)invokedTabView.SelectedItem).IsClosable) return;
-            if (invokedTabView.TabItems[invokedTabView.SelectedIndex] is TabViewItem tabItem)
-                CloseTabItemRequested(tabItem);
-        }
-
-        private async void GetBookmarksAsync()
+        private async Task GetBookmarksAsync()
         {
             var bookmarksListTransfer = await _dataTransferService.GetBookmarksList();
             var bookmarkDetailsEnumerable = bookmarksListTransfer.Reverse();
@@ -662,7 +648,7 @@ namespace NetBrowser_UWP.ViewModels
         private void SetBookmarkIconState(bool isAccessable)
         {
             IsBookmarksExists = isAccessable;
-            DeleteBookmarkButtonVisibility = isAccessable ? Visibility.Visible : Visibility.Collapsed;
+            DeleteBookmarkButtonVisibility = isAccessable;
         }
 
         private void SetBookmarkButtonAppearance()
