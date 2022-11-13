@@ -1,27 +1,27 @@
 ﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:media="using:Microsoft.UI.Xaml.Media">
 
     <x:String x:Key="NameOfTheme">DarkAcrylic</x:String>
     <x:Int32 x:Key="ThemeMode">2</x:Int32>
     <media:AcrylicBrush x:Key="BackgroundBrush" BackgroundSource="HostBackdrop"
-            TintOpacity="0.7" TintColor="#FF000000" AlwaysUseFallback="False" FallbackColor="#FF000000"/>
+                        TintOpacity="0.7" TintColor="#FF000000" AlwaysUseFallback="False" FallbackColor="#FF000000" />
 
     <media:AcrylicBrush x:Key="SecondBrush" BackgroundSource="HostBackdrop"
-            TintOpacity="0.8" TintColor="#FF333333"  />
+                        TintOpacity="0.8" TintColor="#FF333333" />
 
     <media:AcrylicBrush x:Key="ThirdBrush" BackgroundSource="HostBackdrop"
-            TintOpacity="0.4" TintColor="#FF000000"  />
+                        TintOpacity="0.4" TintColor="#FF000000" />
 
-    <SolidColorBrush x:Key="AppTitleBrush" Color="#7FFFFFFF"/>
-    <SolidColorBrush x:Key="ForegroundBrush" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FFEFEF"/>
-    <SolidColorBrush x:Key="SearchBoxForeground" Color="#FFEFEF"/>
+    <SolidColorBrush x:Key="AppTitleBrush" Color="#7FFFFFFF" />
+    <SolidColorBrush x:Key="ForegroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FFEFEF" />
+    <SolidColorBrush x:Key="SearchBoxForeground" Color="#FFEFEF" />
 
     <media:AcrylicBrush x:Key="SearchBoxBorderBrush" BackgroundSource="HostBackdrop"
-            TintOpacity="0.8" TintLuminosityOpacity="0.15" TintColor="#FFC7D6DC" />
+                        TintOpacity="0.8" TintLuminosityOpacity="0.15" TintColor="#FFC7D6DC" />
 
-    <SolidColorBrush x:Key="BookmarkSavedBrush" Color="#FF517EB4"></SolidColorBrush>
+    <SolidColorBrush x:Key="BookmarkSavedBrush" Color="#FF517EB4" />
 
 </ResourceDictionary>

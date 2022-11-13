@@ -2,24 +2,25 @@
     x:Class="NetBrowser_UWP.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:NetBrowser_UWP" 
+    xmlns:local="using:NetBrowser_UWP"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
 
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <controls:XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
-                <ResourceDictionary Source="Styles/TabViewItem_Style.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Styles/TabViewTemplate_Style.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Styles/AutoSuggestBox_Style.xaml"></ResourceDictionary>
+                <controls:XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <ResourceDictionary Source="Styles/TabViewItem_Style.xaml" />
+                <ResourceDictionary Source="Styles/TabViewTemplate_Style.xaml" />
+                <ResourceDictionary Source="Styles/AutoSuggestBox_Style.xaml" />
                 <ResourceDictionary Source="Styles/FontSizes.xaml" />
                 <ResourceDictionary Source="Styles/TextBlocks.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <local:ThemeManager x:Key="ThemeManager"/>
+            <local:ThemeManager x:Key="ThemeManager" />
             <FontFamily x:Key="Segoe Fluent">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
             <x:String x:Key="AppVersion">ver.0.10.31.w2</x:String>
 
-            <Style TargetType="ContentDialog" BasedOn="{StaticResource DefaultContentDialogStyle}" x:Key="ContentDialogStyle"></Style>
+            <Style TargetType="ContentDialog" BasedOn="{StaticResource DefaultContentDialogStyle}"
+                   x:Key="ContentDialogStyle" />
 
         </ResourceDictionary>
 

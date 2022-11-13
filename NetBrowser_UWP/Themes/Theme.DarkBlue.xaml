@@ -1,16 +1,16 @@
 ﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
+
     <x:String x:Key="NameOfTheme">DarkBlue</x:String>
     <x:Int32 x:Key="ThemeMode">2</x:Int32>
-    <SolidColorBrush x:Key="BackgroundBrush" Color="#FF2A3441"/>
-    <SolidColorBrush x:Key="SecondBrush" Color="#FF445469"/>
-    <SolidColorBrush x:Key="ThirdBrush" Color="#FF364354"/>
-    <SolidColorBrush x:Key="AppTitleBrush" Color="#7F97C1EF"/>
-    <SolidColorBrush x:Key="ForegroundBrush" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FFEFEF"/>
-    <SolidColorBrush x:Key="SearchBoxForeground" Color="White"/>
-    <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="#FF445469"/>
-    <SolidColorBrush x:Key="BookmarkSavedBrush" Color="#FF246F8D"></SolidColorBrush>
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#FF2A3441" />
+    <SolidColorBrush x:Key="SecondBrush" Color="#FF445469" />
+    <SolidColorBrush x:Key="ThirdBrush" Color="#FF364354" />
+    <SolidColorBrush x:Key="AppTitleBrush" Color="#7F97C1EF" />
+    <SolidColorBrush x:Key="ForegroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FFEFEF" />
+    <SolidColorBrush x:Key="SearchBoxForeground" Color="White" />
+    <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="#FF445469" />
+    <SolidColorBrush x:Key="BookmarkSavedBrush" Color="#FF246F8D" />
 </ResourceDictionary>

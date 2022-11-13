@@ -9,30 +9,33 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="3*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="100"></RowDefinition>
+            <RowDefinition Height="100" />
         </Grid.RowDefinitions>
         <resources:AuroraLite Grid.RowSpan="3" />
         <StackPanel Grid.Row="0" VerticalAlignment="Center" Spacing="20">
-            <Image Source="/Resources/Logos/AppLogo.png" Width="96" VerticalAlignment="Center" HorizontalAlignment="Center" />
-            <TextBlock HorizontalTextAlignment="Center" VerticalAlignment="Center" Text="NetBrowser" FontSize="30" FontWeight="SemiBold" />
+            <Image Source="/Resources/Logos/AppLogo.png" Width="96" VerticalAlignment="Center"
+                   HorizontalAlignment="Center" />
+            <TextBlock HorizontalTextAlignment="Center" VerticalAlignment="Center" Text="NetBrowser" FontSize="30"
+                       FontWeight="SemiBold" />
         </StackPanel>
 
         <StackPanel Grid.Row="1" Spacing="15">
 
             <TextBlock Text="{helpers:ResourceString Name=BrowserVersionBlock/Text}" HorizontalTextAlignment="Center"
-                           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}">
-                <Run Text="{StaticResource AppVersion}"/>
+                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}">
+                <Run Text="{StaticResource AppVersion}" />
             </TextBlock>
 
-            <TextBlock Text="{helpers:ResourceString Name=BuiltOnTechnologyBlock/Text}" HorizontalTextAlignment="Center" 
-                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" >
+            <TextBlock Text="{helpers:ResourceString Name=BuiltOnTechnologyBlock/Text}"
+                       HorizontalTextAlignment="Center"
+                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}">
                 <Run Text="{Binding WebViewVersion}" />
             </TextBlock>
         </StackPanel>
 
         <TextBlock Grid.Row="2" Margin="40" HorizontalTextAlignment="Right">
             <Span>
-                <Run Text="{helpers:ResourceString Name=RunOnOpenSourceProject/Text}"></Run>
+                <Run Text="{helpers:ResourceString Name=RunOnOpenSourceProject/Text}" />
                 <Hyperlink NavigateUri="https://www.chromium.org/chromium-projects/">Chromium</Hyperlink>
             </Span>
         </TextBlock>

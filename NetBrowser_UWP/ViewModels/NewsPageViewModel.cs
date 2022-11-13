@@ -1,37 +1,57 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Extensions.DependencyInjection;
-using NetBrowser_UWP.Helpers;
-using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
-using NetBrowser_UWP.Views.Settings;
-using Prism.Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Helpers;
+using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views.News;
+using NetBrowser_UWP.Views.Settings;
+using Prism.Commands;
 using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
 using NavigationViewItemInvokedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs;
-using NetBrowser_UWP.Contracts.Services;
 
 namespace NetBrowser_UWP.ViewModels;
 
 public class NewsPageViewModel : ObservableObject
 {
+    private readonly INavigationService _navigationService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly TabViewService _tabViewService;
-    private readonly INavigationService _navigationService;
-    private ObservableCollection<ContentModel> _news = new();
     private bool _isProgressRingActive = true;
+    private NavigationView _navigationView;
+    private ObservableCollection<ContentModel> _news = new();
     private ContentModel _newsForSharing;
     private NavigationViewItem _selected;
-    private NavigationView _navigationView;
+    private ContentModel _selectedItemInAllNews;
+
+
+    public NewsPageViewModel(IServiceScopeFactory serviceScopeFactory,
+        TabViewService tabViewService,
+        INavigationService navigationService)
+    {
+        _serviceScopeFactory = serviceScopeFactory;
+        _tabViewService = tabViewService;
+        _navigationService = navigationService;
+
+        RotatorTileClickCommand = new DelegateCommand<ContentModel>(OnRotatorTileClickCommandExecuted);
+        ShareNewsCommand = new DelegateCommand<ContentModel>(OnShareNewsCommandExecuted);
+        NavigationViewItemInvokedCommand =
+            new DelegateCommand<NavigationViewItemInvokedEventArgs>(OnNavigationViewItemInvokedCommandExecuted);
+
+        DataTransferManager.GetForCurrentView().DataRequested += NewsPageViewModel_DataRequested;
+        InitializeNewsContent();
+    }
 
     public DelegateCommand<ContentModel> RotatorTileClickCommand { get; }
     public DelegateCommand<ContentModel> ShareNewsCommand { get; }
@@ -54,7 +74,6 @@ public class NewsPageViewModel : ObservableObject
         get => _selected;
         set => SetProperty(ref _selected, value);
     }
-    private ContentModel _selectedItemInAllNews;
 
     public ContentModel SelectedItemInAllNews
     {
@@ -64,23 +83,6 @@ public class NewsPageViewModel : ObservableObject
             SetProperty(ref _selectedItemInAllNews, value);
             _tabViewService.CreateNewWebTab(value.Link);
         }
-    }
-
-
-    public NewsPageViewModel(IServiceScopeFactory serviceScopeFactory,
-        TabViewService tabViewService,
-        INavigationService navigationService)
-    {
-        _serviceScopeFactory = serviceScopeFactory;
-        _tabViewService = tabViewService;
-        _navigationService = navigationService;
-
-        RotatorTileClickCommand = new DelegateCommand<ContentModel>(OnRotatorTileClickCommandExecuted);
-        ShareNewsCommand = new DelegateCommand<ContentModel>(OnShareNewsCommandExecuted);
-        NavigationViewItemInvokedCommand = new DelegateCommand<NavigationViewItemInvokedEventArgs>(OnNavigationViewItemInvokedCommandExecuted);
-        
-        DataTransferManager.GetForCurrentView().DataRequested += NewsPageViewModel_DataRequested;
-        InitializeNewsContent();
     }
 
     private void OnNavigationViewItemInvokedCommandExecuted(NavigationViewItemInvokedEventArgs args)
@@ -96,9 +98,7 @@ public class NewsPageViewModel : ObservableObject
             try
             {
                 if (selectedItem?.GetValue(NavigationHelper.NavigateToProperty) is Type pageType)
-                {
                     _navigationService.Navigate(pageType, null, args.RecommendedNavigationTransitionInfo);
-                }
             }
             catch (Exception ex)
             {
@@ -112,7 +112,7 @@ public class NewsPageViewModel : ObservableObject
         if (_newsForSharing == null) return;
 
         args.Request.Data.SetText(_newsForSharing.Title);
-        args.Request.Data.Properties.Title = Windows.ApplicationModel.Package.Current.DisplayName;
+        args.Request.Data.Properties.Title = Package.Current.DisplayName;
         args.Request.Data.SetWebLink(new Uri(_newsForSharing.Link));
     }
 
@@ -121,7 +121,6 @@ public class NewsPageViewModel : ObservableObject
         if (param == null) return;
         _newsForSharing = param;
         DataTransferManager.ShowShareUI();
-
     }
 
     public void Initialize(Frame frame, NavigationView navigationView)
@@ -143,10 +142,7 @@ public class NewsPageViewModel : ObservableObject
         }
 
         var selectedItem = GetSelectedItem(_navigationView.MenuItems, e.SourcePageType);
-        if (selectedItem != null)
-        {
-            Selected = selectedItem;
-        }
+        if (selectedItem != null) Selected = selectedItem;
     }
 
     private bool IsMenuItemForPageType(NavigationViewItem menuItem, Type sourcePageType)
@@ -159,16 +155,10 @@ public class NewsPageViewModel : ObservableObject
     {
         foreach (var item in menuItems.OfType<NavigationViewItem>())
         {
-            if (IsMenuItemForPageType(item, pageType))
-            {
-                return item;
-            }
+            if (IsMenuItemForPageType(item, pageType)) return item;
 
             var selectedChild = GetSelectedItem(item.MenuItems, pageType);
-            if (selectedChild != null)
-            {
-                return selectedChild;
-            }
+            if (selectedChild != null) return selectedChild;
         }
 
         return null;
@@ -176,7 +166,6 @@ public class NewsPageViewModel : ObservableObject
 
     private void NavigationServiceOnNavigationFailed(object sender, NavigationFailedEventArgs e)
     {
-
     }
 
     private void OnRotatorTileClickCommandExecuted(ContentModel param)
@@ -189,9 +178,9 @@ public class NewsPageViewModel : ObservableObject
     {
         await GetNews(new Dictionary<string, string>
         {
-            { "Lenta", "https://lenta.ru/rss/news" },
-            { "RT", "https://russian.rt.com/rss" },
-            { "Habr", "https://habr.com/ru/rss/all/all/" }
+            {"Lenta", "https://lenta.ru/rss/news"},
+            {"RT", "https://russian.rt.com/rss"},
+            {"Habr", "https://habr.com/ru/rss/all/all/"}
         });
         IsProgressRingActive = false;
     }
@@ -205,10 +194,7 @@ public class NewsPageViewModel : ObservableObject
         var feeds = new List<SyndicationFeed>();
         await Task.Run(async () =>
         {
-            foreach (var source in sources)
-            {
-                feeds.Add(await rssWorker.ParseRss(source.Value));
-            }
+            foreach (var source in sources) feeds.Add(await rssWorker.ParseRss(source.Value));
         });
 
         foreach (var syndicationFeed in feeds)
@@ -231,5 +217,4 @@ public class NewsPageViewModel : ObservableObject
         }
         //News.Shuffle();
     }
-
 }

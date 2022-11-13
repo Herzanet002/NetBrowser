@@ -2,14 +2,15 @@
     x:Class="NetBrowser_UWP.Views.ErrorLoadPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:NetBrowser_UWP"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Grid>
-        <TextBlock Text="Не удалось загрузить страницу" Foreground="White" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-        <TextBlock  Foreground="MediumVioletRed" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,200,0,0"/>
+        <TextBlock Text="Не удалось загрузить страницу" Foreground="White" FontSize="50" HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+        <TextBlock Foreground="MediumVioletRed" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Margin="0,200,0,0" />
 
     </Grid>
 </Page>

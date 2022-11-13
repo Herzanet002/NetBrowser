@@ -2,7 +2,6 @@
     x:Class="NetBrowser_UWP.Views.Settings.HistoryPageSettings"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:NetBrowser_UWP.Views.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
@@ -12,7 +11,7 @@
     xmlns:converters="using:NetBrowser_UWP.Converters"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewModels:HistoryPageViewModel,IsDesignTimeCreatable=True}">
-    
+
     <Page.Resources>
         <x:String x:Key="SearchPlaceholderText">Поиск в журнале истории</x:String>
         <StandardUICommand x:Name="DeleteCommand"
@@ -30,24 +29,25 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="100" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="50,30,50,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="180" />
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="180" />
             </Grid.ColumnDefinitions>
-            <TextBlock HorizontalAlignment="Left"  Text="История" FontSize="40" VerticalAlignment="Top" Margin="0" />
-            <TextBox Grid.Column="1" Height="30" MaxWidth="500" HorizontalAlignment="Stretch" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     PlaceholderText="{StaticResource SearchPlaceholderText}" Margin="0,0,0,0"></TextBox>
+            <TextBlock HorizontalAlignment="Left" Text="История" FontSize="40" VerticalAlignment="Top" Margin="0" />
+            <TextBox Grid.Column="1" Height="30" MaxWidth="500" HorizontalAlignment="Stretch"
+                     Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="{StaticResource SearchPlaceholderText}" Margin="0,0,0,0" />
             <Button HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent" Grid.Column="2"
-                     VerticalAlignment="Center" 
+                    VerticalAlignment="Center"
                     Command="{StaticResource ClearHistoryButtonCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Очистить журнал" Margin="0,0,10,0" FontWeight="SemiBold"></TextBlock>
+                    <TextBlock Text="Очистить журнал" Margin="0,0,10,0" FontWeight="SemiBold" />
                     <FontIcon Glyph="&#xE74D;" FontSize="14" />
                 </StackPanel>
             </Button>
@@ -56,26 +56,27 @@
 
         <Grid Grid.Row="1" Margin="60,10,60,40">
             <ListView Background="{x:Null}" ItemsSource="{Binding HistoryList}" SelectionMode="Single"
-                      HorizontalAlignment="Left" SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                      HorizontalAlignment="Left"
+                      SelectedItem="{Binding SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Tapped">
-                    <core:InvokeCommandAction Command="{StaticResource OpenCommand}" />
-                </core:EventTriggerBehavior>
-            </interactivity:Interaction.Behaviors>
+                        <core:InvokeCommandAction Command="{StaticResource OpenCommand}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <VirtualizingStackPanel VirtualizationMode="Recycling"></VirtualizingStackPanel>
+                        <VirtualizingStackPanel VirtualizationMode="Recycling" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:HistoryItemDetails" x:Name="DataTemplate">
                         <UserControl PointerEntered="ListViewItem_PointerEntered"
-                                 PointerExited="ListViewItem_PointerExited">
+                                     PointerExited="ListViewItem_PointerExited">
                             <Grid Background="Transparent" Height="50">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="100"></ColumnDefinition>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="100" />
                                 </Grid.ColumnDefinitions>
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup x:Name="HoveringStates">
@@ -83,33 +84,35 @@
                                         <VisualState x:Name="HoverButtonsShown">
                                             <VisualState.Setters>
                                                 <Setter Target="HoverButtons.Visibility"
-                                                    Value="Visible" />
+                                                        Value="Visible" />
                                             </VisualState.Setters>
                                         </VisualState>
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
-                                <TextBlock Text="{x:Bind Time, Converter={StaticResource TimeConverter}}" VerticalAlignment="Center"
-                                           FontSize="16" FontWeight="SemiBold" Grid.Column="0"/>
-                                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,0,80,2" VerticalAlignment="Center">
+                                <TextBlock Text="{x:Bind Time, Converter={StaticResource TimeConverter}}"
+                                           VerticalAlignment="Center"
+                                           FontSize="16" FontWeight="SemiBold" Grid.Column="0" />
+                                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,0,80,2"
+                                            VerticalAlignment="Center">
                                     <TextBlock Text="{x:Bind Name}" FontSize="16"
-                                               Margin="10,0" FontWeight="Bold"  />
-                                    <TextBlock Text="{x:Bind Url}" FontSize="12"  
-                                               HorizontalAlignment="Left" Margin="10,0"/>
+                                               Margin="10,0" FontWeight="Bold" />
+                                    <TextBlock Text="{x:Bind Url}" FontSize="12"
+                                               HorizontalAlignment="Left" Margin="10,0" />
                                 </StackPanel>
                                 <TextBlock Text="{Binding Date}" VerticalAlignment="Center" FontSize="16"
-                                       FontWeight="SemiBold" Grid.Column="2"/>
+                                           FontWeight="SemiBold" Grid.Column="2" />
                                 <StackPanel x:Name="HoverButtons" Grid.Column="1"
-                                        Orientation="Horizontal"
-                                        Visibility="Collapsed"
-                                        Margin="0,0,20,0"
-                                        HorizontalAlignment="Right">
-                                    <Button 
+                                            Orientation="Horizontal"
+                                            Visibility="Collapsed"
+                                            Margin="0,0,20,0"
+                                            HorizontalAlignment="Right">
+                                    <Button
                                         HorizontalAlignment="Right"
                                         Command="{StaticResource DeleteCommand}" CommandParameter="{Binding }"
                                         Padding="0"
                                         Style="{StaticResource ButtonRevealStyle}"
                                         Height="28" Width="28">
-                                        <FontIcon Glyph="&#xE711;" FontSize="14"></FontIcon>
+                                        <FontIcon Glyph="&#xE711;" FontSize="14" />
                                     </Button>
 
                                 </StackPanel>

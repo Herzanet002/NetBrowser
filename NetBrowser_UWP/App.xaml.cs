@@ -1,11 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
-using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
-using NetBrowser_UWP.ViewModels;
-using NetBrowser_UWP.Views;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -14,148 +7,145 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using NetBrowser_UWP.Views.UserControls;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels;
+using NetBrowser_UWP.Views;
+using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
 
-namespace NetBrowser_UWP
+namespace NetBrowser_UWP;
+
+/// <summary>
+///     Обеспечивает зависящее от конкретного приложения поведение, дополняющее класс Application по умолчанию.
+/// </summary>
+sealed partial class App : Application
 {
-    /// <summary>
-    /// Обеспечивает зависящее от конкретного приложения поведение, дополняющее класс Application по умолчанию.
-    /// </summary>
-    sealed partial class App : Application
+    public static ThemeItem CurrentTheme;
+
+    public static SearchEngineItem CurrentWebEngine;
+
+
+    public App()
     {
-        /// <summary>
-        /// Инициализирует одноэлементный объект приложения. Это первая выполняемая строка разрабатываемого
-        /// кода, поэтому она является логическим эквивалентом main() или WinMain().
-        /// </summary>
-        ///
-        public IServiceProvider Services { get; }
+        InitializeComponent();
+        Suspending += OnSuspending;
+        UnhandledException += App_UnhandledException;
 
-        public static ApplicationViewTitleBar TitleBar => ApplicationView.GetForCurrentView().TitleBar;
+        Services = ConfigureDependencyInjection();
+        Ioc.Default.ConfigureServices(Services);
+        var dataAccessService = Ioc.Default.GetRequiredService<IDataAccessService>();
 
-        public static ThemeItem CurrentTheme;
+        dataAccessService.InitializeHistoryFile();
+        dataAccessService.InitializeBookmarksFile();
+        dataAccessService.InitializeConfigFile();
+        dataAccessService.InitializeStartPageFile();
+    }
 
-        public static SearchEngineItem CurrentWebEngine;
+    /// <summary>
+    ///     Инициализирует одноэлементный объект приложения. Это первая выполняемая строка разрабатываемого
+    ///     кода, поэтому она является логическим эквивалентом main() или WinMain().
+    /// </summary>
+    public IServiceProvider Services { get; }
 
-        public static ThemeManager ThemeManager =>
-            Current.Resources["ThemeManager"] as ThemeManager;
+    public static ApplicationViewTitleBar TitleBar => ApplicationView.GetForCurrentView().TitleBar;
+
+    public static ThemeManager ThemeManager =>
+        Current.Resources["ThemeManager"] as ThemeManager;
+
+    private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+    }
+
+    private static IServiceProvider ConfigureDependencyInjection()
+    {
+        var services = new ServiceCollection();
+
+        //Services & Managers
+        services.AddSingleton<IDataTransferService, DataTransferService>();
+        services.AddSingleton<IDataAccessService, DataAccessService>();
+        services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
+        services.AddSingleton<IWebView2Service, WebView2Service>();
+        services.AddTransient<INavigationService, NavigationService>();
+        services.AddSingleton<TabViewService>();
+
+        services.AddScoped<IRssWorkerService, RssWorkerService>();
+
+        //ViewModels
+        services.AddSingleton<ShellPageViewModel>();
+        services.AddTransient<HistoryPageViewModel>();
+        services.AddTransient<StartPageViewModel>();
+        services.AddTransient<BookmarksPageViewModel>();
+        services.AddTransient<PersonalizePageViewModel>();
+        services.AddTransient<SearchSystemPageViewModel>();
+        services.AddTransient<SettingsPageViewModel>();
+        services.AddTransient<NewsPageViewModel>();
+        services.AddTransient<AboutAppViewModel>();
+
+        services.AddHttpClient("NewsClient");
+
+        return services.BuildServiceProvider();
+    }
 
 
-        public App()
+    public static async Task SetApplicationTheme()
+    {
+        var name = await Ioc.Default.GetRequiredService<ILocalSettingsService>()
+            .ReadSettingAsync<string>("CurrentTheme");
+        CurrentTheme = ThemeManager.SetRequestedTheme(name);
+    }
+
+    protected override async void OnLaunched(LaunchActivatedEventArgs e)
+    {
+        var rootFrame = Window.Current.Content as Frame;
+
+        //Set Current Search Engine
+        CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataTransferService>().GetCurrentSearchEngine();
+
+        // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
+        // только обеспечьте активность окна
+        if (rootFrame == null)
         {
-            this.InitializeComponent();
-            this.Suspending += OnSuspending;
-            this.UnhandledException += App_UnhandledException;
+            // Создание фрейма, который станет контекстом навигации, и переход к первой странице
+            rootFrame = new Frame();
 
-            this.Services = ConfigureDependencyInjection();
-            Ioc.Default.ConfigureServices(Services);
-            var dataAccessService = Ioc.Default.GetRequiredService<IDataAccessService>();
+            rootFrame.NavigationFailed += OnNavigationFailed;
 
-            dataAccessService.InitializeHistoryFile();
-            dataAccessService.InitializeBookmarksFile();
-            dataAccessService.InitializeConfigFile();
-            dataAccessService.InitializeStartPageFile();
-
-        }
-
-        private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-
-        }
-
-        private static IServiceProvider ConfigureDependencyInjection()
-        {
-            var services = new ServiceCollection();
-
-            //Services & Managers
-            services.AddSingleton<IDataTransferService, DataTransferService>();
-            services.AddSingleton<IDataAccessService, DataAccessService>();
-            services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
-            services.AddSingleton<IWebView2Service, WebView2Service>();
-            services.AddTransient<INavigationService, NavigationService>();
-            services.AddSingleton<TabViewService>();
-            
-            services.AddScoped<IRssWorkerService, RssWorkerService>();
-            
-            //ViewModels
-            services.AddSingleton<ShellPageViewModel>();
-            services.AddTransient<HistoryPageViewModel>();
-            services.AddTransient<StartPageViewModel>();
-            services.AddTransient<BookmarksPageViewModel>();
-            services.AddTransient<PersonalizePageViewModel>();
-            services.AddTransient<SearchSystemPageViewModel>();
-            services.AddTransient<SettingsPageViewModel>();
-            services.AddTransient<NewsPageViewModel>();
-            services.AddTransient<AboutAppViewModel>();
-
-            services.AddHttpClient("NewsClient");
-
-            return services.BuildServiceProvider();
-        }
-
-
-
-        public static async Task SetApplicationTheme()
-        {
-            var name = await Ioc.Default.GetRequiredService<ILocalSettingsService>()
-                .ReadSettingAsync<string>("CurrentTheme");
-            CurrentTheme = ThemeManager.SetRequestedTheme(name);
-        }
-
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
-        {
-            var rootFrame = Window.Current.Content as Frame;
-
-            //Set Current Search Engine
-            CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataTransferService>().GetCurrentSearchEngine();
-
-            // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
-            // только обеспечьте активность окна
-            if (rootFrame == null)
+            if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
             {
-                // Создание фрейма, который станет контекстом навигации, и переход к первой странице
-                rootFrame = new Frame();
-
-                rootFrame.NavigationFailed += OnNavigationFailed;
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Загрузить состояние из ранее приостановленного приложения
-                }
-
-                // Размещение фрейма в текущем окне
-                Window.Current.Content = rootFrame;
-                await SetApplicationTheme();
+                //TODO: Загрузить состояние из ранее приостановленного приложения
             }
 
-            if (e.PrelaunchActivated == false)
-            {
-                if (rootFrame.Content == null)
-                {
-                    // Если стек навигации не восстанавливается для перехода к первой странице,
-                    // настройка новой страницы путем передачи необходимой информации в качестве параметра
-                    // навигации
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
-                }
-                // Обеспечение активности текущего окна
-                Window.Current.Activate();
-            }
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-
+            // Размещение фрейма в текущем окне
+            Window.Current.Content = rootFrame;
+            await SetApplicationTheme();
         }
 
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        if (e.PrelaunchActivated == false)
         {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
-
+            if (rootFrame.Content == null)
+                // Если стек навигации не восстанавливается для перехода к первой странице,
+                // настройка новой страницы путем передачи необходимой информации в качестве параметра
+                // навигации
+                rootFrame.Navigate(typeof(MainPage), e.Arguments);
+            // Обеспечение активности текущего окна
+            Window.Current.Activate();
         }
 
-        private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
-            var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Сохранить состояние приложения и остановить все фоновые операции
-            deferral.Complete();
-        }
+        CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+    }
 
+    private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+    {
+        throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+    }
 
+    private void OnSuspending(object sender, SuspendingEventArgs e)
+    {
+        var deferral = e.SuspendingOperation.GetDeferral();
+        //TODO: Сохранить состояние приложения и остановить все фоновые операции
+        deferral.Complete();
     }
 }

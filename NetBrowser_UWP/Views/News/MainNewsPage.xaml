@@ -5,44 +5,42 @@
     xmlns:local="using:NetBrowser_UWP.Views.News"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:NetBrowser_UWP.Models"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
-    xmlns:wctoolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:behaviors="using:Microsoft.Toolkit.Uwp.UI.Behaviors"
-    xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     d:DataContext="{d:DesignInstance Type=viewModels:NewsPageViewModel,IsDesignTimeCreatable=True}"
     controls:BackdropMaterial.ApplyToRootOrPageBackground="True">
-    
+
     <Grid>
-        <controls:NavigationView IsBackButtonVisible="Collapsed" 
+        <controls:NavigationView IsBackButtonVisible="Collapsed"
                                  IsSettingsVisible="True" x:Name="NewsNavigationView"
                                  SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
             <controls:NavigationView.MenuItems>
-                <controls:NavigationViewItem Content="Основные новости" helpers:NavigationHelper.NavigateTo="local:AllNewsPage">
+                <controls:NavigationViewItem Content="Основные новости"
+                                             helpers:NavigationHelper.NavigateTo="local:AllNewsPage">
                     <controls:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE774;"></FontIcon>
+                        <FontIcon Glyph="&#xE774;" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItemSeparator/>
-                <controls:NavigationViewItem Content="Список для чтения" helpers:NavigationHelper.NavigateTo="local:ReadingListNewsPage">
+                <controls:NavigationViewItemSeparator />
+                <controls:NavigationViewItem Content="Список для чтения"
+                                             helpers:NavigationHelper.NavigateTo="local:ReadingListNewsPage">
                     <controls:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7BC;"></FontIcon>
+                        <FontIcon Glyph="&#xE7BC;" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItemSeparator/>
-                <controls:NavigationViewItem Content="Избранное" helpers:NavigationHelper.NavigateTo="local:BookmarksNewsPage">
+                <controls:NavigationViewItemSeparator />
+                <controls:NavigationViewItem Content="Избранное"
+                                             helpers:NavigationHelper.NavigateTo="local:BookmarksNewsPage">
                     <controls:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE728;"></FontIcon>
+                        <FontIcon Glyph="&#xE728;" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
-                <controls:NavigationViewItemSeparator/>
+                <controls:NavigationViewItemSeparator />
 
             </controls:NavigationView.MenuItems>
             <interactivity:Interaction.Behaviors>
@@ -53,12 +51,11 @@
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
             <Grid>
-                <Frame x:Name="MainFrame" Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}"/>
+                <Frame x:Name="MainFrame" Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}" />
             </Grid>
         </controls:NavigationView>
 
     </Grid>
 
-    
 
 </Page>

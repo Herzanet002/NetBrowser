@@ -1,51 +1,52 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
-using System.Collections.ObjectModel;
-using System.Linq;
 
-namespace NetBrowser_UWP.ViewModels
+namespace NetBrowser_UWP.ViewModels;
+
+internal class SearchSystemPageViewModel : ObservableObject
 {
-    internal class SearchSystemPageViewModel : ObservableObject
+    private static ObservableCollection<SearchEngineItem> _listOfEngines;
+    private readonly IDataTransferService _dataTransferService;
+    private SearchEngineItem _currentEngine;
+
+    public SearchSystemPageViewModel(IDataTransferService dataTransferService)
     {
-        private static ObservableCollection<SearchEngineItem> _listOfEngines;
-        private SearchEngineItem _currentEngine;
-        private readonly IDataTransferService _dataTransferService;
-        public ObservableCollection<SearchEngineItem> ListOfEngines
-        {
-            get => _listOfEngines;
-            set => SetProperty(ref _listOfEngines, value);
-        }
+        _dataTransferService = dataTransferService;
+        GetEngines();
+    }
 
-        public SearchEngineItem CurrentEngine
-        {
-            get => _currentEngine;
-            set
-            {
-                SetProperty(ref _currentEngine, value);
-                ChangeSearchEngine();
-            }
-        }
+    public ObservableCollection<SearchEngineItem> ListOfEngines
+    {
+        get => _listOfEngines;
+        set => SetProperty(ref _listOfEngines, value);
+    }
 
-        private void ChangeSearchEngine()
+    public SearchEngineItem CurrentEngine
+    {
+        get => _currentEngine;
+        set
         {
-            _dataTransferService.ChangeSearchEngine(CurrentEngine.Name);
-            App.CurrentWebEngine = CurrentEngine;
+            SetProperty(ref _currentEngine, value);
+            ChangeSearchEngine();
         }
-        public SearchSystemPageViewModel(IDataTransferService dataTransferService)
-        {
-            _dataTransferService = dataTransferService;
-            GetEngines();
-        }
+    }
 
-        public async void GetEngines()
-        {
-            ListOfEngines = new ObservableCollection<SearchEngineItem>(await _dataTransferService.GetSearchEngineList());
+    private void ChangeSearchEngine()
+    {
+        _dataTransferService.ChangeSearchEngine(CurrentEngine.Name);
+        App.CurrentWebEngine = CurrentEngine;
+    }
 
-            var selectedEngine = from item in ListOfEngines
-                                 where item.IsSelected == "1"
-                                 select item;
-            CurrentEngine = selectedEngine.FirstOrDefault();
-        }
+    public async void GetEngines()
+    {
+        ListOfEngines = new ObservableCollection<SearchEngineItem>(await _dataTransferService.GetSearchEngineList());
+
+        var selectedEngine = from item in ListOfEngines
+            where item.IsSelected == "1"
+            select item;
+        CurrentEngine = selectedEngine.FirstOrDefault();
     }
 }

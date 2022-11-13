@@ -1,22 +1,19 @@
-﻿using NetBrowser_UWP.ViewModels;
-using System.Numerics;
+﻿using System.Numerics;
 using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using NetBrowser_UWP.ViewModels;
 
-namespace NetBrowser_UWP.Views
+namespace NetBrowser_UWP.Views;
+
+/// <summary>
+///     Главная страница браузера, в котором отображается весь контент
+/// </summary>
+public sealed partial class MainPage : Page
 {
-    /// <summary>
-    ///     Главная страница браузера, в котором отображается весь контент
-    /// </summary>
-    public sealed partial class MainPage : Page
+    public MainPage()
     {
-        public MainPage()
-        {
-            InitializeComponent();
-            DataContext = Ioc.Default.GetService<ShellPageViewModel>();
-            SearchBox.Translation += new Vector3(0, 0, 32);
-        }
-
+        InitializeComponent();
+        DataContext = Ioc.Default.GetService<ShellPageViewModel>();
+        SearchBox.Translation += new Vector3(0, 0, 32);
     }
-
 }

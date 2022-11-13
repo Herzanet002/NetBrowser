@@ -1,16 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using NetBrowser_UWP.ViewModels;
 
-namespace NetBrowser_UWP.Views.UserControls
+namespace NetBrowser_UWP.Views.UserControls;
+
+public sealed partial class EditBookmarkDialog
 {
-    public sealed partial class EditBookmarkDialog
+    public EditBookmarkDialog()
     {
-        public EditBookmarkDialog()
-        {
-            this.InitializeComponent();
-            DataContext = Ioc.Default.GetRequiredService<BookmarksPageViewModel>();
-        }
-
-
+        InitializeComponent();
+        DataContext = Ioc.Default.GetRequiredService<BookmarksPageViewModel>();
     }
 }

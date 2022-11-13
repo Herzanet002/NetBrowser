@@ -1,8 +1,6 @@
-﻿namespace NetBrowser_UWP.Models
+﻿namespace NetBrowser_UWP.Models;
+
+public class BookmarkDetails : SiteItem
 {
-    public class BookmarkDetails:SiteItem
-    {
-        
-        public string FaviconUrl { get; set; }
-    }
+    public string FaviconUrl { get; set; }
 }

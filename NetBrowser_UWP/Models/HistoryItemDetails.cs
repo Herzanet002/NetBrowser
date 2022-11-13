@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace NetBrowser_UWP.Models
-{
-    [Serializable]
-    public class HistoryItemDetails : SiteItem
-    {
-        public string Time { get; set; }
+namespace NetBrowser_UWP.Models;
 
-        public string Date { get; set; }
-    }
+[Serializable]
+public class HistoryItemDetails : SiteItem
+{
+    public string Time { get; set; }
+
+    public string Date { get; set; }
 }

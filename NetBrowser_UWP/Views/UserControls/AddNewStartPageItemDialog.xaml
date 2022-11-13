@@ -17,10 +17,11 @@
         <StackPanel>
             <TextBox Header="Заголовок" VerticalContentAlignment="Center" Margin="0,10,0,0"
                      TextWrapping="NoWrap" PlaceholderText="Название сайта"
-                     Text="{Binding NewSiteName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                     Text="{Binding NewSiteName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <TextBox Header="Ссылка" VerticalContentAlignment="Center" Margin="0,10,0,0"
-                     TextWrapping="NoWrap" Text="{Binding NewSiteUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     PlaceholderText="Ссылка на сайт"></TextBox>
+                     TextWrapping="NoWrap"
+                     Text="{Binding NewSiteUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="Ссылка на сайт" />
 
         </StackPanel>
 

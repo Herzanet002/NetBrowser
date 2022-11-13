@@ -12,7 +12,7 @@
 
     <!--Заголовок пункта страницы-->
     <Style x:Key="PageSubTitleStyle" TargetType="TextBlock">
-        
+
         <Setter Property="FontSize" Value="{StaticResource MediumFontSize}" />
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         <Setter Property="TextWrapping" Value="NoWrap" />

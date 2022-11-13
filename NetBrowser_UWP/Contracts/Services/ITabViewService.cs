@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace NetBrowser_UWP.Contracts.Services;
 
-public interface ITabViewService 
+public interface ITabViewService
 {
     void AddTabItem(TabViewItem item);
     bool ContainsTab(TabViewItem item);
