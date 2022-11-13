@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
-using Windows.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views.UserControls;
-using Prism.Commands;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 
 namespace NetBrowser_UWP.ViewModels;
 
@@ -30,12 +30,12 @@ internal class HistoryPageViewModel : ObservableObject
         GetHistoryAsync();
     }
 
-    public ICommand DeleteCommand => new DelegateCommand<object>(OnDeleteHistoryItemCommandExecuted, _ => true);
-    public ICommand OpenPageCommand => new DelegateCommand(OnOpenHistoryItemCommandExecuted, () => true);
-    public ICommand ClearHistoryCommand => new DelegateCommand(OnClearHistoryJournalCommandExecuted, () => true);
+    public IAsyncRelayCommand DeleteCommand => new AsyncRelayCommand<HistoryItemDetails>(OnDeleteHistoryItemCommandExecuted);
+    public IAsyncRelayCommand OpenPageCommand => new AsyncRelayCommand(OnOpenHistoryItemCommandExecuted);
+    public IAsyncRelayCommand ClearHistoryCommand => new AsyncRelayCommand(OnClearHistoryJournalCommandExecuted);
 
-    public ICommand OpenClearDialogCommand =>
-        new DelegateCommand(OnOpenClearHistoryJournalDialogCommandExecuted, () => true);
+    public IAsyncRelayCommand OpenClearDialogCommand =>
+        new AsyncRelayCommand(OnOpenClearHistoryJournalDialogCommandExecuted);
 
     public string SearchText
     {
@@ -59,32 +59,31 @@ internal class HistoryPageViewModel : ObservableObject
         set => SetProperty(ref _selectedItem, value);
     }
 
-    private async void OnDeleteHistoryItemCommandExecuted(object param)
+    private async Task OnDeleteHistoryItemCommandExecuted(HistoryItemDetails historyItem)
     {
-        if (param is not HistoryItemDetails historyItem) return;
         await _dataTransferService.RemoveHistoryItem(historyItem);
         var history = HistoryList.ToList();
         history.Remove(historyItem);
         HistoryList = history;
     }
 
-    private async void OnClearHistoryJournalCommandExecuted()
+    private async Task OnClearHistoryJournalCommandExecuted()
     {
         await _dataTransferService.ClearHistoryFile();
     }
 
-    private async void OnOpenClearHistoryJournalDialogCommandExecuted()
+    private async Task OnOpenClearHistoryJournalDialogCommandExecuted()
     {
         await new HistoryClearConfirmationDialog().ShowAsync();
-        GetHistoryAsync();
+        await GetHistoryAsync().ConfigureAwait(false);
     }
 
-    private async void OnOpenHistoryItemCommandExecuted()
+    private async Task OnOpenHistoryItemCommandExecuted()
     {
         if (SelectedItem == null) return;
         if (Uri.IsWellFormedUriString(SelectedItem.Url, UriKind.Absolute))
         {
-            _tabViewService.CreateNewWebTab(SelectedItem.Url);
+            await _tabViewService.CreateNewWebTab(SelectedItem.Url);
             SelectedItem = null;
         }
         else
@@ -103,13 +102,13 @@ internal class HistoryPageViewModel : ObservableObject
     public void GetSearchSuggestions()
     {
         var suitable = from item in HistoryList
-            where item.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                  item.Url.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
-            select item;
+                       where item.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                             item.Url.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+                       select item;
         HistoryList = suitable;
     }
 
-    public async void GetHistoryAsync()
+    public async Task GetHistoryAsync()
     {
         var list = await _dataTransferService.GetHistory();
         if (list == null) return;

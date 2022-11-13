@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
@@ -40,7 +41,7 @@ internal class SearchSystemPageViewModel : ObservableObject
         App.CurrentWebEngine = CurrentEngine;
     }
 
-    public async void GetEngines()
+    public async Task GetEngines()
     {
         ListOfEngines = new ObservableCollection<SearchEngineItem>(await _dataTransferService.GetSearchEngineList());
 

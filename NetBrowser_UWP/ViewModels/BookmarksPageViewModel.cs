@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views.UserControls;
-using Prism.Commands;
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace NetBrowser_UWP.ViewModels;
 
@@ -51,40 +51,40 @@ internal class BookmarksPageViewModel : ObservableObject
         set => SetProperty(ref _bookmarksList, value);
     }
 
-    public async void GetBookmarksAsync()
+    public async Task GetBookmarksAsync()
     {
         BookmarksList = new ObservableCollection<BookmarkDetails>(await _dataTransferService.GetBookmarksList());
     }
 
-    private void OnOpenBookmarkInWebCommandExecuted()
+    private async Task OnOpenBookmarkInWebCommandExecuted()
     {
-        _tabViewService.CreateNewWebTab(SelectedBookmark.Url);
+        await _tabViewService.CreateNewWebTab(SelectedBookmark.Url);
         SelectedBookmark = null;
     }
 
-    private async void OnRemoveBookmarkCommandExecuted()
+    private async Task OnRemoveBookmarkCommandExecuted()
     {
         await _dataTransferService.RemoveBookmark(SelectedBookmark);
     }
 
-    private async void OnDeleteSelectedBookmarkCommandExecuted()
+    private async Task OnDeleteSelectedBookmarkCommandExecuted()
     {
         await new DeleteBookmarkDialog().ShowAsync();
-        GetBookmarksAsync();
+        await GetBookmarksAsync().ConfigureAwait(false);
     }
 
-    private async void OnEditBookmarkCommandExecuted()
+    private async Task OnEditBookmarkCommandExecuted()
     {
         BookmarkNewTitle = SelectedBookmark.Name;
         BookmarkNewUrl = SelectedBookmark.Url;
 
         await new EditBookmarkDialog().ShowAsync();
-        GetBookmarksAsync();
+        await GetBookmarksAsync().ConfigureAwait(false);
     }
 
-    private void OnSaveEditedBookmarkCommandExecuted()
+    private Task OnSaveEditedBookmarkCommandExecuted()
     {
-        _dataTransferService.EditBookmark(SelectedBookmark, new BookmarkDetails
+        return _dataTransferService.EditBookmark(SelectedBookmark, new BookmarkDetails
         {
             Name = BookmarkNewTitle,
             Url = BookmarkNewUrl,
@@ -94,11 +94,11 @@ internal class BookmarksPageViewModel : ObservableObject
 
     #region Commands
 
-    public ICommand EditBookmarkCommand => new DelegateCommand(OnEditBookmarkCommandExecuted, () => true);
-    public ICommand SaveEditedBookmarkCommand => new DelegateCommand(OnSaveEditedBookmarkCommandExecuted, () => true);
-    public ICommand OpenBookmarkCommand => new DelegateCommand(OnOpenBookmarkInWebCommandExecuted, () => true);
-    public ICommand DeleteBookmarkCommand => new DelegateCommand(OnDeleteSelectedBookmarkCommandExecuted, () => true);
-    public ICommand RemoveBookmarkCommand => new DelegateCommand(OnRemoveBookmarkCommandExecuted, () => true);
+    public IAsyncRelayCommand EditBookmarkCommand => new AsyncRelayCommand(OnEditBookmarkCommandExecuted, () => true);
+    public IAsyncRelayCommand SaveEditedBookmarkCommand => new AsyncRelayCommand(OnSaveEditedBookmarkCommandExecuted, () => true);
+    public IAsyncRelayCommand OpenBookmarkCommand => new AsyncRelayCommand(OnOpenBookmarkInWebCommandExecuted, () => true);
+    public IAsyncRelayCommand DeleteBookmarkCommand => new AsyncRelayCommand(OnDeleteSelectedBookmarkCommandExecuted, () => true);
+    public IAsyncRelayCommand RemoveBookmarkCommand => new AsyncRelayCommand(OnRemoveBookmarkCommandExecuted, () => true);
 
     #endregion Commands
 }

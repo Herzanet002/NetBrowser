@@ -134,7 +134,6 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BookmarksStore.cs" />
     <Compile Include="Commands\OpenFlyoutAction.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
     <Compile Include="Contracts\Services\IDataAccessService.cs" />

@@ -1,12 +1,11 @@
-﻿using System;
+﻿using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
-using Windows.System;
-using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
 using static NetBrowser_UWP.Constants.Constants;
 
 namespace NetBrowser_UWP.Services;
@@ -67,7 +66,7 @@ public class DataTransferService : IDataTransferService
 
         elSiteName.InnerText = siteItem.Name;
 
-        await SaveDoc(doc, HISTORY_FILE_NAME);
+        await SaveDoc(doc, HISTORY_FILE_NAME).ConfigureAwait(false);
     }
 
     public async Task<XmlDocument> DocumentLoad(string configFileName)
@@ -156,7 +155,7 @@ public class DataTransferService : IDataTransferService
         bookmarkTitle.InnerText = bookmarkDetails.Name;
         bookmarkIcon.InnerText = bookmarkDetails.FaviconUrl;
 
-        await SaveDoc(doc, BOOKMARKS_FILE_NAME);
+        await SaveDoc(doc, BOOKMARKS_FILE_NAME).ConfigureAwait(false);
     }
 
     public async Task<IList<BookmarkDetails>> GetBookmarksList()
@@ -196,24 +195,17 @@ public class DataTransferService : IDataTransferService
 
     public async Task<bool> ClearHistoryFile()
     {
-        try
-        {
-            var doc = await DocumentLoad(HISTORY_FILE_NAME);
-            var root = doc.DocumentElement;
-            var isSuccess = false;
-            while (root.ChildNodes.Count > 0)
-                root.RemoveChild(root.ChildNodes[0]);
+        var doc = await DocumentLoad(HISTORY_FILE_NAME);
+        var root = doc.DocumentElement;
+        var isSuccess = false;
+        while (root.ChildNodes.Count > 0)
+            root.RemoveChild(root.ChildNodes[0]);
 
-            if (root.ChildNodes.Count == 0)
-                isSuccess = true;
+        if (root.ChildNodes.Count == 0)
+            isSuccess = true;
 
-            await SaveDoc(doc, HISTORY_FILE_NAME);
-            return isSuccess;
-        }
-        catch
-        {
-            throw new Exception("Clear history file error");
-        }
+        await SaveDoc(doc, HISTORY_FILE_NAME);
+        return isSuccess;
     }
 
     public async Task<bool> RemoveHistoryItem(HistoryItemDetails historyItem)
@@ -236,7 +228,7 @@ public class DataTransferService : IDataTransferService
                     }
         }
 
-        await SaveDoc(doc, HISTORY_FILE_NAME);
+        await SaveDoc(doc, HISTORY_FILE_NAME).ConfigureAwait(false);
         return result;
     }
 
@@ -254,36 +246,35 @@ public class DataTransferService : IDataTransferService
             child[2].InnerText = newBookmark.FaviconUrl;
         }
 
-        await SaveDoc(doc, BOOKMARKS_FILE_NAME);
+        await SaveDoc(doc, BOOKMARKS_FILE_NAME).ConfigureAwait(false);
     }
 
     public async Task<IList<SearchEngineItem>> GetSearchEngineList()
     {
         var engineList = new List<SearchEngineItem>();
-        await Task.Run(async () =>
+
+        var file = await ApplicationData.Current.LocalFolder.GetFileAsync(SETTINGS_FILE_NAME);
+        var doc = await XmlDocument.LoadFromFileAsync(file);
+
+        var searchEngine = doc.GetElementsByTagName("searchEngine");
+        foreach (var t in searchEngine)
         {
-            var file = await ApplicationData.Current.LocalFolder.GetFileAsync(SETTINGS_FILE_NAME);
-            var doc = await XmlDocument.LoadFromFileAsync(file);
+            var searchChild = t.ChildNodes;
 
-            var searchEngine = doc.GetElementsByTagName("searchEngine");
-            foreach (var t in searchEngine)
+            foreach (var child in searchChild)
             {
-                var searchChild = t.ChildNodes;
-
-                foreach (var child in searchChild)
+                if (child.NodeName != "engine") continue;
+                var engineItem = new SearchEngineItem
                 {
-                    if (child.NodeName != "engine") continue;
-                    var engineItem = new SearchEngineItem
-                    {
-                        Prefix = child.Attributes.GetNamedItem("prefix")?.InnerText,
-                        Name = child.Attributes.GetNamedItem("name")?.InnerText,
-                        IsSelected = child.Attributes.GetNamedItem("mode")?.InnerText,
-                        HomePage = child.Attributes.GetNamedItem("homePage")?.InnerText
-                    };
-                    engineList.Add(engineItem);
-                }
+                    Prefix = child.Attributes.GetNamedItem("prefix")?.InnerText,
+                    Name = child.Attributes.GetNamedItem("name")?.InnerText,
+                    IsSelected = child.Attributes.GetNamedItem("mode")?.InnerText,
+                    HomePage = child.Attributes.GetNamedItem("homePage")?.InnerText
+                };
+                engineList.Add(engineItem);
             }
-        });
+        }
+
         return engineList;
     }
 
@@ -325,7 +316,7 @@ public class DataTransferService : IDataTransferService
             child[1].InnerText = newItem.Name;
         }
 
-        await SaveDoc(doc, BOOKMARKS_FILE_NAME);
+        await SaveDoc(doc, BOOKMARKS_FILE_NAME).ConfigureAwait(false);
     }
 
     public async Task AddNewSiteOnStartPage(SiteItem siteItem)
@@ -342,7 +333,7 @@ public class DataTransferService : IDataTransferService
         pageUrl.InnerText = siteItem.Url;
 
 
-        await SaveDoc(doc, STARTPAGE_FILE_NAME);
+        await SaveDoc(doc, STARTPAGE_FILE_NAME).ConfigureAwait(false);
     }
 
     public async Task<bool> RemoveSiteOnStartPage(SiteItem siteItem)
@@ -385,33 +376,9 @@ public class DataTransferService : IDataTransferService
             }
         }
 
-        await SaveDoc(doc, SETTINGS_FILE_NAME);
+        await SaveDoc(doc, SETTINGS_FILE_NAME).ConfigureAwait(false);
     }
 
-    public static async void LoadXmlFile(string configFileName)
-    {
-        var file = await ApplicationData.Current.LocalFolder.GetFileAsync(configFileName);
-        await Launcher.LaunchFileAsync(file);
-    }
 
-    public async Task<string> GetCurrentTheme()
-    {
-        var name = string.Empty;
-        var doc = await DocumentLoad(SETTINGS_FILE_NAME);
-        var theme = doc.GetElementsByTagName("CurrentTheme");
 
-        foreach (var item in theme) name = item.Attributes[0].InnerText;
-
-        return name;
-    }
-
-    public async void SaveCurrentTheme(string themeName)
-    {
-        var doc = await DocumentLoad(SETTINGS_FILE_NAME);
-        var theme = doc.GetElementsByTagName("CurrentTheme");
-
-        foreach (var item in theme) item.Attributes[0].InnerText = themeName;
-
-        await SaveDoc(doc, SETTINGS_FILE_NAME);
-    }
 }

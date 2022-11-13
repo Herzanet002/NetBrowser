@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
@@ -90,7 +91,7 @@ public class PersonalizePageViewModel : ObservableObject
         App.ThemeManager.SetRequestedTheme(SelectedTheme.Name);
     }
 
-    private async void InitializePageComponents()
+    private async Task InitializePageComponents()
     {
         IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsSuggestionBarEnabled));
         IsHomeButtonEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsHomeButtonEnabled));

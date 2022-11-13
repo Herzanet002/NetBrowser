@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Xml;
 using Windows.Storage;
 using Windows.System;
@@ -10,7 +11,7 @@ namespace NetBrowser_UWP.Services;
 
 public class DataAccessService : IDataAccessService
 {
-    public async void InitializeHistoryFile()
+    public async Task InitializeHistoryFile()
     {
         try
         {
@@ -40,7 +41,7 @@ public class DataAccessService : IDataAccessService
         }
     }
 
-    public async void InitializeBookmarksFile()
+    public async Task InitializeBookmarksFile()
     {
         try
         {
@@ -69,7 +70,7 @@ public class DataAccessService : IDataAccessService
         }
     }
 
-    public async void InitializeConfigFile()
+    public async Task InitializeConfigFile()
     {
         try
         {
@@ -122,7 +123,7 @@ public class DataAccessService : IDataAccessService
         }
     }
 
-    public async void InitializeStartPageFile()
+    public async Task InitializeStartPageFile()
     {
         try
         {
