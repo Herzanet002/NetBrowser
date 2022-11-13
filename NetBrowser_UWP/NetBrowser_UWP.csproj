@@ -185,9 +185,6 @@
     <Compile Include="Views\News\ReadingListNewsPage.xaml.cs">
       <DependentUpon>ReadingListNewsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\UserControls\AddNewStartPageItemDialog.xaml.cs">
-      <DependentUpon>AddNewStartPageItemDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\AboutAppPage.xaml.cs">
       <DependentUpon>AboutAppPage.xaml</DependentUpon>
     </Compile>
@@ -329,10 +326,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\News\ReadingListNewsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\UserControls\AddNewStartPageItemDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -225,7 +225,7 @@
                 </i:Interaction.Behaviors>
                 <Button.Flyout>
                     <Flyout Placement="Bottom">
-                        <StackPanel Orientation="Vertical" Width="300">
+                        <StackPanel Width="300" Margin="5">
                             <TextBlock Text="Добавить закладку" HorizontalAlignment="Center" FontWeight="SemiBold"
                                        FontSize="14"
                                        Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" />
@@ -233,14 +233,18 @@
                                      Header="Заголовок" Margin="0,15" PlaceholderText="Название сайта" />
                             <TextBox Text="{Binding BookmarkUrlForSave, Mode=TwoWay}" Header="Ссылка"
                                      Margin="0,10,0,30" PlaceholderText="Ссылка на сайт" />
-                            <StackPanel Orientation="Horizontal" Spacing="30">
-                                <Button Content="Отмена" Command="{Binding CancelSaveBookmarkButtonCommand}" />
-                                <Button Content="Удалить"
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Content="Отмена" Command="{Binding CancelSaveBookmarkButtonCommand}" />
+                                <Button Content="Удалить" Grid.Column="1" HorizontalAlignment="Right"
                                         Visibility="{Binding DeleteBookmarkButtonVisibility}"
                                         Command="{Binding DeleteBookmarkButtonCommand}" />
-                                <Button Content="Добавить" Command="{Binding SaveBookmarkButtonCommand}"
+                                <Button Grid.Column="1" Content="Добавить" Command="{Binding SaveBookmarkButtonCommand}" HorizontalAlignment="Right"
                                         Visibility="{Binding DeleteBookmarkButtonVisibility, Converter={StaticResource InvertBooleanConverter}}" />
-                            </StackPanel>
+                            </Grid>
                         </StackPanel>
                         <i:Interaction.Behaviors>
                             <core:DataTriggerBehavior Binding="{Binding IsFlyoutClosed}"

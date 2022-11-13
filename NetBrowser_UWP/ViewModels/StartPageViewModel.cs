@@ -1,15 +1,17 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Models;
+using Prism.Commands;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
-using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
-using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels;
 
@@ -43,10 +45,10 @@ public class StartPageViewModel : ObservableObject
         InitializePageComponents();
     }
 
-    public ICommand GridViewItemDeleteCommand => new DelegateCommand<object>(OnGridViewItemDeleteCommandExecuted);
-    public ICommand SearchButtonTappedCommand => new DelegateCommand(OnSearchButtonTappedCommandExecuted);
-    public ICommand SaveNewSiteCommand => new DelegateCommand(OnSaveNewSiteCommandExecuted);
-    public ICommand KeyDownCommand => new DelegateCommand<object>(OnKeyDownCommandExecuted);
+    public IAsyncRelayCommand GridViewItemDeleteCommand => new AsyncRelayCommand<SiteItem>(OnGridViewItemDeleteCommandExecuted);
+    public IAsyncRelayCommand SearchButtonTappedCommand => new AsyncRelayCommand(OnSearchButtonTappedCommandExecuted);
+    public IAsyncRelayCommand SaveNewSiteCommand => new AsyncRelayCommand(OnSaveNewSiteCommandExecuted);
+    public IAsyncRelayCommand KeyDownCommand => new AsyncRelayCommand<KeyRoutedEventArgs>(OnKeyDownCommandExecuted);
     public ICommand CancelCommand => new DelegateCommand(() => IsFlyoutClosed = true);
     public ICommand EditStartPageItem => new DelegateCommand<object>(OnEditStartPageItem);
 
@@ -148,20 +150,20 @@ public class StartPageViewModel : ObservableObject
     {
     }
 
-    private void OnKeyDownCommandExecuted(object obj)
+    private async Task OnKeyDownCommandExecuted(object obj)
     {
-        if (obj is not KeyRoutedEventArgs {Key: VirtualKey.Enter}) return;
-        OnSearchButtonTappedCommandExecuted();
+        if (obj is not KeyRoutedEventArgs { Key: VirtualKey.Enter }) return;
+        await OnSearchButtonTappedCommandExecuted().ConfigureAwait(false);
     }
 
-    private async void OnGridViewItemDeleteCommandExecuted(object obj)
+    private async Task OnGridViewItemDeleteCommandExecuted(object obj)
     {
         if (obj is not SiteItem elem) return;
         await _dataTransferService.RemoveSiteOnStartPage(elem);
-        GetStartPageElementsAsync();
+        await GetStartPageElementsAsync().ConfigureAwait(false);
     }
 
-    private async void OnSaveNewSiteCommandExecuted()
+    private async Task OnSaveNewSiteCommandExecuted()
     {
         if (string.IsNullOrWhiteSpace(NewSiteName) ||
             string.IsNullOrWhiteSpace(NewSiteUrl))
@@ -186,10 +188,10 @@ public class StartPageViewModel : ObservableObject
             Url = NewSiteUrl
         });
         IsFlyoutClosed = true;
-        GetStartPageElementsAsync();
+        await GetStartPageElementsAsync().ConfigureAwait(false);
     }
 
-    private async void InitializePageComponents()
+    private async Task InitializePageComponents()
     {
         IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsSuggestionBarEnabled));
         IsAnimationEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsAnimationEnabled));
@@ -200,11 +202,11 @@ public class StartPageViewModel : ObservableObject
         LogoSource = new Uri($"ms-appx:///Resources/Logos/{currentWebEngineName}Logo.png");
         PlaceholderText = "Искать с помощью " + currentWebEngineName;
 
-        GetStartPageElementsAsync();
-        if (IsSuggestionBarEnabled) GetRecentlySearchedItemsAsync();
+        await GetStartPageElementsAsync();
+        if (IsSuggestionBarEnabled) await GetRecentlySearchedItemsAsync();
     }
 
-    private async void GetRecentlySearchedItemsAsync()
+    private async Task GetRecentlySearchedItemsAsync()
     {
         var searchTermListTransfer = await _dataTransferService.GetSearchTerm();
         if (searchTermListTransfer == null) return;
@@ -213,12 +215,12 @@ public class StartPageViewModel : ObservableObject
         RecentlySearchedItems = new HashSet<SiteItem>(termListTransfer);
     }
 
-    private void OnSearchButtonTappedCommandExecuted()
+    private async Task OnSearchButtonTappedCommandExecuted()
     {
-        _mainPageViewModel.SearchWebFromStartPage(SearchBoxText);
+        await _mainPageViewModel.SearchWebFromStartPage(SearchBoxText);
     }
 
-    private async void GetStartPageElementsAsync()
+    private async Task GetStartPageElementsAsync()
     {
         StartPageItems = new ObservableCollection<SiteItem>(await _dataTransferService.GetStartPageElements());
     }

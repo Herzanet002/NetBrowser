@@ -376,18 +376,20 @@ public class ShellPageViewModel : ObservableObject
     public DelegateCommand ReloadButtonCommand { get; private set; }
     public DelegateCommand StopLoadingButtonCommand { get; private set; }
     public DelegateCommand HomeButtonCommand { get; private set; }
+
+    public IAsyncRelayCommand SaveBookmarkButtonCommand { get; private set; }
+    public IAsyncRelayCommand DeleteBookmarkButtonCommand { get; private set; }
+    public IAsyncRelayCommand BookmarksButtonCommand { get; private set; }
+    public IAsyncRelayCommand BookmarksItemClickCommand { get; private set; }
+    public IAsyncRelayCommand SearchBoxTextChangedCommand { get; private set; }
+    public IAsyncRelayCommand SearchBoxQuerySubmittedCommand { get; private set; }
+    public IAsyncRelayCommand HistoryItemClickCommand { get; private set; }
+    public IAsyncRelayCommand HistoryButtonCommand { get; private set; }
+
     public ICommand AddBookmarkButtonCommand { get; private set; }
-    public ICommand SaveBookmarkButtonCommand { get; private set; }
     public ICommand CancelSaveBookmarkButtonCommand { get; private set; }
-    public ICommand DeleteBookmarkButtonCommand { get; private set; }
-    public ICommand BookmarksButtonCommand { get; private set; }
     public ICommand BookmarksSettingsButtonCommand { get; private set; }
-    public ICommand BookmarksItemClickCommand { get; private set; }
-    public ICommand SearchBoxTextChangedCommand { get; private set; }
-    public ICommand SearchBoxQuerySubmittedCommand { get; private set; }
-    public ICommand HistoryButtonCommand { get; private set; }
     public ICommand HistorySettingsButtonCommand { get; private set; }
-    public ICommand HistoryItemClickCommand { get; private set; }
     public ICommand SettingsButtonCommand { get; private set; }
     public ICommand AddTabButtonCommand { get; private set; }
     public ICommand CloseTabButtonCommand { get; private set; }
