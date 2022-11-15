@@ -14,41 +14,31 @@ public class DataTransferService : IDataTransferService
 {
     public async Task SaveHistory(HistoryItemDetails historyItemDetail)
     {
-        //var rootFrameDataString = ObjectSerializer<HistoryItemDetails>.ToXml(historyItemDetail);
-        //if (string.IsNullOrEmpty(rootFrameDataString)) return;
-        //var localFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("historyFile.xml",
-        //    CreationCollisionOption.OpenIfExists);
-        //await FileIO.AppendTextAsync(localFile, rootFrameDataString);
-        try
-        {
-            if (historyItemDetail.Url == "about:blank") return;
-            var doc = await DocumentLoad(HISTORY_FILE_NAME).AsAsyncOperation();
 
-            var history = doc.GetElementsByTagName("history");
+        if (historyItemDetail.Url == "about:blank") return;
+        var doc = await DocumentLoad(HISTORY_FILE_NAME).AsAsyncOperation();
 
-            var siteElement = doc.CreateElement("siteName");
-            var siteUrl = doc.CreateElement("url");
-            var timeElement = doc.CreateElement("hour");
-            var dateElement = doc.CreateElement("date");
+        var history = doc.GetElementsByTagName("history");
 
-            var historyItem = history[0].AppendChild(doc.CreateElement("historyitem"));
+        var siteElement = doc.CreateElement("siteName");
+        var siteUrl = doc.CreateElement("url");
+        var timeElement = doc.CreateElement("hour");
+        var dateElement = doc.CreateElement("date");
 
-            historyItem.AppendChild(siteElement);
-            historyItem.AppendChild(siteUrl);
-            historyItem.AppendChild(timeElement);
-            historyItem.AppendChild(dateElement);
+        var historyItem = history[0].AppendChild(doc.CreateElement("historyitem"));
 
-            siteElement.InnerText = historyItemDetail.Name;
-            siteUrl.InnerText = historyItemDetail.Url;
-            timeElement.InnerText = historyItemDetail.Time;
-            dateElement.InnerText = historyItemDetail.Date;
+        historyItem.AppendChild(siteElement);
+        historyItem.AppendChild(siteUrl);
+        historyItem.AppendChild(timeElement);
+        historyItem.AppendChild(dateElement);
 
-            await SaveDoc(doc, HISTORY_FILE_NAME);
-        }
-        catch
-        {
-            // ignored
-        }
+        siteElement.InnerText = historyItemDetail.Name;
+        siteUrl.InnerText = historyItemDetail.Url;
+        timeElement.InnerText = historyItemDetail.Time;
+        dateElement.InnerText = historyItemDetail.Date;
+
+        await SaveDoc(doc, HISTORY_FILE_NAME).ConfigureAwait(false);
+
     }
 
     public async Task SaveSearchTerm(SiteItem siteItem)

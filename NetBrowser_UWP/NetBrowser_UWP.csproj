@@ -135,6 +135,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Commands\OpenFlyoutAction.cs" />
+    <Compile Include="Contracts\IAsyncInitialization.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
     <Compile Include="Contracts\Services\IDataAccessService.cs" />
     <Compile Include="Contracts\Services\IDataTransferService.cs" />

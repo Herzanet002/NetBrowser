@@ -16,6 +16,11 @@
     Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
     d:DataContext="{d:DesignInstance Type=viewModels:ShellPageViewModel,IsDesignTimeCreatable=True}"
     IsTabStop="True">
+    <i:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{Binding LoadedPageCommand}" />
+        </core:EventTriggerBehavior>
+    </i:Interaction.Behaviors>
 
     <Grid>
         <Grid.Resources>

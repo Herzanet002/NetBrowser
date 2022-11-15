@@ -9,6 +9,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Helpers;
@@ -44,7 +45,7 @@ public class NewsPageViewModel : ObservableObject
         _tabViewService = tabViewService;
         _navigationService = navigationService;
 
-        RotatorTileClickCommand = new DelegateCommand<ContentModel>(OnRotatorTileClickCommandExecuted);
+        RotatorTileClickCommand = new AsyncRelayCommand<ContentModel>(OnRotatorTileClickCommandExecuted);
         ShareNewsCommand = new DelegateCommand<ContentModel>(OnShareNewsCommandExecuted);
         NavigationViewItemInvokedCommand =
             new DelegateCommand<NavigationViewItemInvokedEventArgs>(OnNavigationViewItemInvokedCommandExecuted);
@@ -53,7 +54,7 @@ public class NewsPageViewModel : ObservableObject
         InitializeNewsContent();
     }
 
-    public DelegateCommand<ContentModel> RotatorTileClickCommand { get; }
+    public IAsyncRelayCommand RotatorTileClickCommand { get; }
     public DelegateCommand<ContentModel> ShareNewsCommand { get; }
     public DelegateCommand<NavigationViewItemInvokedEventArgs> NavigationViewItemInvokedCommand { get; }
 
@@ -123,14 +124,14 @@ public class NewsPageViewModel : ObservableObject
         DataTransferManager.ShowShareUI();
     }
 
-    public void Initialize(Frame frame, NavigationView navigationView)
+    public void Initialize(Frame frame, NavigationView navigationView, Type pageType)
     {
         _navigationView = navigationView;
         _navigationService.Frame = frame;
-        _navigationService.NavigationFailed += NavigationServiceOnNavigationFailed;
         _navigationService.Navigated += NavigationServiceOnNavigated;
+        _navigationService.NavigationFailed += NavigationServiceOnNavigationFailed;
 
-        _navigationService.Navigate(typeof(AllNewsPage));
+        _navigationService.Navigate(pageType);
     }
 
     private void NavigationServiceOnNavigated(object sender, NavigationEventArgs e)
@@ -168,13 +169,13 @@ public class NewsPageViewModel : ObservableObject
     {
     }
 
-    private void OnRotatorTileClickCommandExecuted(ContentModel param)
+    private async Task OnRotatorTileClickCommandExecuted(ContentModel param)
     {
         if (param == null) return;
-        _tabViewService.CreateNewWebTab(param.Link);
+        await _tabViewService.CreateNewWebTab(param.Link).ConfigureAwait(false);
     }
 
-    public async void InitializeNewsContent()
+    public async Task InitializeNewsContent()
     {
         await GetNews(new Dictionary<string, string>
         {

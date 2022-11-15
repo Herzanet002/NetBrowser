@@ -173,16 +173,16 @@ public class TabViewService : ObservableObject, ITabViewService
 
         var settingsTab = CreateTabViewItemInstance(
             "Settings".GetLocalized(),
-            new SettingsPage(pageType),
+            new SettingsPage(pageType ?? typeof(MainItemPageSettings)),
             new SymbolIconSource {Symbol = Symbol.Setting});
 
         AddTabItem(settingsTab);
         ChangeSelectedTabItem(settingsTab);
     }
 
-    public void CreateNewsTab()
+    public void CreateNewsTab(Type pageType = default)
     {
-        var alreadyExistsContentTab = GetTabItemByFilter(tab => tab.Content is NewsPage);
+        var alreadyExistsContentTab = GetTabItemByFilter(tab => tab.Content is MainNewsPage);
 
         if (alreadyExistsContentTab != null)
         {
@@ -192,7 +192,7 @@ public class TabViewService : ObservableObject, ITabViewService
 
         var newsTab = CreateTabViewItemInstance(
             "News".GetLocalized(),
-            new NewsPage(),
+            new MainNewsPage(pageType ?? typeof(AllNewsPage)),
             new FontIconSource
             {
                 Glyph = "\xE8A1"
