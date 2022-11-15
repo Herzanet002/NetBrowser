@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace NetBrowser_UWP.Contracts
+namespace NetBrowser_UWP.Contracts;
+
+public interface IAsyncInitialization
 {
-    public interface IAsyncInitialization
-    {
-        Task Initialization { get; }
-    }
+    Task Initialization { get; }
 }

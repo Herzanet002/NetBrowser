@@ -8,13 +8,11 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
     xmlns:settings="using:NetBrowser_UWP.Views.Settings"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
 
     <Grid>
         <muxc:NavigationView IsSettingsVisible="False" PaneTitle="Настройки"
-                             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}" 
+                             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}"
                              Canvas.ZIndex="0"
                              x:Name="SettingsNavigationView"
                              SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
@@ -64,7 +62,7 @@
                 </muxc:NavigationViewItem>
             </muxc:NavigationView.FooterMenuItems>
             <Grid>
-                <Frame x:Name="ContentFrame"/>
+                <Frame x:Name="ContentFrame" />
             </Grid>
         </muxc:NavigationView>
 

@@ -7,8 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -44,7 +42,7 @@
             </controls:NavigationView.MenuItems>
 
             <Grid>
-                <Frame x:Name="MainFrame"/>
+                <Frame x:Name="MainFrame" />
             </Grid>
         </controls:NavigationView>
 

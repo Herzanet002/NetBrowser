@@ -30,7 +30,9 @@ internal class HistoryPageViewModel : ObservableObject
         GetHistoryAsync();
     }
 
-    public IAsyncRelayCommand DeleteCommand => new AsyncRelayCommand<HistoryItemDetails>(OnDeleteHistoryItemCommandExecuted);
+    public IAsyncRelayCommand DeleteCommand =>
+        new AsyncRelayCommand<HistoryItemDetails>(OnDeleteHistoryItemCommandExecuted);
+
     public IAsyncRelayCommand OpenPageCommand => new AsyncRelayCommand(OnOpenHistoryItemCommandExecuted);
     public IAsyncRelayCommand ClearHistoryCommand => new AsyncRelayCommand(OnClearHistoryJournalCommandExecuted);
 
@@ -102,9 +104,9 @@ internal class HistoryPageViewModel : ObservableObject
     public void GetSearchSuggestions()
     {
         var suitable = from item in HistoryList
-                       where item.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                             item.Url.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
-                       select item;
+            where item.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                  item.Url.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+            select item;
         HistoryList = suitable;
     }
 

@@ -1,9 +1,8 @@
-﻿namespace NetBrowser_UWP.Contracts
-{
-    public interface INavigationAware
-    {
-        void OnNavigatedTo(object parameter);
+﻿namespace NetBrowser_UWP.Contracts;
 
-        void OnNavigatedFrom();
-    }
+public interface INavigationAware
+{
+    void OnNavigatedTo(object parameter);
+
+    void OnNavigatedFrom();
 }

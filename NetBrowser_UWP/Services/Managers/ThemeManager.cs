@@ -28,12 +28,9 @@ public sealed class ThemeManager : INotifyPropertyChanged, IThemeManager
     {
         return themeName == null
             ? Constants.Constants.LightTheme
-            :
-            Constants.Constants.ThemesDictionary.ContainsKey(themeName)
-                ?
-                Constants.Constants.ThemesDictionary[themeName]
-                :
-                Constants.Constants.LightTheme;
+            : Constants.Constants.ThemesDictionary.ContainsKey(themeName)
+                ? Constants.Constants.ThemesDictionary[themeName]
+                : Constants.Constants.LightTheme;
     }
 
     public ThemeItem SetRequestedTheme(string themeName)

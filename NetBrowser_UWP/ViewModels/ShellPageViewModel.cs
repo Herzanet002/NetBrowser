@@ -42,7 +42,6 @@ public class ShellPageViewModel : ObservableObject
         //InitializeAsync();
 
         InitializeCommands();
-
     }
 
     private async Task InitializeAsync()
@@ -73,7 +72,7 @@ public class ShellPageViewModel : ObservableObject
     {
         SelectionChangedTabHandler();
         if (_tabViewService.GetSelectedWebView() != null)
-            IsWebLoading = (bool)_tabViewService.GetSelectedWebView().Tag;
+            IsWebLoading = (bool) _tabViewService.GetSelectedWebView().Tag;
         SetVisualUiElementStates(_tabViewService.GetSelectedWebView());
         CommandsRaiseCanExecuteChanged();
     }
@@ -92,9 +91,9 @@ public class ShellPageViewModel : ObservableObject
     {
         LoadedPageCommand = new AsyncRelayCommand(InitializeAsync);
         BackButtonCommand = new DelegateCommand(OnBackButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() is { CanGoBack: true });
+            () => _tabViewService.GetSelectedWebView() is {CanGoBack: true});
         ForwardButtonCommand = new DelegateCommand(OnForwardButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() is { CanGoForward: true });
+            () => _tabViewService.GetSelectedWebView() is {CanGoForward: true});
         ReloadButtonCommand = new DelegateCommand(OnReloadButtonCommandExecuted);
         StopLoadingButtonCommand = new DelegateCommand(OnStopLoadingButtonCommandExecuted);
         HomeButtonCommand = new DelegateCommand(OnHomeButtonCommandExecuted);
@@ -104,16 +103,20 @@ public class ShellPageViewModel : ObservableObject
         DeleteBookmarkButtonCommand = new AsyncRelayCommand(OnDeleteBookmarkCommandExecuted);
         BookmarksButtonCommand = new AsyncRelayCommand(OnBookmarksButtonCommandExecuted);
         BookmarksSettingsButtonCommand = new DelegateCommand(OnBookmarkSettingButtonExecuted);
-        BookmarksItemClickCommand = new AsyncRelayCommand<ItemClickEventArgs>(OnBookmarksFlyoutListViewItemClickExecuted);
-        SearchBoxTextChangedCommand = new AsyncRelayCommand<AutoSuggestBoxTextChangedEventArgs>(OnSearchBoxTextChangedCommandExecuted);
-        SearchBoxQuerySubmittedCommand = new AsyncRelayCommand<AutoSuggestBoxQuerySubmittedEventArgs>(OnSearchBoxQuerySubmittedCommandExecuted);
+        BookmarksItemClickCommand =
+            new AsyncRelayCommand<ItemClickEventArgs>(OnBookmarksFlyoutListViewItemClickExecuted);
+        SearchBoxTextChangedCommand =
+            new AsyncRelayCommand<AutoSuggestBoxTextChangedEventArgs>(OnSearchBoxTextChangedCommandExecuted);
+        SearchBoxQuerySubmittedCommand =
+            new AsyncRelayCommand<AutoSuggestBoxQuerySubmittedEventArgs>(OnSearchBoxQuerySubmittedCommandExecuted);
         NewsContentButtonCommand = new DelegateCommand(OnNewsContentButtonCommandExecuted);
         HistoryButtonCommand = new AsyncRelayCommand(OnHistoryButtonCommandExecuted);
         HistorySettingsButtonCommand = new DelegateCommand(OnHistorySettingsButtonExecuted);
         HistoryItemClickCommand = new AsyncRelayCommand<ItemClickEventArgs>(OnHistoryFlyoutItemClickCommandExecuted);
         SettingsButtonCommand = new DelegateCommand(OnSettingsButtonCommandExecuted);
         AddTabButtonCommand = new DelegateCommand(OnAddTabButtonCommandExecuted);
-        CloseTabButtonCommand = new DelegateCommand<winUI.TabViewTabCloseRequestedEventArgs>(OnCloseTabButtonCommandExecuted);
+        CloseTabButtonCommand =
+            new DelegateCommand<winUI.TabViewTabCloseRequestedEventArgs>(OnCloseTabButtonCommandExecuted);
         DeveloperInstrumentsButtonCommand = new DelegateCommand(OnDeveloperInstrumentsButtonCommandExecuted,
             () => _tabViewService.GetSelectedWebView() != null);
         TaskManagerButtonCommand = new DelegateCommand(OnTaskManagerButtonCommandExecuted,
@@ -134,8 +137,8 @@ public class ShellPageViewModel : ObservableObject
 
         var enumerable = searchTermList.ToList();
         var suitableItems = from item in enumerable
-                            where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
-                            select item;
+            where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
+            select item;
 
         var enumerableList = suitableItems.ToList();
 
@@ -178,7 +181,7 @@ public class ShellPageViewModel : ObservableObject
         }
         else
         {
-            var loadingState = (bool)webInstance.Tag;
+            var loadingState = (bool) webInstance.Tag;
             SetProgressRingActivity(loadingState);
         }
 
@@ -502,13 +505,13 @@ public class ShellPageViewModel : ObservableObject
 
     private void OnBackButtonCommandExecuted()
     {
-        if (_tabViewService.GetSelectedWebView() is { CanGoBack: true })
+        if (_tabViewService.GetSelectedWebView() is {CanGoBack: true})
             _tabViewService.GetSelectedWebView().GoBack();
     }
 
     private void OnForwardButtonCommandExecuted()
     {
-        if (_tabViewService.GetSelectedWebView() is { CanGoForward: true })
+        if (_tabViewService.GetSelectedWebView() is {CanGoForward: true})
             _tabViewService.GetSelectedWebView().GoForward();
     }
 
@@ -665,7 +668,7 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task OnBookmarksFlyoutListViewItemClickExecuted(object sender)
     {
-        if (sender is not ItemClickEventArgs { ClickedItem: BookmarkDetails selectedBookmarkItem }) return;
+        if (sender is not ItemClickEventArgs {ClickedItem: BookmarkDetails selectedBookmarkItem}) return;
         await _tabViewService.CreateNewWebTab(selectedBookmarkItem.Url);
         IsFlyoutClosed = true;
     }
@@ -688,6 +691,4 @@ public class ShellPageViewModel : ObservableObject
     }
 
     #endregion On Command Executed Region
-
-
 }

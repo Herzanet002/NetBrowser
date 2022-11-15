@@ -95,10 +95,18 @@ internal class BookmarksPageViewModel : ObservableObject
     #region Commands
 
     public IAsyncRelayCommand EditBookmarkCommand => new AsyncRelayCommand(OnEditBookmarkCommandExecuted, () => true);
-    public IAsyncRelayCommand SaveEditedBookmarkCommand => new AsyncRelayCommand(OnSaveEditedBookmarkCommandExecuted, () => true);
-    public IAsyncRelayCommand OpenBookmarkCommand => new AsyncRelayCommand(OnOpenBookmarkInWebCommandExecuted, () => true);
-    public IAsyncRelayCommand DeleteBookmarkCommand => new AsyncRelayCommand(OnDeleteSelectedBookmarkCommandExecuted, () => true);
-    public IAsyncRelayCommand RemoveBookmarkCommand => new AsyncRelayCommand(OnRemoveBookmarkCommandExecuted, () => true);
+
+    public IAsyncRelayCommand SaveEditedBookmarkCommand =>
+        new AsyncRelayCommand(OnSaveEditedBookmarkCommandExecuted, () => true);
+
+    public IAsyncRelayCommand OpenBookmarkCommand =>
+        new AsyncRelayCommand(OnOpenBookmarkInWebCommandExecuted, () => true);
+
+    public IAsyncRelayCommand DeleteBookmarkCommand =>
+        new AsyncRelayCommand(OnDeleteSelectedBookmarkCommandExecuted, () => true);
+
+    public IAsyncRelayCommand RemoveBookmarkCommand =>
+        new AsyncRelayCommand(OnRemoveBookmarkCommandExecuted, () => true);
 
     #endregion Commands
 }

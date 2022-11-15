@@ -14,7 +14,6 @@ public class DataTransferService : IDataTransferService
 {
     public async Task SaveHistory(HistoryItemDetails historyItemDetail)
     {
-
         if (historyItemDetail.Url == "about:blank") return;
         var doc = await DocumentLoad(HISTORY_FILE_NAME).AsAsyncOperation();
 
@@ -38,7 +37,6 @@ public class DataTransferService : IDataTransferService
         dateElement.InnerText = historyItemDetail.Date;
 
         await SaveDoc(doc, HISTORY_FILE_NAME).ConfigureAwait(false);
-
     }
 
     public async Task SaveSearchTerm(SiteItem siteItem)
@@ -79,25 +77,6 @@ public class DataTransferService : IDataTransferService
 
     public async Task<IList<HistoryItemDetails>> GetHistory()
     {
-        //StorageFile localFile;
-        //ObservableCollection<HistoryItemDetails> history = null;
-        //try
-        //{
-        //    localFile = await ApplicationData.Current.LocalFolder.GetFileAsync("historyFile.xml");
-        //}
-        //catch (FileNotFoundException ex)
-        //{
-        //    localFile = null;
-        //}
-        //if (localFile != null)
-        //{
-        //    string localData = await FileIO.ReadTextAsync(localFile);
-
-        //    history = ObjectSerializer<ObservableCollection<HistoryItemDetails>>.FromXml(localData);
-        //}
-
-        //return history;
-
         var listOfHistory = new List<HistoryItemDetails>();
         var doc = await DocumentLoad(HISTORY_FILE_NAME);
 
@@ -368,7 +347,4 @@ public class DataTransferService : IDataTransferService
 
         await SaveDoc(doc, SETTINGS_FILE_NAME).ConfigureAwait(false);
     }
-
-
-
 }

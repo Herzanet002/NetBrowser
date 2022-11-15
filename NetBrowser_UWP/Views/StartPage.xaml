@@ -13,7 +13,6 @@
     xmlns:commands="using:NetBrowser_UWP.Commands"
     xmlns:converters="using:NetBrowser_UWP.Converters"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
-    xmlns:userControls="using:NetBrowser_UWP.Views.UserControls"
     d:DataContext="{d:DesignInstance Type=viewModels:StartPageViewModel,IsDesignTimeCreatable=True}">
 
 

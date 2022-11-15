@@ -7,11 +7,7 @@ namespace NetBrowser_UWP.ViewModels;
 
 public class SettingsPageViewModel : ObservableObject
 {
-
-    public INavigationViewService NavigationViewService
-    {
-        get;
-    }
+    public INavigationViewService NavigationViewService { get; }
 
     private bool _isBackEnabled;
     private NavigationViewItem _selected;
@@ -27,10 +23,7 @@ public class SettingsPageViewModel : ObservableObject
         IsBackEnabled = NavigationViewService.NavigationService.CanGoBack;
 
         var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
-        if (selectedItem != null)
-        {
-            Selected = selectedItem;
-        }
+        if (selectedItem != null) Selected = selectedItem;
     }
 
     public NavigationViewItem Selected

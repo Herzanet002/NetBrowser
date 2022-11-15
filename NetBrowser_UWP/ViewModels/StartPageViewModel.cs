@@ -45,7 +45,9 @@ public class StartPageViewModel : ObservableObject
         InitializePageComponents();
     }
 
-    public IAsyncRelayCommand GridViewItemDeleteCommand => new AsyncRelayCommand<SiteItem>(OnGridViewItemDeleteCommandExecuted);
+    public IAsyncRelayCommand GridViewItemDeleteCommand =>
+        new AsyncRelayCommand<SiteItem>(OnGridViewItemDeleteCommandExecuted);
+
     public IAsyncRelayCommand SearchButtonTappedCommand => new AsyncRelayCommand(OnSearchButtonTappedCommandExecuted);
     public IAsyncRelayCommand SaveNewSiteCommand => new AsyncRelayCommand(OnSaveNewSiteCommandExecuted);
     public IAsyncRelayCommand KeyDownCommand => new AsyncRelayCommand<KeyRoutedEventArgs>(OnKeyDownCommandExecuted);
@@ -152,7 +154,7 @@ public class StartPageViewModel : ObservableObject
 
     private async Task OnKeyDownCommandExecuted(object obj)
     {
-        if (obj is not KeyRoutedEventArgs { Key: VirtualKey.Enter }) return;
+        if (obj is not KeyRoutedEventArgs {Key: VirtualKey.Enter}) return;
         await OnSearchButtonTappedCommandExecuted().ConfigureAwait(false);
     }
 

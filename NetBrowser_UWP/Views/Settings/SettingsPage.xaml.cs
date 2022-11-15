@@ -18,7 +18,8 @@ public sealed partial class SettingsPage : Page
         InitializeComponent();
         ViewModel = Ioc.Default.GetRequiredService<SettingsPageViewModel>();
         DataContext = ViewModel;
-        ViewModel.NavigationViewService?.Initialize(ContentFrame, SettingsNavigationView, pageType ?? typeof(MainItemPageSettings));
+        ViewModel.NavigationViewService?.Initialize(ContentFrame, SettingsNavigationView,
+            pageType ?? typeof(MainItemPageSettings));
     }
 
     public SettingsPageViewModel ViewModel { get; set; }

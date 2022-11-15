@@ -5,27 +5,20 @@ using Windows.UI.Xaml.Navigation;
 using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
 
-namespace NetBrowser_UWP.Contracts.Services
+namespace NetBrowser_UWP.Contracts.Services;
+
+public interface INavigationViewService
 {
-    public interface INavigationViewService
-    {
-        IList<object> MenuItems
-        {
-            get;
-        }
+    IList<object> MenuItems { get; }
 
-        object SettingsItem
-        {
-            get;
-        }
+    object SettingsItem { get; }
 
-        void Initialize(Frame frame, NavigationView navigationView, Type pageType = default);
+    void Initialize(Frame frame, NavigationView navigationView, Type pageType = default);
 
-        void UnregisterEvents();
+    void UnregisterEvents();
 
-        event NavigatedEventHandler Navigated;
-        INavigationService NavigationService { get; }
+    event NavigatedEventHandler Navigated;
+    INavigationService NavigationService { get; }
 
-        NavigationViewItem GetSelectedItem(Type pageType);
-    }
+    NavigationViewItem GetSelectedItem(Type pageType);
 }

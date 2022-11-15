@@ -20,10 +20,7 @@ namespace NetBrowser_UWP.ViewModels;
 
 public class NewsPageViewModel : ObservableObject
 {
-    public INavigationViewService NavigationViewService
-    {
-        get;
-    }
+    public INavigationViewService NavigationViewService { get; }
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly TabViewService _tabViewService;
@@ -56,19 +53,13 @@ public class NewsPageViewModel : ObservableObject
 
     private async Task OnAllNewsItemClickCommandExecuted(ContentModel contentItem, CancellationToken ct)
     {
-        if (contentItem != null)
-        {
-            await _tabViewService.CreateNewWebTab(contentItem.Link);
-        }
+        if (contentItem != null) await _tabViewService.CreateNewWebTab(contentItem.Link);
     }
 
     private void OnNavigated(object sender, NavigationEventArgs e)
     {
         var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
-        if (selectedItem != null)
-        {
-            SelectedNavViewItem = selectedItem;
-        }
+        if (selectedItem != null) SelectedNavViewItem = selectedItem;
     }
 
     public bool IsProgressRingActive
