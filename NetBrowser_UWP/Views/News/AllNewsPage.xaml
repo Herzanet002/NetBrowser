@@ -15,6 +15,11 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewModels:NewsPageViewModel,IsDesignTimeCreatable=True}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <interactivity:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{Binding PageLoadedCommand}" />
+        </core:EventTriggerBehavior>
+    </interactivity:Interaction.Behaviors>
     <Page.Resources>
         <DataTemplate x:Key="NewsGridItemTemplate" x:DataType="models:ContentModel">
             <Grid>
@@ -57,9 +62,11 @@
                                 <FontIcon Glyph="&#xE7BC;" />
                             </AppBarButton.Icon>
                         </AppBarButton>
-                        <AppBarButton Width="45" Height="45" Foreground="AliceBlue">
+                        <AppBarButton Width="45" Height="45" Foreground="AliceBlue" 
+                                      Command="{Binding ElementName=AdaptiveGrid, Path=DataContext.AddNewsToFavoriteCommand}"
+                                      CommandParameter="{Binding }">
                             <AppBarButton.Icon>
-                                <FontIcon Glyph="&#xE734;" />
+                                <FontIcon Glyph="&#xEB51;" />
                             </AppBarButton.Icon>
                         </AppBarButton>
 

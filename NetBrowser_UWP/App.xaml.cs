@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
@@ -15,6 +16,8 @@ using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels;
 using NetBrowser_UWP.Views;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace NetBrowser_UWP;
 
@@ -33,15 +36,12 @@ sealed partial class App : Application
         InitializeComponent();
         Suspending += OnSuspending;
         UnhandledException += App_UnhandledException;
-
+        //var host = new HostBuilder()
+        //    .ConfigureLogging(l => l.AddConsole())
+        //    .ConfigureServices(c => ConfigureDependencyInjection())
+        //    .ConfigureAppConfiguration((host, cfg) => cfg.AddJsonFile("appsettings.json", optional:true, reloadOnChange:true));
         Services = ConfigureDependencyInjection();
         Ioc.Default.ConfigureServices(Services);
-        var dataAccessService = Ioc.Default.GetRequiredService<IDataAccessService>();
-
-        dataAccessService.InitializeHistoryFile();
-        dataAccessService.InitializeBookmarksFile();
-        dataAccessService.InitializeConfigFile();
-        dataAccessService.InitializeStartPageFile();
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ sealed partial class App : Application
     private static IServiceProvider ConfigureDependencyInjection()
     {
         var services = new ServiceCollection();
-
+        
         //Services & Managers
         services.AddSingleton<IDataTransferService, DataTransferService>();
         services.AddSingleton<IDataAccessService, DataAccessService>();
@@ -70,6 +70,7 @@ sealed partial class App : Application
         services.AddSingleton<IWebView2Service, WebView2Service>();
         services.AddTransient<INavigationService, NavigationService>();
         services.AddTransient<INavigationViewService, NavigationViewService>();
+        services.AddSingleton<AppConfigService>();
         services.AddSingleton<TabViewService>();
 
         services.AddScoped<IRssWorkerService, RssWorkerService>();
@@ -86,7 +87,7 @@ sealed partial class App : Application
         services.AddTransient<AboutAppViewModel>();
 
         services.AddHttpClient("NewsClient");
-
+        
         return services.BuildServiceProvider();
     }
 
@@ -104,6 +105,12 @@ sealed partial class App : Application
 
         //Set Current Search Engine
         CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataTransferService>().GetCurrentSearchEngine();
+        var dataAccessService = Ioc.Default.GetRequiredService<IDataAccessService>();
+
+        await dataAccessService.InitializeHistoryFile();
+        await dataAccessService.InitializeBookmarksFile();
+        await dataAccessService.InitializeConfigFile();
+        await dataAccessService.InitializeStartPageFile();
 
         // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
         // только обеспечьте активность окна

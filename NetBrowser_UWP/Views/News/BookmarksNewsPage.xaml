@@ -5,9 +5,37 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
+    xmlns:models="using:NetBrowser_UWP.Models"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     d:DataContext="{d:DesignInstance Type=viewModels:NewsPageViewModel,IsDesignTimeCreatable=True}">
+    <Page.Resources>
+        <DataTemplate x:Key="ListViewItemNewsTemplate" x:DataType="models:ContentModel">
+            <Grid Margin="0,12,0,12" AutomationProperties.Name="{x:Bind Title}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="150"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Source="{x:Bind ImageUrl}" MaxHeight="100" MaxWidth="200" Stretch="UniformToFill"/>
+                <StackPanel Margin="12,0,0,0" Grid.Column="1">
+                    <TextBlock Text="{x:Bind Title}" FontSize="14" FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}"
+                               HorizontalAlignment="Left" Margin="0,0,0,6"/>
+                    <TextBlock Text="{x:Bind Description}" Style="{ThemeResource BodyTextBlockStyle}"
+                               TextTrimming="CharacterEllipsis" MaxLines="2" HorizontalTextAlignment="Left"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind PubDate}" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
 
-    <Grid />
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <ListView ItemsSource="{Binding FavoriteNews, UpdateSourceTrigger=PropertyChanged}" CanReorderItems="True" 
+                  ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" 
+                  ScrollViewer.IsVerticalRailEnabled="True" ItemTemplate="{StaticResource ListViewItemNewsTemplate}">
+
+        </ListView>
+    </Grid>
 </Page>

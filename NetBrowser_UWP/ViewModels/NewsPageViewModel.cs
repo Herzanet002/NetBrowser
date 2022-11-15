@@ -24,31 +24,54 @@ public class NewsPageViewModel : ObservableObject
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly TabViewService _tabViewService;
+    private readonly AppConfigService _appConfigService;
     private bool _isProgressRingActive = true;
     private ObservableCollection<ContentModel> _news = new();
+    private ObservableCollection<ContentModel> _favoriteNews = new();
     private ContentModel _newsForSharing;
     private NavigationViewItem _selectedNavViewItem;
     private ContentModel _selectedItemInAllNews;
 
-    public IAsyncRelayCommand RotatorTileClickCommand { get; }
-    public IAsyncRelayCommand AllNewsItemClickCommand { get; }
-    public DelegateCommand<ContentModel> ShareNewsCommand { get; }
+    public IAsyncRelayCommand PageLoadedCommand { get; set; }
+    public IAsyncRelayCommand RotatorTileClickCommand { get; set; }
+    public IAsyncRelayCommand AllNewsItemClickCommand { get; set; }
+    public IAsyncRelayCommand AddNewsToFavoriteCommand { get; set; }
+    public DelegateCommand<ContentModel> ShareNewsCommand { get; set; }
 
     public NewsPageViewModel(IServiceScopeFactory serviceScopeFactory,
         TabViewService tabViewService,
-        INavigationViewService navigationViewService)
+        INavigationViewService navigationViewService,
+        AppConfigService appConfigService)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _tabViewService = tabViewService;
+        _appConfigService = appConfigService;
         NavigationViewService = navigationViewService;
         NavigationViewService.Navigated += OnNavigated;
 
-        RotatorTileClickCommand = new AsyncRelayCommand<ContentModel>(OnRotatorTileClickCommandExecuted);
-        AllNewsItemClickCommand = new AsyncRelayCommand<ContentModel>(OnAllNewsItemClickCommandExecuted);
-        ShareNewsCommand = new DelegateCommand<ContentModel>(OnShareNewsCommandExecuted);
+        InitializeCommands();
 
         DataTransferManager.GetForCurrentView().DataRequested += NewsPageViewModel_DataRequested;
-        InitializeNewsContent();
+    }
+
+    private void InitializeCommands()
+    {
+        RotatorTileClickCommand = new AsyncRelayCommand<ContentModel>(OnRotatorTileClickCommandExecuted);
+        AllNewsItemClickCommand = new AsyncRelayCommand<ContentModel>(OnAllNewsItemClickCommandExecuted);
+        PageLoadedCommand = new AsyncRelayCommand(OnPageLoadedCommandExecuted);
+        AddNewsToFavoriteCommand = new AsyncRelayCommand<ContentModel>(OnAddNewsToFavoriteCommandExecuted);
+        ShareNewsCommand = new DelegateCommand<ContentModel>(OnShareNewsCommandExecuted);
+    }
+
+    private async Task OnAddNewsToFavoriteCommandExecuted(ContentModel contentItem, CancellationToken ct)
+    {
+        FavoriteNews.Add(contentItem);
+        await Task.Delay(1, ct);
+    }
+
+    private async Task OnPageLoadedCommandExecuted(CancellationToken ct)
+    {
+        await InitializeNewsContent();
     }
 
     private async Task OnAllNewsItemClickCommandExecuted(ContentModel contentItem, CancellationToken ct)
@@ -72,6 +95,12 @@ public class NewsPageViewModel : ObservableObject
     {
         get => _news;
         set => SetProperty(ref _news, value);
+    }
+
+    public ObservableCollection<ContentModel> FavoriteNews
+    {
+        get => _favoriteNews;
+        set => SetProperty(ref _favoriteNews, value);
     }
 
     public NavigationViewItem SelectedNavViewItem
@@ -110,12 +139,8 @@ public class NewsPageViewModel : ObservableObject
 
     public async Task InitializeNewsContent()
     {
-        await GetNews(new Dictionary<string, string>
-        {
-            {"Lenta", "https://lenta.ru/rss/news"},
-            {"RT", "https://russian.rt.com/rss"},
-            {"Habr", "https://habr.com/ru/rss/all/all/"}
-        });
+        var feedResources = _appConfigService.GetSection<Dictionary<string, string>>("FeedResources");
+        await GetNews(feedResources);
         IsProgressRingActive = false;
     }
 
@@ -125,30 +150,13 @@ public class NewsPageViewModel : ObservableObject
         var rssWorker = scope.ServiceProvider.GetService<IRssWorkerService>();
         if (rssWorker is null) return;
 
-        var feeds = new List<SyndicationFeed>();
+        var syndicationFeeds = new List<SyndicationFeed>();
         await Task.Run(async () =>
         {
-            foreach (var source in sources) feeds.Add(await rssWorker.ParseRss(source.Value));
+            foreach (var source in sources)
+                syndicationFeeds.Add(await rssWorker.GetSyndicationFeedAsync(source.Value));
         });
 
-        foreach (var syndicationFeed in feeds)
-        {
-            if (syndicationFeed is null) continue;
-            foreach (var element in syndicationFeed.Items)
-            {
-                if (element is null || element.Links.Count != 2) continue;
-                News.Add(new ContentModel
-                {
-                    Title = element.Title.Text,
-                    Description = element.Summary.Text.Trim().Replace("\n", string.Empty),
-                    PubDate = element.PublishDate.LocalDateTime.ToString("g"),
-                    Link = element.Links[0].Uri.ToString(),
-                    ImageUrl = element.Links[1].Uri.ToString(),
-                    FeederImageLink = syndicationFeed.ImageUrl.ToString(),
-                    Feeder = syndicationFeed.Title.Text
-                });
-            }
-        }
-        //News.Shuffle();
+        News = new ObservableCollection<ContentModel>(rssWorker.GetFeeds(syndicationFeeds));
     }
 }

@@ -163,7 +163,7 @@
     <value>Обновить страницу</value>
   </data>
   <data name="RunOnOpenSourceProject.Text" xml:space="preserve">
-    <value>Браузер работает на основе проекта с открытым кодом</value>
+    <value>На основе проекта с открытым кодом</value>
   </data>
   <data name="SaveBookmarkButton.Tooltip" xml:space="preserve">
     <value>Сохранить страницу в закладки</value>
