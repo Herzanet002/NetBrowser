@@ -118,7 +118,7 @@
                                     Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}"
                                     IsActive="{Binding IsProgressRingActive}" />
             <controls:AdaptiveGridView ItemsSource="{Binding News}" Padding="15" StretchContentForSingleRow="False"
-                                       OneRowModeEnabled="False"
+                                       OneRowModeEnabled="False" ItemClickCommand="{Binding AllNewsItemClickCommand}" IsItemClickEnabled="True"
                                        ItemHeight="300" x:Name="AdaptiveGrid"
                                        DesiredWidth="350" SelectedItem="{Binding SelectedItemInAllNews, Mode=TwoWay}"
                                        SelectionMode="Single" ItemTemplate="{StaticResource NewsGridItemTemplate}">

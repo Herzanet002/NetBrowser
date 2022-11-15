@@ -18,7 +18,7 @@
     <Grid>
         <controls:NavigationView IsBackButtonVisible="Collapsed"
                                  IsSettingsVisible="True" x:Name="NewsNavigationView"
-                                 SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
+                                 SelectedItem="{x:Bind ViewModel.SelectedNavViewItem, Mode=OneWay}">
             <controls:NavigationView.MenuItems>
                 <controls:NavigationViewItem Content="Основные новости"
                                              helpers:NavigationHelper.NavigateTo="local:AllNewsPage">
@@ -41,17 +41,10 @@
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItemSeparator />
-
             </controls:NavigationView.MenuItems>
-            <interactivity:Interaction.Behaviors>
-                <core:EventTriggerBehavior EventName="ItemInvoked">
-                    <core:EventTriggerBehavior.Actions>
-                        <core:InvokeCommandAction Command="{x:Bind ViewModel.NavigationViewItemInvokedCommand}" />
-                    </core:EventTriggerBehavior.Actions>
-                </core:EventTriggerBehavior>
-            </interactivity:Interaction.Behaviors>
+
             <Grid>
-                <Frame x:Name="MainFrame" Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}" />
+                <Frame x:Name="MainFrame"/>
             </Grid>
         </controls:NavigationView>
 

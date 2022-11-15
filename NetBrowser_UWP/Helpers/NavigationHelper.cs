@@ -13,10 +13,10 @@ public class NavigationHelper
     // This helper class allows to specify the page that will be shown when you click on a NavigationViewItem
     //
     // Usage in xaml:
-    // <winui:NavigationViewItem x:Uid="Shell_Main" Icon="Document" helpers:NavHelper.NavigateTo="views:MainPage" />
+    // <winui:NavigationViewItem x:Uid="Shell_Main" Icon="Document" helpers:NavHelper.NavigateTo="views:ShellPage" />
     //
     // Usage in code:
-    // NavHelper.SetNavigateTo(navigationViewItem, typeof(MainPage));
+    // NavHelper.SetNavigateTo(navigationViewItem, typeof(ShellPage));
     public static Type GetNavigateTo(NavigationViewItem item)
     {
         return (Type) item.GetValue(NavigateToProperty);

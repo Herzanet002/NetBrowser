@@ -1,62 +1,75 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.ServiceModel.Syndication;
-using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Helpers;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
-using NetBrowser_UWP.Views.News;
-using NetBrowser_UWP.Views.Settings;
 using Prism.Commands;
-using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ServiceModel.Syndication;
+using System.Threading;
+using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Xaml.Navigation;
 using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
-using NavigationViewItemInvokedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs;
 
 namespace NetBrowser_UWP.ViewModels;
 
 public class NewsPageViewModel : ObservableObject
 {
-    private readonly INavigationService _navigationService;
+    public INavigationViewService NavigationViewService
+    {
+        get;
+    }
+
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly TabViewService _tabViewService;
     private bool _isProgressRingActive = true;
-    private NavigationView _navigationView;
     private ObservableCollection<ContentModel> _news = new();
     private ContentModel _newsForSharing;
-    private NavigationViewItem _selected;
+    private NavigationViewItem _selectedNavViewItem;
     private ContentModel _selectedItemInAllNews;
 
+    public IAsyncRelayCommand RotatorTileClickCommand { get; }
+    public IAsyncRelayCommand AllNewsItemClickCommand { get; }
+    public DelegateCommand<ContentModel> ShareNewsCommand { get; }
 
     public NewsPageViewModel(IServiceScopeFactory serviceScopeFactory,
         TabViewService tabViewService,
-        INavigationService navigationService)
+        INavigationViewService navigationViewService)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _tabViewService = tabViewService;
-        _navigationService = navigationService;
+        NavigationViewService = navigationViewService;
+        NavigationViewService.Navigated += OnNavigated;
 
         RotatorTileClickCommand = new AsyncRelayCommand<ContentModel>(OnRotatorTileClickCommandExecuted);
+        AllNewsItemClickCommand = new AsyncRelayCommand<ContentModel>(OnAllNewsItemClickCommandExecuted);
         ShareNewsCommand = new DelegateCommand<ContentModel>(OnShareNewsCommandExecuted);
-        NavigationViewItemInvokedCommand =
-            new DelegateCommand<NavigationViewItemInvokedEventArgs>(OnNavigationViewItemInvokedCommandExecuted);
 
         DataTransferManager.GetForCurrentView().DataRequested += NewsPageViewModel_DataRequested;
         InitializeNewsContent();
     }
 
-    public IAsyncRelayCommand RotatorTileClickCommand { get; }
-    public DelegateCommand<ContentModel> ShareNewsCommand { get; }
-    public DelegateCommand<NavigationViewItemInvokedEventArgs> NavigationViewItemInvokedCommand { get; }
+    private async Task OnAllNewsItemClickCommandExecuted(ContentModel contentItem, CancellationToken ct)
+    {
+        if (contentItem != null)
+        {
+            await _tabViewService.CreateNewWebTab(contentItem.Link);
+        }
+    }
+
+    private void OnNavigated(object sender, NavigationEventArgs e)
+    {
+        var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
+        if (selectedItem != null)
+        {
+            SelectedNavViewItem = selectedItem;
+        }
+    }
 
     public bool IsProgressRingActive
     {
@@ -70,42 +83,16 @@ public class NewsPageViewModel : ObservableObject
         set => SetProperty(ref _news, value);
     }
 
-    public NavigationViewItem Selected
+    public NavigationViewItem SelectedNavViewItem
     {
-        get => _selected;
-        set => SetProperty(ref _selected, value);
+        get => _selectedNavViewItem;
+        set => SetProperty(ref _selectedNavViewItem, value);
     }
 
     public ContentModel SelectedItemInAllNews
     {
         get => _selectedItemInAllNews;
-        set
-        {
-            SetProperty(ref _selectedItemInAllNews, value);
-            _tabViewService.CreateNewWebTab(value.Link);
-        }
-    }
-
-    private void OnNavigationViewItemInvokedCommandExecuted(NavigationViewItemInvokedEventArgs args)
-    {
-        if (args.IsSettingsInvoked)
-        {
-            _navigationService.Navigate(typeof(SettingsPage), null, args.RecommendedNavigationTransitionInfo);
-        }
-        else
-        {
-            var selectedItem = args.InvokedItemContainer as NavigationViewItem;
-
-            try
-            {
-                if (selectedItem?.GetValue(NavigationHelper.NavigateToProperty) is Type pageType)
-                    _navigationService.Navigate(pageType, null, args.RecommendedNavigationTransitionInfo);
-            }
-            catch (Exception ex)
-            {
-                // ignored
-            }
-        }
+        set => SetProperty(ref _selectedItemInAllNews, value);
     }
 
     private void NewsPageViewModel_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
@@ -122,51 +109,6 @@ public class NewsPageViewModel : ObservableObject
         if (param == null) return;
         _newsForSharing = param;
         DataTransferManager.ShowShareUI();
-    }
-
-    public void Initialize(Frame frame, NavigationView navigationView, Type pageType)
-    {
-        _navigationView = navigationView;
-        _navigationService.Frame = frame;
-        _navigationService.Navigated += NavigationServiceOnNavigated;
-        _navigationService.NavigationFailed += NavigationServiceOnNavigationFailed;
-
-        _navigationService.Navigate(pageType);
-    }
-
-    private void NavigationServiceOnNavigated(object sender, NavigationEventArgs e)
-    {
-        if (e.SourcePageType == typeof(SettingsPage))
-        {
-            Selected = _navigationView.SettingsItem as NavigationViewItem;
-            return;
-        }
-
-        var selectedItem = GetSelectedItem(_navigationView.MenuItems, e.SourcePageType);
-        if (selectedItem != null) Selected = selectedItem;
-    }
-
-    private bool IsMenuItemForPageType(NavigationViewItem menuItem, Type sourcePageType)
-    {
-        var pageType = menuItem.GetValue(NavigationHelper.NavigateToProperty) as Type;
-        return pageType == sourcePageType;
-    }
-
-    private NavigationViewItem GetSelectedItem(IEnumerable<object> menuItems, Type pageType)
-    {
-        foreach (var item in menuItems.OfType<NavigationViewItem>())
-        {
-            if (IsMenuItemForPageType(item, pageType)) return item;
-
-            var selectedChild = GetSelectedItem(item.MenuItems, pageType);
-            if (selectedChild != null) return selectedChild;
-        }
-
-        return null;
-    }
-
-    private void NavigationServiceOnNavigationFailed(object sender, NavigationFailedEventArgs e)
-    {
     }
 
     private async Task OnRotatorTileClickCommandExecuted(ContentModel param)

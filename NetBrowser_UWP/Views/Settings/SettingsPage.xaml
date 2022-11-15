@@ -14,7 +14,9 @@
 
     <Grid>
         <muxc:NavigationView IsSettingsVisible="False" PaneTitle="Настройки"
-                             IsBackEnabled="True" x:Name="SettingsNavigationView"
+                             IsBackEnabled="{x:Bind ViewModel.IsBackEnabled, Mode=OneWay}" 
+                             Canvas.ZIndex="0"
+                             x:Name="SettingsNavigationView"
                              SelectedItem="{x:Bind ViewModel.Selected, Mode=OneWay}">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Content="Общие"
@@ -61,19 +63,9 @@
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
             </muxc:NavigationView.FooterMenuItems>
-            <interactivity:Interaction.Behaviors>
-                <core:EventTriggerBehavior EventName="ItemInvoked">
-                    <core:EventTriggerBehavior.Actions>
-                        <core:InvokeCommandAction Command="{x:Bind ViewModel.NavigationViewItemInvokedCommand}" />
-                    </core:EventTriggerBehavior.Actions>
-                </core:EventTriggerBehavior>
-            </interactivity:Interaction.Behaviors>
-            <Frame x:Name="ContentFrame">
-                <Grid>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Настройки"
-                               Foreground="White" FontSize="50" />
-                </Grid>
-            </Frame>
+            <Grid>
+                <Frame x:Name="ContentFrame"/>
+            </Grid>
         </muxc:NavigationView>
 
     </Grid>

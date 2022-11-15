@@ -17,7 +17,7 @@ public sealed partial class MainNewsPage : Page
         InitializeComponent();
         ViewModel = Ioc.Default.GetRequiredService<NewsPageViewModel>();
         DataContext = ViewModel;
-        ViewModel.Initialize(MainFrame, NewsNavigationView, pageType);
+        ViewModel.NavigationViewService?.Initialize(MainFrame, NewsNavigationView, pageType ?? typeof(AllNewsPage));
     }
 
     public NewsPageViewModel ViewModel { get; set; }

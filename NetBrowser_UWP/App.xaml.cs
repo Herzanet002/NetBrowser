@@ -69,6 +69,7 @@ sealed partial class App : Application
         services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
         services.AddSingleton<IWebView2Service, WebView2Service>();
         services.AddTransient<INavigationService, NavigationService>();
+        services.AddTransient<INavigationViewService, NavigationViewService>();
         services.AddSingleton<TabViewService>();
 
         services.AddScoped<IRssWorkerService, RssWorkerService>();
@@ -81,7 +82,7 @@ sealed partial class App : Application
         services.AddTransient<PersonalizePageViewModel>();
         services.AddTransient<SearchSystemPageViewModel>();
         services.AddTransient<SettingsPageViewModel>();
-        services.AddTransient<NewsPageViewModel>();
+        services.AddSingleton<NewsPageViewModel>();
         services.AddTransient<AboutAppViewModel>();
 
         services.AddHttpClient("NewsClient");
@@ -129,7 +130,7 @@ sealed partial class App : Application
                 // Если стек навигации не восстанавливается для перехода к первой странице,
                 // настройка новой страницы путем передачи необходимой информации в качестве параметра
                 // навигации
-                rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                rootFrame.Navigate(typeof(ShellPage), e.Arguments);
             // Обеспечение активности текущего окна
             Window.Current.Activate();
         }

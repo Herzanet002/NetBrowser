@@ -8,9 +8,9 @@ namespace NetBrowser_UWP.Views;
 /// <summary>
 ///     Главная страница браузера, в котором отображается весь контент
 /// </summary>
-public sealed partial class MainPage : Page
+public sealed partial class ShellPage : Page
 {
-    public MainPage()
+    public ShellPage()
     {
         InitializeComponent();
         DataContext = Ioc.Default.GetService<ShellPageViewModel>();

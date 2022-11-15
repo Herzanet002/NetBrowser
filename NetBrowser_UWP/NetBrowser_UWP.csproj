@@ -136,15 +136,19 @@
   <ItemGroup>
     <Compile Include="Commands\OpenFlyoutAction.cs" />
     <Compile Include="Contracts\IAsyncInitialization.cs" />
+    <Compile Include="Contracts\INavigationAware.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
     <Compile Include="Contracts\Services\IDataAccessService.cs" />
     <Compile Include="Contracts\Services\IDataTransferService.cs" />
     <Compile Include="Contracts\Services\ILocalSettingsService.cs" />
     <Compile Include="Contracts\Services\INavigationService.cs" />
+    <Compile Include="Contracts\Services\INavigationViewService.cs" />
     <Compile Include="Contracts\Services\IWebView2Service.cs" />
     <Compile Include="Contracts\Services\ITabViewService.cs" />
+    <Compile Include="Helpers\FrameExtensions.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Services\NavigationService.cs" />
+    <Compile Include="Services\NavigationViewService.cs" />
     <Compile Include="Services\TabViewService.cs" />
     <Compile Include="Converters\DateTimeToDateConverter.cs" />
     <Compile Include="Converters\HostNameConverter.cs" />
