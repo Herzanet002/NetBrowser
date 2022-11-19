@@ -434,35 +434,6 @@
                 AddTabButtonCommand="{Binding AddTabButtonCommand}"
                 Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}">
 
-                <!--<winUi:TabView.ContextFlyout>
-                    <MenuFlyout x:Key="TabItemFlyout">
-                        <MenuFlyoutItem Text="Новая вкладка" >
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE737;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="Дублировать вкладку">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE7C4;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="Выключить звук на вкладке">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE74F;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="Открыть только что закрытую вкладку">
-                        </MenuFlyoutItem>
-                        <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Text="Закрыть вкладку">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE711;"/>
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                    </MenuFlyout>
-                </winUi:TabView.ContextFlyout>-->
-
                 <i:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="TabCloseRequested">
                         <core:InvokeCommandAction Command="{Binding CloseTabButtonCommand}" />

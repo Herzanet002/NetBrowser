@@ -3,6 +3,7 @@ using NetBrowser_UWP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
@@ -12,10 +13,10 @@ namespace NetBrowser_UWP.Services;
 
 public class DataTransferService : IDataTransferService
 {
-    public async Task SaveHistory(HistoryItemDetails historyItemDetail)
+    public async Task SaveHistoryAsync(HistoryItemDetails historyItemDetail)
     {
         if (historyItemDetail.Url == "about:blank") return;
-        var doc = await DocumentLoad(HISTORY_FILE_NAME).AsAsyncOperation();
+        var doc = await DocumentLoad(HISTORY_FILE_NAME);
 
         var history = doc.GetElementsByTagName("history");
 
@@ -36,13 +37,13 @@ public class DataTransferService : IDataTransferService
         timeElement.InnerText = historyItemDetail.Time;
         dateElement.InnerText = historyItemDetail.Date;
 
-        await SaveDoc(doc, HISTORY_FILE_NAME).ConfigureAwait(false);
+        await SaveDocAsync(doc, HISTORY_FILE_NAME).ConfigureAwait(false);
     }
 
-    public async Task SaveSearchTerm(SiteItem siteItem)
+    public async Task SaveSearchTermAsync(SiteItem siteItem)
     {
         if (siteItem == null) return;
-        var doc = await DocumentLoad(HISTORY_FILE_NAME).AsAsyncOperation();
+        var doc = await DocumentLoad(HISTORY_FILE_NAME);
 
         var history = doc.GetElementsByTagName("history");
 
@@ -54,7 +55,7 @@ public class DataTransferService : IDataTransferService
 
         elSiteName.InnerText = siteItem.Name;
 
-        await SaveDoc(doc, HISTORY_FILE_NAME).ConfigureAwait(false);
+        await SaveDocAsync(doc, HISTORY_FILE_NAME).ConfigureAwait(false);
     }
 
     public async Task<XmlDocument> DocumentLoad(string configFileName)
@@ -69,13 +70,13 @@ public class DataTransferService : IDataTransferService
         return result;
     }
 
-    public async Task SaveDoc(XmlDocument doc, string fileName)
+    public async Task SaveDocAsync(XmlDocument doc, string fileName)
     {
         var file = await ApplicationData.Current.LocalFolder.GetFileAsync(fileName);
         await doc.SaveToFileAsync(file);
     }
 
-    public async Task<IList<HistoryItemDetails>> GetHistory()
+    public async Task<IList<HistoryItemDetails>> GetHistoryAsync()
     {
         var listOfHistory = new List<HistoryItemDetails>();
         var doc = await DocumentLoad(HISTORY_FILE_NAME);
@@ -97,7 +98,7 @@ public class DataTransferService : IDataTransferService
         return listOfHistory;
     }
 
-    public async Task<IList<SiteItem>> GetSearchTerm()
+    public async Task<IList<SiteItem>> GetSearchTermAsync()
     {
         var doc = await DocumentLoad(HISTORY_FILE_NAME);
         var historyItem = doc.GetElementsByTagName("searchTerm");
@@ -109,7 +110,7 @@ public class DataTransferService : IDataTransferService
             .ToList();
     }
 
-    public async Task SaveBookmark(BookmarkDetails bookmarkDetails)
+    public async Task SaveBookmarkAsync(BookmarkDetails bookmarkDetails)
     {
         var doc = await DocumentLoad(BOOKMARKS_FILE_NAME);
 
@@ -124,10 +125,12 @@ public class DataTransferService : IDataTransferService
         bookmarkTitle.InnerText = bookmarkDetails.Name;
         bookmarkIcon.InnerText = bookmarkDetails.FaviconUrl;
 
-        await SaveDoc(doc, BOOKMARKS_FILE_NAME).ConfigureAwait(false);
+        await SaveDocAsync(doc, BOOKMARKS_FILE_NAME).ConfigureAwait(false);
     }
 
-    public async Task<IList<BookmarkDetails>> GetBookmarksList()
+
+
+    public async Task<IList<BookmarkDetails>> GetBookmarksListAsync()
     {
         var doc = await DocumentLoad(BOOKMARKS_FILE_NAME);
         var bookmarks = doc.GetElementsByTagName("bookmark");
@@ -141,7 +144,7 @@ public class DataTransferService : IDataTransferService
             }).ToList();
     }
 
-    public async Task<bool> RemoveBookmark(BookmarkDetails bookmarkDetails)
+    public async Task<bool> RemoveBookmarkAsync(BookmarkDetails bookmarkDetails)
     {
         var doc = await DocumentLoad(BOOKMARKS_FILE_NAME);
         var bookmarks = doc.GetElementsByTagName("bookmark");
@@ -158,11 +161,37 @@ public class DataTransferService : IDataTransferService
         if (found == null)
             return false;
         root.RemoveChild(found);
-        await SaveDoc(doc, BOOKMARKS_FILE_NAME);
+        await SaveDocAsync(doc, BOOKMARKS_FILE_NAME);
         return true;
     }
 
-    public async Task<bool> ClearHistoryFile()
+    public async Task SaveNewsContentToFavoriteAsync(ContentModel contentModel, CancellationToken ct)
+    {
+        var doc = await DocumentLoad(NEWS_CONTENT_FILE_NAME);
+
+        var favoriteNews = doc.GetElementsByTagName("favoriteNews");
+
+        var newsContent = favoriteNews[0].AppendChild(doc.CreateElement("content"));
+        var contentLink = newsContent.AppendChild(doc.CreateElement("link"));
+        var contentFeederImageLink = newsContent.AppendChild(doc.CreateElement("feederImageLink"));
+        var contentDescription = newsContent.AppendChild(doc.CreateElement("description"));
+        var contentPubDate = newsContent.AppendChild(doc.CreateElement("pubDate"));
+        var contentImageUrl = newsContent.AppendChild(doc.CreateElement("imageUrl"));
+        var contentFeeder = newsContent.AppendChild(doc.CreateElement("feeder"));
+
+        contentLink.InnerText = contentModel.Link;
+        contentFeederImageLink.InnerText = contentModel.FeederImageLink;
+        contentDescription.InnerText = contentModel.Description;
+        contentPubDate.InnerText = contentModel.PubDate;
+        contentImageUrl.InnerText = contentModel.ImageUrl;
+        contentFeeder.InnerText = contentModel.Feeder;
+
+
+        await SaveDocAsync(doc, NEWS_CONTENT_FILE_NAME).ConfigureAwait(false);
+
+    }
+
+    public async Task<bool> ClearHistoryFileAsync()
     {
         var doc = await DocumentLoad(HISTORY_FILE_NAME);
         var root = doc.DocumentElement;
@@ -173,11 +202,11 @@ public class DataTransferService : IDataTransferService
         if (root.ChildNodes.Count == 0)
             isSuccess = true;
 
-        await SaveDoc(doc, HISTORY_FILE_NAME);
+        await SaveDocAsync(doc, HISTORY_FILE_NAME);
         return isSuccess;
     }
 
-    public async Task<bool> RemoveHistoryItem(HistoryItemDetails historyItem)
+    public async Task<bool> RemoveHistoryItemAsync(HistoryItemDetails historyItem)
     {
         var doc = await DocumentLoad(HISTORY_FILE_NAME);
         var root = doc.DocumentElement;
@@ -197,11 +226,11 @@ public class DataTransferService : IDataTransferService
                     }
         }
 
-        await SaveDoc(doc, HISTORY_FILE_NAME).ConfigureAwait(false);
+        await SaveDocAsync(doc, HISTORY_FILE_NAME).ConfigureAwait(false);
         return result;
     }
 
-    public async Task EditBookmark(BookmarkDetails oldBookmark, BookmarkDetails newBookmark)
+    public async Task EditBookmarkAsync(BookmarkDetails oldBookmark, BookmarkDetails newBookmark)
     {
         if (oldBookmark == null || newBookmark == null || oldBookmark == newBookmark) return;
         var doc = await DocumentLoad(BOOKMARKS_FILE_NAME);
@@ -215,10 +244,10 @@ public class DataTransferService : IDataTransferService
             child[2].InnerText = newBookmark.FaviconUrl;
         }
 
-        await SaveDoc(doc, BOOKMARKS_FILE_NAME).ConfigureAwait(false);
+        await SaveDocAsync(doc, BOOKMARKS_FILE_NAME).ConfigureAwait(false);
     }
 
-    public async Task<IList<SearchEngineItem>> GetSearchEngineList()
+    public async Task<IList<SearchEngineItem>> GetSearchEngineListAsync()
     {
         var engineList = new List<SearchEngineItem>();
 
@@ -247,18 +276,18 @@ public class DataTransferService : IDataTransferService
         return engineList;
     }
 
-    public async Task<SearchEngineItem> GetCurrentSearchEngine()
+    public async Task<SearchEngineItem> GetCurrentSearchEngineAsync()
     {
         var current = new SearchEngineItem();
         await Task.Run(async () =>
         {
-            var engines = await GetSearchEngineList();
+            var engines = await GetSearchEngineListAsync();
             foreach (var engine in engines.Where(engine => engine.IsSelected == "1")) current = engine;
         });
         return current;
     }
 
-    public async Task<IList<SiteItem>> GetStartPageElements()
+    public async Task<IList<SiteItem>> GetStartPageElementsAsync()
     {
         var doc = await DocumentLoad(STARTPAGE_FILE_NAME);
         var startPageElements = doc.GetElementsByTagName("element");
@@ -271,7 +300,7 @@ public class DataTransferService : IDataTransferService
             }).ToList();
     }
 
-    public async Task EditStartPageItem(SiteItem oldItem, SiteItem newItem)
+    public async Task EditStartPageItemAsync(SiteItem oldItem, SiteItem newItem)
     {
         if (oldItem == null || newItem == null || oldItem == newItem) return;
 
@@ -285,10 +314,10 @@ public class DataTransferService : IDataTransferService
             child[1].InnerText = newItem.Name;
         }
 
-        await SaveDoc(doc, BOOKMARKS_FILE_NAME).ConfigureAwait(false);
+        await SaveDocAsync(doc, BOOKMARKS_FILE_NAME).ConfigureAwait(false);
     }
 
-    public async Task AddNewSiteOnStartPage(SiteItem siteItem)
+    public async Task AddNewSiteOnStartPageAsync(SiteItem siteItem)
     {
         var doc = await DocumentLoad(STARTPAGE_FILE_NAME);
 
@@ -302,10 +331,10 @@ public class DataTransferService : IDataTransferService
         pageUrl.InnerText = siteItem.Url;
 
 
-        await SaveDoc(doc, STARTPAGE_FILE_NAME).ConfigureAwait(false);
+        await SaveDocAsync(doc, STARTPAGE_FILE_NAME).ConfigureAwait(false);
     }
 
-    public async Task<bool> RemoveSiteOnStartPage(SiteItem siteItem)
+    public async Task<bool> RemoveSiteOnStartPageAsync(SiteItem siteItem)
     {
         var doc = await DocumentLoad(STARTPAGE_FILE_NAME);
         var elements = doc.GetElementsByTagName("element");
@@ -321,11 +350,11 @@ public class DataTransferService : IDataTransferService
         if (found == null)
             return false;
         root.RemoveChild(found);
-        await SaveDoc(doc, STARTPAGE_FILE_NAME);
+        await SaveDocAsync(doc, STARTPAGE_FILE_NAME);
         return true;
     }
 
-    public async Task ChangeSearchEngine(string newEngine)
+    public async Task ChangeSearchEngineAsync(string newEngine)
     {
         if (string.IsNullOrWhiteSpace(newEngine)) return;
         var file = await ApplicationData.Current.LocalFolder.GetFileAsync(SETTINGS_FILE_NAME);
@@ -345,6 +374,6 @@ public class DataTransferService : IDataTransferService
             }
         }
 
-        await SaveDoc(doc, SETTINGS_FILE_NAME).ConfigureAwait(false);
+        await SaveDocAsync(doc, SETTINGS_FILE_NAME).ConfigureAwait(false);
     }
 }

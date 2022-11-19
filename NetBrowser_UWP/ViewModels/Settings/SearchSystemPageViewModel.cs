@@ -5,9 +5,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 
-namespace NetBrowser_UWP.ViewModels;
+namespace NetBrowser_UWP.ViewModels.Settings;
 
-internal class SearchSystemPageViewModel : ObservableObject
+public class SearchSystemPageViewModel : ObservableObject
 {
     private static ObservableCollection<SearchEngineItem> _listOfEngines;
     private readonly IDataTransferService _dataTransferService;
@@ -37,13 +37,13 @@ internal class SearchSystemPageViewModel : ObservableObject
 
     private void ChangeSearchEngine()
     {
-        _dataTransferService.ChangeSearchEngine(CurrentEngine.Name);
+        _dataTransferService.ChangeSearchEngineAsync(CurrentEngine.Name);
         App.CurrentWebEngine = CurrentEngine;
     }
 
     public async Task GetEngines()
     {
-        ListOfEngines = new ObservableCollection<SearchEngineItem>(await _dataTransferService.GetSearchEngineList());
+        ListOfEngines = new ObservableCollection<SearchEngineItem>(await _dataTransferService.GetSearchEngineListAsync());
 
         var selectedEngine = from item in ListOfEngines
             where item.IsSelected == "1"

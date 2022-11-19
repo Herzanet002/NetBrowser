@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
 
-namespace NetBrowser_UWP.ViewModels;
+namespace NetBrowser_UWP.ViewModels.Settings;
 
 public class AboutAppViewModel : ObservableObject
 {

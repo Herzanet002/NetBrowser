@@ -5,13 +5,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
+    xmlns:settings="using:NetBrowser_UWP.ViewModels.Settings"
     mc:Ignorable="d"
     Title="Очистка журнала истории"
     PrimaryButtonText="Очистить"
     SecondaryButtonText="Отмена"
     PrimaryButtonCommand="{Binding ClearHistoryCommand}"
     Style="{StaticResource ContentDialogStyle}"
-    d:DataContext="{d:DesignInstance Type=viewModels:HistoryPageViewModel,IsDesignTimeCreatable=True}">
+    d:DataContext="{d:DesignInstance Type=settings:HistoryPageViewModel,IsDesignTimeCreatable=True}">
 
     <Grid>
         <TextBlock Text="Вы действительно хотите очистить журнал истории?" />

@@ -1,9 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Windows.UI.Xaml.Navigation;
+using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
-using Windows.UI.Xaml.Navigation;
 using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
 
-namespace NetBrowser_UWP.ViewModels;
+namespace NetBrowser_UWP.ViewModels.Settings;
 
 public class SettingsPageViewModel : ObservableObject
 {

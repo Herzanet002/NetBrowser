@@ -1,16 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views.UserControls;
-using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 
-namespace NetBrowser_UWP.ViewModels;
+namespace NetBrowser_UWP.ViewModels.Settings;
 
-internal class BookmarksPageViewModel : ObservableObject
+public class BookmarksPageViewModel : ObservableObject
 {
     private static ObservableCollection<BookmarkDetails> _bookmarksList;
     private static string _bookmarkNewTitle;
@@ -53,7 +53,7 @@ internal class BookmarksPageViewModel : ObservableObject
 
     public async Task GetBookmarksAsync()
     {
-        BookmarksList = new ObservableCollection<BookmarkDetails>(await _dataTransferService.GetBookmarksList());
+        BookmarksList = new ObservableCollection<BookmarkDetails>(await _dataTransferService.GetBookmarksListAsync());
     }
 
     private async Task OnOpenBookmarkInWebCommandExecuted()
@@ -64,7 +64,7 @@ internal class BookmarksPageViewModel : ObservableObject
 
     private async Task OnRemoveBookmarkCommandExecuted()
     {
-        await _dataTransferService.RemoveBookmark(SelectedBookmark);
+        await _dataTransferService.RemoveBookmarkAsync(SelectedBookmark);
     }
 
     private async Task OnDeleteSelectedBookmarkCommandExecuted()
@@ -84,7 +84,7 @@ internal class BookmarksPageViewModel : ObservableObject
 
     private Task OnSaveEditedBookmarkCommandExecuted()
     {
-        return _dataTransferService.EditBookmark(SelectedBookmark, new BookmarkDetails
+        return _dataTransferService.EditBookmarkAsync(SelectedBookmark, new BookmarkDetails
         {
             Name = BookmarkNewTitle,
             Url = BookmarkNewUrl,

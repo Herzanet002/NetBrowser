@@ -9,8 +9,9 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:converters="using:NetBrowser_UWP.Converters"
+    xmlns:settings="using:NetBrowser_UWP.ViewModels.Settings"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance Type=viewModels:HistoryPageViewModel,IsDesignTimeCreatable=True}">
+    d:DataContext="{d:DesignInstance Type=settings:HistoryPageViewModel,IsDesignTimeCreatable=True}">
 
     <Page.Resources>
         <x:String x:Key="SearchPlaceholderText">Поиск в журнале истории</x:String>

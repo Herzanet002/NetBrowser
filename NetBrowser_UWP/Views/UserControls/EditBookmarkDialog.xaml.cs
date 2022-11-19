@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using NetBrowser_UWP.ViewModels;
+using NetBrowser_UWP.ViewModels.Settings;
 
 namespace NetBrowser_UWP.Views.UserControls;
 

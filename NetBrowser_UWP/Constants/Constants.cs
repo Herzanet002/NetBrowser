@@ -9,6 +9,8 @@ public static class Constants
 
     //private const string FAVICONS_SERVICE = "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=";
 
+    #region THEMES_PATH
+
     public const string DARK_BLUE_THEME_PATH = "ms-appx:///Themes/Theme.DarkBlue.xaml";
     public const string LIGHT_THEME_PATH = "ms-appx:///Themes/Theme.Light.xaml";
     public const string LIGHT_PINK_THEME_PATH = "ms-appx:///Themes/Theme.LightPink.xaml";
@@ -19,15 +21,25 @@ public static class Constants
     public const string LIGHT_ACRYLIC_THEME_PATH = "ms-appx:///Themes/Theme.Light.Acrylic.xaml";
     public const string LIGHT_LILAC_THEME_PATH = "ms-appx:///Themes/Theme.Light.Lilac.xaml";
 
+    #endregion
+
+    #region FILE_ACCESS_NAMES
+
     public const string SETTINGS_FILE_NAME = "configs.xml";
     public const string BOOKMARKS_FILE_NAME = "bookmarks.xml";
     public const string HISTORY_FILE_NAME = "history.xml";
     public const string STARTPAGE_FILE_NAME = "startpage.xml";
+    public const string NEWS_CONTENT_FILE_NAME = "newspage.xml";
 
+    #endregion
+
+    #region ADDRESSES
 
     public const string SETTINGS_ADDRESS = "app://settings";
     public const string STARTPAGE_ADDRESS = "app://newtab";
     public const string NEWS_ADDRESS = "app://news";
+
+    #endregion
 
     // Light Themes
     public static ThemeItem LightTheme = new(LIGHT_THEME_PATH);

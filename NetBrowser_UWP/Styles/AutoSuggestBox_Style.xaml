@@ -16,9 +16,8 @@
         <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
         <Setter Property="UseSystemFocusVisuals" Value="{ThemeResource IsApplicationFocusVisualKindReveal}" />
         <Setter Property="TextWrapping" Value="NoWrap" />
-        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="CornerRadius" Value="6" />
         <Setter Property="BorderThickness" Value="0" />
-
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">

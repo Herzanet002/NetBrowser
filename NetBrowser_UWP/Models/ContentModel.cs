@@ -1,5 +1,8 @@
-﻿namespace NetBrowser_UWP.Models;
+﻿using System.Xml.Serialization;
 
+namespace NetBrowser_UWP.Models;
+
+[XmlRoot(ElementName = nameof(ContentModel))]
 public class ContentModel
 {
     public string Title { get; set; }

@@ -72,7 +72,7 @@ public class ShellPageViewModel : ObservableObject
     {
         SelectionChangedTabHandler();
         if (_tabViewService.GetSelectedWebView() != null)
-            IsWebLoading = (bool) _tabViewService.GetSelectedWebView().Tag;
+            IsWebLoading = (bool)_tabViewService.GetSelectedWebView().Tag;
         SetVisualUiElementStates(_tabViewService.GetSelectedWebView());
         CommandsRaiseCanExecuteChanged();
     }
@@ -91,9 +91,9 @@ public class ShellPageViewModel : ObservableObject
     {
         LoadedPageCommand = new AsyncRelayCommand(InitializeAsync);
         BackButtonCommand = new DelegateCommand(OnBackButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() is {CanGoBack: true});
+            () => _tabViewService.GetSelectedWebView() is { CanGoBack: true });
         ForwardButtonCommand = new DelegateCommand(OnForwardButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() is {CanGoForward: true});
+            () => _tabViewService.GetSelectedWebView() is { CanGoForward: true });
         ReloadButtonCommand = new DelegateCommand(OnReloadButtonCommandExecuted);
         StopLoadingButtonCommand = new DelegateCommand(OnStopLoadingButtonCommandExecuted);
         HomeButtonCommand = new DelegateCommand(OnHomeButtonCommandExecuted);
@@ -125,7 +125,7 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task<IEnumerable<string>> GetSearchTermListAsync()
     {
-        var searchTermListTransfer = await _dataTransferService.GetSearchTerm();
+        var searchTermListTransfer = await _dataTransferService.GetSearchTermAsync();
         var searchTermListReversed = searchTermListTransfer.Reverse();
 
         return searchTermListReversed.Select(term => term.Name).ToHashSet();
@@ -137,8 +137,8 @@ public class ShellPageViewModel : ObservableObject
 
         var enumerable = searchTermList.ToList();
         var suitableItems = from item in enumerable
-            where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
-            select item;
+                            where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
+                            select item;
 
         var enumerableList = suitableItems.ToList();
 
@@ -181,7 +181,7 @@ public class ShellPageViewModel : ObservableObject
         }
         else
         {
-            var loadingState = (bool) webInstance.Tag;
+            var loadingState = (bool)webInstance.Tag;
             SetProgressRingActivity(loadingState);
         }
 
@@ -221,7 +221,7 @@ public class ShellPageViewModel : ObservableObject
             ShowAsMonochrome = false
         };
 
-        _dataTransferService.SaveHistory(new HistoryItemDetails
+        _dataTransferService.SaveHistoryAsync(new HistoryItemDetails
         {
             Name = webInstance.CoreWebView2.DocumentTitle,
             Url = webInstance.Source.AbsoluteUri,
@@ -261,22 +261,7 @@ public class ShellPageViewModel : ObservableObject
         }
     }
 
-    public async Task SearchWebFromStartPage(string url)
-    {
-        if (string.IsNullOrWhiteSpace(url))
-            return;
-        var webViewInstance = await _webView2Service.InstantiateWebView2(_webView2Service.ResolveUri(url).ToString());
-        var newTab = _tabViewService.CreateTabViewItemInstance(
-            webViewInstance.CoreWebView2.DocumentTitle,
-            webViewInstance,
-            new winUI.SymbolIconSource
-            {
-                Symbol = Symbol.More
-            });
-
-        _tabViewService.ChangeTabItem(_tabViewService.GetSelectedTabItem(), newTab);
-        _tabViewService.ChangeSelectedTabItem(newTab);
-    }
+    
 
     private void SelectionChangedTabHandler()
     {
@@ -306,7 +291,7 @@ public class ShellPageViewModel : ObservableObject
                         _tabViewService.GetSelectedWebView().Source.AbsoluteUri);
                 break;
 
-            case MainNewsPage:
+            case NewsShellPage:
                 SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(),
                     Constants.Constants.NEWS_ADDRESS);
                 break;
@@ -329,7 +314,7 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task GetBookmarksAsync()
     {
-        var bookmarksListTransfer = await _dataTransferService.GetBookmarksList();
+        var bookmarksListTransfer = await _dataTransferService.GetBookmarksListAsync();
         var bookmarkDetailsEnumerable = bookmarksListTransfer.Reverse();
         BookmarksList = new ObservableCollection<BookmarkDetails>(bookmarkDetailsEnumerable);
     }
@@ -505,13 +490,13 @@ public class ShellPageViewModel : ObservableObject
 
     private void OnBackButtonCommandExecuted()
     {
-        if (_tabViewService.GetSelectedWebView() is {CanGoBack: true})
+        if (_tabViewService.GetSelectedWebView() is { CanGoBack: true })
             _tabViewService.GetSelectedWebView().GoBack();
     }
 
     private void OnForwardButtonCommandExecuted()
     {
-        if (_tabViewService.GetSelectedWebView() is {CanGoForward: true})
+        if (_tabViewService.GetSelectedWebView() is { CanGoForward: true })
             _tabViewService.GetSelectedWebView().GoForward();
     }
 
@@ -556,7 +541,7 @@ public class ShellPageViewModel : ObservableObject
         if (_tabViewService.GetSelectedWebView() == null) return;
 
         NavigateTo(queryForSearch, _tabViewService.GetSelectedWebView());
-        await _dataTransferService.SaveSearchTerm(new SiteItem
+        await _dataTransferService.SaveSearchTermAsync(new SiteItem
         {
             Name = queryForSearch
         }).ConfigureAwait(false);
@@ -580,7 +565,7 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task OnHistoryButtonCommandExecuted()
     {
-        var historyListTransfer = await _dataTransferService.GetHistory();
+        var historyListTransfer = await _dataTransferService.GetHistoryAsync();
 
         const int MAX_DISPLAY_COUNT = 100;
 
@@ -619,7 +604,7 @@ public class ShellPageViewModel : ObservableObject
               string.IsNullOrWhiteSpace(BookmarkUrlForSave)) &&
             Uri.IsWellFormedUriString(BookmarkUrlForSave, UriKind.Absolute))
         {
-            await _dataTransferService.SaveBookmark(
+            await _dataTransferService.SaveBookmarkAsync(
                 new BookmarkDetails
                 {
                     Name = BookmarkTitleForSave,
@@ -644,7 +629,7 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task OnDeleteBookmarkCommandExecuted()
     {
-        var result = await _dataTransferService.RemoveBookmark(new BookmarkDetails
+        var result = await _dataTransferService.RemoveBookmarkAsync(new BookmarkDetails
         {
             Name = BookmarkTitleForSave,
             Url = BookmarkUrlForSave
@@ -668,7 +653,7 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task OnBookmarksFlyoutListViewItemClickExecuted(object sender)
     {
-        if (sender is not ItemClickEventArgs {ClickedItem: BookmarkDetails selectedBookmarkItem}) return;
+        if (sender is not ItemClickEventArgs { ClickedItem: BookmarkDetails selectedBookmarkItem }) return;
         await _tabViewService.CreateNewWebTab(selectedBookmarkItem.Url);
         IsFlyoutClosed = true;
     }

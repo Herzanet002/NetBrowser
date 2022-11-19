@@ -1,12 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using Prism.Commands;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace NetBrowser_UWP.ViewModels;
+namespace NetBrowser_UWP.ViewModels.Settings;
 
 public class PersonalizePageViewModel : ObservableObject
 {

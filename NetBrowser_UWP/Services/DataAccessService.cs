@@ -4,17 +4,20 @@ using System.Threading.Tasks;
 using System.Xml;
 using Windows.Storage;
 using Windows.System;
+using Microsoft.Toolkit.Uwp.Helpers;
 using NetBrowser_UWP.Contracts.Services;
 using static NetBrowser_UWP.Constants.Constants;
+// ReSharper disable UnthrowableException
 
 namespace NetBrowser_UWP.Services;
 
 public class DataAccessService : IDataAccessService
 {
-    public async Task InitializeHistoryFile()
+    public async Task InitializeHistoryFileAsync()
     {
         try
         {
+            if(await ApplicationData.Current.LocalFolder.FileExistsAsync(HISTORY_FILE_NAME)) return;
             var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(HISTORY_FILE_NAME);
             using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
             {
@@ -35,16 +38,17 @@ public class DataAccessService : IDataAccessService
 
             await Launcher.LaunchFileAsync(storageFile);
         }
-        catch
+        catch(Exception ex)
         {
-            // ignored
+            throw new Exception(ex.Message, ex);
         }
     }
 
-    public async Task InitializeBookmarksFile()
+    public async Task InitializeBookmarksFileAsync()
     {
         try
         {
+            if (await ApplicationData.Current.LocalFolder.FileExistsAsync(BOOKMARKS_FILE_NAME)) return;
             var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(BOOKMARKS_FILE_NAME);
             using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
             {
@@ -58,22 +62,24 @@ public class DataAccessService : IDataAccessService
                 using var writer = XmlWriter.Create(stream, settings);
                 await writer.WriteStartDocumentAsync();
                 writer.WriteStartElement("bookmarks");
+                await writer.WriteEndElementAsync();
                 await writer.WriteEndDocumentAsync();
                 await writer.FlushAsync();
             }
 
             await Launcher.LaunchFileAsync(storageFile);
         }
-        catch
+        catch (Exception ex)
         {
-            // ignored
+            throw new Exception(ex.Message, ex);
         }
     }
 
-    public async Task InitializeConfigFile()
+    public async Task InitializeConfigFileAsync()
     {
         try
         {
+            if (await ApplicationData.Current.LocalFolder.FileExistsAsync(SETTINGS_FILE_NAME)) return;
             var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(SETTINGS_FILE_NAME);
             using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
             {
@@ -117,16 +123,17 @@ public class DataAccessService : IDataAccessService
 
             await Launcher.LaunchFileAsync(storageFile);
         }
-        catch
+        catch (Exception ex)
         {
-            // ignored
+            throw new Exception(ex.Message, ex);
         }
     }
 
-    public async Task InitializeStartPageFile()
+    public async Task InitializeStartPageFileAsync()
     {
         try
         {
+            if (await ApplicationData.Current.LocalFolder.FileExistsAsync(STARTPAGE_FILE_NAME)) return;
             var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(STARTPAGE_FILE_NAME);
             using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
             {
@@ -170,9 +177,41 @@ public class DataAccessService : IDataAccessService
 
             await Launcher.LaunchFileAsync(storageFile);
         }
-        catch
+        catch (Exception ex)
         {
-            // ignored
+            throw new Exception(ex.Message, ex);
+        }
+    }
+
+    public async Task InitializeNewsContentFileAsync()
+    {
+        try
+        {
+            if (await ApplicationData.Current.LocalFolder.FileExistsAsync(NEWS_CONTENT_FILE_NAME)) return;
+            var storageFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(NEWS_CONTENT_FILE_NAME);
+            using (var writeStream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                var stream = writeStream.AsStreamForWrite();
+                var settings = new XmlWriterSettings
+                {
+                    Async = true,
+                    Indent = true
+                };
+
+                using var writer = XmlWriter.Create(stream, settings);
+                await writer.WriteStartDocumentAsync();
+                writer.WriteStartElement("news");
+                writer.WriteStartElement("favoriteNews");
+                await writer.WriteEndElementAsync();
+                await writer.WriteEndDocumentAsync();
+                await writer.FlushAsync();
+            }
+
+            await Launcher.LaunchFileAsync(storageFile);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message, ex);
         }
     }
 }

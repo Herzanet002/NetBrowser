@@ -24,6 +24,7 @@ public class NewsPageViewModel : ObservableObject
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly TabViewService _tabViewService;
+    private readonly IDataTransferService _dataTransferService;
     private readonly AppConfigService _appConfigService;
     private bool _isProgressRingActive = true;
     private ObservableCollection<ContentModel> _news = new();
@@ -40,11 +41,13 @@ public class NewsPageViewModel : ObservableObject
 
     public NewsPageViewModel(IServiceScopeFactory serviceScopeFactory,
         TabViewService tabViewService,
+        IDataTransferService dataTransferService,
         INavigationViewService navigationViewService,
         AppConfigService appConfigService)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _tabViewService = tabViewService;
+        _dataTransferService = dataTransferService;
         _appConfigService = appConfigService;
         NavigationViewService = navigationViewService;
         NavigationViewService.Navigated += OnNavigated;
@@ -65,8 +68,7 @@ public class NewsPageViewModel : ObservableObject
 
     private async Task OnAddNewsToFavoriteCommandExecuted(ContentModel contentItem, CancellationToken ct)
     {
-        FavoriteNews.Add(contentItem);
-        await Task.Delay(1, ct);
+        await _dataTransferService.SaveNewsContentToFavoriteAsync(contentItem, ct);
     }
 
     private async Task OnPageLoadedCommandExecuted(CancellationToken ct)

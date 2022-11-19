@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -24,10 +25,18 @@ public static class XmlSerializer<T>
         {
             serializer.Serialize(xmlWriter, value, ns);
         }
-
+        
         return stringBuilder.ToString();
     }
 
+    public static XmlNode ToXmlNode(string xmlInputString)
+    {
+        if (string.IsNullOrEmpty(xmlInputString.Trim())) { throw new ArgumentNullException(nameof(xmlInputString)); }
+        var xd = new XmlDocument();
+        using var sr = new StringReader(xmlInputString);
+        xd.Load(sr);
+        return xd;
+    }
     // Deserialize from xml  
     public static T FromXml(string xml)
     {

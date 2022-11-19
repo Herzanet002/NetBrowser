@@ -1,18 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views.UserControls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
 
-namespace NetBrowser_UWP.ViewModels;
+namespace NetBrowser_UWP.ViewModels.Settings;
 
-internal class HistoryPageViewModel : ObservableObject
+public class HistoryPageViewModel : ObservableObject
 {
     private static IEnumerable<HistoryItemDetails> _historyList;
     private static HistoryItemDetails _selectedItem;
@@ -63,7 +63,7 @@ internal class HistoryPageViewModel : ObservableObject
 
     private async Task OnDeleteHistoryItemCommandExecuted(HistoryItemDetails historyItem)
     {
-        await _dataTransferService.RemoveHistoryItem(historyItem);
+        await _dataTransferService.RemoveHistoryItemAsync(historyItem);
         var history = HistoryList.ToList();
         history.Remove(historyItem);
         HistoryList = history;
@@ -71,7 +71,7 @@ internal class HistoryPageViewModel : ObservableObject
 
     private async Task OnClearHistoryJournalCommandExecuted()
     {
-        await _dataTransferService.ClearHistoryFile();
+        await _dataTransferService.ClearHistoryFileAsync();
     }
 
     private async Task OnOpenClearHistoryJournalDialogCommandExecuted()
@@ -112,7 +112,7 @@ internal class HistoryPageViewModel : ObservableObject
 
     public async Task GetHistoryAsync()
     {
-        var list = await _dataTransferService.GetHistory();
+        var list = await _dataTransferService.GetHistoryAsync();
         if (list == null) return;
         var historyItemDetailsEnumerable = list.ToList();
         historyItemDetailsEnumerable.Reverse();

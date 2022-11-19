@@ -4,8 +4,9 @@ namespace NetBrowser_UWP.Contracts.Services;
 
 public interface IDataAccessService
 {
-    public Task InitializeHistoryFile();
-    public Task InitializeBookmarksFile();
-    public Task InitializeConfigFile();
-    public Task InitializeStartPageFile();
+    public Task InitializeHistoryFileAsync();
+    public Task InitializeBookmarksFileAsync();
+    public Task InitializeConfigFileAsync();
+    public Task InitializeStartPageFileAsync();
+    public Task InitializeNewsContentFileAsync();
 }

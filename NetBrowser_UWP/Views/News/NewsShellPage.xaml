@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="NetBrowser_UWP.Views.News.MainNewsPage"
+    x:Class="NetBrowser_UWP.Views.News.NewsShellPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:NetBrowser_UWP.Views.News"
@@ -25,6 +25,13 @@
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItemSeparator />
+                <controls:NavigationViewItem Content="Рекомендации"
+                                             helpers:NavigationHelper.NavigateTo="local:RecommendationsNewsPage">
+                    <controls:NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xe8df;" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+                <controls:NavigationViewItemSeparator />
                 <controls:NavigationViewItem Content="Список для чтения"
                                              helpers:NavigationHelper.NavigateTo="local:ReadingListNewsPage">
                     <controls:NavigationViewItem.Icon>
@@ -33,7 +40,7 @@
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItemSeparator />
                 <controls:NavigationViewItem Content="Избранное"
-                                             helpers:NavigationHelper.NavigateTo="local:BookmarksNewsPage">
+                                             helpers:NavigationHelper.NavigateTo="local:FavoritesNewsPage">
                     <controls:NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEB51;" />
                     </controls:NavigationViewItem.Icon>

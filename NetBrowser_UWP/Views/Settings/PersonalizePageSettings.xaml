@@ -8,8 +8,9 @@
     xmlns:models="using:NetBrowser_UWP.Models"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:settings="using:NetBrowser_UWP.ViewModels.Settings"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance Type=viewmodels:PersonalizePageViewModel,IsDesignTimeCreatable=True}">
+    d:DataContext="{d:DesignInstance Type=settings:PersonalizePageViewModel,IsDesignTimeCreatable=True}">
     <Grid>
 
         <Grid.RowDefinitions>

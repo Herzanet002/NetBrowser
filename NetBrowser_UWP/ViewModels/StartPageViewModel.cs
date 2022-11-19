@@ -12,12 +12,14 @@ using System.Windows.Input;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using NetBrowser_UWP.Services;
 
 namespace NetBrowser_UWP.ViewModels;
 
 public class StartPageViewModel : ObservableObject
 {
     private readonly IDataTransferService _dataTransferService;
+    private readonly TabViewService _tabViewService;
     private readonly ILocalSettingsService _localSettingsService;
     private readonly ShellPageViewModel _mainPageViewModel;
     private int _gridViewOrientation;
@@ -36,11 +38,11 @@ public class StartPageViewModel : ObservableObject
     private ObservableCollection<SiteItem> _startPageItems;
 
     public StartPageViewModel(IDataTransferService dataTransferService,
-        ShellPageViewModel mainViewModel,
+        TabViewService tabViewService,
         ILocalSettingsService localSettingsService)
     {
         _dataTransferService = dataTransferService;
-        _mainPageViewModel = mainViewModel;
+        _tabViewService = tabViewService;
         _localSettingsService = localSettingsService;
         InitializePageComponents();
     }
@@ -84,7 +86,7 @@ public class StartPageViewModel : ObservableObject
         {
             SetProperty(ref _gridViewSelectedItem, value);
             if (value == null) return;
-            _mainPageViewModel.SearchWebFromStartPage(value.Url);
+            _tabViewService.CreateNewWebTab(url:value.Url, isReplaced:true);
         }
     }
 
@@ -95,7 +97,7 @@ public class StartPageViewModel : ObservableObject
         {
             SetProperty(ref _searchBarSelectedItem, value);
             if (value == null) return;
-            _mainPageViewModel.SearchWebFromStartPage(value.Name);
+            _tabViewService.CreateNewWebTab(url:value.Name, isReplaced:true);
         }
     }
 
@@ -161,7 +163,7 @@ public class StartPageViewModel : ObservableObject
     private async Task OnGridViewItemDeleteCommandExecuted(object obj)
     {
         if (obj is not SiteItem elem) return;
-        await _dataTransferService.RemoveSiteOnStartPage(elem);
+        await _dataTransferService.RemoveSiteOnStartPageAsync(elem);
         await GetStartPageElementsAsync().ConfigureAwait(false);
     }
 
@@ -184,7 +186,7 @@ public class StartPageViewModel : ObservableObject
         if (!(NewSiteUrl.StartsWith("http://") ||
               NewSiteUrl.StartsWith("https://")))
             NewSiteUrl = "https://" + NewSiteUrl;
-        await _dataTransferService.AddNewSiteOnStartPage(new SiteItem
+        await _dataTransferService.AddNewSiteOnStartPageAsync(new SiteItem
         {
             Name = NewSiteName,
             Url = NewSiteUrl
@@ -210,7 +212,7 @@ public class StartPageViewModel : ObservableObject
 
     private async Task GetRecentlySearchedItemsAsync()
     {
-        var searchTermListTransfer = await _dataTransferService.GetSearchTerm();
+        var searchTermListTransfer = await _dataTransferService.GetSearchTermAsync();
         if (searchTermListTransfer == null) return;
         var termListTransfer = searchTermListTransfer.ToList();
         termListTransfer.Reverse();
@@ -219,11 +221,11 @@ public class StartPageViewModel : ObservableObject
 
     private async Task OnSearchButtonTappedCommandExecuted()
     {
-        await _mainPageViewModel.SearchWebFromStartPage(SearchBoxText);
+        await _tabViewService.CreateNewWebTab(url:SearchBoxText, isReplaced:true);
     }
 
     private async Task GetStartPageElementsAsync()
     {
-        StartPageItems = new ObservableCollection<SiteItem>(await _dataTransferService.GetStartPageElements());
+        StartPageItems = new ObservableCollection<SiteItem>(await _dataTransferService.GetStartPageElementsAsync());
     }
 }

@@ -136,7 +136,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Commands\OpenFlyoutAction.cs" />
-    <Compile Include="Contracts\IAsyncInitialization.cs" />
     <Compile Include="Contracts\INavigationAware.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
     <Compile Include="Contracts\Services\IDataAccessService.cs" />
@@ -172,24 +171,28 @@
     </Compile>
     <Compile Include="Services\LocalSettingsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
-    <Compile Include="ViewModels\AboutAppViewModel.cs" />
+    <Compile Include="ViewModels\Settings\AboutAppViewModel.cs" />
     <Compile Include="Helpers\ListExtension.cs" />
+    <Compile Include="ViewModels\Settings\MainSettingsPageViewModel.cs" />
     <Compile Include="ViewModels\ShellPageViewModel.cs" />
     <Compile Include="ViewModels\NewsPageViewModel.cs" />
-    <Compile Include="ViewModels\PersonalizePageViewModel.cs" />
+    <Compile Include="ViewModels\Settings\PersonalizePageViewModel.cs" />
     <Compile Include="Services\RssWorkerService.cs" />
-    <Compile Include="ViewModels\SettingsPageViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPageViewModel.cs" />
     <Compile Include="Views\News\AllNewsPage.xaml.cs">
       <DependentUpon>AllNewsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\News\BookmarksNewsPage.xaml.cs">
-      <DependentUpon>BookmarksNewsPage.xaml</DependentUpon>
+    <Compile Include="Views\News\FavoritesNewsPage.xaml.cs">
+      <DependentUpon>FavoritesNewsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\News\MainNewsPage.xaml.cs">
-      <DependentUpon>MainNewsPage.xaml</DependentUpon>
+    <Compile Include="Views\News\NewsShellPage.xaml.cs">
+      <DependentUpon>NewsShellPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\News\ReadingListNewsPage.xaml.cs">
       <DependentUpon>ReadingListNewsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\News\RecommendationsNewsPage.xaml.cs">
+      <DependentUpon>RecommendationsNewsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\AboutAppPage.xaml.cs">
       <DependentUpon>AboutAppPage.xaml</DependentUpon>
@@ -198,8 +201,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Commands\CloseFlyoutAction.cs" />
-    <Compile Include="ViewModels\HistoryPageViewModel.cs" />
-    <Compile Include="ViewModels\SearchSystemPageViewModel.cs" />
+    <Compile Include="ViewModels\Settings\HistoryPageViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SearchSystemPageViewModel.cs" />
     <Compile Include="ViewModels\StartPageViewModel.cs" />
     <Compile Include="Views\UserControls\DeleteBookmarkDialog.xaml.cs">
       <DependentUpon>DeleteBookmarkDialog.xaml</DependentUpon>
@@ -239,7 +242,7 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\Managers\ThemeManager.cs" />
-    <Compile Include="ViewModels\BookmarksPageViewModel.cs" />
+    <Compile Include="ViewModels\Settings\BookmarksPageViewModel.cs" />
     <Compile Include="Views\UserControls\EditBookmarkDialog.xaml.cs">
       <DependentUpon>EditBookmarkDialog.xaml</DependentUpon>
     </Compile>
@@ -323,15 +326,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\News\BookmarksNewsPage.xaml">
+    <Page Include="Views\News\FavoritesNewsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\News\MainNewsPage.xaml">
+    <Page Include="Views\News\NewsShellPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\News\ReadingListNewsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\News\RecommendationsNewsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -508,6 +515,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

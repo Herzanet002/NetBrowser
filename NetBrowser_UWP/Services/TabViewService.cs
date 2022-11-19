@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.UI.Xaml.Controls;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Views;
 using NetBrowser_UWP.Views.News;
 using NetBrowser_UWP.Views.Settings;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 using FontIconSource = Microsoft.UI.Xaml.Controls.FontIconSource;
 using IconSource = Microsoft.UI.Xaml.Controls.IconSource;
 using SymbolIconSource = Microsoft.UI.Xaml.Controls.SymbolIconSource;
@@ -77,6 +77,8 @@ public class TabViewService : ObservableObject, ITabViewService
     {
         if (TabViewItemsList.Contains(newItem))
             SelectedTabItem = newItem;
+        if (newItem is null)
+            SelectedTabItem = null;
     }
 
     public TabViewItem GetSelectedTabItem()
@@ -134,17 +136,27 @@ public class TabViewService : ObservableObject, ITabViewService
         return newTab;
     }
 
-    public async Task CreateNewWebTab(string url = null)
+    public async Task CreateNewWebTab(string url = null, bool isNavigated = true, bool isReplaced = false)
     {
         var newWebView = await _webView2Service.InstantiateWebView2(url);
 
         var newTab = CreateTabViewItemInstance(
             newWebView.CoreWebView2.DocumentTitle,
             newWebView,
-            new SymbolIconSource {Symbol = Symbol.More});
+            new SymbolIconSource { Symbol = Symbol.More });
 
-        AddTabItem(newTab);
-        ChangeSelectedTabItem(newTab);
+        if (isReplaced)
+        {
+            ChangeTabItem(GetSelectedTabItem(), newTab);
+        }
+        else
+        {
+            AddTabItem(newTab);
+        }
+        if (isNavigated)
+        {
+            ChangeSelectedTabItem(newTab);
+        }
     }
 
     public void CreateStartPageTab()
@@ -174,7 +186,7 @@ public class TabViewService : ObservableObject, ITabViewService
         var settingsTab = CreateTabViewItemInstance(
             "Settings".GetLocalized(),
             new SettingsPage(pageType ?? typeof(MainItemPageSettings)),
-            new SymbolIconSource {Symbol = Symbol.Setting});
+            new SymbolIconSource { Symbol = Symbol.Setting });
 
         AddTabItem(settingsTab);
         ChangeSelectedTabItem(settingsTab);
@@ -182,7 +194,7 @@ public class TabViewService : ObservableObject, ITabViewService
 
     public void CreateNewsTab(Type pageType = default)
     {
-        var alreadyExistsContentTab = GetTabItemByFilter(tab => tab.Content is MainNewsPage);
+        var alreadyExistsContentTab = GetTabItemByFilter(tab => tab.Content is NewsShellPage);
 
         if (alreadyExistsContentTab != null)
         {
@@ -192,7 +204,7 @@ public class TabViewService : ObservableObject, ITabViewService
 
         var newsTab = CreateTabViewItemInstance(
             "News".GetLocalized(),
-            new MainNewsPage(pageType ?? typeof(AllNewsPage)),
+            new NewsShellPage(pageType ?? typeof(AllNewsPage)),
             new FontIconSource
             {
                 Glyph = "\xE8A1"

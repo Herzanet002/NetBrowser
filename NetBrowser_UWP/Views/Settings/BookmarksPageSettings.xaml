@@ -7,7 +7,8 @@
     xmlns:viewmodels="using:NetBrowser_UWP.ViewModels"
     mc:Ignorable="d"
     xmlns:models="using:NetBrowser_UWP.Models"
-    d:DataContext="{d:DesignInstance Type=viewmodels:BookmarksPageViewModel,IsDesignTimeCreatable=True}">
+    xmlns:settings="using:NetBrowser_UWP.ViewModels.Settings"
+    d:DataContext="{d:DesignInstance Type=settings:BookmarksPageViewModel,IsDesignTimeCreatable=True}">
 
     <Grid>
         <Grid.RowDefinitions>
