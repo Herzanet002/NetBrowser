@@ -86,7 +86,7 @@ public class StartPageViewModel : ObservableObject
         {
             SetProperty(ref _gridViewSelectedItem, value);
             if (value == null) return;
-            _tabViewService.CreateNewWebTab(url:value.Url, isReplaced:true);
+            _tabViewService.CreateNewWebTab(value.Url, isReplaced: true);
         }
     }
 
@@ -97,7 +97,7 @@ public class StartPageViewModel : ObservableObject
         {
             SetProperty(ref _searchBarSelectedItem, value);
             if (value == null) return;
-            _tabViewService.CreateNewWebTab(url:value.Name, isReplaced:true);
+            _tabViewService.CreateNewWebTab(value.Name, isReplaced: true);
         }
     }
 
@@ -221,7 +221,7 @@ public class StartPageViewModel : ObservableObject
 
     private async Task OnSearchButtonTappedCommandExecuted()
     {
-        await _tabViewService.CreateNewWebTab(url:SearchBoxText, isReplaced:true);
+        await _tabViewService.CreateNewWebTab(SearchBoxText, isReplaced: true);
     }
 
     private async Task GetStartPageElementsAsync()

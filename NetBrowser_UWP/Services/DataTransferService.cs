@@ -129,7 +129,6 @@ public class DataTransferService : IDataTransferService
     }
 
 
-
     public async Task<IList<BookmarkDetails>> GetBookmarksListAsync()
     {
         var doc = await DocumentLoad(BOOKMARKS_FILE_NAME);
@@ -188,7 +187,6 @@ public class DataTransferService : IDataTransferService
 
 
         await SaveDocAsync(doc, NEWS_CONTENT_FILE_NAME).ConfigureAwait(false);
-
     }
 
     public async Task<bool> ClearHistoryFileAsync()

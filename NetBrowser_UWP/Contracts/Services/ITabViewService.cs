@@ -18,4 +18,5 @@ public interface ITabViewService
     WebView2 GetSelectedWebView();
     void ChangeSelectedWebView(WebView2 webView);
     void ChangeTabItem(TabViewItem oldTabItem, TabViewItem newTabItem);
+    void CloseTabItemRequested(TabViewItem tab);
 }

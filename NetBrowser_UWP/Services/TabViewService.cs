@@ -124,6 +124,17 @@ public class TabViewService : ObservableObject, ITabViewService
     {
     }
 
+    public void CloseTabItemRequested(TabViewItem tab)
+    {
+        if (tab.Content is WebView2 webContent)
+            webContent.Close();
+
+        RemoveTabItem(tab);
+        if (GetTabItemsCount() == 0)
+            ChangeSelectedWebView(null);
+    }
+
+
     public TabViewItem CreateTabViewItemInstance<T>(string header, T content, IconSource icon)
     {
         var newTab = new TabViewItem

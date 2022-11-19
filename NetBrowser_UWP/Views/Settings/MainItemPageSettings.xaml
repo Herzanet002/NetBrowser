@@ -10,16 +10,16 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
-            <RowDefinition/>
+            <RowDefinition Height="100" />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock Style="{StaticResource PageTitleStyle}" Text="Основные" Margin="50,20"/>
+        <TextBlock Style="{StaticResource PageTitleStyle}" Text="Основные" Margin="50,20" />
         <Grid Row="1">
             <StackPanel Spacing="20" Margin="60,0">
-                <TextBlock Text="Расположение приложения:" Style="{StaticResource PageSubTitleStyle}"/>
-                <TextBox IsReadOnly="True" Text="{Binding FullAppInstalledPath}"></TextBox>
+                <TextBlock Text="Расположение приложения:" Style="{StaticResource PageSubTitleStyle}" />
+                <TextBox IsReadOnly="True" Text="{Binding FullAppInstalledPath}" />
             </StackPanel>
-            
+
         </Grid>
     </Grid>
 </Page>

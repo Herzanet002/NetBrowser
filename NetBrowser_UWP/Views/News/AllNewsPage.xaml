@@ -62,7 +62,7 @@
                                 <FontIcon Glyph="&#xE7BC;" />
                             </AppBarButton.Icon>
                         </AppBarButton>
-                        <AppBarButton Width="45" Height="45" Foreground="AliceBlue" 
+                        <AppBarButton Width="45" Height="45" Foreground="AliceBlue"
                                       Command="{Binding ElementName=AdaptiveGrid, Path=DataContext.AddNewsToFavoriteCommand}"
                                       CommandParameter="{Binding }">
                             <AppBarButton.Icon>

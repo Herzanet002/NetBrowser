@@ -43,7 +43,8 @@ public class SearchSystemPageViewModel : ObservableObject
 
     public async Task GetEngines()
     {
-        ListOfEngines = new ObservableCollection<SearchEngineItem>(await _dataTransferService.GetSearchEngineListAsync());
+        ListOfEngines =
+            new ObservableCollection<SearchEngineItem>(await _dataTransferService.GetSearchEngineListAsync());
 
         var selectedEngine = from item in ListOfEngines
             where item.IsSelected == "1"

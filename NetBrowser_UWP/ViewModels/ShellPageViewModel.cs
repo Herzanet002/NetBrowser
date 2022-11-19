@@ -78,9 +78,7 @@ public class ShellPageViewModel : ObservableObject
     }
 
     private void TabViewServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
-    {
-        OnPropertyChanged(e);
-    }
+        => OnPropertyChanged(e);
 
     private async Task InitializePageComponents()
     {
@@ -261,7 +259,7 @@ public class ShellPageViewModel : ObservableObject
         }
     }
 
-    
+
 
     private void SelectionChangedTabHandler()
     {
@@ -302,15 +300,6 @@ public class ShellPageViewModel : ObservableObject
         }
     }
 
-    private void CloseTabItemRequested(winUI.TabViewItem tab)
-    {
-        if (tab.Content is winUI.WebView2 webContent)
-            webContent.Close();
-
-        _tabViewService.RemoveTabItem(tab);
-        if (_tabViewService.GetTabItemsCount() == 0)
-            _tabViewService.ChangeSelectedWebView(null);
-    }
 
     private async Task GetBookmarksAsync()
     {
@@ -611,8 +600,9 @@ public class ShellPageViewModel : ObservableObject
                     Url = BookmarkUrlForSave,
                     FaviconUrl = Constants.Constants.FAVICONS_SERVICE + BookmarkUrlForSave
                 });
+            await GetBookmarksAsync();
             IsFlyoutClosed = true;
-            SetBookmarkIconState(true);
+            SetBookmarkButtonAppearance();
         }
         else
         {
@@ -672,7 +662,7 @@ public class ShellPageViewModel : ObservableObject
     private void OnCloseTabButtonCommandExecuted(object sender)
     {
         if (sender is winUI.TabViewTabCloseRequestedEventArgs tab)
-            CloseTabItemRequested(tab.Tab);
+            _tabViewService.CloseTabItemRequested(tab.Tab);
     }
 
     #endregion On Command Executed Region
