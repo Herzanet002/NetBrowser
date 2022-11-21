@@ -11,7 +11,7 @@ using static NetBrowser_UWP.Constants.Constants;
 
 namespace NetBrowser_UWP.Services;
 
-public class DataTransferService : IDataTransferService
+public class DataTransferXmlService 
 {
     public async Task SaveHistoryAsync(HistoryItemDetails historyItemDetail)
     {
@@ -285,20 +285,20 @@ public class DataTransferService : IDataTransferService
         return current;
     }
 
-    public async Task<IList<SiteItem>> GetStartPageElementsAsync()
+    public async Task<IList<StartPageItem>> GetStartPageElementsAsync()
     {
         var doc = await DocumentLoad(STARTPAGE_FILE_NAME);
         var startPageElements = doc.GetElementsByTagName("element");
 
         return startPageElements.Select(item => item.ChildNodes)
-            .Select(page => new SiteItem
+            .Select(page => new StartPageItem
             {
                 Name = page[0].InnerText,
                 Url = page[1].InnerText
             }).ToList();
     }
 
-    public async Task EditStartPageItemAsync(SiteItem oldItem, SiteItem newItem)
+    public async Task EditStartPageItemAsync(StartPageItem oldItem, StartPageItem newItem)
     {
         if (oldItem == null || newItem == null || oldItem == newItem) return;
 
@@ -315,7 +315,7 @@ public class DataTransferService : IDataTransferService
         await SaveDocAsync(doc, BOOKMARKS_FILE_NAME).ConfigureAwait(false);
     }
 
-    public async Task AddNewSiteOnStartPageAsync(SiteItem siteItem)
+    public async Task AddNewSiteOnStartPageAsync(StartPageItem siteItem)
     {
         var doc = await DocumentLoad(STARTPAGE_FILE_NAME);
 
@@ -332,7 +332,7 @@ public class DataTransferService : IDataTransferService
         await SaveDocAsync(doc, STARTPAGE_FILE_NAME).ConfigureAwait(false);
     }
 
-    public async Task<bool> RemoveSiteOnStartPageAsync(SiteItem siteItem)
+    public async Task<bool> RemoveSiteOnStartPageAsync(StartPageItem siteItem)
     {
         var doc = await DocumentLoad(STARTPAGE_FILE_NAME);
         var elements = doc.GetElementsByTagName("element");

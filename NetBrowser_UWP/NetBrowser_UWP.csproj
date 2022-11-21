@@ -11,7 +11,7 @@
     <AssemblyName>NetBrowser</AssemblyName>
     <DefaultLanguage>ru-RU</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22000.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -138,16 +138,22 @@
     <Compile Include="Commands\OpenFlyoutAction.cs" />
     <Compile Include="Contracts\INavigationAware.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
-    <Compile Include="Contracts\Services\IDataAccessService.cs" />
+    <Compile Include="Contracts\Services\IDataInitializeService.cs" />
     <Compile Include="Contracts\Services\IDataTransferService.cs" />
     <Compile Include="Contracts\Services\ILocalSettingsService.cs" />
     <Compile Include="Contracts\Services\INavigationService.cs" />
     <Compile Include="Contracts\Services\INavigationViewService.cs" />
     <Compile Include="Contracts\Services\IWebView2Service.cs" />
     <Compile Include="Contracts\Services\ITabViewService.cs" />
+    <Compile Include="DbContexts\DataAccessContext.cs" />
+    <Compile Include="Helpers\EntityExtensions.cs" />
     <Compile Include="Helpers\FrameExtensions.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
+    <Compile Include="Models\EntityModel.cs" />
+    <Compile Include="Models\StartPageItem.cs" />
     <Compile Include="Services\AppConfigService.cs" />
+    <Compile Include="Services\DataTransferDbService.cs" />
+    <Compile Include="Services\DbInitializeService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NavigationViewService.cs" />
     <Compile Include="Services\TabViewService.cs" />
@@ -162,7 +168,6 @@
     <Compile Include="Helpers\XmlSerializer.cs" />
     <Compile Include="Models\BookmarkDetails.cs" />
     <Compile Include="Models\ContentModel.cs" />
-    <Compile Include="Models\NewsModel.cs" />
     <Compile Include="Models\SiteItem.cs" />
     <Compile Include="Models\ThemeItem.cs" />
     <Compile Include="Helpers\ResourseHelper.cs" />
@@ -214,8 +219,8 @@
       <DependentUpon>BookmarksPageSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\Constants.cs" />
-    <Compile Include="Services\DataAccessService.cs" />
-    <Compile Include="Services\DataTransferService.cs" />
+    <Compile Include="Services\DataXmlInitializeService.cs" />
+    <Compile Include="Services\DataTransferXmlService.cs" />
     <Compile Include="Views\ErrorLoadPage.xaml.cs">
       <DependentUpon>ErrorLoadPage.xaml</DependentUpon>
     </Compile>
@@ -445,6 +450,19 @@
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm">
       <Version>8.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <Version>3.1.31</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
+      <Version>3.1.31</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <Version>3.1.31</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json">
       <Version>7.0.0</Version>

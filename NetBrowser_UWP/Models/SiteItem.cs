@@ -1,9 +1,6 @@
-﻿using System;
+﻿namespace NetBrowser_UWP.Models;
 
-namespace NetBrowser_UWP.Models;
-
-[Serializable]
-public class SiteItem
+public class SiteItem : EntityModel
 {
     public string Name { get; set; }
     public string Url { get; set; }

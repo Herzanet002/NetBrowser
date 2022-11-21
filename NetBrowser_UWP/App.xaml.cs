@@ -1,6 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.DbContexts;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels;
@@ -36,12 +39,9 @@ sealed partial class App : Application
         UnhandledException += App_UnhandledException;
         Services = ConfigureDependencyInjection();
         Ioc.Default.ConfigureServices(Services);
+
     }
 
-    /// <summary>
-    ///     Инициализирует одноэлементный объект приложения. Это первая выполняемая строка разрабатываемого
-    ///     кода, поэтому она является логическим эквивалентом main() или WinMain().
-    /// </summary>
     public IServiceProvider Services { get; }
 
     public static ApplicationViewTitleBar TitleBar => ApplicationView.GetForCurrentView().TitleBar;
@@ -57,9 +57,14 @@ sealed partial class App : Application
     {
         var services = new ServiceCollection();
 
+        services.AddDbContext<DataAccessContext>(opt =>
+            opt.UseSqlite("Filename=datasource.db"))
+        ;
+
+        services.AddTransient<DbInitializeService>();
         //Services & Managers
-        services.AddSingleton<IDataTransferService, DataTransferService>();
-        services.AddSingleton<IDataAccessService, DataAccessService>();
+        services.AddSingleton<IDataTransferService, DataTransferDbService>();
+        services.AddTransient<DbInitializeService>();
         services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
         services.AddSingleton<IWebView2Service, WebView2Service>();
         services.AddTransient<INavigationService, NavigationService>();
@@ -99,10 +104,11 @@ sealed partial class App : Application
         var rootFrame = Window.Current.Content as Frame;
 
         //Set Current Search Engine
+        using (var scope = Services.CreateScope())
+            await scope.ServiceProvider.GetRequiredService<DbInitializeService>().InitializeAsync().ConfigureAwait(false);
         CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataTransferService>().GetCurrentSearchEngineAsync();
-        var dataAccessService = Ioc.Default.GetRequiredService<IDataAccessService>();
-
-        await InitializeDataAccessLayer(dataAccessService);
+        using (var scope = Services.CreateScope())
+            await scope.ServiceProvider.GetRequiredService<DbInitializeService>().InitializeAsync().ConfigureAwait(false);
 
         // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
         // только обеспечьте активность окна
@@ -135,15 +141,6 @@ sealed partial class App : Application
         }
 
         CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-    }
-
-    private static async Task InitializeDataAccessLayer(IDataAccessService dataAccessService)
-    {
-        await dataAccessService.InitializeHistoryFileAsync();
-        await dataAccessService.InitializeBookmarksFileAsync();
-        await dataAccessService.InitializeConfigFileAsync();
-        await dataAccessService.InitializeStartPageFileAsync();
-        await dataAccessService.InitializeNewsContentFileAsync();
     }
 
     private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)

@@ -619,13 +619,14 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task OnDeleteBookmarkCommandExecuted()
     {
-        var result = await _dataTransferService.RemoveBookmarkAsync(new BookmarkDetails
+        await _dataTransferService.RemoveBookmarkAsync(new BookmarkDetails
         {
             Name = BookmarkTitleForSave,
             Url = BookmarkUrlForSave
         });
-        SetBookmarkIconState(!result);
-        IsFlyoutClosed = result;
+        await GetBookmarksAsync();
+        SetBookmarkButtonAppearance();
+        IsFlyoutClosed = true;
     }
 
     private void OnAddBookmarkButtonCommandExecuted()

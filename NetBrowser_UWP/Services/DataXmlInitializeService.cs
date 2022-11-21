@@ -12,9 +12,9 @@ using static NetBrowser_UWP.Constants.Constants;
 
 namespace NetBrowser_UWP.Services;
 
-public class DataAccessService : IDataAccessService
+public class DataXmlInitializeService : IDataInitializeService
 {
-    public async Task InitializeHistoryFileAsync()
+    public async Task InitializeHistoryStorageAsync()
     {
         try
         {
@@ -45,7 +45,7 @@ public class DataAccessService : IDataAccessService
         }
     }
 
-    public async Task InitializeBookmarksFileAsync()
+    public async Task InitializeBookmarksStorageAsync()
     {
         try
         {
@@ -76,7 +76,7 @@ public class DataAccessService : IDataAccessService
         }
     }
 
-    public async Task InitializeConfigFileAsync()
+    public async Task InitializeConfigStorageAsync()
     {
         try
         {
@@ -130,7 +130,7 @@ public class DataAccessService : IDataAccessService
         }
     }
 
-    public async Task InitializeStartPageFileAsync()
+    public async Task InitializeStartPageStorageAsync()
     {
         try
         {
@@ -184,7 +184,7 @@ public class DataAccessService : IDataAccessService
         }
     }
 
-    public async Task InitializeNewsContentFileAsync()
+    public async Task InitializeNewsContentStorageAsync()
     {
         try
         {
