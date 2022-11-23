@@ -11,7 +11,11 @@
     xmlns:settings="using:NetBrowser_UWP.ViewModels.Settings"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=settings:HistoryPageViewModel,IsDesignTimeCreatable=True}">
-
+    <interactivity:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{Binding HistoryPageLoadedCommand}" />
+        </core:EventTriggerBehavior>
+    </interactivity:Interaction.Behaviors>
     <Page.Resources>
         <x:String x:Key="SearchPlaceholderText">Поиск в журнале истории</x:String>
         <StandardUICommand x:Name="DeleteCommand"

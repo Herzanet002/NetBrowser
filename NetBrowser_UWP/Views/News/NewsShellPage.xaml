@@ -8,14 +8,15 @@
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
+    xmlns:news="using:NetBrowser_UWP.ViewModels.News"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    d:DataContext="{d:DesignInstance Type=viewModels:NewsPageViewModel,IsDesignTimeCreatable=True}"
+    d:DataContext="{d:DesignInstance Type=news:NewsShellPageViewModel,IsDesignTimeCreatable=True}"
     controls:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <Grid>
         <controls:NavigationView IsBackButtonVisible="Collapsed"
-                                 IsSettingsVisible="True" x:Name="NewsNavigationView"
+                                 IsSettingsVisible="False" x:Name="NewsNavigationView"
                                  SelectedItem="{x:Bind ViewModel.SelectedNavViewItem, Mode=OneWay}">
             <controls:NavigationView.MenuItems>
                 <controls:NavigationViewItem Content="Основные новости"
@@ -29,13 +30,6 @@
                                              helpers:NavigationHelper.NavigateTo="local:RecommendationsNewsPage">
                     <controls:NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xe8df;" />
-                    </controls:NavigationViewItem.Icon>
-                </controls:NavigationViewItem>
-                <controls:NavigationViewItemSeparator />
-                <controls:NavigationViewItem Content="Список для чтения"
-                                             helpers:NavigationHelper.NavigateTo="local:ReadingListNewsPage">
-                    <controls:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7BC;" />
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItemSeparator />

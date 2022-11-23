@@ -5,9 +5,45 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
+    xmlns:news="using:NetBrowser_UWP.ViewModels.News"
+    xmlns:converters="using:NetBrowser_UWP.Converters"
+    xmlns:models="using:NetBrowser_UWP.Models"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:syndication="using:System.ServiceModel.Syndication"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance Type=viewModels:NewsPageViewModel,IsDesignTimeCreatable=True}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    d:DataContext="{d:DesignInstance Type=news:RecommendationsNewsPageViewModel,IsDesignTimeCreatable=True}"
+    Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">
+    <interactivity:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{Binding RecommendationsNewsPageLoadedCommand}" />
+        </core:EventTriggerBehavior>
+    </interactivity:Interaction.Behaviors>
 
-    <Grid />
+    <Grid>
+        <Grid.Resources>
+            <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
+            <DataTemplate x:Key="ListViewCategoryTemplate" x:DataType="syndication:SyndicationCategory">
+                    <Grid>
+                        <TextBlock
+                            Text="{x:Bind Name}"/>
+                        <ToolTipService.Placement>Mouse</ToolTipService.Placement>
+                        <ToolTipService.ToolTip>
+                            <TextBlock Text="{x:Bind Name}" />
+                        </ToolTipService.ToolTip>
+                    </Grid>
+                </DataTemplate>
+        </Grid.Resources>
+        
+        <StackPanel Margin="30" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20"
+                    Visibility="{Binding RssFeederCollection.Count, Converter={StaticResource IntToVisibilityConverter}}">
+            <TextBlock HorizontalTextAlignment="Center" VerticalAlignment="Center"
+                       FontSize="24">
+                <Run Text="Для начала выберите категории новостей, которые вам нравятся"/>
+                <Run Text="&#xE76E;" FontFamily="Segoe Fluent Icons"/>
+            </TextBlock>
+            <Button Content="Выбрать категории" HorizontalAlignment="Center"></Button>
+            
+        </StackPanel>
+    </Grid>
 </Page>

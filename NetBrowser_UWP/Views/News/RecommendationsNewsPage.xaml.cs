@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using NetBrowser_UWP.ViewModels;
+using NetBrowser_UWP.ViewModels.News;
 using Windows.UI.Xaml.Controls;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
@@ -14,6 +14,6 @@ public sealed partial class RecommendationsNewsPage : Page
     public RecommendationsNewsPage()
     {
         InitializeComponent();
-        DataContext = Ioc.Default.GetRequiredService<NewsPageViewModel>();
+        DataContext = Ioc.Default.GetRequiredService<RecommendationsNewsPageViewModel>();
     }
 }

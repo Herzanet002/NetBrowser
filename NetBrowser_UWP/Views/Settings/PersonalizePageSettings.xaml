@@ -10,8 +10,12 @@
     xmlns:settings="using:NetBrowser_UWP.ViewModels.Settings"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=settings:PersonalizePageViewModel,IsDesignTimeCreatable=True}">
+    <interactivity:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{Binding PersonalizePageLoadedCommand}" />
+        </core:EventTriggerBehavior>
+    </interactivity:Interaction.Behaviors>
     <Grid>
-
         <Grid.RowDefinitions>
             <!--Header-->
             <RowDefinition Height="100" />

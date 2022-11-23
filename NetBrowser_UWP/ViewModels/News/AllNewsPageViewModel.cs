@@ -8,83 +8,84 @@ using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml.Navigation;
-using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
 
-namespace NetBrowser_UWP.ViewModels;
+namespace NetBrowser_UWP.ViewModels.News;
 
-public class NewsPageViewModel : ObservableObject
+public class AllNewsPageViewModel : ObservableObject
 {
-    public INavigationViewService NavigationViewService { get; }
-
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly TabViewService _tabViewService;
     private readonly IDataTransferService _dataTransferService;
     private readonly AppConfigService _appConfigService;
     private bool _isProgressRingActive = true;
-    private ObservableCollection<ContentModel> _news = new();
-    private ObservableCollection<ContentModel> _favoriteNews = new();
     private ContentModel _newsForSharing;
-    private NavigationViewItem _selectedNavViewItem;
     private ContentModel _selectedItemInAllNews;
+    private ObservableCollection<ContentModel> _news = new();
 
-    public IAsyncRelayCommand PageLoadedCommand { get; set; }
     public IAsyncRelayCommand RotatorTileClickCommand { get; set; }
     public IAsyncRelayCommand AllNewsItemClickCommand { get; set; }
     public IAsyncRelayCommand AddNewsToFavoriteCommand { get; set; }
+    public IAsyncRelayCommand AllNewsPageLoadedCommand { get; set; }
     public DelegateCommand<ContentModel> ShareNewsCommand { get; set; }
 
-    public NewsPageViewModel(IServiceScopeFactory serviceScopeFactory,
+    public AllNewsPageViewModel(IServiceScopeFactory serviceScopeFactory,
         TabViewService tabViewService,
-        IDataTransferService dataTransferService,
-        INavigationViewService navigationViewService,
-        AppConfigService appConfigService)
+        IDataTransferService dataTransferService, AppConfigService appConfigService)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _tabViewService = tabViewService;
         _dataTransferService = dataTransferService;
         _appConfigService = appConfigService;
-        NavigationViewService = navigationViewService;
-        NavigationViewService.Navigated += OnNavigated;
 
+        News = new ObservableCollection<ContentModel>();
         InitializeCommands();
-
-        DataTransferManager.GetForCurrentView().DataRequested += NewsPageViewModel_DataRequested;
+        DataTransferManager.GetForCurrentView().DataRequested += NewsPageViewModelOnDataSharing;
     }
 
     private void InitializeCommands()
     {
         RotatorTileClickCommand = new AsyncRelayCommand<ContentModel>(OnRotatorTileClickCommandExecuted);
         AllNewsItemClickCommand = new AsyncRelayCommand<ContentModel>(OnAllNewsItemClickCommandExecuted);
-        PageLoadedCommand = new AsyncRelayCommand(OnPageLoadedCommandExecuted);
+        AllNewsPageLoadedCommand = new AsyncRelayCommand(OnAllNewsPageLoadedCommandExecuted);
         AddNewsToFavoriteCommand = new AsyncRelayCommand<ContentModel>(OnAddNewsToFavoriteCommandExecuted);
         ShareNewsCommand = new DelegateCommand<ContentModel>(OnShareNewsCommandExecuted);
     }
 
-    private async Task OnAddNewsToFavoriteCommandExecuted(ContentModel contentItem, CancellationToken ct)
+    private async Task OnAllNewsPageLoadedCommandExecuted(CancellationToken ct)
     {
-        await _dataTransferService.SaveNewsContentToFavoriteAsync(contentItem, ct);
+        var rssFeeders = await _dataTransferService.GetRssFeedersListAsync();
+        var news = await GetNewsAsync(rssFeeders);
+        await foreach (var content in news.WithCancellation(ct))
+        {
+            News.Add(content);
+        }
+        IsProgressRingActive = false;
     }
 
-    private async Task OnPageLoadedCommandExecuted(CancellationToken ct)
+    private async Task OnAddNewsToFavoriteCommandExecuted(ContentModel contentItem, CancellationToken ct)
     {
-        await InitializeNewsContent();
+        if (contentItem.IsFavorite)
+        {
+            await _dataTransferService.RemoveNewsContentFromFavorite(contentItem);
+            contentItem.IsFavorite = false;
+            News[News.IndexOf(contentItem)] = contentItem;
+            return;
+
+        }
+        contentItem.IsFavorite = true;
+        await _dataTransferService.SaveNewsContentToFavoriteAsync(contentItem);
+        News[News.IndexOf(contentItem)] = contentItem;
     }
 
     private async Task OnAllNewsItemClickCommandExecuted(ContentModel contentItem, CancellationToken ct)
     {
         if (contentItem != null) await _tabViewService.CreateNewWebTab(contentItem.Link);
-    }
-
-    private void OnNavigated(object sender, NavigationEventArgs e)
-    {
-        var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
-        if (selectedItem != null) SelectedNavViewItem = selectedItem;
     }
 
     public bool IsProgressRingActive
@@ -99,25 +100,13 @@ public class NewsPageViewModel : ObservableObject
         set => SetProperty(ref _news, value);
     }
 
-    public ObservableCollection<ContentModel> FavoriteNews
-    {
-        get => _favoriteNews;
-        set => SetProperty(ref _favoriteNews, value);
-    }
-
-    public NavigationViewItem SelectedNavViewItem
-    {
-        get => _selectedNavViewItem;
-        set => SetProperty(ref _selectedNavViewItem, value);
-    }
-
     public ContentModel SelectedItemInAllNews
     {
         get => _selectedItemInAllNews;
         set => SetProperty(ref _selectedItemInAllNews, value);
     }
 
-    private void NewsPageViewModel_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+    private void NewsPageViewModelOnDataSharing(DataTransferManager sender, DataRequestedEventArgs args)
     {
         if (_newsForSharing == null) return;
 
@@ -139,26 +128,16 @@ public class NewsPageViewModel : ObservableObject
         await _tabViewService.CreateNewWebTab(param.Link).ConfigureAwait(false);
     }
 
-    public async Task InitializeNewsContent()
-    {
-        var feedResources = _appConfigService.GetSection<Dictionary<string, string>>("FeedResources");
-        await GetNews(feedResources);
-        IsProgressRingActive = false;
-    }
 
-    public async Task GetNews(Dictionary<string, string> sources)
+
+    public async Task<IAsyncEnumerable<ContentModel>> GetNewsAsync(IEnumerable<RssFeeder> sources)
     {
         using var scope = _serviceScopeFactory.CreateScope();
-        var rssWorker = scope.ServiceProvider.GetService<IRssWorkerService>();
-        if (rssWorker is null) return;
+        var rssWorker = scope.ServiceProvider.GetRequiredService<IRssWorkerService>();
 
-        var syndicationFeeds = new List<SyndicationFeed>();
-        await Task.Run(async () =>
-        {
-            foreach (var source in sources)
-                syndicationFeeds.Add(await rssWorker.GetSyndicationFeedAsync(source.Value));
-        });
-
-        News = new ObservableCollection<ContentModel>(rssWorker.GetFeeds(syndicationFeeds));
+        var favoriteNews = await _dataTransferService.GetAllFavoritesNewsContentAsync();
+        var contentModels = rssWorker.GetFeeds(sources, favoriteNews.ToList());
+        
+        return contentModels;
     }
 }

@@ -1,5 +1,7 @@
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Services;
 using System.Collections.Generic;
 
 namespace NetBrowser_UWP.DbContexts;
@@ -14,16 +16,27 @@ public class DataAccessContext : DbContext
     public DbSet<BookmarkDetails> Bookmarks { get; set; }
     public DbSet<SearchEngineItem> SearchEngines { get; set; }
     public DbSet<StartPageItem> StartPageItems { get; set; }
-    public DbSet<SiteItem> SearchTermItems { get; set; }
+    public DbSet<SearchTermItem> SearchTermItems { get; set; }
+    public DbSet<ContentModel> FavoriteNews { get; set; }
+    public DbSet<RssFeeder> RssFeeders { get; set; }
+    public DbSet<SyndicationCategoryModel> SyndicationCategories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<StartPageItem>().HasData(InitializeStartPageItems());
         modelBuilder.Entity<SearchEngineItem>().HasData(InitializeSearchEngines());
+        modelBuilder.Entity<RssFeeder>().HasData(InitializeRssFeeders());
         base.OnModelCreating(modelBuilder);
     }
 
-    public List<SearchEngineItem> InitializeSearchEngines()
+    private IEnumerable<RssFeeder> InitializeRssFeeders()
+    {
+        var appConfigService = Ioc.Default.GetRequiredService<AppConfigService>();
+        var feedResources = appConfigService.GetSection<List<RssFeeder>>("FeedResources");
+        return feedResources;
+    }
+
+    private IEnumerable<SearchEngineItem> InitializeSearchEngines()
     {
         return new List<SearchEngineItem>
             {
@@ -54,7 +67,7 @@ public class DataAccessContext : DbContext
             };
     }
 
-    public List<StartPageItem> InitializeStartPageItems()
+    private IEnumerable<StartPageItem> InitializeStartPageItems()
     {
         return new List<StartPageItem>
             {

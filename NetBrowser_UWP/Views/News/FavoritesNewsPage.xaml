@@ -6,9 +6,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
     xmlns:models="using:NetBrowser_UWP.Models"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:news="using:NetBrowser_UWP.ViewModels.News"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    d:DataContext="{d:DesignInstance Type=viewModels:NewsPageViewModel,IsDesignTimeCreatable=True}">
+    Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}"
+    d:DataContext="{d:DesignInstance Type=news:FavoriteNewsPageViewModel,IsDesignTimeCreatable=True}">
+    <interactivity:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{Binding FavoriteNewsPageLoadedCommand}" />
+        </core:EventTriggerBehavior>
+    </interactivity:Interaction.Behaviors>
+
     <Page.Resources>
         <DataTemplate x:Key="ListViewItemNewsTemplate" x:DataType="models:ContentModel">
             <Grid Margin="0,12,0,12" AutomationProperties.Name="{x:Bind Title}">

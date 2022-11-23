@@ -1,21 +1,26 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using NetBrowser_UWP.Models;
+using System.Collections.Generic;
+using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
-using Windows.Data.Xml.Dom;
-using NetBrowser_UWP.Models;
 
 namespace NetBrowser_UWP.Contracts.Services;
 
 public interface IDataTransferService
 {
     Task SaveHistoryAsync(HistoryItemDetails historyItemDetail);
-    Task SaveSearchTermAsync(SiteItem siteItem);
+    Task SaveSearchTermAsync(SearchTermItem siteItem);
     Task<IList<HistoryItemDetails>> GetHistoryAsync();
-    Task<IList<SiteItem>> GetSearchTermAsync();
+    Task<IList<SearchTermItem>> GetSearchTermAsync();
     Task SaveBookmarkAsync(BookmarkDetails bookmarkDetails);
     Task<IList<BookmarkDetails>> GetBookmarksListAsync();
     Task RemoveBookmarkAsync(BookmarkDetails bookmarkDetails);
-    Task SaveNewsContentToFavoriteAsync(ContentModel contentModel, CancellationToken ct);
+    Task SaveNewsContentToFavoriteAsync(ContentModel contentModel);
+    Task<IList<ContentModel>> GetAllFavoritesNewsContentAsync();
+    Task<ContentModel> HasNewsContentInFavorite(ContentModel contentModel);
+    Task RemoveNewsContentFromFavorite(ContentModel contentModel);
+    Task<IList<RssFeeder>> GetRssFeedersListAsync();
+    Task AddRecommendationSyndicationCategoryAsync(ICollection<SyndicationCategoryModel> category);
+    Task RemoveRecommendationSyndicationCategoryAsync(ICollection<SyndicationCategoryModel> category);
     Task ClearHistoryFileAsync();
     Task RemoveHistoryItemAsync(HistoryItemDetails historyItemDetails);
     Task EditBookmarkAsync(BookmarkDetails oldBookmark, BookmarkDetails newBookmark);

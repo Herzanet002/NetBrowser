@@ -147,13 +147,18 @@
     <Compile Include="Contracts\Services\ITabViewService.cs" />
     <Compile Include="DbContexts\DataAccessContext.cs" />
     <Compile Include="Helpers\EntityExtensions.cs" />
-    <Compile Include="Helpers\FrameExtensions.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
-    <Compile Include="Models\EntityModel.cs" />
+    <Compile Include="Helpers\StringHelpers.cs" />
+    <Compile Include="Helpers\ViewModelsRegistrator.cs" />
+    <Compile Include="Models\BaseEntity.cs" />
+    <Compile Include="Models\RssFeeder.cs" />
+    <Compile Include="Models\SearchTermItem.cs" />
     <Compile Include="Models\StartPageItem.cs" />
+    <Compile Include="Models\SyndicationCategoryModel.cs" />
     <Compile Include="Services\AppConfigService.cs" />
     <Compile Include="Services\DataTransferDbService.cs" />
     <Compile Include="Services\DbInitializeService.cs" />
+    <Compile Include="Services\FirstRunRecommendationsService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NavigationViewService.cs" />
     <Compile Include="Services\TabViewService.cs" />
@@ -176,11 +181,15 @@
     </Compile>
     <Compile Include="Services\LocalSettingsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
+    <Compile Include="ViewModels\News\AllNewsPageViewModel.cs" />
+    <Compile Include="ViewModels\News\FavoriteNewsPageViewModel.cs" />
+    <Compile Include="ViewModels\News\FirstRunRecommendationsViewModel.cs" />
+    <Compile Include="ViewModels\News\RecommendationsNewsPageViewModel.cs" />
     <Compile Include="ViewModels\Settings\AboutAppViewModel.cs" />
     <Compile Include="Helpers\ListExtension.cs" />
     <Compile Include="ViewModels\Settings\MainSettingsPageViewModel.cs" />
     <Compile Include="ViewModels\ShellPageViewModel.cs" />
-    <Compile Include="ViewModels\NewsPageViewModel.cs" />
+    <Compile Include="ViewModels\News\NewsShellPageViewModel.cs" />
     <Compile Include="ViewModels\Settings\PersonalizePageViewModel.cs" />
     <Compile Include="Services\RssWorkerService.cs" />
     <Compile Include="ViewModels\Settings\SettingsPageViewModel.cs" />
@@ -190,11 +199,11 @@
     <Compile Include="Views\News\FavoritesNewsPage.xaml.cs">
       <DependentUpon>FavoritesNewsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\News\FirstRunRecommendationsDialog.xaml.cs">
+      <DependentUpon>FirstRunRecommendationsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\News\NewsShellPage.xaml.cs">
       <DependentUpon>NewsShellPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\News\ReadingListNewsPage.xaml.cs">
-      <DependentUpon>ReadingListNewsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\News\RecommendationsNewsPage.xaml.cs">
       <DependentUpon>RecommendationsNewsPage.xaml</DependentUpon>
@@ -212,6 +221,9 @@
     <Compile Include="Views\UserControls\DeleteBookmarkDialog.xaml.cs">
       <DependentUpon>DeleteBookmarkDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UserControls\EditStartPageItemDialog.xaml.cs">
+      <DependentUpon>EditStartPageItemDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\HistoryClearConfirmationDialog.xaml.cs">
       <DependentUpon>HistoryClearConfirmationDialog.xaml</DependentUpon>
     </Compile>
@@ -219,8 +231,6 @@
       <DependentUpon>BookmarksPageSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\Constants.cs" />
-    <Compile Include="Services\DataXmlInitializeService.cs" />
-    <Compile Include="Services\DataTransferXmlService.cs" />
     <Compile Include="Views\ErrorLoadPage.xaml.cs">
       <DependentUpon>ErrorLoadPage.xaml</DependentUpon>
     </Compile>
@@ -335,11 +345,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\News\NewsShellPage.xaml">
+    <Page Include="Views\News\FirstRunRecommendationsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\News\ReadingListNewsPage.xaml">
+    <Page Include="Views\News\NewsShellPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -356,6 +366,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UserControls\DeleteBookmarkDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\EditStartPageItemDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

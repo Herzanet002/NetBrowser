@@ -12,12 +12,13 @@
     xmlns:controls1="using:Microsoft.UI.Xaml.Controls"
     xmlns:models="using:NetBrowser_UWP.Models"
     xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
+    xmlns:news="using:NetBrowser_UWP.ViewModels.News"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance Type=viewModels:NewsPageViewModel,IsDesignTimeCreatable=True}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    d:DataContext="{d:DesignInstance Type=news:AllNewsPageViewModel,IsDesignTimeCreatable=True}"
+    Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">
     <interactivity:Interaction.Behaviors>
         <core:EventTriggerBehavior EventName="Loaded">
-            <core:InvokeCommandAction Command="{Binding PageLoadedCommand}" />
+            <core:InvokeCommandAction Command="{Binding AllNewsPageLoadedCommand}" />
         </core:EventTriggerBehavior>
     </interactivity:Interaction.Behaviors>
     <Page.Resources>
@@ -27,17 +28,16 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="3*" />
                     <RowDefinition Height="2*" />
-                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1.2*" />
                 </Grid.RowDefinitions>
                 <controls:ImageEx Grid.Row="0" Grid.RowSpan="4" Source="{x:Bind ImageUrl}" Stretch="UniformToFill"
-                                  CornerRadius="8"
-                                  Opacity="0.6">
+                                  CornerRadius="8" Opacity="0.6">
                     <controls:ImageEx.Background>
-                        <SolidColorBrush Color="Black" />
+                        <SolidColorBrush Color="Black"/>
                     </controls:ImageEx.Background>
                 </controls:ImageEx>
-                <TextBlock Grid.Row="0" Text="{x:Bind Feeder}" Foreground="Azure" FontSize="14" FontWeight="SemiBold"
-                           Margin="10" />
+                <TextBlock Grid.Row="0" Text="{x:Bind Feeder.Name}" FontSize="14" FontWeight="SemiBold"
+                           Margin="10" Foreground="White" />
                 <TextBlock Grid.Row="1" VerticalAlignment="Bottom" Text="{x:Bind Title}" FontSize="20"
                            FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}"
                            Foreground="White" Margin="10, 0" />
@@ -46,30 +46,42 @@
                            TextTrimming="CharacterEllipsis" MaxLines="2" Foreground="White" Margin="10, 0" />
                 <Grid Grid.Row="3" RequestedTheme="Dark">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="{x:Bind PubDate}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White"
-                               Margin="10, 10" VerticalAlignment="Bottom" />
+                               VerticalAlignment="Center" Margin="10,0"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <AppBarButton Icon="Like" Width="45" Height="45" Foreground="AliceBlue" />
-                        <AppBarButton Icon="Share" Width="45" Height="45"
-                                      Command="{Binding ElementName=AdaptiveGrid, Path=DataContext.ShareNewsCommand}"
-                                      CommandParameter="{Binding }" Foreground="AliceBlue" />
-                        <AppBarSeparator />
-                        <AppBarButton Width="45" Height="45" Foreground="AliceBlue">
-                            <AppBarButton.Icon>
-                                <FontIcon Glyph="&#xE7BC;" />
-                            </AppBarButton.Icon>
-                        </AppBarButton>
-                        <AppBarButton Width="45" Height="45" Foreground="AliceBlue"
+                        <AppBarButton Width="45" Height="45" ToolTipService.ToolTip="Добавить в закладки"
                                       Command="{Binding ElementName=AdaptiveGrid, Path=DataContext.AddNewsToFavoriteCommand}"
-                                      CommandParameter="{Binding }">
-                            <AppBarButton.Icon>
-                                <FontIcon Glyph="&#xEB51;" />
-                            </AppBarButton.Icon>
+                                      CommandParameter="{x:Bind }">
+                            <interactivity:Interaction.Behaviors>
+                                <core:DataTriggerBehavior Binding="{x:Bind IsFavorite}" Value="True">
+                                    <core:DataTriggerBehavior.Actions>
+                                        <core:ChangePropertyAction
+                                            PropertyName="Content">
+                                            <core:ChangePropertyAction.Value>
+                                                <FontIcon Glyph="&#xEB52;"/>
+                                            </core:ChangePropertyAction.Value>
+                                        </core:ChangePropertyAction>
+                                    </core:DataTriggerBehavior.Actions>
+                                </core:DataTriggerBehavior>
+                                <core:DataTriggerBehavior Binding="{x:Bind IsFavorite}" Value="False">
+                                    <core:DataTriggerBehavior.Actions>
+                                        <core:ChangePropertyAction
+                                            PropertyName="Content">
+                                            <core:ChangePropertyAction.Value>
+                                                <FontIcon Glyph="&#xEB51;"/>
+                                            </core:ChangePropertyAction.Value>
+                                        </core:ChangePropertyAction>
+                                    </core:DataTriggerBehavior.Actions>
+                                </core:DataTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
                         </AppBarButton>
-
+                        <AppBarButton Icon="Share" Width="45" Height="45" ToolTipService.ToolTip="Поделиться"
+                                      Command="{Binding ElementName=AdaptiveGrid, Path=DataContext.ShareNewsCommand}"
+                                      CommandParameter="{x:Bind }"/>
+                        <AppBarSeparator/>
                     </StackPanel>
                 </Grid>
 
@@ -100,7 +112,7 @@
             </Grid>
         </DataTemplate>
     </Page.Resources>
-    <Grid Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="120" />
             <RowDefinition Height="*" />

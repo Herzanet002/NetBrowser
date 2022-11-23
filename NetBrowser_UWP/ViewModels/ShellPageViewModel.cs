@@ -511,26 +511,26 @@ public class ShellPageViewModel : ObservableObject
             NavigateTo(App.CurrentWebEngine.HomePage, _tabViewService.GetSelectedWebView());
     }
 
-    private async Task OnSearchBoxTextChangedCommandExecuted(object obj)
+    private async Task OnSearchBoxTextChangedCommandExecuted(AutoSuggestBoxTextChangedEventArgs obj)
     {
-        if (obj is not AutoSuggestBoxTextChangedEventArgs eventArgs) return;
-        if (eventArgs.Reason == AutoSuggestionBoxTextChangeReason.UserInput) await AutoSuggestListFill();
+        if (obj is not { }) return;
+        if (obj.Reason == AutoSuggestionBoxTextChangeReason.UserInput) await AutoSuggestListFill();
     }
 
     //TODO: Обновление поисковых запросов
-    private async Task OnSearchBoxQuerySubmittedCommandExecuted(object obj)
+    private async Task OnSearchBoxQuerySubmittedCommandExecuted(AutoSuggestBoxQuerySubmittedEventArgs obj)
     {
-        if (obj is not AutoSuggestBoxQuerySubmittedEventArgs eventArgs) return;
+        if (obj is not { }) return;
 
         var queryForSearch = string.Empty;
-        if (!string.IsNullOrWhiteSpace(eventArgs.QueryText))
-            queryForSearch = eventArgs.QueryText;
+        if (!string.IsNullOrWhiteSpace(obj.QueryText))
+            queryForSearch = obj.QueryText;
 
         if (string.IsNullOrWhiteSpace(queryForSearch)) return;
         if (_tabViewService.GetSelectedWebView() == null) return;
 
         NavigateTo(queryForSearch, _tabViewService.GetSelectedWebView());
-        await _dataTransferService.SaveSearchTermAsync(new SiteItem
+        await _dataTransferService.SaveSearchTermAsync(new SearchTermItem
         {
             Name = queryForSearch
         }).ConfigureAwait(false);

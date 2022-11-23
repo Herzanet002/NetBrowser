@@ -7,8 +7,10 @@ using NetBrowser_UWP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel.Syndication;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.UI;
 
 namespace NetBrowser_UWP.Services
 {
@@ -20,6 +22,24 @@ namespace NetBrowser_UWP.Services
         {
             _scopeFactory = scopeFactory;
         }
+        //public async Task<bool> ExistsItem<T>(T item) where T : BaseEntity
+        //{
+        //    try
+        //    {
+        //        if (item is null) throw new ArgumentNullException(nameof(item));
+        //        using var scope = _scopeFactory.CreateScope();
+        //        var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+        //        return await dbContext.Set<T>().ContainsAsync(item).ConfigureAwait(false);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e);
+        //        throw;
+        //    }
+
+        //}
+
+        #region History
 
         public async Task SaveHistoryAsync(HistoryItemDetails historyItemDetail)
         {
@@ -30,21 +50,6 @@ namespace NetBrowser_UWP.Services
             await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public async Task SaveSearchTermAsync(SiteItem searchTermItem)
-        {
-            if (searchTermItem is null) return;
-            var dbContext = GetDbContext();
-            await dbContext.SearchTermItems.AddAsync(searchTermItem).ConfigureAwait(false);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
-        }
-
-        private DataAccessContext GetDbContext()
-        {
-            using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-            return dbContext;
-        }
-
         public async Task<IList<HistoryItemDetails>> GetHistoryAsync()
         {
             using var scope = _scopeFactory.CreateScope();
@@ -52,52 +57,6 @@ namespace NetBrowser_UWP.Services
             return await dbContext.HistoryItems.AsNoTracking().ToListAsync().ConfigureAwait(false);
         }
 
-        public async Task<IList<SiteItem>> GetSearchTermAsync()
-        {
-            using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-            return await dbContext.SearchTermItems.AsNoTracking().ToListAsync().ConfigureAwait(false);
-        }
-
-        public async Task SaveBookmarkAsync(BookmarkDetails bookmarkDetails)
-        {
-            if (bookmarkDetails is null) return;
-            using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-            await dbContext.Bookmarks.AddAsync(bookmarkDetails).ConfigureAwait(false);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
-        }
-
-        public async Task<IList<BookmarkDetails>> GetBookmarksListAsync()
-        {
-            using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-            return await dbContext.Bookmarks.AsNoTracking().ToListAsync().ConfigureAwait(false);
-        }
-
-        public async Task<bool> ExistsItem<T>(T item, CancellationToken ct = default) where T : EntityModel
-        {
-            if (item is null) throw new ArgumentNullException(nameof(item));
-            using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-            return await dbContext.Set<T>().AnyAsync(i => i.Id == item.Id, ct).ConfigureAwait(false);
-        }
-
-        public async Task RemoveBookmarkAsync(BookmarkDetails bookmarkDetails)
-        {
-            if (bookmarkDetails is null) return;
-            if (!await ExistsItem(bookmarkDetails))
-                return;
-            using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-            dbContext.Bookmarks.Remove(bookmarkDetails);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
-        }
-
-        public Task SaveNewsContentToFavoriteAsync(ContentModel contentModel, CancellationToken ct)
-        {
-            throw new System.NotImplementedException();
-        }
 
         public async Task ClearHistoryFileAsync()
         {
@@ -115,6 +74,57 @@ namespace NetBrowser_UWP.Services
             await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
+        #endregion History
+
+        #region SearchTerm
+
+        public async Task<IList<SearchTermItem>> GetSearchTermAsync()
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            return await dbContext.SearchTermItems.AsNoTracking().ToListAsync().ConfigureAwait(false);
+        }
+
+        public async Task SaveSearchTermAsync(SearchTermItem searchTermItem)
+        {
+            if (searchTermItem is null) return;
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            await dbContext.SearchTermItems.AddAsync(searchTermItem).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        #endregion SearchTerm
+
+        #region Bookmarks
+
+        public async Task SaveBookmarkAsync(BookmarkDetails bookmarkDetails)
+        {
+            if (bookmarkDetails is null) return;
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            await dbContext.Bookmarks.AddAsync(bookmarkDetails).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public async Task<IList<BookmarkDetails>> GetBookmarksListAsync()
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            return await dbContext.Bookmarks.AsNoTracking().ToListAsync().ConfigureAwait(false);
+        }
+
+        public async Task RemoveBookmarkAsync(BookmarkDetails bookmarkDetails)
+        {
+            if (bookmarkDetails is null) return;
+            //if (!await ExistsItem(bookmarkDetails))
+            //    return;
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            dbContext.Bookmarks.Remove(bookmarkDetails);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
         public async Task EditBookmarkAsync(BookmarkDetails oldBookmark, BookmarkDetails newBookmark)
         {
             using var scope = _scopeFactory.CreateScope();
@@ -127,6 +137,81 @@ namespace NetBrowser_UWP.Services
             existBookmark.Url = newBookmark.Url;
             await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
+
+        #endregion Bookmarks
+
+        #region News
+
+        public async Task SaveNewsContentToFavoriteAsync(ContentModel contentModel)
+        {
+            if (contentModel is null) return;
+            if (await HasNewsContentInFavorite(contentModel) is not null) return;
+
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+
+            //await dbContext.SyndicationCategories.AddRangeAsync(contentModel.Categories).ConfigureAwait(false);
+            await dbContext.FavoriteNews.AddAsync(contentModel).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public async Task<ContentModel> HasNewsContentInFavorite(ContentModel contentModel)
+        {
+            if (contentModel is null) return null;
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            return await dbContext.FavoriteNews.FirstOrDefaultAsync(x => x.Link == contentModel.Link).ConfigureAwait(false);
+        }
+
+        public async Task<IList<ContentModel>> GetAllFavoritesNewsContentAsync()
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            return await dbContext.FavoriteNews.AsNoTracking().ToListAsync().ConfigureAwait(false);
+        }
+
+        public async Task RemoveNewsContentFromFavorite(ContentModel contentModel)
+        {
+            if (contentModel is null) return;
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            var element = await HasNewsContentInFavorite(contentModel);
+            dbContext.FavoriteNews.Remove(element);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public async Task<IList<RssFeeder>> GetRssFeedersListAsync()
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            return await dbContext.RssFeeders.AsNoTracking().ToListAsync().ConfigureAwait(false);
+        }
+
+        public async Task AddRecommendationSyndicationCategoryAsync(ICollection<SyndicationCategoryModel> category)
+        {
+            if (category is null) return;
+
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+
+            await dbContext.SyndicationCategories.AddRangeAsync(category).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public async Task RemoveRecommendationSyndicationCategoryAsync(ICollection<SyndicationCategoryModel> category)
+        {
+            if (category is null) return;
+
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+
+            dbContext.SyndicationCategories.RemoveRange(category);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        #endregion News
+
+        #region SearchEngine
 
         public async Task<IList<SearchEngineItem>> GetSearchEngineListAsync()
         {
@@ -142,6 +227,23 @@ namespace NetBrowser_UWP.Services
             return dbContext.SearchEngines.AsNoTracking().FirstOrDefault(x => x.IsSelected == "1");
         }
 
+        public async Task ChangeSearchEngineAsync(string newEngine)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            var oldSearchEngine = dbContext.SearchEngines.FirstOrDefault(x => x.IsSelected == "1");
+            if (oldSearchEngine != null)
+                oldSearchEngine.IsSelected = "0";
+            var newSearchEngine = dbContext.SearchEngines.FirstOrDefault(x => x.Name == newEngine);
+            if (newSearchEngine != null)
+                newSearchEngine.IsSelected = "1";
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        #endregion SearchEngine
+
+        #region StartPage
+
         public async Task<IList<StartPageItem>> GetStartPageElementsAsync()
         {
             using var scope = _scopeFactory.CreateScope();
@@ -154,7 +256,7 @@ namespace NetBrowser_UWP.Services
             using var scope = _scopeFactory.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
             var existsItem = dbContext.StartPageItems.FirstOrDefault(x => x.Name == oldItem.Name
-                                                                        && x.Url == oldItem.Url);
+                                                                          && x.Url == oldItem.Url);
             if (existsItem is null) return;
             existsItem.Name = newItem.Name;
             existsItem.Url = newItem.Url;
@@ -179,18 +281,6 @@ namespace NetBrowser_UWP.Services
             await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public async Task ChangeSearchEngineAsync(string newEngine)
-        {
-            using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-            var oldSearchEngine = dbContext.SearchEngines.FirstOrDefault(x => x.IsSelected == "1");
-            if (oldSearchEngine != null)
-                oldSearchEngine.IsSelected = "0";
-            var newSearchEngine = dbContext.SearchEngines.FirstOrDefault(x => x.Name == newEngine);
-            if (newSearchEngine != null)
-                newSearchEngine.IsSelected = "1";
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
-        }
-
+        #endregion StartPage
     }
 }

@@ -13,6 +13,7 @@ using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using NetBrowser_UWP.Services;
+using NetBrowser_UWP.Views.UserControls;
 
 namespace NetBrowser_UWP.ViewModels;
 
@@ -23,6 +24,7 @@ public class StartPageViewModel : ObservableObject
     private readonly ILocalSettingsService _localSettingsService;
     private int _gridViewOrientation;
     private StartPageItem _gridViewSelectedItem;
+    private StartPageItem _editableStartPageItem;
     private bool _isAnimationEnabled;
     private bool _isFlyoutClosed;
 
@@ -32,7 +34,7 @@ public class StartPageViewModel : ObservableObject
     private string _newSiteUrl;
     private string _placeholderText;
     private HashSet<SiteItem> _recentlySearchedItems;
-    private StartPageItem _searchBarSelectedItem;
+    private SearchTermItem _searchBarSelectedItem;
     private string _searchBoxText;
     private ObservableCollection<StartPageItem> _startPageItems;
 
@@ -53,7 +55,7 @@ public class StartPageViewModel : ObservableObject
     public IAsyncRelayCommand SaveNewSiteCommand => new AsyncRelayCommand(OnSaveNewSiteCommandExecuted);
     public IAsyncRelayCommand KeyDownCommand => new AsyncRelayCommand<KeyRoutedEventArgs>(OnKeyDownCommandExecuted);
     public ICommand CancelCommand => new DelegateCommand(() => IsFlyoutClosed = true);
-    public ICommand EditStartPageItem => new DelegateCommand<object>(OnEditStartPageItem);
+    public ICommand EditStartPageItem => new AsyncRelayCommand<StartPageItem>(OnEditStartPageItem);
 
     public bool IsSuggestionBarEnabled
     {
@@ -89,7 +91,7 @@ public class StartPageViewModel : ObservableObject
         }
     }
 
-    public StartPageItem SearchBarSelectedItem
+    public SearchTermItem SearchBarSelectedItem
     {
         get => _searchBarSelectedItem;
         set
@@ -98,6 +100,12 @@ public class StartPageViewModel : ObservableObject
             if (value == null) return;
             _tabViewService.CreateNewWebTab(value.Name, isReplaced: true);
         }
+    }
+
+    public StartPageItem EditableStartPageItem
+    {
+        get => _editableStartPageItem;
+        set => SetProperty(ref _editableStartPageItem, value);
     }
 
     public int GridViewOrientation
@@ -149,8 +157,10 @@ public class StartPageViewModel : ObservableObject
     }
 
     //TODO: OnEditStartPageItem
-    private void OnEditStartPageItem(object obj)
+    private async Task OnEditStartPageItem(StartPageItem startPageItem)
     {
+        EditableStartPageItem = startPageItem;
+        await new EditStartPageItemDialog().ShowAsync();
     }
 
     private async Task OnKeyDownCommandExecuted(object obj)
@@ -161,8 +171,8 @@ public class StartPageViewModel : ObservableObject
 
     private async Task OnGridViewItemDeleteCommandExecuted(StartPageItem obj)
     {
-        if (obj is not StartPageItem elem) return;
-        await _dataTransferService.RemoveSiteOnStartPageAsync(elem);
+        if (obj is not { }) return;
+        await _dataTransferService.RemoveSiteOnStartPageAsync(obj);
         await GetStartPageElementsAsync().ConfigureAwait(false);
     }
 

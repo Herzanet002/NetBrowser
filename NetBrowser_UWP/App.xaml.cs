@@ -18,6 +18,8 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using NetBrowser_UWP.Helpers;
+using NetBrowser_UWP.ViewModels.News;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace NetBrowser_UWP;
@@ -71,20 +73,11 @@ sealed partial class App : Application
         services.AddTransient<INavigationViewService, NavigationViewService>();
         services.AddSingleton<AppConfigService>();
         services.AddSingleton<TabViewService>();
+        services.AddScoped<FirstRunRecommendationsService>();
 
         services.AddScoped<IRssWorkerService, RssWorkerService>();
 
-        //ViewModels
-        services.AddSingleton<ShellPageViewModel>();
-        services.AddSingleton<MainSettingsPageViewModel>();
-        services.AddTransient<HistoryPageViewModel>();
-        services.AddTransient<StartPageViewModel>();
-        services.AddTransient<BookmarksPageViewModel>();
-        services.AddTransient<PersonalizePageViewModel>();
-        services.AddTransient<SearchSystemPageViewModel>();
-        services.AddTransient<SettingsPageViewModel>();
-        services.AddSingleton<NewsPageViewModel>();
-        services.AddTransient<AboutAppViewModel>();
+        services.RegisterViewModels();
 
         services.AddHttpClient("NewsClient");
 

@@ -1,6 +1,6 @@
 ﻿namespace NetBrowser_UWP.Models;
 
-public class SearchEngineItem : EntityModel
+public class SearchEngineItem : BaseEntity
 {
     public string Prefix { get; set; }
     public string Name { get; set; }

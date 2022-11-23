@@ -147,7 +147,6 @@
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid Orientation="{Binding GridViewOrientation}" />
-
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
 
