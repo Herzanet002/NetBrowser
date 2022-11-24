@@ -21,6 +21,7 @@ namespace NetBrowser_UWP.Helpers
             services.AddTransient<SettingsPageViewModel>();
             services.AddTransient<FirstRunRecommendationsViewModel>();
             services.AddSingleton<NewsShellPageViewModel>();
+            services.AddSingleton<NewsSettingsViewModel>();
             services.AddTransient<RecommendationsNewsPageViewModel>();
             services.AddTransient<AboutAppViewModel>();
         }

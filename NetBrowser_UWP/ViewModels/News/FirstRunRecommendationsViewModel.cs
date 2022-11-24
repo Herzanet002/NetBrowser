@@ -77,7 +77,7 @@ namespace NetBrowser_UWP.ViewModels.News
                 _chosenCategories.Remove(item as CategoryRssFeeder);
             }
 
-            CanContinue = _chosenCategories.Count > 4;
+            CanContinue = _chosenCategories.Count > 2;
         }
 
         private async Task OnPageLoaded(CancellationToken ct = default)

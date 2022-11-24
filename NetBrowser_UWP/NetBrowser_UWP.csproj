@@ -186,6 +186,7 @@
     <Compile Include="ViewModels\News\AllNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FavoriteNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FirstRunRecommendationsViewModel.cs" />
+    <Compile Include="ViewModels\News\NewsSettingsViewModel.cs" />
     <Compile Include="ViewModels\News\RecommendationsNewsPageViewModel.cs" />
     <Compile Include="ViewModels\Settings\AboutAppViewModel.cs" />
     <Compile Include="Helpers\ListExtension.cs" />
@@ -203,6 +204,9 @@
     </Compile>
     <Compile Include="Views\News\FirstRunRecommendationsDialog.xaml.cs">
       <DependentUpon>FirstRunRecommendationsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\News\NewsSettingsPage.xaml.cs">
+      <DependentUpon>NewsSettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\News\NewsShellPage.xaml.cs">
       <DependentUpon>NewsShellPage.xaml</DependentUpon>
@@ -348,6 +352,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\News\FirstRunRecommendationsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\News\NewsSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -23,95 +23,64 @@
     </interactivity:Interaction.Behaviors>
     <Grid>
         <Grid.Resources>
-            <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
             <DataTemplate x:Key="ListViewCategoryTemplate" x:DataType="syndication:SyndicationCategory">
-                    <Grid>
-                        <TextBlock
+                <Grid>
+                    <TextBlock
                             Text="{x:Bind Name}"/>
-                        <ToolTipService.Placement>Mouse</ToolTipService.Placement>
-                        <ToolTipService.ToolTip>
-                            <TextBlock Text="{x:Bind Name}" />
-                        </ToolTipService.ToolTip>
-                    </Grid>
-                </DataTemplate>
+                    <ToolTipService.Placement>Mouse</ToolTipService.Placement>
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{x:Bind Name}" />
+                    </ToolTipService.ToolTip>
+                </Grid>
+            </DataTemplate>
             <DataTemplate x:Key="NewsGridItemTemplate" x:DataType="models:ContentModel">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="3*" />
+
+                        <RowDefinition Height="4*" />
                         <RowDefinition Height="2*" />
                         <RowDefinition Height="1.2*" />
                     </Grid.RowDefinitions>
-                    <controls:ImageEx Grid.Row="0" Grid.RowSpan="4" Source="{x:Bind ImageUrl}" Stretch="UniformToFill"
+                    <controls:ImageEx Grid.Row="0" Grid.RowSpan="3" Source="{x:Bind ImageUrl}" Stretch="UniformToFill"
                                   CornerRadius="8" Opacity="0.6">
                         <controls:ImageEx.Background>
                             <SolidColorBrush Color="Black"/>
                         </controls:ImageEx.Background>
                     </controls:ImageEx>
-                    <TextBlock Grid.Row="0" Text="{x:Bind Feeder.Name}" FontSize="14" FontWeight="SemiBold"
-                           Margin="10" Foreground="White" />
-                    <TextBlock Grid.Row="1" VerticalAlignment="Bottom" Text="{x:Bind Title}" FontSize="20"
-                           FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}"
-                           Foreground="White" Margin="10, 0" />
-                    <TextBlock Grid.Row="2" VerticalAlignment="Bottom" Text="{x:Bind Description}"
+                    <TextBlock Grid.Row="0" VerticalAlignment="Bottom" Text="{x:Bind Title}" FontSize="20"
+                               FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}"
+                               Foreground="White" Margin="10, 0" />
+                    <TextBlock Grid.Row="1" VerticalAlignment="Bottom" Text="{x:Bind Description}"
                            Style="{ThemeResource BodyTextBlockStyle}"
                            TextTrimming="CharacterEllipsis" MaxLines="2" Foreground="White" Margin="10, 0" />
-                    <Grid Grid.Row="3" RequestedTheme="Dark">
+                    <Grid Grid.Row="2" RequestedTheme="Dark">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{x:Bind PubDate}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White"
                                VerticalAlignment="Center" Margin="10,0"/>
-                        <!--<StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
                             <AppBarButton Width="45" Height="45" ToolTipService.ToolTip="Добавить в закладки"
                                       Command="{Binding ElementName=AdaptiveGrid, Path=DataContext.AddNewsToFavoriteCommand}"
                                       CommandParameter="{x:Bind }">
-                                <interactivity:Interaction.Behaviors>
-                                    <core:DataTriggerBehavior Binding="{x:Bind IsFavorite}" Value="True">
-                                        <core:DataTriggerBehavior.Actions>
-                                            <core:ChangePropertyAction
-                                            PropertyName="Content">
-                                                <core:ChangePropertyAction.Value>
-                                                    <FontIcon Glyph="&#xEB52;"/>
-                                                </core:ChangePropertyAction.Value>
-                                            </core:ChangePropertyAction>
-                                        </core:DataTriggerBehavior.Actions>
-                                    </core:DataTriggerBehavior>
-                                    <core:DataTriggerBehavior Binding="{x:Bind IsFavorite}" Value="False">
-                                        <core:DataTriggerBehavior.Actions>
-                                            <core:ChangePropertyAction
-                                            PropertyName="Content">
-                                                <core:ChangePropertyAction.Value>
-                                                    <FontIcon Glyph="&#xEB51;"/>
-                                                </core:ChangePropertyAction.Value>
-                                            </core:ChangePropertyAction>
-                                        </core:DataTriggerBehavior.Actions>
-                                    </core:DataTriggerBehavior>
-                                </interactivity:Interaction.Behaviors>
+                                <AppBarButton.Icon>
+                                    <FontIcon Glyph="&#xEB51;"></FontIcon>
+                                </AppBarButton.Icon>
                             </AppBarButton>
-                            --><!--<AppBarButton Icon="Share" Width="45" Height="45" ToolTipService.ToolTip="Поделиться"
+                            <AppBarButton Icon="Share" Width="45" Height="45" ToolTipService.ToolTip="Поделиться"
                                       Command="{Binding ElementName=AdaptiveGrid, Path=DataContext.ShareNewsCommand}"
                                       CommandParameter="{x:Bind }"/>
-                            <AppBarSeparator/>--><!--
-                        </StackPanel>-->
+                            <AppBarSeparator/>
+                        </StackPanel>
                     </Grid>
 
 
                 </Grid>
             </DataTemplate>
         </Grid.Resources>
-        
-        <StackPanel Grid.Row="0" Margin="30" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20"
-                    Visibility="{Binding IsConfigured}">
-            <TextBlock HorizontalTextAlignment="Center" VerticalAlignment="Center"
-                       FontSize="24">
-                <Run Text="Для начала выберите категории новостей, которые вам нравятся"/>
-                <Run Text="&#xE76E;" FontFamily="Segoe Fluent Icons"/>
-            </TextBlock>
-            <Button Content="Выбрать категории" HorizontalAlignment="Center" 
-                    Command="{Binding CategoriesButtonSetCommand}"></Button>
-        </StackPanel>
+
+
         <Grid Grid.Row="0" Margin="10" CornerRadius="8">
             <controls1:ProgressRing VerticalAlignment="Center" HorizontalAlignment="Center"
                                     Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}"
@@ -129,6 +98,16 @@
                     </Style>
                 </GridView.ItemContainerStyle>
             </controls:AdaptiveGridView>
+            <StackPanel Grid.Row="0" Margin="30" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20"
+                        Visibility="{Binding IsConfiguredHidden}">
+                <TextBlock HorizontalTextAlignment="Center" VerticalAlignment="Center"
+                           FontSize="24">
+                    <Run Text="Для начала выберите категории новостей, которые вам нравятся"/>
+                    <Run Text="&#xE76E;" FontFamily="Segoe Fluent Icons"/>
+                </TextBlock>
+                <Button Content="Выбрать категории" HorizontalAlignment="Center" 
+                        Command="{Binding CategoriesButtonSetCommand}"></Button>
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

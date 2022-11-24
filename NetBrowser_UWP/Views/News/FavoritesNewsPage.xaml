@@ -21,25 +21,28 @@
 
     <Page.Resources>
         <DataTemplate x:Key="ListViewItemNewsTemplate" x:DataType="models:ContentModel">
-            <Grid Margin="0,12,0,12" AutomationProperties.Name="{x:Bind Title}">
-                
-                <!--<controls:ImageEx Source="{x:Bind Feeder.FeederImageLink}" MaxHeight="100" MaxWidth="200" Stretch="UniformToFill" />-->
-                <StackPanel Margin="12,0,0,0">
+            <Grid Margin="0,12,0,12">
+                <Grid Margin="12,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
                     <TextBlock Text="{x:Bind Feeder.Name}" FontSize="14" FontWeight="SemiBold"
                                Style="{ThemeResource BaseTextBlockStyle}"
                                HorizontalAlignment="Left" Margin="0,0,0,6" />
-                    <TextBlock Text="{x:Bind Description}" Style="{ThemeResource BodyTextBlockStyle}"
+                    <TextBlock Grid.Column="1" Text="{x:Bind Title}" Style="{ThemeResource BodyTextBlockStyle}"
                                TextTrimming="CharacterEllipsis" MaxLines="2" HorizontalTextAlignment="Left" />
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
                         <TextBlock Text="{x:Bind PubDate}" Style="{ThemeResource CaptionTextBlockStyle}" />
                     </StackPanel>
-                </StackPanel>
+                </Grid>
             </Grid>
 
         </DataTemplate>
     </Page.Resources>
 
-    <Grid>
+    <Grid Margin="30">
         <ListView ItemsSource="{Binding FavoriteNews, UpdateSourceTrigger=PropertyChanged}" CanReorderItems="True"
                   ScrollViewer.HorizontalScrollBarVisibility="Visible"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"

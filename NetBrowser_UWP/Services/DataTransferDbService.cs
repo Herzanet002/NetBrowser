@@ -39,7 +39,7 @@ namespace NetBrowser_UWP.Services
         }
 
 
-        public async Task ClearHistoryFileAsync()
+        public async Task ClearAllHistoryAsync()
         {
             using var scope = _scopeFactory.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
@@ -147,9 +147,15 @@ namespace NetBrowser_UWP.Services
         {
             using var scope = _scopeFactory.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-            return await dbContext.FavoriteNews.AsNoTracking().ToListAsync().ConfigureAwait(false);
+            return await dbContext.FavoriteNews.Include(x=>x.Feeder).AsNoTracking().ToListAsync().ConfigureAwait(false);
         }
-
+        public async Task ClearAllRecommendationCategories()
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            dbContext.CategoryRssFeeders.Clear();
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
         public async Task RemoveNewsContentFromFavorite(ContentModel contentModel)
         {
             if (contentModel is null) return;
@@ -169,20 +175,11 @@ namespace NetBrowser_UWP.Services
 
         public async Task AddRecommendationRssCategoryAsync(ICollection<CategoryRssFeeder> categories)
         {
-            try
-            {
-                using var scope = _scopeFactory.CreateScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-                dbContext.CategoryRssFeeders.AttachRange(categories);
-                await dbContext.CategoryRssFeeders.AddRangeAsync(categories).ConfigureAwait(false);
-                await dbContext.SaveChangesAsync().ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            
+            using var scope = _scopeFactory.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+            dbContext.CategoryRssFeeders.AttachRange(categories);
+            await dbContext.CategoryRssFeeders.AddRangeAsync(categories).ConfigureAwait(false);
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
         public async Task<IList<CategoryRssFeeder>> GetRecommendationRssCategoryAsync()
         {

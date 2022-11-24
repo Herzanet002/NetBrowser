@@ -6,12 +6,15 @@ using NetBrowser_UWP.Helpers;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views.News;
+using Prism.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 
 namespace NetBrowser_UWP.ViewModels.News
@@ -23,8 +26,11 @@ namespace NetBrowser_UWP.ViewModels.News
         private ObservableCollection<ContentModel> _recommendedNews;
         public IAsyncRelayCommand RecommendationsNewsPageLoadedCommand { get; set; }
         public IAsyncRelayCommand CategoriesButtonSetCommand { get; set; }
+        public IAsyncRelayCommand AddNewsToFavoriteCommand { get; set; }
+        public DelegateCommand<ContentModel> ShareNewsCommand { get; set; }
+        private ContentModel _newsForSharing;
         private bool _isProgressRingActive = true;
-        private bool _isConfigured;
+        private bool _isConfiguredHidden;
 
         public RecommendationsNewsPageViewModel(IDataTransferService dataTransferService, IServiceScopeFactory serviceScopeFactory)
         {
@@ -33,12 +39,23 @@ namespace NetBrowser_UWP.ViewModels.News
             RecommendationsNewsPageLoadedCommand =
                 new AsyncRelayCommand(OnRecommendationsNewsPageLoadedCommandExecuted);
             CategoriesButtonSetCommand = new AsyncRelayCommand(OnCategoriesButtonSetCommandExecuted);
+            ShareNewsCommand = new DelegateCommand<ContentModel>(OnShareNewsCommandExecuted);
+            AddNewsToFavoriteCommand = new AsyncRelayCommand<ContentModel>(OnAddNewsToFavoriteCommandExecuted);
+            DataTransferManager.GetForCurrentView().DataRequested += NewsPageViewModelOnDataSharing;
+        }
+        private void NewsPageViewModelOnDataSharing(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            if (_newsForSharing == null) return;
+
+            args.Request.Data.SetText(_newsForSharing.Title);
+            args.Request.Data.Properties.Title = Package.Current.DisplayName;
+            args.Request.Data.SetWebLink(new Uri(_newsForSharing.Link));
         }
 
-        public bool IsConfigured
+        public bool IsConfiguredHidden
         {
-            get => _isConfigured;
-            set => SetProperty(ref _isConfigured, value);
+            get => _isConfiguredHidden;
+            set => SetProperty(ref _isConfiguredHidden, value);
         }
 
         public bool IsProgressRingActive
@@ -49,9 +66,30 @@ namespace NetBrowser_UWP.ViewModels.News
 
         private async Task OnCategoriesButtonSetCommandExecuted(CancellationToken ct = default)
         {
-            await new FirstRunRecommendationsDialog().ShowAsync();
+            var result = await new FirstRunRecommendationsDialog().ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                IsConfiguredHidden = false;
+            }
+            else
+            {
+                IsConfiguredHidden = true;
+                IsProgressRingActive = false;
+            }
         }
 
+        private void OnShareNewsCommandExecuted(ContentModel param)
+        {
+            if (param == null) return;
+            _newsForSharing = param;
+            DataTransferManager.ShowShareUI();
+        }
+
+        private async Task OnAddNewsToFavoriteCommandExecuted(ContentModel contentItem, CancellationToken ct)
+        {
+            await _dataTransferService.SaveNewsContentToFavoriteAsync(contentItem);
+            RecommendedNews.Remove(contentItem);
+        }
         private async Task OnRecommendationsNewsPageLoadedCommandExecuted(CancellationToken ct = default)
         {
             var recommendationCategories =
@@ -63,9 +101,15 @@ namespace NetBrowser_UWP.ViewModels.News
                 {
                     recommendationCategories =
                         await _dataTransferService.GetRecommendationRssCategoryAsync();
+                    IsConfiguredHidden = false;
+                }
+                else
+                {
+                    IsConfiguredHidden = true;
+                    IsProgressRingActive = false;
+                    return;
                 }
 
-                IsConfigured = false;
             }
 
             var news = await GetNewsAsync(recommendationCategories);

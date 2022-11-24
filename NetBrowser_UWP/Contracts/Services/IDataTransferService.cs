@@ -21,8 +21,9 @@ public interface IDataTransferService
     Task<IList<RssFeeder>> GetRssFeedersListAsync();
     Task AddRecommendationRssCategoryAsync(ICollection<CategoryRssFeeder> category);
     Task<IList<CategoryRssFeeder>> GetRecommendationRssCategoryAsync();
+    Task ClearAllRecommendationCategories();
     //Task RemoveRecommendationSyndicationCategoryAsync(ICollection<SyndicationCategoryModel> category);
-    Task ClearHistoryFileAsync();
+    Task ClearAllHistoryAsync();
     //Task<IList<SyndicationCategoryModel>> GetRecommendationSyndicationCategoryAsync();
     Task RemoveHistoryItemAsync(HistoryItemDetails historyItemDetails);
     Task EditBookmarkAsync(BookmarkDetails oldBookmark, BookmarkDetails newBookmark);

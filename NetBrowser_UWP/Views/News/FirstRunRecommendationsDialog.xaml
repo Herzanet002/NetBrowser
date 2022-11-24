@@ -43,7 +43,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Выберите как минимум 5 категорий" Margin="10"></TextBlock>
+        <TextBlock Text="Выберите как минимум 3 категории" Margin="10"></TextBlock>
         <ListView Grid.Row="1" ItemsSource="{Binding Categories}" MaxHeight="500"
                   ItemTemplate="{StaticResource ListViewCategoryTemplate}" 
                   SelectionMode="Multiple" IsMultiSelectCheckBoxEnabled="True">

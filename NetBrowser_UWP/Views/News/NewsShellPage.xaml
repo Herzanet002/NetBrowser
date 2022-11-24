@@ -41,6 +41,13 @@
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItemSeparator />
             </controls:NavigationView.MenuItems>
+            <controls:NavigationView.FooterMenuItems>
+                <controls:NavigationViewItem Content="Параметры" helpers:NavigationHelper.NavigateTo="local:NewsSettingsPage">
+                    <controls:NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE713;" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+            </controls:NavigationView.FooterMenuItems>
 
             <Grid>
                 <Frame x:Name="MainFrame" />

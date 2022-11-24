@@ -76,7 +76,7 @@ public class HistoryPageViewModel : ObservableObject
 
     private async Task OnClearHistoryJournalCommandExecuted()
     {
-        await _dataTransferService.ClearHistoryFileAsync();
+        await _dataTransferService.ClearAllHistoryAsync();
     }
 
     private async Task OnOpenClearHistoryJournalDialogCommandExecuted()
