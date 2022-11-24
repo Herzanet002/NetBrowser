@@ -7,10 +7,7 @@ using NetBrowser_UWP.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel.Syndication;
-using System.Threading;
 using System.Threading.Tasks;
-using Windows.UI;
 
 namespace NetBrowser_UWP.Services
 {
@@ -22,22 +19,6 @@ namespace NetBrowser_UWP.Services
         {
             _scopeFactory = scopeFactory;
         }
-        //public async Task<bool> ExistsItem<T>(T item) where T : BaseEntity
-        //{
-        //    try
-        //    {
-        //        if (item is null) throw new ArgumentNullException(nameof(item));
-        //        using var scope = _scopeFactory.CreateScope();
-        //        var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-        //        return await dbContext.Set<T>().ContainsAsync(item).ConfigureAwait(false);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e);
-        //        throw;
-        //    }
-
-        //}
 
         #region History
 
@@ -149,8 +130,7 @@ namespace NetBrowser_UWP.Services
 
             using var scope = _scopeFactory.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-
-            //await dbContext.SyndicationCategories.AddRangeAsync(contentModel.Categories).ConfigureAwait(false);
+            dbContext.FavoriteNews.Attach(contentModel);
             await dbContext.FavoriteNews.AddAsync(contentModel).ConfigureAwait(false);
             await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
@@ -187,26 +167,28 @@ namespace NetBrowser_UWP.Services
             return await dbContext.RssFeeders.AsNoTracking().ToListAsync().ConfigureAwait(false);
         }
 
-        public async Task AddRecommendationSyndicationCategoryAsync(ICollection<SyndicationCategoryModel> category)
+        public async Task AddRecommendationRssCategoryAsync(ICollection<CategoryRssFeeder> categories)
         {
-            if (category is null) return;
-
-            using var scope = _scopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-
-            await dbContext.SyndicationCategories.AddRangeAsync(category).ConfigureAwait(false);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            try
+            {
+                using var scope = _scopeFactory.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
+                dbContext.CategoryRssFeeders.AttachRange(categories);
+                await dbContext.CategoryRssFeeders.AddRangeAsync(categories).ConfigureAwait(false);
+                await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
         }
-
-        public async Task RemoveRecommendationSyndicationCategoryAsync(ICollection<SyndicationCategoryModel> category)
+        public async Task<IList<CategoryRssFeeder>> GetRecommendationRssCategoryAsync()
         {
-            if (category is null) return;
-
             using var scope = _scopeFactory.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<DataAccessContext>();
-
-            dbContext.SyndicationCategories.RemoveRange(category);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            return await dbContext.CategoryRssFeeders.AsNoTracking().ToListAsync().ConfigureAwait(false);
         }
 
         #endregion News

@@ -19,7 +19,8 @@ public class DataAccessContext : DbContext
     public DbSet<SearchTermItem> SearchTermItems { get; set; }
     public DbSet<ContentModel> FavoriteNews { get; set; }
     public DbSet<RssFeeder> RssFeeders { get; set; }
-    public DbSet<SyndicationCategoryModel> SyndicationCategories { get; set; }
+    public DbSet<CategoryRssFeeder> CategoryRssFeeders { get; set; }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,6 +36,7 @@ public class DataAccessContext : DbContext
         var feedResources = appConfigService.GetSection<List<RssFeeder>>("FeedResources");
         return feedResources;
     }
+
 
     private IEnumerable<SearchEngineItem> InitializeSearchEngines()
     {

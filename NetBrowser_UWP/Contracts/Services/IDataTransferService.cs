@@ -19,9 +19,11 @@ public interface IDataTransferService
     Task<ContentModel> HasNewsContentInFavorite(ContentModel contentModel);
     Task RemoveNewsContentFromFavorite(ContentModel contentModel);
     Task<IList<RssFeeder>> GetRssFeedersListAsync();
-    Task AddRecommendationSyndicationCategoryAsync(ICollection<SyndicationCategoryModel> category);
-    Task RemoveRecommendationSyndicationCategoryAsync(ICollection<SyndicationCategoryModel> category);
+    Task AddRecommendationRssCategoryAsync(ICollection<CategoryRssFeeder> category);
+    Task<IList<CategoryRssFeeder>> GetRecommendationRssCategoryAsync();
+    //Task RemoveRecommendationSyndicationCategoryAsync(ICollection<SyndicationCategoryModel> category);
     Task ClearHistoryFileAsync();
+    //Task<IList<SyndicationCategoryModel>> GetRecommendationSyndicationCategoryAsync();
     Task RemoveHistoryItemAsync(HistoryItemDetails historyItemDetails);
     Task EditBookmarkAsync(BookmarkDetails oldBookmark, BookmarkDetails newBookmark);
     Task<IList<SearchEngineItem>> GetSearchEngineListAsync();

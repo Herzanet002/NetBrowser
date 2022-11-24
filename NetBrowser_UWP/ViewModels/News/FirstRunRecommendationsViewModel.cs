@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using NetBrowser_UWP.Contracts.Services;
@@ -19,15 +20,16 @@ namespace NetBrowser_UWP.ViewModels.News
     {
         private readonly IDataTransferService _dataTransferService;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private ObservableCollection<SyndicationCategory> _categories;
+        private ObservableCollection<CategoryRssFeeder> _categories;
         public IAsyncRelayCommand PageLoadedCommand { get; set; }
         public IAsyncRelayCommand OkButtonCommand { get; set; }
         public DelegateCommand<SelectionChangedEventArgs> SelectionChangedCommand { get; set; }
-        private ObservableCollection<SyndicationCategory> _chosenCategories;
-
+        private ObservableCollection<CategoryRssFeeder> _chosenCategories;
+        private bool _isProgressRingActive = true;
         private bool _canContinue;
+        
 
-        public ObservableCollection<SyndicationCategory> Categories
+        public ObservableCollection<CategoryRssFeeder> Categories
         {
             get => _categories;
             set => SetProperty(ref _categories, value);
@@ -39,6 +41,14 @@ namespace NetBrowser_UWP.ViewModels.News
             set => SetProperty(ref _canContinue, value);
         }
 
+        
+
+        public bool IsProgressRingActive
+        {
+            get => _isProgressRingActive;
+            set => SetProperty(ref _isProgressRingActive, value);
+        }
+
         public FirstRunRecommendationsViewModel(IDataTransferService dataTransferService, IServiceScopeFactory serviceScopeFactory)
         {
             _dataTransferService = dataTransferService;
@@ -46,60 +56,42 @@ namespace NetBrowser_UWP.ViewModels.News
             PageLoadedCommand = new AsyncRelayCommand(OnPageLoaded);
             OkButtonCommand = new AsyncRelayCommand(OnOkButtonCommandExecuted);
             SelectionChangedCommand = new DelegateCommand<SelectionChangedEventArgs>(OnSelectionChangedCommandExecuted);
-            Categories = new ObservableCollection<SyndicationCategory>();
-            _chosenCategories = new ObservableCollection<SyndicationCategory>();
+            Categories = new ObservableCollection<CategoryRssFeeder>();
+            _chosenCategories = new ObservableCollection<CategoryRssFeeder>();
         }
 
         private async Task OnOkButtonCommandExecuted(CancellationToken ct = default)
         {
-            var sc = _chosenCategories.Select(syndicationCategory => new SyndicationCategoryModel
-            { Name = syndicationCategory.Name, Label = syndicationCategory.Label, Scheme = syndicationCategory.Scheme }).ToList();
-            await _dataTransferService.AddRecommendationSyndicationCategoryAsync(sc);
+            await _dataTransferService.AddRecommendationRssCategoryAsync(_chosenCategories);
         }
 
         private void OnSelectionChangedCommandExecuted(SelectionChangedEventArgs obj)
         {
             foreach (var item in obj.AddedItems)
             {
-                _chosenCategories.Add(item as SyndicationCategory);
+                _chosenCategories.Add(item as CategoryRssFeeder);
             }
 
             foreach (var item in obj.RemovedItems)
             {
-                _chosenCategories.Remove(item as SyndicationCategory);
+                _chosenCategories.Remove(item as CategoryRssFeeder);
             }
 
             CanContinue = _chosenCategories.Count > 4;
         }
 
-        public Task<IAsyncEnumerable<ContentModel>> GetNewsAsync(IEnumerable<RssFeeder> sources)
-        {
-            using var scope = _serviceScopeFactory.CreateScope();
-            var rssWorker = scope.ServiceProvider.GetRequiredService<IRssWorkerService>();
-            var contentModels = rssWorker.GetFeeds(sources);
-
-            return Task.FromResult(contentModels);
-        }
-
         private async Task OnPageLoaded(CancellationToken ct = default)
         {
-            using var scope = _serviceScopeFactory.CreateScope();
-            var firstRun = scope.ServiceProvider.GetRequiredService<FirstRunRecommendationsService>();
-            await firstRun.ShowIfAppropriateAsync();
-            var rssFeeders = await _dataTransferService.GetRssFeedersListAsync();
-            var news = await GetNewsAsync(rssFeeders);
-            var categories = new HashSet<SyndicationCategory>();
-
-            await foreach (var contentModel in news.WithCancellation(ct))
+            var appConfigService = Ioc.Default.GetRequiredService<AppConfigService>();
+            var feedResources = appConfigService.GetSection<List<CategoryRssFeeder>>("CategoryFeedResources");
+            var categories = new HashSet<CategoryRssFeeder>();
+            foreach (var feedResource in feedResources)
             {
-                foreach (var syndicationCategoryModel in contentModel.Categories)
-                {
-                    if (categories.Any(x => x.Name == syndicationCategoryModel.Name)) continue;
-                    categories.Add(syndicationCategoryModel);
-                }
+                categories.Add(feedResource);
             }
 
-            Categories = new ObservableCollection<SyndicationCategory>(categories);
+            Categories = new ObservableCollection<CategoryRssFeeder>(categories);
+            IsProgressRingActive = false;
         }
     }
 }

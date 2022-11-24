@@ -60,7 +60,8 @@ sealed partial class App : Application
         var services = new ServiceCollection();
 
         services.AddDbContext<DataAccessContext>(opt =>
-            opt.UseSqlite("Filename=datasource.db"))
+            opt.UseSqlite("Filename=datasource.db")
+                .EnableSensitiveDataLogging())
         ;
 
         services.AddTransient<DbInitializeService>();

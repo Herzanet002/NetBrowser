@@ -19,9 +19,10 @@ public class ContentModel : BaseEntity
     public string ImageUrl { get; set; }
 
     public RssFeeder Feeder { get; set; }
+    
+    public bool IsFavorite { get; set; }
 
     [NotMapped]
     public ICollection<SyndicationCategory> Categories { get; set; }
 
-    public bool IsFavorite { get; set; }
 }

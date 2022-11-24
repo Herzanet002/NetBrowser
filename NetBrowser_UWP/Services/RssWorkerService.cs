@@ -1,5 +1,6 @@
 ﻿using NetBrowser_UWP.Helpers;
 using NetBrowser_UWP.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -24,13 +25,13 @@ public class RssWorkerService : IRssWorkerService
         try
         {
             var client = _httpClientFactory.CreateClient();
-            var content = await client.GetStreamAsync(rssFeeder.ApiUrl);
+            var content = await client.GetStreamAsync(rssFeeder.RssUrl);
             using var reader = XmlReader.Create(content, settings);
             var feed = SyndicationFeed.Load(reader);
             reader.Close();
             return feed;
         }
-        catch
+        catch (Exception ex)
         {
             return null;
         }
@@ -55,12 +56,12 @@ public class RssWorkerService : IRssWorkerService
                 yield return new ContentModel
                 {
                     Title = element.Title.Text,
-                    Description = element.Summary.Text.StripHtml().TrimStart().Replace("\n", string.Empty).TrimEnd(),
+                    Description = element.Summary?.Text.StripHtml().TrimStart().Replace("\n", string.Empty).TrimEnd(),
                     PubDate = element.PublishDate.LocalDateTime.ToString("g"),
                     Link = element.Links[0].Uri.ToString(),
                     ImageUrl = element.Links.Count == 2 ? element.Links[1].Uri.ToString() : null,
                     Feeder = rssFeeders.FirstOrDefault(x => x.Link == syndicationFeed.Links[0].Uri ||
-                                                            x.ApiUrl == syndicationFeed.Links[0].Uri.OriginalString),
+                                                            x.RssUrl == syndicationFeed.Links[0].Uri.OriginalString),
                     Categories = element.Categories,
                     IsFavorite = commonFavorite is not null
                 };

@@ -11,6 +11,8 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:models="using:NetBrowser_UWP.Models"
     mc:Ignorable="d"
     Title="Для начала выберите категории новостей, которые вам нравятся"
     PrimaryButtonText="Продолжить"
@@ -26,7 +28,7 @@
     </interactivity:Interaction.Behaviors>
     <Grid>
         <Grid.Resources>
-            <DataTemplate x:Key="ListViewCategoryTemplate" x:DataType="syndication:SyndicationCategory">
+            <DataTemplate x:Key="ListViewCategoryTemplate" x:DataType="models:CategoryRssFeeder">
                 <Grid>
                     <TextBlock
                         Text="{x:Bind Name}"/>
@@ -51,6 +53,10 @@
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
         </ListView>
+
+        <controls:ProgressRing Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}"
+                                IsActive="{Binding IsProgressRingActive}" />
 
     </Grid>
 </ContentDialog>

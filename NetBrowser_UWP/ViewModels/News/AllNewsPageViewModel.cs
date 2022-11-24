@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
+using NetBrowser_UWP.Helpers;
 
 namespace NetBrowser_UWP.ViewModels.News;
 
@@ -61,10 +62,13 @@ public class AllNewsPageViewModel : ObservableObject
     {
         var rssFeeders = await _dataTransferService.GetRssFeedersListAsync();
         var news = await GetNewsAsync(rssFeeders);
+        var orderedEnumerable = new List<ContentModel>();
         await foreach (var content in news.WithCancellation(ct))
         {
-            News.Add(content);
+            orderedEnumerable.Add(content);
         }
+        orderedEnumerable.Shuffle();
+        News = new ObservableCollection<ContentModel>(orderedEnumerable);
         IsProgressRingActive = false;
     }
 

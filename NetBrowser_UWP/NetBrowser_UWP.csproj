@@ -151,7 +151,9 @@
     <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="Helpers\ViewModelsRegistrator.cs" />
     <Compile Include="Models\BaseEntity.cs" />
+    <Compile Include="Models\CategoryRssFeeder.cs" />
     <Compile Include="Models\RssFeeder.cs" />
+    <Compile Include="Models\RssUrlEntity.cs" />
     <Compile Include="Models\SearchTermItem.cs" />
     <Compile Include="Models\StartPageItem.cs" />
     <Compile Include="Models\SyndicationCategoryModel.cs" />
