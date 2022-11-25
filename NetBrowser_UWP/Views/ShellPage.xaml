@@ -182,9 +182,9 @@
 
             <!--SearchBox-->
             <AutoSuggestBox x:Name="SearchBox" Style="{StaticResource AutoSuggestBoxTemplate}" Grid.Column="4"
-                            Text="{Binding SearchBoxText, Mode=TwoWay}" QueryIcon="Find"
-                            ItemsSource="{Binding SearchBoxItemsCollection}" UpdateTextOnSelect="True"
-                            PlaceholderText="{helpers:ResourceString Name=SearchBoxPlaceholder/PlaceholderText}">
+                            Text="{Binding SearchBoxText, Mode=TwoWay}" QueryIcon="Find" 
+                            ItemsSource="{Binding SearchBoxItemsCollection}"
+                            PlaceholderText="{helpers:ResourceString Name=SearchBoxPlaceholder/PlaceholderText}" GotFocus="SearchBox_GotFocus">
                 <AutoSuggestBox.Shadow>
                     <ThemeShadow />
                 </AutoSuggestBox.Shadow>

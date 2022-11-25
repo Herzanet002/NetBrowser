@@ -1,15 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.DbContexts;
-using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
-using NetBrowser_UWP.ViewModels;
-using NetBrowser_UWP.ViewModels.Settings;
-using NetBrowser_UWP.Views;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -18,8 +7,15 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.DbContexts;
 using NetBrowser_UWP.Helpers;
-using NetBrowser_UWP.ViewModels.News;
+using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Services;
+using NetBrowser_UWP.Views;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace NetBrowser_UWP;
@@ -27,7 +23,7 @@ namespace NetBrowser_UWP;
 /// <summary>
 ///     Обеспечивает зависящее от конкретного приложения поведение, дополняющее класс Application по умолчанию.
 /// </summary>
-sealed partial class App : Application
+public sealed partial class App : Application
 {
     public static ThemeItem CurrentTheme;
 
@@ -41,7 +37,6 @@ sealed partial class App : Application
         UnhandledException += App_UnhandledException;
         Services = ConfigureDependencyInjection();
         Ioc.Default.ConfigureServices(Services);
-
     }
 
     public IServiceProvider Services { get; }
@@ -60,9 +55,9 @@ sealed partial class App : Application
         var services = new ServiceCollection();
 
         services.AddDbContext<DataAccessContext>(opt =>
-            opt.UseSqlite("Filename=datasource.db")
-                .EnableSensitiveDataLogging())
-        ;
+                opt.UseSqlite("Filename=datasource.db")
+                    .EnableSensitiveDataLogging())
+            ;
 
         services.AddTransient<DbInitializeService>();
         //Services & Managers
@@ -99,10 +94,17 @@ sealed partial class App : Application
 
         //Set Current Search Engine
         using (var scope = Services.CreateScope())
-            await scope.ServiceProvider.GetRequiredService<DbInitializeService>().InitializeAsync().ConfigureAwait(false);
+        {
+            await scope.ServiceProvider.GetRequiredService<DbInitializeService>().InitializeAsync()
+                .ConfigureAwait(false);
+        }
+
         CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataTransferService>().GetCurrentSearchEngineAsync();
         using (var scope = Services.CreateScope())
-            await scope.ServiceProvider.GetRequiredService<DbInitializeService>().InitializeAsync().ConfigureAwait(false);
+        {
+            await scope.ServiceProvider.GetRequiredService<DbInitializeService>().InitializeAsync()
+                .ConfigureAwait(false);
+        }
 
         // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
         // только обеспечьте активность окна

@@ -1,6 +1,5 @@
-﻿namespace NetBrowser_UWP.Models
+﻿namespace NetBrowser_UWP.Models;
+
+public class SearchTermItem : SiteItem
 {
-    public class SearchTermItem : SiteItem
-    {
-    }
 }

@@ -1,15 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
-using NetBrowser_UWP.Views.UserControls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Services;
+using NetBrowser_UWP.Views.UserControls;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
@@ -109,9 +109,9 @@ public class HistoryPageViewModel : ObservableObject
     public void GetSearchSuggestions()
     {
         var suitable = from item in HistoryList
-                       where item.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                             item.Url.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
-                       select item;
+            where item.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                  item.Url.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+            select item;
         HistoryList = suitable;
     }
 

@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
+using Microsoft.Extensions.Configuration;
 
 namespace NetBrowser_UWP.Services;
 

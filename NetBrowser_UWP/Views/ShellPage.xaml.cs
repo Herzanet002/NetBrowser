@@ -16,4 +16,10 @@ public sealed partial class ShellPage : Page
         DataContext = Ioc.Default.GetService<ShellPageViewModel>();
         SearchBox.Translation += new Vector3(0, 0, 32);
     }
+
+
+    private void SearchBox_GotFocus(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+    {
+
+    }
 }

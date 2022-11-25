@@ -1,7 +1,7 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using NetBrowser_UWP.ViewModels.News;
-using System;
+﻿using System;
 using Windows.UI.Xaml.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using NetBrowser_UWP.ViewModels.News;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 

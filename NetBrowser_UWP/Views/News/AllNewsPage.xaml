@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
@@ -33,7 +32,7 @@
                 <controls:ImageEx Grid.Row="0" Grid.RowSpan="4" Source="{x:Bind ImageUrl}" Stretch="UniformToFill"
                                   CornerRadius="8" Opacity="0.6">
                     <controls:ImageEx.Background>
-                        <SolidColorBrush Color="Black"/>
+                        <SolidColorBrush Color="Black" />
                     </controls:ImageEx.Background>
                 </controls:ImageEx>
                 <TextBlock Grid.Row="0" Text="{x:Bind Feeder.Name}" FontSize="14" FontWeight="SemiBold"
@@ -47,10 +46,10 @@
                 <Grid Grid.Row="3" RequestedTheme="Dark">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="{x:Bind PubDate}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White"
-                               VerticalAlignment="Center" Margin="10,0"/>
+                               VerticalAlignment="Center" Margin="10,0" />
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <AppBarButton Width="45" Height="45" ToolTipService.ToolTip="Добавить в закладки"
                                       Command="{Binding ElementName=AdaptiveGrid, Path=DataContext.AddNewsToFavoriteCommand}"
@@ -61,7 +60,7 @@
                                         <core:ChangePropertyAction
                                             PropertyName="Content">
                                             <core:ChangePropertyAction.Value>
-                                                <FontIcon Glyph="&#xEB52;"/>
+                                                <FontIcon Glyph="&#xEB52;" />
                                             </core:ChangePropertyAction.Value>
                                         </core:ChangePropertyAction>
                                     </core:DataTriggerBehavior.Actions>
@@ -71,7 +70,7 @@
                                         <core:ChangePropertyAction
                                             PropertyName="Content">
                                             <core:ChangePropertyAction.Value>
-                                                <FontIcon Glyph="&#xEB51;"/>
+                                                <FontIcon Glyph="&#xEB51;" />
                                             </core:ChangePropertyAction.Value>
                                         </core:ChangePropertyAction>
                                     </core:DataTriggerBehavior.Actions>
@@ -80,8 +79,8 @@
                         </AppBarButton>
                         <AppBarButton Icon="Share" Width="45" Height="45" ToolTipService.ToolTip="Поделиться"
                                       Command="{Binding ElementName=AdaptiveGrid, Path=DataContext.ShareNewsCommand}"
-                                      CommandParameter="{x:Bind }"/>
-                        <AppBarSeparator/>
+                                      CommandParameter="{x:Bind }" />
+                        <AppBarSeparator />
                     </StackPanel>
                 </Grid>
 

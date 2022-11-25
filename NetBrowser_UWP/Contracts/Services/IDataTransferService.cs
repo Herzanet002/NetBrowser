@@ -1,7 +1,6 @@
-﻿using NetBrowser_UWP.Models;
-using System.Collections.Generic;
-using System.ServiceModel.Syndication;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using NetBrowser_UWP.Models;
 
 namespace NetBrowser_UWP.Contracts.Services;
 
@@ -24,8 +23,10 @@ public interface IDataTransferService
     Task ClearAllRecommendedCategories();
 
     Task<IList<RssFeeder>> GetCategorizedRssFeeders();
+
     //Task RemoveRecommendationSyndicationCategoryAsync(ICollection<SyndicationCategoryModel> category);
     Task ClearAllHistoryAsync();
+
     //Task<IList<SyndicationCategoryModel>> GetRecommendationSyndicationCategoryAsync();
     Task RemoveHistoryItemAsync(HistoryItemDetails historyItemDetails);
     Task EditBookmarkAsync(BookmarkDetails oldBookmark, BookmarkDetails newBookmark);

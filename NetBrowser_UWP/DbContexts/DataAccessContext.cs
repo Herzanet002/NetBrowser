@@ -1,8 +1,8 @@
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
-using System.Collections.Generic;
 
 namespace NetBrowser_UWP.DbContexts;
 
@@ -39,62 +39,62 @@ public class DataAccessContext : DbContext
     private IEnumerable<SearchEngineItem> InitializeSearchEngines()
     {
         return new List<SearchEngineItem>
+        {
+            new()
             {
-                new SearchEngineItem
-                {
-                    Id = 1,
-                    HomePage = "https://www.google.ru/",
-                    Name = "Google",
-                    IsSelected = "1",
-                    Prefix = "https://google.com/search?q="
-                },
-                new SearchEngineItem
-                {
-                    Id = 2,
-                    HomePage = "https://yandex.ru/",
-                    Name = "Yandex",
-                    IsSelected = "0",
-                    Prefix = "https://yandex.ru/search/?text="
-                },
-                new SearchEngineItem
-                {
-                    Id = 3,
-                    HomePage = "https://www.bing.ru/",
-                    Name = "Bing",
-                    IsSelected = "0",
-                    Prefix = "https://bing.com/search?q="
-                }
-            };
+                Id = 1,
+                HomePage = "https://www.google.ru/",
+                Name = "Google",
+                IsSelected = "1",
+                Prefix = "https://google.com/search?q="
+            },
+            new()
+            {
+                Id = 2,
+                HomePage = "https://yandex.ru/",
+                Name = "Yandex",
+                IsSelected = "0",
+                Prefix = "https://yandex.ru/search/?text="
+            },
+            new()
+            {
+                Id = 3,
+                HomePage = "https://www.bing.ru/",
+                Name = "Bing",
+                IsSelected = "0",
+                Prefix = "https://bing.com/search?q="
+            }
+        };
     }
 
     private IEnumerable<StartPageItem> InitializeStartPageItems()
     {
         return new List<StartPageItem>
+        {
+            new()
             {
-                new StartPageItem
-                {
-                    Id = 1,
-                    Name = "Google",
-                    Url = "www.google.com"
-                },
-                new StartPageItem
-                {
-                    Id = 2,
-                    Name = "GitHub",
-                    Url = "www.github.com"
-                },
-                new StartPageItem
-                {
-                    Id = 3,
-                    Name = "Yandex",
-                    Url = "www.yandex.com"
-                },
-                new StartPageItem
-                {
-                    Id = 4,
-                    Name = "YouTube",
-                    Url = "www.youtube.com"
-                }
-            };
+                Id = 1,
+                Name = "Google",
+                Url = "www.google.com"
+            },
+            new()
+            {
+                Id = 2,
+                Name = "GitHub",
+                Url = "www.github.com"
+            },
+            new()
+            {
+                Id = 3,
+                Name = "Yandex",
+                Url = "www.yandex.com"
+            },
+            new()
+            {
+                Id = 4,
+                Name = "YouTube",
+                Url = "www.youtube.com"
+            }
+        };
     }
 }

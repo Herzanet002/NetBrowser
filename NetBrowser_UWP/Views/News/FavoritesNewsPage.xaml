@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
     xmlns:models="using:NetBrowser_UWP.Models"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
@@ -24,37 +23,40 @@
             <Grid Margin="0,12,0,12">
                 <Grid Margin="12,0,0,0" ColumnSpacing="30">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="0.5*"/>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="0.5*" />
                     </Grid.ColumnDefinitions>
                     <controls:ImageEx Source="{x:Bind Feeder.FeederImageLink}" Width="100" Height="50"
-                                      Background="{Binding Source={StaticResource ThemeManager}, Path=AppTitleBrush}" CornerRadius="6"></controls:ImageEx>
+                                      Background="{Binding Source={StaticResource ThemeManager}, Path=AppTitleBrush}"
+                                      CornerRadius="6" />
                     <TextBlock Grid.Column="1" Text="{x:Bind Feeder.Name}" FontSize="14" FontWeight="SemiBold"
                                Style="{ThemeResource BaseTextBlockStyle}" VerticalAlignment="Center"
                                HorizontalAlignment="Left" Margin="0,0,0,6" />
                     <TextBlock Grid.Column="2" Text="{x:Bind Title}" Style="{ThemeResource BodyTextBlockStyle}"
                                TextTrimming="CharacterEllipsis" MaxLines="2" HorizontalTextAlignment="Left" />
-                    <TextBlock Grid.Column="3" Text="{x:Bind PubDate}" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}"
-                               VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="3" Text="{x:Bind PubDate}" FontWeight="SemiBold"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               VerticalAlignment="Center" HorizontalAlignment="Right" />
                     <Button Grid.Column="4" Width="50" Height="35" Style="{StaticResource TabViewButtonStyle}">
                         <Button.Content>
-                            <FontIcon Glyph="&#xE712;"/>
+                            <FontIcon Glyph="&#xE712;" />
                         </Button.Content>
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <MenuFlyoutItem Text="Убрать из избранных" CommandParameter="{x:Bind}"
                                                 Command="{Binding DataContext.RemoveNewsCommand, ElementName=ListViewPresenter}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xEA92;"/>
+                                        <FontIcon Glyph="&#xEA92;" />
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
-                                <MenuFlyoutItem Text="Поделиться" Command="{Binding DataContext.ShareNewsCommand, ElementName=ListViewPresenter}"
+                                <MenuFlyoutItem Text="Поделиться"
+                                                Command="{Binding DataContext.ShareNewsCommand, ElementName=ListViewPresenter}"
                                                 CommandParameter="{x:Bind}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE72D;"/>
+                                        <FontIcon Glyph="&#xE72D;" />
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                             </MenuFlyout>
@@ -66,9 +68,11 @@
     </Page.Resources>
 
     <Grid Margin="30">
-        <ListView x:Name="ListViewPresenter" ItemsSource="{Binding FavoriteNews, UpdateSourceTrigger=PropertyChanged}" CanReorderItems="True"
+        <ListView x:Name="ListViewPresenter" ItemsSource="{Binding FavoriteNews, UpdateSourceTrigger=PropertyChanged}"
+                  CanReorderItems="True"
                   ScrollViewer.HorizontalScrollBarVisibility="Visible"
-                  ScrollViewer.VerticalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedItemNews, Mode=TwoWay}"
+                  ScrollViewer.VerticalScrollBarVisibility="Visible"
+                  SelectedItem="{Binding SelectedItemNews, Mode=TwoWay}"
                   ScrollViewer.IsVerticalRailEnabled="True" ItemTemplate="{StaticResource ListViewItemNewsTemplate}">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="SelectionChanged">

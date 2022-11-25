@@ -1,9 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
-using Prism.Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,19 +7,24 @@ using System.Windows.Input;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views.UserControls;
+using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels;
 
 public class StartPageViewModel : ObservableObject
 {
     private readonly IDataTransferService _dataTransferService;
-    private readonly TabViewService _tabViewService;
     private readonly ILocalSettingsService _localSettingsService;
+    private readonly TabViewService _tabViewService;
+    private StartPageItem _editableStartPageItem;
     private int _gridViewOrientation;
     private StartPageItem _gridViewSelectedItem;
-    private StartPageItem _editableStartPageItem;
     private bool _isAnimationEnabled;
     private bool _isFlyoutClosed;
 
@@ -235,6 +235,7 @@ public class StartPageViewModel : ObservableObject
 
     private async Task GetStartPageElementsAsync()
     {
-        StartPageItems = new ObservableCollection<StartPageItem>(await _dataTransferService.GetStartPageElementsAsync());
+        StartPageItems =
+            new ObservableCollection<StartPageItem>(await _dataTransferService.GetStartPageElementsAsync());
     }
 }

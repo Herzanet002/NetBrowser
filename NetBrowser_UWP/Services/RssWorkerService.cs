@@ -1,12 +1,12 @@
-﻿using NetBrowser_UWP.Helpers;
-using NetBrowser_UWP.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
 using System.Xml;
-using SyndicationFeed = System.ServiceModel.Syndication.SyndicationFeed;
+using NetBrowser_UWP.Helpers;
+using NetBrowser_UWP.Models;
 
 namespace NetBrowser_UWP.Services;
 
@@ -19,25 +19,8 @@ public class RssWorkerService : IRssWorkerService
         _httpClientFactory = httpClientFactory;
     }
 
-    private async Task<SyndicationFeed> GetSyndicationFeedAsync(RssFeeder rssFeeder)
-    {
-        var settings = new XmlReaderSettings { Async = true };
-        try
-        {
-            var client = _httpClientFactory.CreateClient();
-            var content = await client.GetStreamAsync(rssFeeder.RssUrl);
-            using var reader = XmlReader.Create(content, settings);
-            var feed = SyndicationFeed.Load(reader);
-            reader.Close();
-            return feed;
-        }
-        catch (Exception ex)
-        {
-            return null;
-        }
-    }
-
-    public async IAsyncEnumerable<ContentModel> GetFeeds(IEnumerable<RssFeeder> rssFeeders, IEnumerable<ContentModel> favoriteItems = null)
+    public async IAsyncEnumerable<ContentModel> GetFeeds(IEnumerable<RssFeeder> rssFeeders,
+        IEnumerable<ContentModel> favoriteItems = null)
     {
         var syndicationFeeds = new List<SyndicationFeed>();
         await Task.Run(async () =>
@@ -68,6 +51,24 @@ public class RssWorkerService : IRssWorkerService
                     IsFavorite = commonFavorite is not null
                 };
             }
+        }
+    }
+
+    private async Task<SyndicationFeed> GetSyndicationFeedAsync(RssFeeder rssFeeder)
+    {
+        var settings = new XmlReaderSettings {Async = true};
+        try
+        {
+            var client = _httpClientFactory.CreateClient();
+            var content = await client.GetStreamAsync(rssFeeder.RssUrl);
+            using var reader = XmlReader.Create(content, settings);
+            var feed = SyndicationFeed.Load(reader);
+            reader.Close();
+            return feed;
+        }
+        catch (Exception ex)
+        {
+            return null;
         }
     }
 }

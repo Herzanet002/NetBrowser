@@ -1,11 +1,11 @@
-﻿using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Helpers;
-using NetBrowser_UWP.Views.Settings;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Helpers;
+using NetBrowser_UWP.Views.Settings;
 using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 using NavigationViewBackRequestedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs;
 using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
@@ -15,19 +15,19 @@ namespace NetBrowser_UWP.Services;
 
 public class NavigationViewService : INavigationViewService
 {
-    public INavigationService NavigationService { get; }
-    public event NavigatedEventHandler Navigated;
-
     private NavigationView _navigationView;
-
-    public IList<object> MenuItems => _navigationView?.MenuItems;
-
-    public object SettingsItem => _navigationView?.SettingsItem;
 
     public NavigationViewService(INavigationService navigationService)
     {
         NavigationService = navigationService;
     }
+
+    public INavigationService NavigationService { get; }
+    public event NavigatedEventHandler Navigated;
+
+    public IList<object> MenuItems => _navigationView?.MenuItems;
+
+    public object SettingsItem => _navigationView?.SettingsItem;
 
     public void Initialize(Frame frame, NavigationView navigationView, Type pageType = default)
     {
@@ -37,11 +37,6 @@ public class NavigationViewService : INavigationViewService
         _navigationView.ItemInvoked += OnItemInvoked;
         NavigationService.Navigated += OnNavigated;
         if (pageType != default) NavigationService.Navigate(pageType);
-    }
-
-    private void OnNavigated(object sender, NavigationEventArgs e)
-    {
-        Navigated?.Invoke(sender, e);
     }
 
     public void UnregisterEvents()
@@ -60,6 +55,11 @@ public class NavigationViewService : INavigationViewService
                    GetSelectedItem(_navigationView.FooterMenuItems, pageType);
 
         return null;
+    }
+
+    private void OnNavigated(object sender, NavigationEventArgs e)
+    {
+        Navigated?.Invoke(sender, e);
     }
 
     private void OnBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

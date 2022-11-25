@@ -1,17 +1,16 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using NetBrowser_UWP.ViewModels.News;
 
 // Документацию по шаблону элемента "Диалоговое окно содержимого" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace NetBrowser_UWP.Views.News
+namespace NetBrowser_UWP.Views.News;
+
+public sealed partial class FirstRunRecommendationsDialog : ContentDialog
 {
-    public sealed partial class FirstRunRecommendationsDialog : ContentDialog
+    public FirstRunRecommendationsDialog()
     {
-        public FirstRunRecommendationsDialog()
-        {
-            this.InitializeComponent();
-            DataContext = Ioc.Default.GetRequiredService<FirstRunRecommendationsViewModel>();
-        }
+        InitializeComponent();
+        DataContext = Ioc.Default.GetRequiredService<FirstRunRecommendationsViewModel>();
     }
 }

@@ -21,8 +21,6 @@ public class BookmarksPageViewModel : ObservableObject
     private readonly IDataTransferService _dataTransferService;
     private readonly TabViewService _tabViewService;
 
-    public IAsyncRelayCommand BookmarksPageSettingsLoadedCommand { get; set; }
-
     public BookmarksPageViewModel(IDataTransferService dataTransferService, TabViewService tabViewService)
     {
         _dataTransferService = dataTransferService;
@@ -30,10 +28,7 @@ public class BookmarksPageViewModel : ObservableObject
         BookmarksPageSettingsLoadedCommand = new AsyncRelayCommand(OnBookmarksPageSettingsLoadedCommandExecuted);
     }
 
-    private async Task OnBookmarksPageSettingsLoadedCommandExecuted(CancellationToken ct)
-    {
-        await GetBookmarksAsync();
-    }
+    public IAsyncRelayCommand BookmarksPageSettingsLoadedCommand { get; set; }
 
     public string BookmarkNewTitle
     {
@@ -57,6 +52,11 @@ public class BookmarksPageViewModel : ObservableObject
     {
         get => _bookmarksList;
         set => SetProperty(ref _bookmarksList, value);
+    }
+
+    private async Task OnBookmarksPageSettingsLoadedCommandExecuted(CancellationToken ct)
+    {
+        await GetBookmarksAsync();
     }
 
     public async Task GetBookmarksAsync()

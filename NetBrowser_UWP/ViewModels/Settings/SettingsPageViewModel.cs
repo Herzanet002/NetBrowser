@@ -1,14 +1,12 @@
 ﻿using Windows.UI.Xaml.Navigation;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml.Controls;
 using NetBrowser_UWP.Contracts.Services;
-using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
 public class SettingsPageViewModel : ObservableObject
 {
-    public INavigationViewService NavigationViewService { get; }
-
     private bool _isBackEnabled;
     private NavigationViewItem _selected;
 
@@ -18,13 +16,7 @@ public class SettingsPageViewModel : ObservableObject
         NavigationViewService.Navigated += OnNavigated;
     }
 
-    private void OnNavigated(object sender, NavigationEventArgs e)
-    {
-        IsBackEnabled = NavigationViewService.NavigationService.CanGoBack;
-
-        var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
-        if (selectedItem != null) Selected = selectedItem;
-    }
+    public INavigationViewService NavigationViewService { get; }
 
     public NavigationViewItem Selected
     {
@@ -36,5 +28,13 @@ public class SettingsPageViewModel : ObservableObject
     {
         get => _isBackEnabled;
         set => SetProperty(ref _isBackEnabled, value);
+    }
+
+    private void OnNavigated(object sender, NavigationEventArgs e)
+    {
+        IsBackEnabled = NavigationViewService.NavigationService.CanGoBack;
+
+        var selectedItem = NavigationViewService.GetSelectedItem(e.SourcePageType);
+        if (selectedItem != null) Selected = selectedItem;
     }
 }

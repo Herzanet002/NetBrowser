@@ -1,12 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using Prism.Commands;
-using System.Collections.ObjectModel;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
@@ -20,8 +20,6 @@ public class PersonalizePageViewModel : ObservableObject
     private int _startPageGridViewOrientation;
     private ObservableCollection<ThemeItem> _themesList;
 
-    public IAsyncRelayCommand PersonalizePageLoadedCommand { get; set; }
-
     public PersonalizePageViewModel(ILocalSettingsService localSettingsService, ShellPageViewModel mainPageViewModel)
     {
         _localSettingsService = localSettingsService;
@@ -29,16 +27,7 @@ public class PersonalizePageViewModel : ObservableObject
         PersonalizePageLoadedCommand = new AsyncRelayCommand(OnPersonalizePageLoadedCommandExecuted);
     }
 
-    private async Task OnPersonalizePageLoadedCommandExecuted(CancellationToken ct)
-    {
-        IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsSuggestionBarEnabled));
-        IsHomeButtonEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsHomeButtonEnabled));
-        IsAnimationEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsAnimationEnabled));
-        StartPageGridViewOrientation =
-            await _localSettingsService.ReadSettingAsync<int>(nameof(StartPageGridViewOrientation));
-        ThemesList = new ObservableCollection<ThemeItem>(Constants.Constants.ThemesDictionary.Values);
-        SelectedTheme = App.CurrentTheme;
-    }
+    public IAsyncRelayCommand PersonalizePageLoadedCommand { get; set; }
 
     public ICommand SelectThemeCommand => new DelegateCommand(OnSelectedThemeCommandExecuted, () => true);
 
@@ -99,6 +88,17 @@ public class PersonalizePageViewModel : ObservableObject
     }
 
     public ShellPageViewModel MainViewModel { get; }
+
+    private async Task OnPersonalizePageLoadedCommandExecuted(CancellationToken ct)
+    {
+        IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsSuggestionBarEnabled));
+        IsHomeButtonEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsHomeButtonEnabled));
+        IsAnimationEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsAnimationEnabled));
+        StartPageGridViewOrientation =
+            await _localSettingsService.ReadSettingAsync<int>(nameof(StartPageGridViewOrientation));
+        ThemesList = new ObservableCollection<ThemeItem>(Constants.Constants.ThemesDictionary.Values);
+        SelectedTheme = App.CurrentTheme;
+    }
 
     private void OnSelectedThemeCommandExecuted()
     {

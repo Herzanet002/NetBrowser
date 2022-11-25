@@ -1,13 +1,11 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
-namespace NetBrowser_UWP.Helpers
+namespace NetBrowser_UWP.Helpers;
+
+public static class StringHelpers
 {
-    public static class StringHelpers
+    public static string StripHtml(this string input)
     {
-        public static string StripHtml(this string input)
-        {
-            return Regex.Replace(input, "<.*?>", string.Empty);
-        }
+        return Regex.Replace(input, "<.*?>", string.Empty);
     }
 }

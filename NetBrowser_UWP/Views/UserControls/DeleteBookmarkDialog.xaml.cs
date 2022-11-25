@@ -1,6 +1,5 @@
 ﻿using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using NetBrowser_UWP.ViewModels;
 using NetBrowser_UWP.ViewModels.Settings;
 
 // Документацию по шаблону элемента "Диалоговое окно содержимого" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238

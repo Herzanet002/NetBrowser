@@ -6,5 +6,4 @@ public class SyndicationCategoryModel : BaseEntity
     public string Name { get; set; }
     public string Scheme { get; set; }
     public RssFeeder RssFeeder { get; set; }
-
 }
