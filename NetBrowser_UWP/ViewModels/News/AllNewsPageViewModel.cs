@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Helpers;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using Prism.Commands;
@@ -9,12 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.ServiceModel.Syndication;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
-using NetBrowser_UWP.Helpers;
 
 namespace NetBrowser_UWP.ViewModels.News;
 
@@ -23,7 +22,7 @@ public class AllNewsPageViewModel : ObservableObject
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly TabViewService _tabViewService;
     private readonly IDataTransferService _dataTransferService;
-    private readonly AppConfigService _appConfigService;
+
     private bool _isProgressRingActive = true;
     private ContentModel _newsForSharing;
     private ContentModel _selectedItemInAllNews;
@@ -37,16 +36,16 @@ public class AllNewsPageViewModel : ObservableObject
 
     public AllNewsPageViewModel(IServiceScopeFactory serviceScopeFactory,
         TabViewService tabViewService,
-        IDataTransferService dataTransferService, AppConfigService appConfigService)
+        IDataTransferService dataTransferService)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _tabViewService = tabViewService;
         _dataTransferService = dataTransferService;
-        _appConfigService = appConfigService;
+
 
         News = new ObservableCollection<ContentModel>();
         InitializeCommands();
-        DataTransferManager.GetForCurrentView().DataRequested += NewsPageViewModelOnDataSharing;
+        DataTransferManager.GetForCurrentView().DataRequested += OnDataSharing;
     }
 
     private void InitializeCommands()
@@ -110,7 +109,7 @@ public class AllNewsPageViewModel : ObservableObject
         set => SetProperty(ref _selectedItemInAllNews, value);
     }
 
-    private void NewsPageViewModelOnDataSharing(DataTransferManager sender, DataRequestedEventArgs args)
+    private void OnDataSharing(DataTransferManager sender, DataRequestedEventArgs args)
     {
         if (_newsForSharing == null) return;
 
@@ -141,7 +140,7 @@ public class AllNewsPageViewModel : ObservableObject
 
         var favoriteNews = await _dataTransferService.GetAllFavoritesNewsContentAsync();
         var contentModels = rssWorker.GetFeeds(sources, favoriteNews.ToList());
-        
+
         return contentModels;
     }
 }

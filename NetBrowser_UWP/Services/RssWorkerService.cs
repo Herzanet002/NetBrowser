@@ -53,6 +53,8 @@ public class RssWorkerService : IRssWorkerService
             {
                 if (element is null) continue;
                 var commonFavorite = favoriteItems?.FirstOrDefault(x => x.Link == element.Links[0].Uri.ToString());
+                var t = rssFeeders.FirstOrDefault(x => x.Link == syndicationFeed.Links[0].Uri ||
+                                                       x.RssUrl == syndicationFeed.Links[0].Uri.OriginalString);
                 yield return new ContentModel
                 {
                     Title = element.Title.Text,

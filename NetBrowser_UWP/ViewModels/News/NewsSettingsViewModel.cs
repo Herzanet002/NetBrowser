@@ -20,7 +20,7 @@ namespace NetBrowser_UWP.ViewModels.News
 
         private async Task OnClearRecommendCategoriesCommandExecuted()
         {
-            await _dataTransferService.ClearAllRecommendationCategories();
+            await _dataTransferService.ClearAllRecommendedCategories();
             await new ContentDialog()
             {
                 Title = "Успешно выполнено",

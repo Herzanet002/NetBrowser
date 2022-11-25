@@ -28,7 +28,7 @@
     </interactivity:Interaction.Behaviors>
     <Grid>
         <Grid.Resources>
-            <DataTemplate x:Key="ListViewCategoryTemplate" x:DataType="models:CategoryRssFeeder">
+            <DataTemplate x:Key="ListViewCategoryTemplate" x:DataType="models:RssFeeder">
                 <Grid>
                     <TextBlock
                         Text="{x:Bind Name}"/>

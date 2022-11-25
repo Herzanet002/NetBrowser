@@ -23,26 +23,38 @@ namespace NetBrowser_UWP.ViewModels.News
     {
         private readonly IDataTransferService _dataTransferService;
         private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly TabViewService _tabViewService;
         private ObservableCollection<ContentModel> _recommendedNews;
         public IAsyncRelayCommand RecommendationsNewsPageLoadedCommand { get; set; }
         public IAsyncRelayCommand CategoriesButtonSetCommand { get; set; }
         public IAsyncRelayCommand AddNewsToFavoriteCommand { get; set; }
         public DelegateCommand<ContentModel> ShareNewsCommand { get; set; }
+        public IAsyncRelayCommand ItemOpenCommand { get; set; }
         private ContentModel _newsForSharing;
         private bool _isProgressRingActive = true;
         private bool _isConfiguredHidden;
 
-        public RecommendationsNewsPageViewModel(IDataTransferService dataTransferService, IServiceScopeFactory serviceScopeFactory)
+        public RecommendationsNewsPageViewModel(IDataTransferService dataTransferService, IServiceScopeFactory serviceScopeFactory,
+            TabViewService tabViewService)
         {
             _dataTransferService = dataTransferService;
             _serviceScopeFactory = serviceScopeFactory;
+            _tabViewService = tabViewService;
             RecommendationsNewsPageLoadedCommand =
                 new AsyncRelayCommand(OnRecommendationsNewsPageLoadedCommandExecuted);
             CategoriesButtonSetCommand = new AsyncRelayCommand(OnCategoriesButtonSetCommandExecuted);
             ShareNewsCommand = new DelegateCommand<ContentModel>(OnShareNewsCommandExecuted);
             AddNewsToFavoriteCommand = new AsyncRelayCommand<ContentModel>(OnAddNewsToFavoriteCommandExecuted);
+            ItemOpenCommand = new AsyncRelayCommand<ContentModel>(OnItemOpenCommandExecuted);
             DataTransferManager.GetForCurrentView().DataRequested += NewsPageViewModelOnDataSharing;
         }
+
+        private async Task OnItemOpenCommandExecuted(ContentModel contentItem)
+        {
+            if (contentItem != null)
+                await _tabViewService.CreateNewWebTab(contentItem.Link);
+        }
+
         private void NewsPageViewModelOnDataSharing(DataTransferManager sender, DataRequestedEventArgs args)
         {
             if (_newsForSharing == null) return;

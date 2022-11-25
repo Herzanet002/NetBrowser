@@ -1,15 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using Prism.Commands;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.ServiceModel.Syndication;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
@@ -19,17 +16,16 @@ namespace NetBrowser_UWP.ViewModels.News
     public class FirstRunRecommendationsViewModel : ObservableObject
     {
         private readonly IDataTransferService _dataTransferService;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private ObservableCollection<CategoryRssFeeder> _categories;
+        private ObservableCollection<RssFeeder> _categories;
         public IAsyncRelayCommand PageLoadedCommand { get; set; }
         public IAsyncRelayCommand OkButtonCommand { get; set; }
         public DelegateCommand<SelectionChangedEventArgs> SelectionChangedCommand { get; set; }
-        private ObservableCollection<CategoryRssFeeder> _chosenCategories;
+        private ObservableCollection<RssFeeder> _chosenCategories;
         private bool _isProgressRingActive = true;
         private bool _canContinue;
-        
 
-        public ObservableCollection<CategoryRssFeeder> Categories
+
+        public ObservableCollection<RssFeeder> Categories
         {
             get => _categories;
             set => SetProperty(ref _categories, value);
@@ -41,7 +37,7 @@ namespace NetBrowser_UWP.ViewModels.News
             set => SetProperty(ref _canContinue, value);
         }
 
-        
+
 
         public bool IsProgressRingActive
         {
@@ -49,15 +45,14 @@ namespace NetBrowser_UWP.ViewModels.News
             set => SetProperty(ref _isProgressRingActive, value);
         }
 
-        public FirstRunRecommendationsViewModel(IDataTransferService dataTransferService, IServiceScopeFactory serviceScopeFactory)
+        public FirstRunRecommendationsViewModel(IDataTransferService dataTransferService)
         {
             _dataTransferService = dataTransferService;
-            _serviceScopeFactory = serviceScopeFactory;
             PageLoadedCommand = new AsyncRelayCommand(OnPageLoaded);
             OkButtonCommand = new AsyncRelayCommand(OnOkButtonCommandExecuted);
             SelectionChangedCommand = new DelegateCommand<SelectionChangedEventArgs>(OnSelectionChangedCommandExecuted);
-            Categories = new ObservableCollection<CategoryRssFeeder>();
-            _chosenCategories = new ObservableCollection<CategoryRssFeeder>();
+            Categories = new ObservableCollection<RssFeeder>();
+            _chosenCategories = new ObservableCollection<RssFeeder>();
         }
 
         private async Task OnOkButtonCommandExecuted(CancellationToken ct = default)
@@ -69,12 +64,12 @@ namespace NetBrowser_UWP.ViewModels.News
         {
             foreach (var item in obj.AddedItems)
             {
-                _chosenCategories.Add(item as CategoryRssFeeder);
+                _chosenCategories.Add(item as RssFeeder);
             }
 
             foreach (var item in obj.RemovedItems)
             {
-                _chosenCategories.Remove(item as CategoryRssFeeder);
+                _chosenCategories.Remove(item as RssFeeder);
             }
 
             CanContinue = _chosenCategories.Count > 2;
@@ -83,14 +78,14 @@ namespace NetBrowser_UWP.ViewModels.News
         private async Task OnPageLoaded(CancellationToken ct = default)
         {
             var appConfigService = Ioc.Default.GetRequiredService<AppConfigService>();
-            var feedResources = appConfigService.GetSection<List<CategoryRssFeeder>>("CategoryFeedResources");
-            var categories = new HashSet<CategoryRssFeeder>();
+            var feedResources = appConfigService.GetSection<List<RssFeeder>>("FeedResources");
+            var categories = new HashSet<RssFeeder>();
             foreach (var feedResource in feedResources)
             {
                 categories.Add(feedResource);
             }
 
-            Categories = new ObservableCollection<CategoryRssFeeder>(categories);
+            Categories = new ObservableCollection<RssFeeder>(categories);
             IsProgressRingActive = false;
         }
     }

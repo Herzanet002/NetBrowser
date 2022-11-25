@@ -97,6 +97,12 @@
                         <Setter Property="BorderThickness" Value="5" />
                     </Style>
                 </GridView.ItemContainerStyle>
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Tapped">
+                        <core:InvokeCommandAction Command="{Binding ItemOpenCommand}"
+                                                  CommandParameter="{Binding SelectedItem, ElementName=AdaptiveGrid}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
             </controls:AdaptiveGridView>
             <StackPanel Grid.Row="0" Margin="30" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20"
                         Visibility="{Binding IsConfiguredHidden}">
