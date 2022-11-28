@@ -159,7 +159,6 @@
     <Compile Include="Services\AppConfigService.cs" />
     <Compile Include="Services\DataTransferDbService.cs" />
     <Compile Include="Services\DbInitializeService.cs" />
-    <Compile Include="Services\FirstRunRecommendationsService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NavigationViewService.cs" />
     <Compile Include="Services\TabViewService.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -80,7 +81,8 @@ public class FavoriteNewsPageViewModel : ObservableObject
 
     private async Task OnFavoriteNewsPageLoadedExecuted(CancellationToken ct)
     {
-        FavoriteNews =
-            new ObservableCollection<ContentModel>(await _dataTransferService.GetAllFavoritesNewsContentAsync());
+        var allFavoritesNewsContent = await _dataTransferService.GetAllFavoritesNewsContentAsync();
+        var reversedFavorites = allFavoritesNewsContent.Reverse();
+        FavoriteNews = new ObservableCollection<ContentModel>(reversedFavorites);
     }
 }

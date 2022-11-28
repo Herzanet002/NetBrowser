@@ -9,6 +9,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:news="using:NetBrowser_UWP.ViewModels.News"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:converters="using:NetBrowser_UWP.Converters"
     mc:Ignorable="d"
     Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}"
     d:DataContext="{d:DesignInstance Type=news:FavoriteNewsPageViewModel,IsDesignTimeCreatable=True}">
@@ -19,28 +20,26 @@
     </interactivity:Interaction.Behaviors>
 
     <Page.Resources>
+        <converters:DateTimeToDateConverter x:Key="TimeConverter" />
         <DataTemplate x:Key="ListViewItemNewsTemplate" x:DataType="models:ContentModel">
             <Grid Margin="0,12,0,12">
-                <Grid Margin="12,0,0,0" ColumnSpacing="30">
+                <Grid Margin="12,0,0,0" ColumnSpacing="40">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="3*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="0.5*" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
-                    <controls:ImageEx Source="{x:Bind Feeder.FeederImageLink}" Width="100" Height="50"
-                                      Background="{Binding Source={StaticResource ThemeManager}, Path=AppTitleBrush}"
-                                      CornerRadius="6" />
-                    <TextBlock Grid.Column="1" Text="{x:Bind Feeder.Name}" FontSize="14" FontWeight="SemiBold"
-                               Style="{ThemeResource BaseTextBlockStyle}" VerticalAlignment="Center"
-                               HorizontalAlignment="Left" Margin="0,0,0,6" />
-                    <TextBlock Grid.Column="2" Text="{x:Bind Title}" Style="{ThemeResource BodyTextBlockStyle}"
-                               TextTrimming="CharacterEllipsis" MaxLines="2" HorizontalTextAlignment="Left" />
-                    <TextBlock Grid.Column="3" Text="{x:Bind PubDate}" FontWeight="SemiBold"
+
+                    <Border Padding="5,0,5,0" CornerRadius="6"  Background="{Binding Source={StaticResource ThemeManager}, Path=AppTitleBrush}" >
+                        <controls:ImageEx Source="{x:Bind Feeder.FeederImageLink}" MinWidth="80" Height="50" HorizontalAlignment="Stretch"/>
+                    </Border>
+                    <TextBlock Grid.Column="1" Text="{x:Bind Title}" Style="{ThemeResource BodyTextBlockStyle}" VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis" MaxLines="3" HorizontalTextAlignment="Left" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Column="2" Text="{x:Bind PubDate}" FontWeight="SemiBold" Margin="10,0"
                                Style="{ThemeResource CaptionTextBlockStyle}"
-                               VerticalAlignment="Center" HorizontalAlignment="Right" />
-                    <Button Grid.Column="4" Width="50" Height="35" Style="{StaticResource TabViewButtonStyle}">
+                               VerticalAlignment="Center" HorizontalAlignment="Left" />
+                    <Button Grid.Column="3" Width="50" Height="35" Style="{StaticResource TabViewButtonStyle}">
                         <Button.Content>
                             <FontIcon Glyph="&#xE712;" />
                         </Button.Content>

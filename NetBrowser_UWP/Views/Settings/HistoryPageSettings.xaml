@@ -96,7 +96,7 @@
                                 <TextBlock Text="{x:Bind Time, Converter={StaticResource TimeConverter}}"
                                            VerticalAlignment="Center"
                                            FontSize="16" FontWeight="SemiBold" Grid.Column="0" />
-                                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,0,80,2"
+                                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,0,50,2"
                                             VerticalAlignment="Center">
                                     <TextBlock Text="{x:Bind Name}" FontSize="16"
                                                Margin="10,0" FontWeight="Bold" />

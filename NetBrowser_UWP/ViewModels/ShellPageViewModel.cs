@@ -351,6 +351,7 @@ public class ShellPageViewModel : ObservableObject
 
     private bool _isWebLoading;
     private bool _isBookmarksExists;
+    private bool _isSuggestionListOpen;
 
     #endregion Private Global Element Region
 
@@ -435,6 +436,12 @@ public class ShellPageViewModel : ObservableObject
         set => SetProperty(ref _isProgressRingActive, value);
     }
 
+    public bool IsSuggestionListOpen
+    {
+        get => _isSuggestionListOpen;
+        set => SetProperty(ref _isSuggestionListOpen, value);
+    }
+
     public bool DeleteBookmarkButtonVisibility
     {
         get => _visibilityDeleteBookmarkButton;
@@ -515,7 +522,8 @@ public class ShellPageViewModel : ObservableObject
     private async Task OnSearchBoxTextChangedCommandExecuted(AutoSuggestBoxTextChangedEventArgs obj)
     {
         if (obj is not { }) return;
-        if (obj.Reason == AutoSuggestionBoxTextChangeReason.UserInput) await AutoSuggestListFill();
+        if (obj.Reason == AutoSuggestionBoxTextChangeReason.UserInput) 
+            await AutoSuggestListFill();
     }
 
     //TODO: Обновление поисковых запросов

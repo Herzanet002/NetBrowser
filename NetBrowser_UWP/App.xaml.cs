@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -10,6 +11,7 @@ using Windows.UI.Xaml.Navigation;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.DbContexts;
 using NetBrowser_UWP.Helpers;
@@ -48,6 +50,10 @@ public sealed partial class App : Application
 
     private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
+        e.Handled = true;
+#if DEBUG
+        Debug.WriteLine(e.Exception);
+#endif
     }
 
     private static IServiceProvider ConfigureDependencyInjection()
@@ -69,14 +75,13 @@ public sealed partial class App : Application
         services.AddTransient<INavigationViewService, NavigationViewService>();
         services.AddSingleton<AppConfigService>();
         services.AddSingleton<TabViewService>();
-        services.AddScoped<FirstRunRecommendationsService>();
 
         services.AddScoped<IRssWorkerService, RssWorkerService>();
 
         services.RegisterViewModels();
 
         services.AddHttpClient("NewsClient");
-
+        services.AddLogging(x => x.AddConsole());
         return services.BuildServiceProvider();
     }
 
