@@ -18,6 +18,7 @@ using NetBrowser_UWP.Views.News;
 using NetBrowser_UWP.Views.Settings;
 using Prism.Commands;
 using winUI = Microsoft.UI.Xaml.Controls;
+using Windows.UI.ViewManagement;
 
 namespace NetBrowser_UWP.ViewModels;
 
@@ -66,6 +67,21 @@ public class ShellPageViewModel : ObservableObject
         _webView2Service.NavigationStarting += WebViewOnNavigationStarting;
         _webView2Service.NewWindowRequested += WebViewOnNewWindowRequested;
         _webView2Service.NavigationCompleted += WebViewOnNavigationCompleted;
+        _webView2Service.ContainsFullScreenElementChanged += WebViewOnContainsFullScreenElementChanged;
+    }
+
+    private void WebViewOnContainsFullScreenElementChanged(CoreWebView2 sender, object args)
+    {
+        var applicationView = ApplicationView.GetForCurrentView();
+
+        if (sender.ContainsFullScreenElement)
+        {
+            var t = applicationView.TryEnterFullScreenMode();
+        }
+        else if (applicationView.IsFullScreenMode)
+        {
+            applicationView.ExitFullScreenMode();
+        }
     }
 
     private void TabViewServiceSelectionChangedHandler(object sender, SelectionChangedEventHandler e)

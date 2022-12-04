@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
+using Windows.Foundation;
 
 namespace NetBrowser_UWP.Contracts.Services;
 
@@ -13,4 +14,5 @@ public interface IWebView2Service
     event EventHandler<CoreWebView2NavigationCompletedEventArgs> NavigationCompleted;
     event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;
     event EventHandler<CoreWebView2NavigationStartingEventArgs> NavigationStarting;
+    event TypedEventHandler<CoreWebView2, object> ContainsFullScreenElementChanged;
 }

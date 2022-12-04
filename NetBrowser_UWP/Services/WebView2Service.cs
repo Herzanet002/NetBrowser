@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using NetBrowser_UWP.Contracts.Services;
@@ -25,6 +26,7 @@ public class WebView2Service : IWebView2Service
 
     public event EventHandler<CoreWebView2NavigationCompletedEventArgs> NavigationCompleted;
     public event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;
+    public event TypedEventHandler<CoreWebView2, object> ContainsFullScreenElementChanged;
     public event EventHandler<CoreWebView2NavigationStartingEventArgs> NavigationStarting;
 
 
@@ -37,6 +39,7 @@ public class WebView2Service : IWebView2Service
         instance.NavigationCompleted += OnNavigationCompleted;
         instance.CoreWebView2.NewWindowRequested += OnNewWindowRequested;
         instance.NavigationStarting += OnNavigationStarting;
+        instance.CoreWebView2.ContainsFullScreenElementChanged += OnContainsFullScreenElementChanged;
         instance.CoreWebView2.Navigate(string.IsNullOrWhiteSpace(uriToNavigate)
             ? App.CurrentWebEngine.HomePage
             : ResolveUri(uriToNavigate).ToString());
@@ -68,6 +71,11 @@ public class WebView2Service : IWebView2Service
                             uriAddress.Scheme == Uri.UriSchemeFtp);
 
         return isUriCreated ? uriAddress : new Uri(App.CurrentWebEngine.Prefix + address);
+    }
+
+    private void OnContainsFullScreenElementChanged(CoreWebView2 sender, object args)
+    {
+        ContainsFullScreenElementChanged?.Invoke(sender, args);
     }
 
     private void OnNavigationStarting(WebView2 sender, CoreWebView2NavigationStartingEventArgs args)
