@@ -17,8 +17,6 @@
             </ResourceDictionary.MergedDictionaries>
             <local:ThemeManager x:Key="ThemeManager" />
             <FontFamily x:Key="Segoe Fluent">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
-            <x:String x:Key="AppVersion">ver.0.10.31.w2</x:String>
-
             <Style TargetType="ContentDialog" BasedOn="{StaticResource DefaultContentDialogStyle}"
                    x:Key="ContentDialogStyle" />
 

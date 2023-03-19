@@ -154,7 +154,7 @@ public class TabViewService : ObservableObject, ITabViewService
         var newTab = CreateTabViewItemInstance(
             newWebView.CoreWebView2.DocumentTitle,
             newWebView,
-            new SymbolIconSource {Symbol = Symbol.More});
+            new SymbolIconSource { Symbol = Symbol.More });
 
         if (isReplaced)
             ChangeTabItem(GetSelectedTabItem(), newTab);
@@ -190,7 +190,7 @@ public class TabViewService : ObservableObject, ITabViewService
         var settingsTab = CreateTabViewItemInstance(
             "Settings".GetLocalized(),
             new SettingsPage(pageType ?? typeof(MainItemPageSettings)),
-            new SymbolIconSource {Symbol = Symbol.Setting});
+            new SymbolIconSource { Symbol = Symbol.Setting });
 
         AddTabItem(settingsTab);
         ChangeSelectedTabItem(settingsTab);

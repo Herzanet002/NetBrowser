@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using NetBrowser_UWP.ViewModels;

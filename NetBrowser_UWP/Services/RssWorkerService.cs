@@ -56,7 +56,7 @@ public class RssWorkerService : IRssWorkerService
 
     private async Task<SyndicationFeed> GetSyndicationFeedAsync(RssFeeder rssFeeder)
     {
-        var settings = new XmlReaderSettings {Async = true};
+        var settings = new XmlReaderSettings { Async = true };
         try
         {
             var client = _httpClientFactory.CreateClient();

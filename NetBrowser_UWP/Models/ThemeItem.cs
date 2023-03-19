@@ -16,7 +16,7 @@ public class ThemeItem
         var resourceDictionary = new ResourceDictionary();
         Application.LoadComponent(resourceDictionary, new Uri(path));
 
-        ThemeMode = (ElementTheme) resourceDictionary[nameof(ThemeMode)];
+        ThemeMode = (ElementTheme)resourceDictionary[nameof(ThemeMode)];
 
         BackgroundBrush = resourceDictionary[nameof(BackgroundBrush)] as Brush;
         SecondBrush = resourceDictionary[nameof(SecondBrush)] as Brush;

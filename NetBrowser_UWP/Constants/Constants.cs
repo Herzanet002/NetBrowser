@@ -30,15 +30,15 @@ public static class Constants
 
     public static Dictionary<string, ThemeItem> ThemesDictionary = new()
     {
-        {LightTheme.Name, LightTheme},
-        {LightPinkTheme.Name, LightPinkTheme},
-        {LightBlueTheme.Name, LightBlueTheme},
-        {LightAcrylicTheme.Name, LightAcrylicTheme},
-        {LightLilacTheme.Name, LightLilacTheme},
-        {DarkTheme.Name, DarkTheme},
-        {DarkBlueTheme.Name, DarkBlueTheme},
-        {DarkNavyBlueTheme.Name, DarkNavyBlueTheme},
-        {DarkAcrylicTheme.Name, DarkAcrylicTheme}
+        { LightTheme.Name, LightTheme },
+        { LightPinkTheme.Name, LightPinkTheme },
+        { LightBlueTheme.Name, LightBlueTheme },
+        { LightAcrylicTheme.Name, LightAcrylicTheme },
+        { LightLilacTheme.Name, LightLilacTheme },
+        { DarkTheme.Name, DarkTheme },
+        { DarkBlueTheme.Name, DarkBlueTheme },
+        { DarkNavyBlueTheme.Name, DarkNavyBlueTheme },
+        { DarkAcrylicTheme.Name, DarkAcrylicTheme }
     };
 
     //private const string FAVICONS_SERVICE = "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=";

@@ -23,7 +23,7 @@
 
             <TextBlock Text="{helpers:ResourceString Name=BrowserVersionBlock/Text}" HorizontalTextAlignment="Center"
                        Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}">
-                <Run Text="{StaticResource AppVersion}" />
+                <Run Text="{Binding AppVersion}" />
             </TextBlock>
 
             <TextBlock Text="{helpers:ResourceString Name=BuiltOnTechnologyBlock/Text}"

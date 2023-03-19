@@ -19,7 +19,7 @@ public class NavigationHelper
     // NavHelper.SetNavigateTo(navigationViewItem, typeof(ShellPage));
     public static Type GetNavigateTo(NavigationViewItem item)
     {
-        return (Type) item.GetValue(NavigateToProperty);
+        return (Type)item.GetValue(NavigateToProperty);
     }
 
     public static void SetNavigateTo(NavigationViewItem item, Type value)

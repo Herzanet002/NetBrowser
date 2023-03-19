@@ -15,10 +15,10 @@ namespace NetBrowser_UWP.ViewModels.News;
 
 public class FirstRunRecommendationsViewModel : ObservableObject
 {
+    private readonly ObservableCollection<RssFeeder> _chosenCategories;
     private readonly IDataTransferService _dataTransferService;
     private bool _canContinue;
     private ObservableCollection<RssFeeder> _categories;
-    private readonly ObservableCollection<RssFeeder> _chosenCategories;
     private bool _isProgressRingActive = true;
 
     public FirstRunRecommendationsViewModel(IDataTransferService dataTransferService)

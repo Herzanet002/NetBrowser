@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -18,7 +19,6 @@ using NetBrowser_UWP.Views.News;
 using NetBrowser_UWP.Views.Settings;
 using Prism.Commands;
 using winUI = Microsoft.UI.Xaml.Controls;
-using Windows.UI.ViewManagement;
 
 namespace NetBrowser_UWP.ViewModels;
 
@@ -88,7 +88,7 @@ public class ShellPageViewModel : ObservableObject
     {
         SelectionChangedTabHandler();
         if (_tabViewService.GetSelectedWebView() != null)
-            IsWebLoading = (bool) _tabViewService.GetSelectedWebView().Tag;
+            IsWebLoading = (bool)_tabViewService.GetSelectedWebView().Tag;
         SetVisualUiElementStates(_tabViewService.GetSelectedWebView());
         CommandsRaiseCanExecuteChanged();
     }
@@ -107,9 +107,9 @@ public class ShellPageViewModel : ObservableObject
     {
         LoadedPageCommand = new AsyncRelayCommand(InitializeAsync);
         BackButtonCommand = new DelegateCommand(OnBackButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() is {CanGoBack: true});
+            () => _tabViewService.GetSelectedWebView() is { CanGoBack: true });
         ForwardButtonCommand = new DelegateCommand(OnForwardButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() is {CanGoForward: true});
+            () => _tabViewService.GetSelectedWebView() is { CanGoForward: true });
         ReloadButtonCommand = new DelegateCommand(OnReloadButtonCommandExecuted);
         StopLoadingButtonCommand = new DelegateCommand(OnStopLoadingButtonCommandExecuted);
         HomeButtonCommand = new DelegateCommand(OnHomeButtonCommandExecuted);
@@ -197,7 +197,7 @@ public class ShellPageViewModel : ObservableObject
         }
         else
         {
-            var loadingState = (bool) webInstance.Tag;
+            var loadingState = (bool)webInstance.Tag;
             SetProgressRingActivity(loadingState);
         }
 
@@ -503,13 +503,13 @@ public class ShellPageViewModel : ObservableObject
 
     private void OnBackButtonCommandExecuted()
     {
-        if (_tabViewService.GetSelectedWebView() is {CanGoBack: true})
+        if (_tabViewService.GetSelectedWebView() is { CanGoBack: true })
             _tabViewService.GetSelectedWebView().GoBack();
     }
 
     private void OnForwardButtonCommandExecuted()
     {
-        if (_tabViewService.GetSelectedWebView() is {CanGoForward: true})
+        if (_tabViewService.GetSelectedWebView() is { CanGoForward: true })
             _tabViewService.GetSelectedWebView().GoForward();
     }
 
@@ -538,7 +538,7 @@ public class ShellPageViewModel : ObservableObject
     private async Task OnSearchBoxTextChangedCommandExecuted(AutoSuggestBoxTextChangedEventArgs obj)
     {
         if (obj is not { }) return;
-        if (obj.Reason == AutoSuggestionBoxTextChangeReason.UserInput) 
+        if (obj.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             await AutoSuggestListFill();
     }
 
@@ -669,7 +669,7 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task OnBookmarksFlyoutListViewItemClickExecuted(object sender)
     {
-        if (sender is not ItemClickEventArgs {ClickedItem: BookmarkDetails selectedBookmarkItem}) return;
+        if (sender is not ItemClickEventArgs { ClickedItem: BookmarkDetails selectedBookmarkItem }) return;
         await _tabViewService.CreateNewWebTab(selectedBookmarkItem.Url);
         IsFlyoutClosed = true;
     }

@@ -165,7 +165,7 @@ public class StartPageViewModel : ObservableObject
 
     private async Task OnKeyDownCommandExecuted(object obj)
     {
-        if (obj is not KeyRoutedEventArgs {Key: VirtualKey.Enter}) return;
+        if (obj is not KeyRoutedEventArgs { Key: VirtualKey.Enter }) return;
         await OnSearchButtonTappedCommandExecuted().ConfigureAwait(false);
     }
 

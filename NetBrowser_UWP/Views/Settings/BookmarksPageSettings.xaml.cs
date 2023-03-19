@@ -23,12 +23,12 @@ public sealed partial class BookmarksPageSettings : Page
 
     private void BookmarksListView_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        var flyout = FlyoutBase.GetAttachedFlyout((FrameworkElement) sender);
+        var flyout = FlyoutBase.GetAttachedFlyout((FrameworkElement)sender);
         var options = new FlyoutShowOptions
         {
-            Position = e.GetPosition((FrameworkElement) sender),
+            Position = e.GetPosition((FrameworkElement)sender),
             ShowMode = FlyoutShowMode.Transient
         };
-        flyout?.ShowAt((FrameworkElement) sender, options);
+        flyout?.ShowAt((FrameworkElement)sender, options);
     }
 }

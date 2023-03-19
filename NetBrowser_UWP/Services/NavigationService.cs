@@ -38,7 +38,7 @@ public class NavigationService : INavigationService
         }
     }
 
-    public bool CanGoBack => Frame is {CanGoBack: true};
+    public bool CanGoBack => Frame is { CanGoBack: true };
 
     public bool GoBack()
     {

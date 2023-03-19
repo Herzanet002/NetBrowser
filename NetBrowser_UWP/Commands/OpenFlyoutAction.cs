@@ -9,14 +9,14 @@ public class OpenFlyoutAction : DependencyObject, IAction
 {
     public object Execute(object sender, object parameter)
     {
-        var param = (RightTappedRoutedEventArgs) parameter;
-        var flyout = FlyoutBase.GetAttachedFlyout((FrameworkElement) sender);
+        var param = (RightTappedRoutedEventArgs)parameter;
+        var flyout = FlyoutBase.GetAttachedFlyout((FrameworkElement)sender);
         var options = new FlyoutShowOptions
         {
-            Position = param.GetPosition((FrameworkElement) sender),
+            Position = param.GetPosition((FrameworkElement)sender),
             ShowMode = FlyoutShowMode.Standard
         };
-        flyout?.ShowAt((FrameworkElement) sender, options);
+        flyout?.ShowAt((FrameworkElement)sender, options);
         return null;
     }
 }
