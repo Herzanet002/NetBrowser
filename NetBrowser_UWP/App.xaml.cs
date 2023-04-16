@@ -68,6 +68,7 @@ public sealed partial class App : Application
         services.AddTransient<DbInitializeService>();
         //Services & Managers
         services.AddSingleton<IDataTransferService, DataTransferDbService>();
+        services.AddSingleton<IUiExperienceService, UiExperienceService>();
         services.AddTransient<DbInitializeService>();
         services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
         services.AddSingleton<IWebView2Service, WebView2Service>();

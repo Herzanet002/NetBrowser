@@ -25,7 +25,7 @@
     <Grid>
         <Grid.Resources>
             <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
-            <Style x:Name="NavigationBarButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
+            <Style x:Name="NavigationBarButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="Padding" Value="0" />
@@ -105,28 +105,17 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}" Height="30">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-
-                <winUi:ProgressRing IsActive="{Binding IsProgressRingActive}" Height="10" Width="10"
-                                    Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}" />
-                <TextBlock
-                    VerticalAlignment="Center" Margin="15,0" FontSize="12.5" HorizontalTextAlignment="Center"
-                    Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}">
-                    <Run Text="{helpers:ResourceString Name=AppTitle/Text}" />
-                    <Run Text="{Binding AppTitleText}" />
-                </TextBlock>
-            </StackPanel>
-
+        <Grid Grid.Row="0" x:Name="AppTitleBar" Background="Transparent" Height="42">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
+                <ColumnDefinition/>
+                <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
+            </Grid.ColumnDefinitions>
         </Grid>
-
-        <Grid Grid.Row="1" HorizontalAlignment="Stretch"
-              Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
-              ColumnSpacing="5" Height="44" Padding="10,0,10,0">
+        <Grid ColumnSpacing="5" Padding="10,0,10,0" Margin="0,0,180,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -183,7 +172,7 @@
             <!--SearchBox-->
             <Grid Grid.Column="4" Margin="10,0,0,0">
                 <AutoSuggestBox x:Name="SearchBox" Style="{StaticResource AutoSuggestBoxTemplate}"
-                                Text="{Binding SearchBoxText, Mode=TwoWay}" QueryIcon="Find"
+                                Text="{Binding UiExperienceService.SearchBoxText, Mode=TwoWay}" QueryIcon="Find"
                                 ItemsSource="{Binding SearchBoxItemsCollection}"
                                 PlaceholderText="{helpers:ResourceString Name=SearchBoxPlaceholder/PlaceholderText}">
                     <AutoSuggestBox.Shadow>
@@ -425,7 +414,7 @@
         </Grid>
 
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="1">
             <Grid.Resources>
                 <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
             </Grid.Resources>

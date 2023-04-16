@@ -21,8 +21,6 @@
                    x:Key="ContentDialogStyle" />
 
         </ResourceDictionary>
-
-
     </Application.Resources>
 
 </Application>

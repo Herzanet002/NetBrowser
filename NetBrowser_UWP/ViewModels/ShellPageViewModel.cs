@@ -27,18 +27,21 @@ public class ShellPageViewModel : ObservableObject
     private readonly IDataTransferService _dataTransferService;
     private readonly ILocalSettingsService _localSettingsService;
     private readonly TabViewService _tabViewService;
+    public IUiExperienceService UiExperienceService { get; }
     private readonly IWebView2Service _webView2Service;
 
 
     public ShellPageViewModel(IDataTransferService dataTransferService,
         IWebView2Service webView2Service,
         ILocalSettingsService localSettingsService,
-        TabViewService tabViewService)
+        TabViewService tabViewService,
+        IUiExperienceService uiExperienceService)
     {
         _dataTransferService = dataTransferService;
         _webView2Service = webView2Service;
         _localSettingsService = localSettingsService;
         _tabViewService = tabViewService;
+        UiExperienceService = uiExperienceService;
         SetEventHandlers();
         //InitializeAsync();
 
@@ -153,15 +156,15 @@ public class ShellPageViewModel : ObservableObject
 
         var enumerable = searchTermList.ToList();
         var suitableItems = from item in enumerable
-            where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
+            where item.Contains(UiExperienceService.SearchBoxText, StringComparison.OrdinalIgnoreCase)
             select item;
 
         var enumerableList = suitableItems.ToList();
 
         if (enumerableList.Count == 0)
-            enumerableList.Add("Искать в " + App.CurrentWebEngine.Name + " " + SearchBoxText);
+            enumerableList.Add("Искать в " + App.CurrentWebEngine.Name + " " + UiExperienceService.SearchBoxText);
 
-        if (SearchBoxText.Length != 0)
+        if (UiExperienceService.SearchBoxText.Length != 0)
         {
             SearchBoxItemsCollection = enumerableList;
             return;
@@ -184,37 +187,11 @@ public class ShellPageViewModel : ObservableObject
         ForwardButtonCommand.RaiseCanExecuteChanged();
     }
 
-    private void SetProgressRingActivity(bool isActive)
-    {
-        IsProgressRingActive = isActive;
-    }
-
-    private void SetVisualUiElementStates(object sender)
-    {
-        if (sender is not winUI.WebView2 webInstance)
-        {
-            SetProgressRingActivity(false);
-        }
-        else
-        {
-            var loadingState = (bool)webInstance.Tag;
-            SetProgressRingActivity(loadingState);
-        }
-
-        SetBookmarkButtonAppearance();
-    }
-
-    private void SetVisualUiLabels(string appTitleText, string searchBoxText)
-    {
-        AppTitleText = appTitleText;
-        SearchBoxText = searchBoxText;
-    }
-
     private void WebViewOnNavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs args)
     {
         IsWebLoading = true;
         SetVisualUiElementStates(sender);
-        SetVisualUiLabels("LoadingString".GetLocalized(), args.Uri);
+        UiExperienceService.SetUiLabels("LoadingString".GetLocalized(), args.Uri);
     }
 
     private async void WebViewOnNewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs args)
@@ -248,7 +225,7 @@ public class ShellPageViewModel : ObservableObject
         IsWebLoading = false;
 
         if (webInstance.Source == null || _tabViewService.GetSelectedWebView() != sender) return;
-        SetVisualUiLabels(webInstance.CoreWebView2.DocumentTitle, webInstance.Source.AbsoluteUri);
+        UiExperienceService.SetUiLabels(webInstance.CoreWebView2.DocumentTitle, webInstance.Source.AbsoluteUri);
         SetVisualUiElementStates(sender);
         CommandsRaiseCanExecuteChanged();
     }
@@ -282,7 +259,7 @@ public class ShellPageViewModel : ObservableObject
     {
         if (_tabViewService.GetSelectedTabItem() == null)
         {
-            SetVisualUiLabels(null, null);
+            UiExperienceService.SetUiLabels(null, null);
             SetVisualUiElementStates(null);
             return;
         }
@@ -292,27 +269,27 @@ public class ShellPageViewModel : ObservableObject
         switch (_tabViewService.GetSelectedTabItem().Content)
         {
             case SettingsPage:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(),
+                UiExperienceService.SetUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(),
                     Constants.Constants.SETTINGS_ADDRESS);
                 break;
 
             case StartPage:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(), string.Empty);
+                UiExperienceService.SetUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(), string.Empty);
                 break;
 
             case winUI.WebView2:
                 if (_tabViewService.GetSelectedWebView()?.Source != null)
-                    SetVisualUiLabels(_tabViewService.GetSelectedWebView().CoreWebView2.DocumentTitle,
+                    UiExperienceService.SetUiLabels(_tabViewService.GetSelectedWebView().CoreWebView2.DocumentTitle,
                         _tabViewService.GetSelectedWebView().Source.AbsoluteUri);
                 break;
 
             case NewsShellPage:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(),
+                UiExperienceService.SetUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(),
                     Constants.Constants.NEWS_ADDRESS);
                 break;
 
             default:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(), string.Empty);
+                UiExperienceService.SetUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(), string.Empty);
                 break;
         }
     }
@@ -323,6 +300,28 @@ public class ShellPageViewModel : ObservableObject
         var bookmarksListTransfer = await _dataTransferService.GetBookmarksListAsync();
         var bookmarkDetailsEnumerable = bookmarksListTransfer.Reverse();
         BookmarksList = new ObservableCollection<BookmarkDetails>(bookmarkDetailsEnumerable);
+    }
+
+    #region Ui
+
+    private void SetProgressRingActivity(bool isActive)
+    {
+        IsProgressRingActive = isActive;
+    }
+
+    private void SetVisualUiElementStates(object sender)
+    {
+        if (sender is not winUI.WebView2 webInstance)
+        {
+            SetProgressRingActivity(false);
+        }
+        else
+        {
+            var loadingState = (bool)webInstance.Tag;
+            SetProgressRingActivity(loadingState);
+        }
+
+        SetBookmarkButtonAppearance();
     }
 
     private void SetBookmarkIconState(bool isAccessable)
@@ -348,6 +347,8 @@ public class ShellPageViewModel : ObservableObject
         SetBookmarkIconState(existableBookmark != null);
     }
 
+    #endregion
+
     #region Private Global Element Region
 
     private ObservableCollection<BookmarkDetails> _bookmarksList;
@@ -355,8 +356,7 @@ public class ShellPageViewModel : ObservableObject
 
     private IList<string> _searchBoxItemsCollection;
 
-    private string _appTitleText;
-    private string _searchBoxText;
+
     private string _bookmarkTitleForSave;
     private string _bookmarkUrlForSave;
 
@@ -410,11 +410,6 @@ public class ShellPageViewModel : ObservableObject
         set => SetProperty(ref _searchBoxItemsCollection, value);
     }
 
-    public string SearchBoxText
-    {
-        get => _searchBoxText;
-        set => SetProperty(ref _searchBoxText, value);
-    }
 
     public ObservableCollection<BookmarkDetails> BookmarksList
     {
@@ -428,11 +423,6 @@ public class ShellPageViewModel : ObservableObject
         set => SetProperty(ref _historyList, value);
     }
 
-    public string AppTitleText
-    {
-        get => _appTitleText;
-        set => SetProperty(ref _appTitleText, value);
-    }
 
     public string BookmarkTitleForSave
     {
