@@ -1,0 +1,25 @@
+﻿<Page
+    x:Class="NetBrowser_UWP.Views.Settings.MainItemPageSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:settings="using:NetBrowser_UWP.ViewModels.Settings"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=settings:MainSettingsPageViewModel,IsDesignTimeCreatable=True}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock Style="{StaticResource PageTitleStyle}" Text="Основные" Margin="50,20" />
+        <Grid Row="1">
+            <StackPanel Spacing="20" Margin="60,0">
+                <TextBlock Text="Расположение приложения:" Style="{StaticResource PageSubTitleStyle}" />
+                <TextBox IsReadOnly="True" Text="{Binding FullAppInstalledPath}" />
+            </StackPanel>
+
+        </Grid>
+    </Grid>
+</Page>

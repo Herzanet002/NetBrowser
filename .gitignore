@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/NetBrowser_UWP/ClassDiagram.cd
+/NetBrowser_UWP/ClassDiagram1.cd

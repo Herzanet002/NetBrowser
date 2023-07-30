@@ -16,16 +16,16 @@
 -->
 
 <Directives xmlns="http://schemas.microsoft.com/netfx/2013/01/metadata">
-  <Application>
-    <!--
+	<Application>
+		<!--
       Элемент Assembly с именем "*Application*" (Name="*Application*") применяется ко всем сборкам в
       пакете приложения. Звездочки не являются подстановочными знаками.
     -->
-    <Assembly Name="*Application*" Dynamic="Required All" />
-    
-    
-    <!-- Добавьте сюда директивы среды выполнения, относящиеся к приложению. -->
+		<Assembly Name="*Application*" Dynamic="Required All" />
 
 
-  </Application>
+		<!-- Добавьте сюда директивы среды выполнения, относящиеся к приложению. -->
+
+
+	</Application>
 </Directives>

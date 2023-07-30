@@ -1,0 +1,28 @@
+﻿<ContentDialog
+    x:Class="NetBrowser_UWP.Views.UserControls.EditStartPageItemDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewModels:StartPageViewModel,IsDesignTimeCreatable=True}"
+    Style="{StaticResource ContentDialogStyle}"
+    Title="Редактирование элемента"
+    PrimaryButtonText="ОК"
+    SecondaryButtonText="Отмена"
+    PrimaryButtonCommand="{Binding EditStartPageItem}">
+
+    <Grid>
+        <StackPanel>
+            <TextBox Header="Заголовок" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                     TextWrapping="NoWrap" PlaceholderText="Название сайта"
+                     Text="{Binding EditableStartPageItem.Name, Mode=TwoWay}" />
+            <TextBox Header="Ссылка" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                     TextWrapping="NoWrap" Text="{Binding EditableStartPageItem.Url, Mode=TwoWay}"
+                     PlaceholderText="Ссылка на сайт" />
+
+        </StackPanel>
+
+    </Grid>
+</ContentDialog>

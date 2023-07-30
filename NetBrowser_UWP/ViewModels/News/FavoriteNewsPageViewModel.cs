@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.DataTransfer;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Services;
+using Prism.Commands;
+
+namespace NetBrowser_UWP.ViewModels.News;
+
+public class FavoriteNewsPageViewModel : ObservableObject
+{
+    private readonly IDataTransferService _dataTransferService;
+    private readonly TabViewService _tabViewService;
+    private ObservableCollection<ContentModel> _favoriteNews = new();
+    private ContentModel _newsForSharing;
+    private ContentModel _selectedItemNews;
+
+    public FavoriteNewsPageViewModel(IDataTransferService dataTransferService, TabViewService tabViewService)
+    {
+        _dataTransferService = dataTransferService;
+        _tabViewService = tabViewService;
+        FavoriteNewsPageLoadedCommand = new AsyncRelayCommand(OnFavoriteNewsPageLoadedExecuted);
+        RemoveNewsCommand = new AsyncRelayCommand<ContentModel>(OnRemoveNewsCommandExecuted);
+        ShareNewsCommand = new DelegateCommand<ContentModel>(OnShareNewsCommandExecuted);
+        ItemOpenCommand = new AsyncRelayCommand<ContentModel>(OnItemOpenCommandExecuted);
+        DataTransferManager.GetForCurrentView().DataRequested += OnDataSharing;
+    }
+
+    public DelegateCommand<ContentModel> ShareNewsCommand { get; set; }
+    public IAsyncRelayCommand FavoriteNewsPageLoadedCommand { get; set; }
+    public IAsyncRelayCommand RemoveNewsCommand { get; set; }
+    public IAsyncRelayCommand ItemOpenCommand { get; set; }
+
+    public ContentModel SelectedItemNews
+    {
+        get => _selectedItemNews;
+        set => SetProperty(ref _selectedItemNews, value);
+    }
+
+    public ObservableCollection<ContentModel> FavoriteNews
+    {
+        get => _favoriteNews;
+        set => SetProperty(ref _favoriteNews, value);
+    }
+
+    private async Task OnItemOpenCommandExecuted(ContentModel contentItem)
+    {
+        if (contentItem != null)
+            await _tabViewService.CreateNewWebTab(contentItem.Link);
+        SelectedItemNews = null;
+    }
+
+    private async Task OnRemoveNewsCommandExecuted(ContentModel contentItem)
+    {
+        await _dataTransferService.RemoveNewsContentFromFavorite(contentItem);
+        FavoriteNews.Remove(contentItem);
+    }
+
+    private void OnShareNewsCommandExecuted(ContentModel param)
+    {
+        if (param == null) return;
+        _newsForSharing = param;
+        DataTransferManager.ShowShareUI();
+    }
+
+    private void OnDataSharing(DataTransferManager sender, DataRequestedEventArgs args)
+    {
+        if (_newsForSharing == null) return;
+
+        args.Request.Data.SetText(_newsForSharing.Title);
+        args.Request.Data.Properties.Title = Package.Current.DisplayName;
+        args.Request.Data.SetWebLink(new Uri(_newsForSharing.Link));
+    }
+
+    private async Task OnFavoriteNewsPageLoadedExecuted(CancellationToken ct)
+    {
+        var allFavoritesNewsContent = await _dataTransferService.GetAllFavoritesNewsContentAsync();
+        var reversedFavorites = allFavoritesNewsContent.Reverse();
+        FavoriteNews = new ObservableCollection<ContentModel>(reversedFavorites);
+    }
+}

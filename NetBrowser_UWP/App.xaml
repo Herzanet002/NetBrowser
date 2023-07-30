@@ -2,19 +2,26 @@
     x:Class="NetBrowser_UWP.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:NetBrowser_UWP" 
+    xmlns:local="using:NetBrowser_UWP"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls">
+
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <controls:XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
+                <controls:XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <ResourceDictionary Source="Styles/TabViewItem_Style.xaml" />
+                <ResourceDictionary Source="Styles/TabViewTemplate_Style.xaml" />
+                <ResourceDictionary Source="Styles/AutoSuggestBox_Style.xaml" />
+                <ResourceDictionary Source="Styles/FontSizes.xaml" />
+                <ResourceDictionary Source="Styles/TextBlocks.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <SolidColorBrush x:Key="mainBg" Color="#283149"></SolidColorBrush>
-            <SolidColorBrush x:Key="sthBg" Color="#404B69"></SolidColorBrush>
-            <SolidColorBrush x:Key="thBg" Color="#00818A"></SolidColorBrush>
-            <SolidColorBrush x:Key="mainfg" Color="#F9C5D5"></SolidColorBrush>
+            <local:ThemeManager x:Key="ThemeManager" />
+            <FontFamily x:Key="Segoe Fluent">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
+            <Style TargetType="ContentDialog" BasedOn="{StaticResource DefaultContentDialogStyle}"
+                   x:Key="ContentDialogStyle" />
+
         </ResourceDictionary>
-        
+
 
     </Application.Resources>
 

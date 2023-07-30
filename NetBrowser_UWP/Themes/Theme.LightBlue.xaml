@@ -1,0 +1,18 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <x:String x:Key="NameOfTheme">LightBlue</x:String>
+    <x:Int32 x:Key="ThemeMode">1</x:Int32>
+
+    <SolidColorBrush x:Key="BackgroundBrush" Color="#FF8BB5CC" />
+    <SolidColorBrush x:Key="SecondBrush" Color="#FF6FA9C9" />
+    <SolidColorBrush x:Key="ThirdBrush" Color="#FFCADEEA" />
+    <SolidColorBrush x:Key="AppTitleBrush" Color="#CC263C53" />
+    <SolidColorBrush x:Key="ForegroundBrush" Color="#FF2D2D2D" />
+    <SolidColorBrush x:Key="NavigationButtonBrush" Color="#FF2D2D2D" />
+    <SolidColorBrush x:Key="SearchBoxForeground" Color="#FF2D2D2D" />
+    <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="#FF445469" />
+    <SolidColorBrush x:Key="BookmarkSavedBrush" Color="#FF28648C" />
+
+</ResourceDictionary>
