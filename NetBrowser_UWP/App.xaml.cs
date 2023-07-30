@@ -1,12 +1,5 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
-using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
-using NetBrowser_UWP.ViewModels;
-using NetBrowser_UWP.ViewModels.Settings;
-using NetBrowser_UWP.Views;
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -15,6 +8,16 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.DbContexts;
+using NetBrowser_UWP.Helpers;
+using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Services;
+using NetBrowser_UWP.Views;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace NetBrowser_UWP;
@@ -22,7 +25,7 @@ namespace NetBrowser_UWP;
 /// <summary>
 ///     Обеспечивает зависящее от конкретного приложения поведение, дополняющее класс Application по умолчанию.
 /// </summary>
-sealed partial class App : Application
+public sealed partial class App : Application
 {
     public static ThemeItem CurrentTheme;
 
@@ -38,10 +41,6 @@ sealed partial class App : Application
         Ioc.Default.ConfigureServices(Services);
     }
 
-    /// <summary>
-    ///     Инициализирует одноэлементный объект приложения. Это первая выполняемая строка разрабатываемого
-    ///     кода, поэтому она является логическим эквивалентом main() или WinMain().
-    /// </summary>
     public IServiceProvider Services { get; }
 
     public static ApplicationViewTitleBar TitleBar => ApplicationView.GetForCurrentView().TitleBar;
@@ -51,15 +50,25 @@ sealed partial class App : Application
 
     private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
+        e.Handled = true;
+#if DEBUG
+        Debug.WriteLine(e.Exception);
+#endif
     }
 
     private static IServiceProvider ConfigureDependencyInjection()
     {
         var services = new ServiceCollection();
 
+        services.AddDbContext<DataAccessContext>(opt =>
+                opt.UseSqlite("Filename=datasource.db")
+                    .EnableSensitiveDataLogging())
+            ;
+
+        services.AddTransient<DbInitializeService>();
         //Services & Managers
-        services.AddSingleton<IDataTransferService, DataTransferService>();
-        services.AddSingleton<IDataAccessService, DataAccessService>();
+        services.AddSingleton<IDataTransferService, DataTransferDbService>();
+        services.AddTransient<DbInitializeService>();
         services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
         services.AddSingleton<IWebView2Service, WebView2Service>();
         services.AddTransient<INavigationService, NavigationService>();
@@ -69,20 +78,10 @@ sealed partial class App : Application
 
         services.AddScoped<IRssWorkerService, RssWorkerService>();
 
-        //ViewModels
-        services.AddSingleton<ShellPageViewModel>();
-        services.AddSingleton<MainSettingsPageViewModel>();
-        services.AddTransient<HistoryPageViewModel>();
-        services.AddTransient<StartPageViewModel>();
-        services.AddTransient<BookmarksPageViewModel>();
-        services.AddTransient<PersonalizePageViewModel>();
-        services.AddTransient<SearchSystemPageViewModel>();
-        services.AddTransient<SettingsPageViewModel>();
-        services.AddSingleton<NewsPageViewModel>();
-        services.AddTransient<AboutAppViewModel>();
+        services.RegisterViewModels();
 
         services.AddHttpClient("NewsClient");
-
+        services.AddLogging(x => x.AddConsole());
         return services.BuildServiceProvider();
     }
 
@@ -99,10 +98,18 @@ sealed partial class App : Application
         var rootFrame = Window.Current.Content as Frame;
 
         //Set Current Search Engine
-        CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataTransferService>().GetCurrentSearchEngineAsync();
-        var dataAccessService = Ioc.Default.GetRequiredService<IDataAccessService>();
+        using (var scope = Services.CreateScope())
+        {
+            await scope.ServiceProvider.GetRequiredService<DbInitializeService>().InitializeAsync()
+                .ConfigureAwait(false);
+        }
 
-        await InitializeDataAccessLayer(dataAccessService);
+        CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataTransferService>().GetCurrentSearchEngineAsync();
+        using (var scope = Services.CreateScope())
+        {
+            await scope.ServiceProvider.GetRequiredService<DbInitializeService>().InitializeAsync()
+                .ConfigureAwait(false);
+        }
 
         // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
         // только обеспечьте активность окна
@@ -135,15 +142,6 @@ sealed partial class App : Application
         }
 
         CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-    }
-
-    private static async Task InitializeDataAccessLayer(IDataAccessService dataAccessService)
-    {
-        await dataAccessService.InitializeHistoryFileAsync();
-        await dataAccessService.InitializeBookmarksFileAsync();
-        await dataAccessService.InitializeConfigFileAsync();
-        await dataAccessService.InitializeStartPageFileAsync();
-        await dataAccessService.InitializeNewsContentFileAsync();
     }
 
     private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)

@@ -7,8 +7,14 @@
     mc:Ignorable="d"
     xmlns:models="using:NetBrowser_UWP.Models"
     xmlns:settings="using:NetBrowser_UWP.ViewModels.Settings"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     d:DataContext="{d:DesignInstance Type=settings:BookmarksPageViewModel,IsDesignTimeCreatable=True}">
-
+    <interactivity:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{Binding BookmarksPageSettingsLoadedCommand}" />
+        </core:EventTriggerBehavior>
+    </interactivity:Interaction.Behaviors>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />

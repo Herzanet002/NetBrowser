@@ -12,7 +12,7 @@ public class TitleTextConverter : IValueConverter
     {
         var title = value as string;
 
-        if (title is {Length: > MAX_LENGTH})
+        if (title is { Length: > MAX_LENGTH })
             title = title.Substring(0, MAX_LENGTH) + "...";
         return title;
     }

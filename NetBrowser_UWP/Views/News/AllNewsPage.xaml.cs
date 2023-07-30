@@ -1,6 +1,6 @@
 ﻿using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using NetBrowser_UWP.ViewModels;
+using NetBrowser_UWP.ViewModels.News;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -14,6 +14,6 @@ public sealed partial class AllNewsPage : Page
     public AllNewsPage()
     {
         InitializeComponent();
-        DataContext = Ioc.Default.GetRequiredService<NewsPageViewModel>();
+        DataContext = Ioc.Default.GetRequiredService<AllNewsPageViewModel>();
     }
 }

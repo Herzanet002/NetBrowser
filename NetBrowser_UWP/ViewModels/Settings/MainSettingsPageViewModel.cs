@@ -1,16 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Windows.Storage;
+﻿using Windows.Storage;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
 public class MainSettingsPageViewModel : ObservableObject
 {
+    private string _fullAppInstalledPath;
+
     public MainSettingsPageViewModel()
     {
         FullAppInstalledPath = ApplicationData.Current.LocalFolder.Path;
     }
-
-    private string _fullAppInstalledPath;
 
     public string FullAppInstalledPath
     {

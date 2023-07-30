@@ -11,7 +11,7 @@
     <AssemblyName>NetBrowser</AssemblyName>
     <DefaultLanguage>ru-RU</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22000.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -19,13 +19,14 @@
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <AppInstallerUri>D:\repos\Installer</AppInstallerUri>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <PackageCertificateThumbprint>ABBC0A5BDDC4CD318C2222072AA09D0AD86151F8</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>
+    </PackageCertificateThumbprint>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <PackageCertificateKeyFile>NetBrowser_UWP_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
@@ -138,16 +139,26 @@
     <Compile Include="Commands\OpenFlyoutAction.cs" />
     <Compile Include="Contracts\INavigationAware.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
-    <Compile Include="Contracts\Services\IDataAccessService.cs" />
+    <Compile Include="Contracts\Services\IDataInitializeService.cs" />
     <Compile Include="Contracts\Services\IDataTransferService.cs" />
     <Compile Include="Contracts\Services\ILocalSettingsService.cs" />
     <Compile Include="Contracts\Services\INavigationService.cs" />
     <Compile Include="Contracts\Services\INavigationViewService.cs" />
     <Compile Include="Contracts\Services\IWebView2Service.cs" />
     <Compile Include="Contracts\Services\ITabViewService.cs" />
-    <Compile Include="Helpers\FrameExtensions.cs" />
+    <Compile Include="DbContexts\DataAccessContext.cs" />
+    <Compile Include="Helpers\EntityExtensions.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
+    <Compile Include="Helpers\StringHelpers.cs" />
+    <Compile Include="Helpers\ViewModelsRegistrator.cs" />
+    <Compile Include="Models\BaseEntity.cs" />
+    <Compile Include="Models\RssFeeder.cs" />
+    <Compile Include="Models\SearchTermItem.cs" />
+    <Compile Include="Models\StartPageItem.cs" />
+    <Compile Include="Models\SyndicationCategoryModel.cs" />
     <Compile Include="Services\AppConfigService.cs" />
+    <Compile Include="Services\DataTransferDbService.cs" />
+    <Compile Include="Services\DbInitializeService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NavigationViewService.cs" />
     <Compile Include="Services\TabViewService.cs" />
@@ -162,7 +173,6 @@
     <Compile Include="Helpers\XmlSerializer.cs" />
     <Compile Include="Models\BookmarkDetails.cs" />
     <Compile Include="Models\ContentModel.cs" />
-    <Compile Include="Models\NewsModel.cs" />
     <Compile Include="Models\SiteItem.cs" />
     <Compile Include="Models\ThemeItem.cs" />
     <Compile Include="Helpers\ResourseHelper.cs" />
@@ -171,11 +181,16 @@
     </Compile>
     <Compile Include="Services\LocalSettingsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
+    <Compile Include="ViewModels\News\AllNewsPageViewModel.cs" />
+    <Compile Include="ViewModels\News\FavoriteNewsPageViewModel.cs" />
+    <Compile Include="ViewModels\News\FirstRunRecommendationsViewModel.cs" />
+    <Compile Include="ViewModels\News\NewsSettingsViewModel.cs" />
+    <Compile Include="ViewModels\News\RecommendationsNewsPageViewModel.cs" />
     <Compile Include="ViewModels\Settings\AboutAppViewModel.cs" />
     <Compile Include="Helpers\ListExtension.cs" />
     <Compile Include="ViewModels\Settings\MainSettingsPageViewModel.cs" />
     <Compile Include="ViewModels\ShellPageViewModel.cs" />
-    <Compile Include="ViewModels\NewsPageViewModel.cs" />
+    <Compile Include="ViewModels\News\NewsShellPageViewModel.cs" />
     <Compile Include="ViewModels\Settings\PersonalizePageViewModel.cs" />
     <Compile Include="Services\RssWorkerService.cs" />
     <Compile Include="ViewModels\Settings\SettingsPageViewModel.cs" />
@@ -185,11 +200,14 @@
     <Compile Include="Views\News\FavoritesNewsPage.xaml.cs">
       <DependentUpon>FavoritesNewsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\News\FirstRunRecommendationsDialog.xaml.cs">
+      <DependentUpon>FirstRunRecommendationsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\News\NewsSettingsPage.xaml.cs">
+      <DependentUpon>NewsSettingsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\News\NewsShellPage.xaml.cs">
       <DependentUpon>NewsShellPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\News\ReadingListNewsPage.xaml.cs">
-      <DependentUpon>ReadingListNewsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\News\RecommendationsNewsPage.xaml.cs">
       <DependentUpon>RecommendationsNewsPage.xaml</DependentUpon>
@@ -207,6 +225,9 @@
     <Compile Include="Views\UserControls\DeleteBookmarkDialog.xaml.cs">
       <DependentUpon>DeleteBookmarkDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UserControls\EditStartPageItemDialog.xaml.cs">
+      <DependentUpon>EditStartPageItemDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\HistoryClearConfirmationDialog.xaml.cs">
       <DependentUpon>HistoryClearConfirmationDialog.xaml</DependentUpon>
     </Compile>
@@ -214,8 +235,6 @@
       <DependentUpon>BookmarksPageSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\Constants.cs" />
-    <Compile Include="Services\DataAccessService.cs" />
-    <Compile Include="Services\DataTransferService.cs" />
     <Compile Include="Views\ErrorLoadPage.xaml.cs">
       <DependentUpon>ErrorLoadPage.xaml</DependentUpon>
     </Compile>
@@ -261,6 +280,11 @@
     <Content Include="Assets\BadgeLogo.scale-150.png" />
     <Content Include="Assets\BadgeLogo.scale-200.png" />
     <Content Include="Assets\BadgeLogo.scale-400.png" />
+    <Content Include="Assets\LargeTile.scale-100.png" />
+    <Content Include="Assets\LargeTile.scale-125.png" />
+    <Content Include="Assets\LargeTile.scale-150.png" />
+    <Content Include="Assets\LargeTile.scale-200.png" />
+    <Content Include="Assets\LargeTile.scale-400.png" />
     <Content Include="Assets\SmallTile.scale-100.png" />
     <Content Include="Assets\SmallTile.scale-125.png" />
     <Content Include="Assets\SmallTile.scale-150.png" />
@@ -270,6 +294,10 @@
     <Content Include="Assets\SplashScreen.scale-125.png" />
     <Content Include="Assets\SplashScreen.scale-150.png" />
     <Content Include="Assets\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Square150x150Logo.scale-400.png" />
     <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
     <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
     <Content Include="Assets\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
@@ -288,13 +316,21 @@
     <Content Include="Assets\Square44x44Logo.targetsize-256.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-32.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\StoreLogo.scale-100.png" />
+    <Content Include="Assets\StoreLogo.scale-125.png" />
+    <Content Include="Assets\StoreLogo.scale-150.png" />
+    <Content Include="Assets\StoreLogo.scale-200.png" />
+    <Content Include="Assets\StoreLogo.scale-400.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Resources\Logos\AppLogo.png" />
     <Content Include="Resources\Logos\BingLogo.png" />
@@ -330,11 +366,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\News\NewsShellPage.xaml">
+    <Page Include="Views\News\FirstRunRecommendationsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\News\ReadingListNewsPage.xaml">
+    <Page Include="Views\News\NewsSettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\News\NewsShellPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -351,6 +391,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UserControls\DeleteBookmarkDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\EditStartPageItemDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -446,6 +490,19 @@
     <PackageReference Include="CommunityToolkit.Mvvm">
       <Version>8.0.0</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <Version>3.1.31</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
+      <Version>3.1.31</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <Version>3.1.31</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json">
       <Version>7.0.0</Version>
     </PackageReference>
@@ -514,6 +571,7 @@
     <None Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="NetBrowser_UWP_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

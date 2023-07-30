@@ -8,8 +8,8 @@
 
   <Identity
     Name="fa65b7fa-4be6-44d6-9c94-67380d0a1bc7"
-    Publisher="CN=stoya"
-    Version="1.0.1.0" />
+    Publisher="CN=PUBLISHER"
+    Version="1.1.3.0" />
 
   <mp:PhoneIdentity PhoneProductId="fa65b7fa-4be6-44d6-9c94-67380d0a1bc7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -37,7 +37,7 @@
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="NetBrowser - web browser"
         BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" a:Optional="true" xmlns:a="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"/>
         <uap:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badgeAndTileText"/>
       </uap:VisualElements>
@@ -47,5 +47,8 @@
   <Capabilities>
     <Capability Name="internetClient" />
     <uap:Capability Name="userAccountInformation"/>
+    <DeviceCapability Name="webcam"/>
+    <DeviceCapability Name="microphone"/>
+    <DeviceCapability Name="location"/>
   </Capabilities>
 </Package>

@@ -7,6 +7,40 @@ public static class Constants
 {
     public const string FAVICONS_SERVICE = "https://www.google.com/s2/favicons?sz=32&domain_url=";
 
+    // Light Themes
+    public static ThemeItem LightTheme = new(LIGHT_THEME_PATH);
+
+    public static ThemeItem LightPinkTheme = new(LIGHT_PINK_THEME_PATH);
+
+    public static ThemeItem LightBlueTheme = new(LIGHT_BLUE_THEME_PATH);
+
+    public static ThemeItem LightAcrylicTheme = new(LIGHT_ACRYLIC_THEME_PATH);
+
+    public static ThemeItem LightLilacTheme = new(LIGHT_LILAC_THEME_PATH);
+
+    // Dark Themes
+    public static ThemeItem DarkTheme = new(DARK_THEME_PATH);
+
+    public static ThemeItem DarkBlueTheme = new(DARK_BLUE_THEME_PATH);
+
+    public static ThemeItem DarkNavyBlueTheme = new(DARK_NAVY_BLUE_THEME_PATH);
+
+    public static ThemeItem DarkAcrylicTheme = new(DARK_ACRYLIC_THEME_PATH);
+
+
+    public static Dictionary<string, ThemeItem> ThemesDictionary = new()
+    {
+        { LightTheme.Name, LightTheme },
+        { LightPinkTheme.Name, LightPinkTheme },
+        { LightBlueTheme.Name, LightBlueTheme },
+        { LightAcrylicTheme.Name, LightAcrylicTheme },
+        { LightLilacTheme.Name, LightLilacTheme },
+        { DarkTheme.Name, DarkTheme },
+        { DarkBlueTheme.Name, DarkBlueTheme },
+        { DarkNavyBlueTheme.Name, DarkNavyBlueTheme },
+        { DarkAcrylicTheme.Name, DarkAcrylicTheme }
+    };
+
     //private const string FAVICONS_SERVICE = "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=";
 
     #region THEMES_PATH
@@ -40,38 +74,4 @@ public static class Constants
     public const string NEWS_ADDRESS = "app://news";
 
     #endregion
-
-    // Light Themes
-    public static ThemeItem LightTheme = new(LIGHT_THEME_PATH);
-
-    public static ThemeItem LightPinkTheme = new(LIGHT_PINK_THEME_PATH);
-
-    public static ThemeItem LightBlueTheme = new(LIGHT_BLUE_THEME_PATH);
-
-    public static ThemeItem LightAcrylicTheme = new(LIGHT_ACRYLIC_THEME_PATH);
-
-    public static ThemeItem LightLilacTheme = new(LIGHT_LILAC_THEME_PATH);
-
-    // Dark Themes
-    public static ThemeItem DarkTheme = new(DARK_THEME_PATH);
-
-    public static ThemeItem DarkBlueTheme = new(DARK_BLUE_THEME_PATH);
-
-    public static ThemeItem DarkNavyBlueTheme = new(DARK_NAVY_BLUE_THEME_PATH);
-
-    public static ThemeItem DarkAcrylicTheme = new(DARK_ACRYLIC_THEME_PATH);
-
-
-    public static Dictionary<string, ThemeItem> ThemesDictionary = new()
-    {
-        {LightTheme.Name, LightTheme},
-        {LightPinkTheme.Name, LightPinkTheme},
-        {LightBlueTheme.Name, LightBlueTheme},
-        {LightAcrylicTheme.Name, LightAcrylicTheme},
-        {LightLilacTheme.Name, LightLilacTheme},
-        {DarkTheme.Name, DarkTheme},
-        {DarkBlueTheme.Name, DarkBlueTheme},
-        {DarkNavyBlueTheme.Name, DarkNavyBlueTheme},
-        {DarkAcrylicTheme.Name, DarkAcrylicTheme}
-    };
 }

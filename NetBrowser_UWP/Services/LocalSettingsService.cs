@@ -10,7 +10,7 @@ public class LocalSettingsService : ILocalSettingsService
     public async Task<T> ReadSettingAsync<T>(string key)
     {
         if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
-            return await Json.ToObjectAsync<T>((string) obj);
+            return await Json.ToObjectAsync<T>((string)obj);
 
         return default;
     }

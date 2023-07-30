@@ -1,9 +1,9 @@
-﻿using NetBrowser_UWP.Contracts.Services;
-using System;
+﻿using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using NetBrowser_UWP.Contracts.Services;
 
 namespace NetBrowser_UWP.Services;
 
@@ -38,7 +38,7 @@ public class NavigationService : INavigationService
         }
     }
 
-    public bool CanGoBack => Frame is {CanGoBack: true};
+    public bool CanGoBack => Frame is { CanGoBack: true };
 
     public bool GoBack()
     {

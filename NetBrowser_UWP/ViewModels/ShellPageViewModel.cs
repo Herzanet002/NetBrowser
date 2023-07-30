@@ -1,4 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Web.WebView2.Core;
@@ -9,14 +18,6 @@ using NetBrowser_UWP.Views;
 using NetBrowser_UWP.Views.News;
 using NetBrowser_UWP.Views.Settings;
 using Prism.Commands;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Windows.UI.Xaml.Controls;
 using winUI = Microsoft.UI.Xaml.Controls;
 
 namespace NetBrowser_UWP.ViewModels;
@@ -44,6 +45,14 @@ public class ShellPageViewModel : ObservableObject
         InitializeCommands();
     }
 
+    public ObservableCollection<winUI.TabViewItem> TabViewItemsList => _tabViewService.GetAllTabItems();
+
+    public winUI.TabViewItem SelectedTabItem
+    {
+        get => _tabViewService.GetSelectedTabItem();
+        set => _tabViewService.ChangeSelectedTabItem(value);
+    }
+
     private async Task InitializeAsync()
     {
         await InitializePageComponents();
@@ -58,14 +67,21 @@ public class ShellPageViewModel : ObservableObject
         _webView2Service.NavigationStarting += WebViewOnNavigationStarting;
         _webView2Service.NewWindowRequested += WebViewOnNewWindowRequested;
         _webView2Service.NavigationCompleted += WebViewOnNavigationCompleted;
+        _webView2Service.ContainsFullScreenElementChanged += WebViewOnContainsFullScreenElementChanged;
     }
 
-    public ObservableCollection<winUI.TabViewItem> TabViewItemsList => _tabViewService.GetAllTabItems();
-
-    public winUI.TabViewItem SelectedTabItem
+    private void WebViewOnContainsFullScreenElementChanged(CoreWebView2 sender, object args)
     {
-        get => _tabViewService.GetSelectedTabItem();
-        set => _tabViewService.ChangeSelectedTabItem(value);
+        var applicationView = ApplicationView.GetForCurrentView();
+
+        if (sender.ContainsFullScreenElement)
+        {
+            var t = applicationView.TryEnterFullScreenMode();
+        }
+        else if (applicationView.IsFullScreenMode)
+        {
+            applicationView.ExitFullScreenMode();
+        }
     }
 
     private void TabViewServiceSelectionChangedHandler(object sender, SelectionChangedEventHandler e)
@@ -78,7 +94,9 @@ public class ShellPageViewModel : ObservableObject
     }
 
     private void TabViewServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        => OnPropertyChanged(e);
+    {
+        OnPropertyChanged(e);
+    }
 
     private async Task InitializePageComponents()
     {
@@ -135,8 +153,8 @@ public class ShellPageViewModel : ObservableObject
 
         var enumerable = searchTermList.ToList();
         var suitableItems = from item in enumerable
-                            where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
-                            select item;
+            where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
+            select item;
 
         var enumerableList = suitableItems.ToList();
 
@@ -260,7 +278,6 @@ public class ShellPageViewModel : ObservableObject
     }
 
 
-
     private void SelectionChangedTabHandler()
     {
         if (_tabViewService.GetSelectedTabItem() == null)
@@ -350,6 +367,7 @@ public class ShellPageViewModel : ObservableObject
 
     private bool _isWebLoading;
     private bool _isBookmarksExists;
+    private bool _isSuggestionListOpen;
 
     #endregion Private Global Element Region
 
@@ -434,6 +452,12 @@ public class ShellPageViewModel : ObservableObject
         set => SetProperty(ref _isProgressRingActive, value);
     }
 
+    public bool IsSuggestionListOpen
+    {
+        get => _isSuggestionListOpen;
+        set => SetProperty(ref _isSuggestionListOpen, value);
+    }
+
     public bool DeleteBookmarkButtonVisibility
     {
         get => _visibilityDeleteBookmarkButton;
@@ -511,26 +535,27 @@ public class ShellPageViewModel : ObservableObject
             NavigateTo(App.CurrentWebEngine.HomePage, _tabViewService.GetSelectedWebView());
     }
 
-    private async Task OnSearchBoxTextChangedCommandExecuted(object obj)
+    private async Task OnSearchBoxTextChangedCommandExecuted(AutoSuggestBoxTextChangedEventArgs obj)
     {
-        if (obj is not AutoSuggestBoxTextChangedEventArgs eventArgs) return;
-        if (eventArgs.Reason == AutoSuggestionBoxTextChangeReason.UserInput) await AutoSuggestListFill();
+        if (obj is not { }) return;
+        if (obj.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            await AutoSuggestListFill();
     }
 
     //TODO: Обновление поисковых запросов
-    private async Task OnSearchBoxQuerySubmittedCommandExecuted(object obj)
+    private async Task OnSearchBoxQuerySubmittedCommandExecuted(AutoSuggestBoxQuerySubmittedEventArgs obj)
     {
-        if (obj is not AutoSuggestBoxQuerySubmittedEventArgs eventArgs) return;
+        if (obj is not { }) return;
 
         var queryForSearch = string.Empty;
-        if (!string.IsNullOrWhiteSpace(eventArgs.QueryText))
-            queryForSearch = eventArgs.QueryText;
+        if (!string.IsNullOrWhiteSpace(obj.QueryText))
+            queryForSearch = obj.QueryText;
 
         if (string.IsNullOrWhiteSpace(queryForSearch)) return;
         if (_tabViewService.GetSelectedWebView() == null) return;
 
         NavigateTo(queryForSearch, _tabViewService.GetSelectedWebView());
-        await _dataTransferService.SaveSearchTermAsync(new SiteItem
+        await _dataTransferService.SaveSearchTermAsync(new SearchTermItem
         {
             Name = queryForSearch
         }).ConfigureAwait(false);
@@ -619,13 +644,14 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task OnDeleteBookmarkCommandExecuted()
     {
-        var result = await _dataTransferService.RemoveBookmarkAsync(new BookmarkDetails
+        await _dataTransferService.RemoveBookmarkAsync(new BookmarkDetails
         {
             Name = BookmarkTitleForSave,
             Url = BookmarkUrlForSave
         });
-        SetBookmarkIconState(!result);
-        IsFlyoutClosed = result;
+        await GetBookmarksAsync();
+        SetBookmarkButtonAppearance();
+        IsFlyoutClosed = true;
     }
 
     private void OnAddBookmarkButtonCommandExecuted()

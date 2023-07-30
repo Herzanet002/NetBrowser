@@ -46,7 +46,7 @@ public static class XmlSerializer<T>
         using (var stringReader = new StringReader(xml))
         {
             var deserialized = serializer.Deserialize(stringReader);
-            value = (T) deserialized;
+            value = (T)deserialized;
         }
 
         return value;

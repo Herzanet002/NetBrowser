@@ -1,7 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using Prism.Commands;
@@ -22,8 +24,10 @@ public class PersonalizePageViewModel : ObservableObject
     {
         _localSettingsService = localSettingsService;
         MainViewModel = mainPageViewModel;
-        InitializePageComponents();
+        PersonalizePageLoadedCommand = new AsyncRelayCommand(OnPersonalizePageLoadedCommandExecuted);
     }
+
+    public IAsyncRelayCommand PersonalizePageLoadedCommand { get; set; }
 
     public ICommand SelectThemeCommand => new DelegateCommand(OnSelectedThemeCommandExecuted, () => true);
 
@@ -85,13 +89,7 @@ public class PersonalizePageViewModel : ObservableObject
 
     public ShellPageViewModel MainViewModel { get; }
 
-    private void OnSelectedThemeCommandExecuted()
-    {
-        _localSettingsService.SaveSettingAsync("CurrentTheme", SelectedTheme.Name);
-        App.ThemeManager.SetRequestedTheme(SelectedTheme.Name);
-    }
-
-    private async Task InitializePageComponents()
+    private async Task OnPersonalizePageLoadedCommandExecuted(CancellationToken ct)
     {
         IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsSuggestionBarEnabled));
         IsHomeButtonEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsHomeButtonEnabled));
@@ -100,5 +98,11 @@ public class PersonalizePageViewModel : ObservableObject
             await _localSettingsService.ReadSettingAsync<int>(nameof(StartPageGridViewOrientation));
         ThemesList = new ObservableCollection<ThemeItem>(Constants.Constants.ThemesDictionary.Values);
         SelectedTheme = App.CurrentTheme;
+    }
+
+    private void OnSelectedThemeCommandExecuted()
+    {
+        _localSettingsService.SaveSettingAsync("CurrentTheme", SelectedTheme.Name);
+        App.ThemeManager.SetRequestedTheme(SelectedTheme.Name);
     }
 }

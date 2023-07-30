@@ -18,6 +18,7 @@
         <Setter Property="TextWrapping" Value="NoWrap" />
         <Setter Property="CornerRadius" Value="6" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="{ThemeResource TextControlThemePadding}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
@@ -28,12 +29,14 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
                                             <Grid x:Name="ButtonLayoutGrid"
-                                                  Background="{ThemeResource TextControlButtonBackground}"
                                                   BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
-                                                  BorderThickness="{TemplateBinding BorderThickness}">
+                                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                                  Background="{ThemeResource TextControlButtonBackground}">
+
                                                 <VisualStateManager.VisualStateGroups>
                                                     <VisualStateGroup x:Name="CommonStates">
                                                         <VisualState x:Name="Normal" />
+
                                                         <VisualState x:Name="PointerOver">
                                                             <Storyboard>
                                                                 <ObjectAnimationUsingKeyFrames
@@ -56,6 +59,7 @@
                                                                 </ObjectAnimationUsingKeyFrames>
                                                             </Storyboard>
                                                         </VisualState>
+
                                                         <VisualState x:Name="Pressed">
                                                             <Storyboard>
                                                                 <ObjectAnimationUsingKeyFrames
@@ -78,23 +82,27 @@
                                                                 </ObjectAnimationUsingKeyFrames>
                                                             </Storyboard>
                                                         </VisualState>
+
                                                         <VisualState x:Name="Disabled">
                                                             <Storyboard>
-                                                                <DoubleAnimation Duration="0"
-                                                                    Storyboard.TargetName="ButtonLayoutGrid" To="0"
-                                                                    Storyboard.TargetProperty="Opacity" />
+                                                                <DoubleAnimation
+                                                                    Storyboard.TargetName="ButtonLayoutGrid"
+                                                                    Storyboard.TargetProperty="Opacity"
+                                                                    To="0"
+                                                                    Duration="0" />
                                                             </Storyboard>
                                                         </VisualState>
                                                     </VisualStateGroup>
                                                 </VisualStateManager.VisualStateGroups>
                                                 <TextBlock x:Name="GlyphElement"
-                                                           AutomationProperties.AccessibilityView="Raw"
                                                            Foreground="{ThemeResource TextControlButtonForeground}"
+                                                           VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center"
                                                            FontStyle="Normal"
-                                                           FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                            FontSize="{ThemeResource AutoSuggestBoxIconFontSize}"
-                                                           HorizontalAlignment="Center" Text="&#xE10A;"
-                                                           VerticalAlignment="Center" />
+                                                           Text="&#xE10A;"
+                                                           FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                           AutomationProperties.AccessibilityView="Raw" />
                                             </Grid>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -105,22 +113,23 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
                                             <ContentPresenter x:Name="ContentPresenter"
-                                                              AutomationProperties.AccessibilityView="Raw"
                                                               Background="{ThemeResource TextControlButtonBackground}"
                                                               BackgroundSizing="{TemplateBinding BackgroundSizing}"
                                                               BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
                                                               BorderThickness="{TemplateBinding BorderThickness}"
-                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
                                                               Content="{TemplateBinding Content}"
+                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
                                                               ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                              FontSize="{TemplateBinding FontSize}"
-                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                              CornerRadius="{TemplateBinding CornerRadius}"
+                                                              FontSize="{ThemeResource AutoSuggestBoxIconFontSize}"
                                                               Padding="{TemplateBinding Padding}"
-                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                              AutomationProperties.AccessibilityView="Raw">
+
                                                 <VisualStateManager.VisualStateGroups>
                                                     <VisualStateGroup x:Name="CommonStates">
                                                         <VisualState x:Name="Normal" />
+
                                                         <VisualState x:Name="PointerOver">
                                                             <Storyboard>
                                                                 <ObjectAnimationUsingKeyFrames
@@ -143,6 +152,7 @@
                                                                 </ObjectAnimationUsingKeyFrames>
                                                             </Storyboard>
                                                         </VisualState>
+
                                                         <VisualState x:Name="Pressed">
                                                             <Storyboard>
                                                                 <ObjectAnimationUsingKeyFrames
@@ -165,11 +175,14 @@
                                                                 </ObjectAnimationUsingKeyFrames>
                                                             </Storyboard>
                                                         </VisualState>
+
                                                         <VisualState x:Name="Disabled">
                                                             <Storyboard>
-                                                                <DoubleAnimation Duration="0"
-                                                                    Storyboard.TargetName="ContentPresenter" To="0"
-                                                                    Storyboard.TargetProperty="Opacity" />
+                                                                <DoubleAnimation
+                                                                    Storyboard.TargetName="ContentPresenter"
+                                                                    Storyboard.TargetProperty="Opacity"
+                                                                    To="0"
+                                                                    Duration="0" />
                                                             </Storyboard>
                                                         </VisualState>
                                                     </VisualStateGroup>
@@ -180,16 +193,6 @@
                                 </Setter>
                             </Style>
                         </Grid.Resources>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Disabled">
@@ -291,8 +294,10 @@
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
+
                             <VisualStateGroup x:Name="ButtonStates">
                                 <VisualState x:Name="ButtonVisible">
+
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton"
                                                                        Storyboard.TargetProperty="Visibility">
@@ -307,6 +312,16 @@
                                 <VisualState x:Name="ButtonCollapsed" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
                         <Border x:Name="BorderElement" BorderThickness="{TemplateBinding BorderThickness}"
                                 Background="{TemplateBinding Background}"
@@ -342,19 +357,28 @@
                                         Padding="{TemplateBinding Padding}" Grid.Row="1"
                                         VerticalContentAlignment="Center" />
 
-                        <Button x:Name="DeleteButton" AutomationProperties.AccessibilityView="Raw"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Grid.Column="1" FontSize="{TemplateBinding FontSize}" IsTabStop="False" MinWidth="36"
+                        <Button x:Name="DeleteButton"
                                 Grid.Row="1"
-                                Margin="0,0,25,0"
-                                Style="{StaticResource DeleteButtonStyle}" VerticalAlignment="Stretch"
-                                Visibility="Collapsed" />
-
-                        <Button x:Name="QueryButton" AutomationProperties.AccessibilityView="Raw"
-                                BorderThickness="{TemplateBinding BorderThickness}" Grid.Column="2"
+                                Style="{StaticResource DeleteButtonStyle}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                IsTabStop="False"
+                                Grid.Column="1"
+                                Visibility="Collapsed"
                                 FontSize="{TemplateBinding FontSize}"
-                                IsTabStop="True" MinWidth="36" Grid.Row="1" Style="{StaticResource QueryButtonStyle}"
-                                VerticalAlignment="Stretch" Width="{TemplateBinding Height}" />
+                                MinWidth="34"
+                                AutomationProperties.AccessibilityView="Raw"
+                                VerticalAlignment="Stretch" />
+                        <Button x:Name="QueryButton"
+                                Grid.Row="1"
+                                Style="{StaticResource QueryButtonStyle}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                IsTabStop="False"
+                                Grid.Column="2"
+                                FontSize="{TemplateBinding FontSize}"
+                                MinWidth="34"
+                                Width="{TemplateBinding Height}"
+                                VerticalAlignment="Stretch"
+                                AutomationProperties.AccessibilityView="Raw" />
 
                         <ContentPresenter x:Name="DescriptionPresenter" AutomationProperties.AccessibilityView="Raw"
                                           Content="{TemplateBinding Description}" Grid.ColumnSpan="3"
@@ -399,7 +423,7 @@
                                  Canvas.ZIndex="0" Padding="{TemplateBinding Padding}" />
                         <Popup x:Name="SuggestionsPopup" Margin="0,10,0,0">
                             <Border x:Name="SuggestionsContainer">
-                                <ListView x:Name="SuggestionsList" CornerRadius="5" VerticalAlignment="Bottom"
+                                <ListView x:Name="SuggestionsList" CornerRadius="6" VerticalAlignment="Bottom"
                                           Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
                                           BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
                                           BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}"

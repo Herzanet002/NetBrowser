@@ -1,15 +1,14 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ServiceModel.Syndication;
 
 namespace NetBrowser_UWP.Models;
 
-[XmlRoot(ElementName = nameof(ContentModel))]
-public class ContentModel
+public class ContentModel : BaseEntity
 {
     public string Title { get; set; }
 
     public string Link { get; set; }
-
-    public string FeederImageLink { get; set; }
 
     public string Description { get; set; }
 
@@ -19,5 +18,9 @@ public class ContentModel
 
     public string ImageUrl { get; set; }
 
-    public string Feeder { get; set; }
+    public RssFeeder Feeder { get; set; }
+
+    public bool IsFavorite { get; set; }
+
+    [NotMapped] public ICollection<SyndicationCategory> Categories { get; set; }
 }

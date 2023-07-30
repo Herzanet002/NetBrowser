@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
+using Microsoft.Extensions.Configuration;
 
 namespace NetBrowser_UWP.Services;
 
@@ -14,6 +14,11 @@ public class AppConfigService
             .AddJsonFile("appsettings.json", true);
 
         _configurationRoot = builder.Build();
+    }
+
+    public string GetConnectionString(string provider)
+    {
+        return _configurationRoot.GetConnectionString(provider);
     }
 
     public T GetSection<T>(string key)

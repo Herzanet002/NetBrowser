@@ -12,13 +12,13 @@ public interface INavigationViewService
     IList<object> MenuItems { get; }
 
     object SettingsItem { get; }
+    INavigationService NavigationService { get; }
 
     void Initialize(Frame frame, NavigationView navigationView, Type pageType = default);
 
     void UnregisterEvents();
 
     event NavigatedEventHandler Navigated;
-    INavigationService NavigationService { get; }
 
     NavigationViewItem GetSelectedItem(Type pageType);
 }

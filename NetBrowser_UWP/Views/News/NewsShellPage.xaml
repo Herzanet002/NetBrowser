@@ -5,17 +5,17 @@
     xmlns:local="using:NetBrowser_UWP.Views.News"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
+    xmlns:news="using:NetBrowser_UWP.ViewModels.News"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    d:DataContext="{d:DesignInstance Type=viewModels:NewsPageViewModel,IsDesignTimeCreatable=True}"
+    d:DataContext="{d:DesignInstance Type=news:NewsShellPageViewModel,IsDesignTimeCreatable=True}"
     controls:BackdropMaterial.ApplyToRootOrPageBackground="True">
 
     <Grid>
         <controls:NavigationView IsBackButtonVisible="Collapsed"
-                                 IsSettingsVisible="True" x:Name="NewsNavigationView"
+                                 IsSettingsVisible="False" x:Name="NewsNavigationView"
                                  SelectedItem="{x:Bind ViewModel.SelectedNavViewItem, Mode=OneWay}">
             <controls:NavigationView.MenuItems>
                 <controls:NavigationViewItem Content="Основные новости"
@@ -32,13 +32,6 @@
                     </controls:NavigationViewItem.Icon>
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItemSeparator />
-                <controls:NavigationViewItem Content="Список для чтения"
-                                             helpers:NavigationHelper.NavigateTo="local:ReadingListNewsPage">
-                    <controls:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7BC;" />
-                    </controls:NavigationViewItem.Icon>
-                </controls:NavigationViewItem>
-                <controls:NavigationViewItemSeparator />
                 <controls:NavigationViewItem Content="Избранное"
                                              helpers:NavigationHelper.NavigateTo="local:FavoritesNewsPage">
                     <controls:NavigationViewItem.Icon>
@@ -47,6 +40,14 @@
                 </controls:NavigationViewItem>
                 <controls:NavigationViewItemSeparator />
             </controls:NavigationView.MenuItems>
+            <controls:NavigationView.FooterMenuItems>
+                <controls:NavigationViewItem Content="Параметры"
+                                             helpers:NavigationHelper.NavigateTo="local:NewsSettingsPage">
+                    <controls:NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE713;" />
+                    </controls:NavigationViewItem.Icon>
+                </controls:NavigationViewItem>
+            </controls:NavigationView.FooterMenuItems>
 
             <Grid>
                 <Frame x:Name="MainFrame" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -21,17 +22,16 @@ public class HistoryPageViewModel : ObservableObject
     private readonly IDataTransferService _dataTransferService;
     private readonly TabViewService _tabViewService;
 
-
     public HistoryPageViewModel(IDataTransferService dataTransferService, TabViewService tabViewService)
     {
         _dataTransferService = dataTransferService;
         _tabViewService = tabViewService;
-
-        GetHistoryAsync();
     }
 
     public IAsyncRelayCommand DeleteCommand =>
         new AsyncRelayCommand<HistoryItemDetails>(OnDeleteHistoryItemCommandExecuted);
+
+    public IAsyncRelayCommand HistoryPageLoadedCommand => new AsyncRelayCommand(OnHistoryPageLoadedCommandExecuted);
 
     public IAsyncRelayCommand OpenPageCommand => new AsyncRelayCommand(OnOpenHistoryItemCommandExecuted);
     public IAsyncRelayCommand ClearHistoryCommand => new AsyncRelayCommand(OnClearHistoryJournalCommandExecuted);
@@ -69,9 +69,14 @@ public class HistoryPageViewModel : ObservableObject
         HistoryList = history;
     }
 
+    private async Task OnHistoryPageLoadedCommandExecuted(CancellationToken ct)
+    {
+        await GetHistoryAsync();
+    }
+
     private async Task OnClearHistoryJournalCommandExecuted()
     {
-        await _dataTransferService.ClearHistoryFileAsync();
+        await _dataTransferService.ClearAllHistoryAsync();
     }
 
     private async Task OnOpenClearHistoryJournalDialogCommandExecuted()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -24,8 +25,10 @@ public class BookmarksPageViewModel : ObservableObject
     {
         _dataTransferService = dataTransferService;
         _tabViewService = tabViewService;
-        GetBookmarksAsync();
+        BookmarksPageSettingsLoadedCommand = new AsyncRelayCommand(OnBookmarksPageSettingsLoadedCommandExecuted);
     }
+
+    public IAsyncRelayCommand BookmarksPageSettingsLoadedCommand { get; set; }
 
     public string BookmarkNewTitle
     {
@@ -49,6 +52,11 @@ public class BookmarksPageViewModel : ObservableObject
     {
         get => _bookmarksList;
         set => SetProperty(ref _bookmarksList, value);
+    }
+
+    private async Task OnBookmarksPageSettingsLoadedCommandExecuted(CancellationToken ct)
+    {
+        await GetBookmarksAsync();
     }
 
     public async Task GetBookmarksAsync()

@@ -3,7 +3,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using NetBrowser_UWP.ViewModels;
 using NetBrowser_UWP.ViewModels.Settings;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
@@ -24,12 +23,12 @@ public sealed partial class BookmarksPageSettings : Page
 
     private void BookmarksListView_Tapped(object sender, TappedRoutedEventArgs e)
     {
-        var flyout = FlyoutBase.GetAttachedFlyout((FrameworkElement) sender);
+        var flyout = FlyoutBase.GetAttachedFlyout((FrameworkElement)sender);
         var options = new FlyoutShowOptions
         {
-            Position = e.GetPosition((FrameworkElement) sender),
+            Position = e.GetPosition((FrameworkElement)sender),
             ShowMode = FlyoutShowMode.Transient
         };
-        flyout?.ShowAt((FrameworkElement) sender, options);
+        flyout?.ShowAt((FrameworkElement)sender, options);
     }
 }
