@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -16,15 +15,15 @@ namespace NetBrowser_UWP.ViewModels.News;
 
 public class FavoriteNewsPageViewModel : ObservableObject
 {
-    private readonly IDataTransferService _dataTransferService;
+    private readonly IDataService _dataService;
     private readonly TabViewService _tabViewService;
     private ObservableCollection<ContentModel> _favoriteNews = new();
     private ContentModel _newsForSharing;
     private ContentModel _selectedItemNews;
 
-    public FavoriteNewsPageViewModel(IDataTransferService dataTransferService, TabViewService tabViewService)
+    public FavoriteNewsPageViewModel(IDataService dataService, TabViewService tabViewService)
     {
-        _dataTransferService = dataTransferService;
+        _dataService = dataService;
         _tabViewService = tabViewService;
         FavoriteNewsPageLoadedCommand = new AsyncRelayCommand(OnFavoriteNewsPageLoadedExecuted);
         RemoveNewsCommand = new AsyncRelayCommand<ContentModel>(OnRemoveNewsCommandExecuted);
@@ -59,7 +58,7 @@ public class FavoriteNewsPageViewModel : ObservableObject
 
     private async Task OnRemoveNewsCommandExecuted(ContentModel contentItem)
     {
-        await _dataTransferService.RemoveNewsContentFromFavorite(contentItem);
+        await _dataService.RemoveNewsContentFromFavoriteAsync(contentItem);
         FavoriteNews.Remove(contentItem);
     }
 
@@ -81,8 +80,8 @@ public class FavoriteNewsPageViewModel : ObservableObject
 
     private async Task OnFavoriteNewsPageLoadedExecuted(CancellationToken ct)
     {
-        var allFavoritesNewsContent = await _dataTransferService.GetAllFavoritesNewsContentAsync();
-        var reversedFavorites = allFavoritesNewsContent.Reverse();
-        FavoriteNews = new ObservableCollection<ContentModel>(reversedFavorites);
+        var allFavoritesNewsContent = await _dataService.GetAllFavoriteNewsContentAsync();
+        allFavoritesNewsContent.Reverse();
+        FavoriteNews = new ObservableCollection<ContentModel>(allFavoritesNewsContent);
     }
 }

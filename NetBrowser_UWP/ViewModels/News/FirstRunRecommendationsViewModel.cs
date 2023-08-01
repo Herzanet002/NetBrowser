@@ -16,14 +16,14 @@ namespace NetBrowser_UWP.ViewModels.News;
 public class FirstRunRecommendationsViewModel : ObservableObject
 {
     private readonly ObservableCollection<RssFeeder> _chosenCategories;
-    private readonly IDataTransferService _dataTransferService;
+    private readonly IDataService _dataService;
     private bool _canContinue;
     private ObservableCollection<RssFeeder> _categories;
     private bool _isProgressRingActive = true;
 
-    public FirstRunRecommendationsViewModel(IDataTransferService dataTransferService)
+    public FirstRunRecommendationsViewModel(IDataService dataService)
     {
-        _dataTransferService = dataTransferService;
+        _dataService = dataService;
         PageLoadedCommand = new AsyncRelayCommand(OnPageLoaded);
         OkButtonCommand = new AsyncRelayCommand(OnOkButtonCommandExecuted);
         SelectionChangedCommand = new DelegateCommand<SelectionChangedEventArgs>(OnSelectionChangedCommandExecuted);
@@ -57,7 +57,7 @@ public class FirstRunRecommendationsViewModel : ObservableObject
 
     private async Task OnOkButtonCommandExecuted(CancellationToken ct = default)
     {
-        await _dataTransferService.AddRecommendationRssCategoryAsync(_chosenCategories);
+        await _dataService.AddLikedRssFeedersAsync(_chosenCategories);
     }
 
     private void OnSelectionChangedCommandExecuted(SelectionChangedEventArgs obj)

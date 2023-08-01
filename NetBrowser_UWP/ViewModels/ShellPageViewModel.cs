@@ -24,18 +24,18 @@ namespace NetBrowser_UWP.ViewModels;
 
 public class ShellPageViewModel : ObservableObject
 {
-    private readonly IDataTransferService _dataTransferService;
+    private readonly IDataService _dataService;
     private readonly ILocalSettingsService _localSettingsService;
     private readonly TabViewService _tabViewService;
     private readonly IWebView2Service _webView2Service;
 
 
-    public ShellPageViewModel(IDataTransferService dataTransferService,
+    public ShellPageViewModel(IDataService dataService,
         IWebView2Service webView2Service,
         ILocalSettingsService localSettingsService,
         TabViewService tabViewService)
     {
-        _dataTransferService = dataTransferService;
+        _dataService = dataService;
         _webView2Service = webView2Service;
         _localSettingsService = localSettingsService;
         _tabViewService = tabViewService;
@@ -141,10 +141,10 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task<IEnumerable<string>> GetSearchTermListAsync()
     {
-        var searchTermListTransfer = await _dataTransferService.GetSearchTermAsync();
-        var searchTermListReversed = searchTermListTransfer.Reverse();
+        var searchTermListTransfer = await _dataService.GetSearchTermsAsync();
+        searchTermListTransfer.Reverse();
 
-        return searchTermListReversed.Select(term => term.Name).ToHashSet();
+        return searchTermListTransfer.Select(term => term.Name).ToHashSet();
     }
 
     private async Task AutoSuggestListFill()
@@ -229,7 +229,7 @@ public class ShellPageViewModel : ObservableObject
         var rightTab = _tabViewService.GetTabItemByFilter(tab => tab.Content == webInstance);
         if (rightTab == null) return;
 
-        var faviconUri = new Uri(Constants.Constants.FAVICONS_SERVICE + webInstance.Source);
+        var faviconUri = new Uri(Constants.ApplicationConstants.FAVICONS_SERVICE + webInstance.Source);
         rightTab.Header = webInstance.CoreWebView2.DocumentTitle;
         rightTab.IconSource = new winUI.BitmapIconSource
         {
@@ -237,7 +237,7 @@ public class ShellPageViewModel : ObservableObject
             ShowAsMonochrome = false
         };
 
-        _dataTransferService.SaveHistoryAsync(new HistoryItemDetails
+        _dataService.SaveHistoryAsync(new HistoryItem
         {
             Name = webInstance.CoreWebView2.DocumentTitle,
             Url = webInstance.Source.AbsoluteUri,
@@ -259,15 +259,15 @@ public class ShellPageViewModel : ObservableObject
 
         switch (address)
         {
-            case Constants.Constants.SETTINGS_ADDRESS:
+            case Constants.ApplicationConstants.SETTINGS_ADDRESS:
                 _tabViewService.CreateSettingsTab();
                 break;
 
-            case Constants.Constants.STARTPAGE_ADDRESS:
+            case Constants.ApplicationConstants.STARTPAGE_ADDRESS:
                 _tabViewService.CreateStartPageTab();
                 break;
 
-            case Constants.Constants.NEWS_ADDRESS:
+            case Constants.ApplicationConstants.NEWS_ADDRESS:
                 _tabViewService.CreateNewsTab();
                 break;
 
@@ -293,7 +293,7 @@ public class ShellPageViewModel : ObservableObject
         {
             case SettingsPage:
                 SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(),
-                    Constants.Constants.SETTINGS_ADDRESS);
+                    Constants.ApplicationConstants.SETTINGS_ADDRESS);
                 break;
 
             case StartPage:
@@ -308,7 +308,7 @@ public class ShellPageViewModel : ObservableObject
 
             case NewsShellPage:
                 SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(),
-                    Constants.Constants.NEWS_ADDRESS);
+                    Constants.ApplicationConstants.NEWS_ADDRESS);
                 break;
 
             default:
@@ -320,9 +320,9 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task GetBookmarksAsync()
     {
-        var bookmarksListTransfer = await _dataTransferService.GetBookmarksListAsync();
-        var bookmarkDetailsEnumerable = bookmarksListTransfer.Reverse();
-        BookmarksList = new ObservableCollection<BookmarkDetails>(bookmarkDetailsEnumerable);
+        var bookmarksListTransfer = await _dataService.GetBookmarksAsync();
+        bookmarksListTransfer.Reverse();
+        BookmarksList = new ObservableCollection<BookmarkItem>(bookmarksListTransfer);
     }
 
     private void SetBookmarkIconState(bool isAccessable)
@@ -350,8 +350,8 @@ public class ShellPageViewModel : ObservableObject
 
     #region Private Global Element Region
 
-    private ObservableCollection<BookmarkDetails> _bookmarksList;
-    private IList<HistoryItemDetails> _historyList;
+    private ObservableCollection<BookmarkItem> _bookmarksList;
+    private IList<HistoryItem> _historyList;
 
     private IList<string> _searchBoxItemsCollection;
 
@@ -416,13 +416,13 @@ public class ShellPageViewModel : ObservableObject
         set => SetProperty(ref _searchBoxText, value);
     }
 
-    public ObservableCollection<BookmarkDetails> BookmarksList
+    public ObservableCollection<BookmarkItem> BookmarksList
     {
         get => _bookmarksList;
         set => SetProperty(ref _bookmarksList, value);
     }
 
-    public IList<HistoryItemDetails> HistoryList
+    public IList<HistoryItem> HistoryList
     {
         get => _historyList;
         set => SetProperty(ref _historyList, value);
@@ -555,7 +555,7 @@ public class ShellPageViewModel : ObservableObject
         if (_tabViewService.GetSelectedWebView() == null) return;
 
         NavigateTo(queryForSearch, _tabViewService.GetSelectedWebView());
-        await _dataTransferService.SaveSearchTermAsync(new SearchTermItem
+        await _dataService.SaveSearchTermAsync(new SiteItem()
         {
             Name = queryForSearch
         }).ConfigureAwait(false);
@@ -579,19 +579,24 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task OnHistoryButtonCommandExecuted()
     {
-        var historyListTransfer = await _dataTransferService.GetHistoryAsync();
+        var historyListTransfer = await _dataService.GetHistoryAsync();
 
-        const int MAX_DISPLAY_COUNT = 100;
+        const int maxDisplayCount = 100;
+        var count = historyListTransfer.Count();
 
-        HistoryList = historyListTransfer.Count <= MAX_DISPLAY_COUNT
-            ? historyListTransfer.Reverse().ToList()
-            : historyListTransfer.Skip(Math.Max(0, historyListTransfer.Count() - MAX_DISPLAY_COUNT)).Reverse().ToList();
+        var orderedHistoryList = count <= maxDisplayCount
+            ? historyListTransfer.ToList()
+            : historyListTransfer.Skip(count - maxDisplayCount).ToList();
+
+        orderedHistoryList.Reverse();
+
+        HistoryList = orderedHistoryList;
     }
 
     private async Task OnHistoryFlyoutItemClickCommandExecuted(object obj)
     {
         if (obj is not ItemClickEventArgs objArgs) return;
-        if (objArgs.ClickedItem is HistoryItemDetails selectedHistoryItem)
+        if (objArgs.ClickedItem is HistoryItem selectedHistoryItem)
         {
             var url = selectedHistoryItem.Url;
             await _tabViewService.CreateNewWebTab();
@@ -618,12 +623,12 @@ public class ShellPageViewModel : ObservableObject
               string.IsNullOrWhiteSpace(BookmarkUrlForSave)) &&
             Uri.IsWellFormedUriString(BookmarkUrlForSave, UriKind.Absolute))
         {
-            await _dataTransferService.SaveBookmarkAsync(
-                new BookmarkDetails
+            await _dataService.SaveBookmarkAsync(
+                new BookmarkItem
                 {
                     Name = BookmarkTitleForSave,
                     Url = BookmarkUrlForSave,
-                    FaviconUrl = Constants.Constants.FAVICONS_SERVICE + BookmarkUrlForSave
+                    FaviconUrl = Constants.ApplicationConstants.FAVICONS_SERVICE + BookmarkUrlForSave
                 });
             await GetBookmarksAsync();
             IsFlyoutClosed = true;
@@ -644,7 +649,7 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task OnDeleteBookmarkCommandExecuted()
     {
-        await _dataTransferService.RemoveBookmarkAsync(new BookmarkDetails
+        await _dataService.RemoveBookmarkAsync(new BookmarkItem
         {
             Name = BookmarkTitleForSave,
             Url = BookmarkUrlForSave
@@ -669,7 +674,7 @@ public class ShellPageViewModel : ObservableObject
 
     private async Task OnBookmarksFlyoutListViewItemClickExecuted(object sender)
     {
-        if (sender is not ItemClickEventArgs { ClickedItem: BookmarkDetails selectedBookmarkItem }) return;
+        if (sender is not ItemClickEventArgs { ClickedItem: BookmarkItem selectedBookmarkItem }) return;
         await _tabViewService.CreateNewWebTab(selectedBookmarkItem.Url);
         IsFlyoutClosed = true;
     }

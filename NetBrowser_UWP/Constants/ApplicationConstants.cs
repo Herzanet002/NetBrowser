@@ -3,32 +3,32 @@ using NetBrowser_UWP.Models;
 
 namespace NetBrowser_UWP.Constants;
 
-public static class Constants
+public static class ApplicationConstants
 {
     public const string FAVICONS_SERVICE = "https://www.google.com/s2/favicons?sz=32&domain_url=";
 
     // Light Themes
-    public static ThemeItem LightTheme = new(LIGHT_THEME_PATH);
+    public static readonly ThemeItem LightTheme = new(LIGHT_THEME_PATH);
 
-    public static ThemeItem LightPinkTheme = new(LIGHT_PINK_THEME_PATH);
+    public static readonly ThemeItem LightPinkTheme = new(LIGHT_PINK_THEME_PATH);
 
-    public static ThemeItem LightBlueTheme = new(LIGHT_BLUE_THEME_PATH);
+    public static readonly ThemeItem LightBlueTheme = new(LIGHT_BLUE_THEME_PATH);
 
-    public static ThemeItem LightAcrylicTheme = new(LIGHT_ACRYLIC_THEME_PATH);
+    public static readonly ThemeItem LightAcrylicTheme = new(LIGHT_ACRYLIC_THEME_PATH);
 
-    public static ThemeItem LightLilacTheme = new(LIGHT_LILAC_THEME_PATH);
+    public static readonly ThemeItem LightLilacTheme = new(LIGHT_LILAC_THEME_PATH);
 
     // Dark Themes
-    public static ThemeItem DarkTheme = new(DARK_THEME_PATH);
+    public static readonly ThemeItem DarkTheme = new(DARK_THEME_PATH);
 
-    public static ThemeItem DarkBlueTheme = new(DARK_BLUE_THEME_PATH);
+    public static readonly ThemeItem DarkBlueTheme = new(DARK_BLUE_THEME_PATH);
 
-    public static ThemeItem DarkNavyBlueTheme = new(DARK_NAVY_BLUE_THEME_PATH);
+    public static readonly ThemeItem DarkNavyBlueTheme = new(DARK_NAVY_BLUE_THEME_PATH);
 
-    public static ThemeItem DarkAcrylicTheme = new(DARK_ACRYLIC_THEME_PATH);
+    public static readonly ThemeItem DarkAcrylicTheme = new(DARK_ACRYLIC_THEME_PATH);
 
 
-    public static Dictionary<string, ThemeItem> ThemesDictionary = new()
+    public static readonly Dictionary<string, ThemeItem> ThemesDictionary = new()
     {
         { LightTheme.Name, LightTheme },
         { LightPinkTheme.Name, LightPinkTheme },
@@ -57,13 +57,16 @@ public static class Constants
 
     #endregion
 
-    #region FILE_ACCESS_NAMES
+    #region ACCESS_NAMES
 
-    public const string SETTINGS_FILE_NAME = "configs.xml";
-    public const string BOOKMARKS_FILE_NAME = "bookmarks.xml";
-    public const string HISTORY_FILE_NAME = "history.xml";
-    public const string STARTPAGE_FILE_NAME = "startpage.xml";
-    public const string NEWS_CONTENT_FILE_NAME = "newspage.xml";
+    public const string HISTORY_COLLECTION_NAME = "history";
+    public const string BOOKMARKS_COLLECTION_NAME = "bookmarks";
+    public const string SEARCH_ENGINES_COLLECTION_NAME = "search_engines";
+    public const string STARTPAGE_ITEMS_COLLECTION_NAME = "startpage_items";
+    public const string SEARCHTERMS_COLLECTION_NAME = "search_term";
+    public const string FAVORITE_NEWS_COLLECTION_NAME = "favorite_news";
+    public const string RSS_FEEDERS_COLLECTION_NAME = "rss_feeders";
+    public const string LIKED_RSS_FEEDERS_COLLECTION_NAME = "liked_rss_feeders";
 
     #endregion
 

@@ -96,7 +96,7 @@ public class PersonalizePageViewModel : ObservableObject
         IsAnimationEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsAnimationEnabled));
         StartPageGridViewOrientation =
             await _localSettingsService.ReadSettingAsync<int>(nameof(StartPageGridViewOrientation));
-        ThemesList = new ObservableCollection<ThemeItem>(Constants.Constants.ThemesDictionary.Values);
+        ThemesList = new ObservableCollection<ThemeItem>(Constants.ApplicationConstants.ThemesDictionary.Values);
         SelectedTheme = App.CurrentTheme;
     }
 

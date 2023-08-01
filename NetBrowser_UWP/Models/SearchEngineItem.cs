@@ -1,9 +1,16 @@
-﻿namespace NetBrowser_UWP.Models;
+﻿using LiteDB;
 
-public class SearchEngineItem : BaseEntity
+namespace NetBrowser_UWP.Models;
+
+public class SearchEngineItem
 {
+    public ObjectId Id { get; set; }
+    
     public string Prefix { get; set; }
+
     public string Name { get; set; }
-    public string IsSelected { get; set; }
+
+    public bool IsSelected { get; set; }
+
     public string HomePage { get; set; }
 }

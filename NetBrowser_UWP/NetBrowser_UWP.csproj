@@ -3,8 +3,8 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	  <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-	  <ProjectGuid>{1623F007-B7AF-4BF2-8642-C19BAF34B790}</ProjectGuid>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{1623F007-B7AF-4BF2-8642-C19BAF34B790}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NetBrowser_UWP</RootNamespace>
@@ -139,26 +139,21 @@
     <Compile Include="Commands\OpenFlyoutAction.cs" />
     <Compile Include="Contracts\INavigationAware.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
-    <Compile Include="Contracts\Services\IDataInitializeService.cs" />
-    <Compile Include="Contracts\Services\IDataTransferService.cs" />
+    <Compile Include="Contracts\Services\IFirstRunAppInitializerService.cs" />
+    <Compile Include="Contracts\Services\IDataService.cs" />
     <Compile Include="Contracts\Services\ILocalSettingsService.cs" />
     <Compile Include="Contracts\Services\INavigationService.cs" />
     <Compile Include="Contracts\Services\INavigationViewService.cs" />
     <Compile Include="Contracts\Services\IWebView2Service.cs" />
     <Compile Include="Contracts\Services\ITabViewService.cs" />
-    <Compile Include="DbContexts\DataAccessContext.cs" />
-    <Compile Include="Helpers\EntityExtensions.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="Helpers\ViewModelsRegistrator.cs" />
-    <Compile Include="Models\BaseEntity.cs" />
     <Compile Include="Models\RssFeeder.cs" />
-    <Compile Include="Models\SearchTermItem.cs" />
-    <Compile Include="Models\StartPageItem.cs" />
     <Compile Include="Models\SyndicationCategoryModel.cs" />
     <Compile Include="Services\AppConfigService.cs" />
-    <Compile Include="Services\DataTransferDbService.cs" />
-    <Compile Include="Services\DbInitializeService.cs" />
+    <Compile Include="Services\DataService.cs" />
+    <Compile Include="Services\FirstRunAppInitializerService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NavigationViewService.cs" />
     <Compile Include="Services\TabViewService.cs" />
@@ -171,7 +166,7 @@
     <Compile Include="Converters\TitleLetterConverter.cs" />
     <Compile Include="Helpers\Json.cs" />
     <Compile Include="Helpers\XmlSerializer.cs" />
-    <Compile Include="Models\BookmarkDetails.cs" />
+    <Compile Include="Models\BookmarkItem.cs" />
     <Compile Include="Models\ContentModel.cs" />
     <Compile Include="Models\SiteItem.cs" />
     <Compile Include="Models\ThemeItem.cs" />
@@ -234,11 +229,11 @@
     <Compile Include="Views\Settings\BookmarksPageSettings.xaml.cs">
       <DependentUpon>BookmarksPageSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Constants\Constants.cs" />
+    <Compile Include="Constants\ApplicationConstants.cs" />
     <Compile Include="Views\ErrorLoadPage.xaml.cs">
       <DependentUpon>ErrorLoadPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\HistoryItemDetails.cs" />
+    <Compile Include="Models\HistoryItem.cs" />
     <Compile Include="Views\Settings\MainItemPageSettings.xaml.cs">
       <DependentUpon>MainItemPageSettings.xaml</DependentUpon>
     </Compile>
@@ -490,18 +485,8 @@
     <PackageReference Include="CommunityToolkit.Mvvm">
       <Version>8.2.1</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
-      <Version>3.1.31</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
-      <Version>3.1.31</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-      <Version>3.1.31</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
+    <PackageReference Include="LiteDB">
+      <Version>5.0.17</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json">
       <Version>7.0.0</Version>
@@ -571,7 +556,6 @@
     <None Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="NetBrowser_UWP_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

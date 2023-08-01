@@ -9,11 +9,11 @@ namespace NetBrowser_UWP.ViewModels.News;
 
 public class NewsSettingsViewModel : ObservableObject
 {
-    private readonly IDataTransferService _dataTransferService;
+    private readonly IDataService _dataService;
 
-    public NewsSettingsViewModel(IDataTransferService dataTransferService)
+    public NewsSettingsViewModel(IDataService dataService)
     {
-        _dataTransferService = dataTransferService;
+        _dataService = dataService;
         ClearRecommendCategoriesCommand = new AsyncRelayCommand(OnClearRecommendCategoriesCommandExecuted);
     }
 
@@ -21,7 +21,7 @@ public class NewsSettingsViewModel : ObservableObject
 
     private async Task OnClearRecommendCategoriesCommandExecuted()
     {
-        await _dataTransferService.ClearAllRecommendedCategories();
+        await _dataService.ClearAllLikedRssFeedersAsync();
         await new ContentDialog
         {
             Title = "Успешно выполнено",

@@ -19,7 +19,7 @@ namespace NetBrowser_UWP.ViewModels.News;
 
 public class AllNewsPageViewModel : ObservableObject
 {
-    private readonly IDataTransferService _dataTransferService;
+    private readonly IDataService _dataService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly TabViewService _tabViewService;
 
@@ -30,11 +30,11 @@ public class AllNewsPageViewModel : ObservableObject
 
     public AllNewsPageViewModel(IServiceScopeFactory serviceScopeFactory,
         TabViewService tabViewService,
-        IDataTransferService dataTransferService)
+        IDataService dataService)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _tabViewService = tabViewService;
-        _dataTransferService = dataTransferService;
+        _dataService = dataService;
 
 
         News = new ObservableCollection<ContentModel>();
@@ -77,7 +77,7 @@ public class AllNewsPageViewModel : ObservableObject
 
     private async Task OnAllNewsPageLoadedCommandExecuted(CancellationToken ct)
     {
-        var rssFeeders = await _dataTransferService.GetRssFeedersListAsync();
+        var rssFeeders = await _dataService.GetRssFeedersListAsync();
         var news = await GetNewsAsync(rssFeeders);
         var orderedEnumerable = new List<ContentModel>();
         await foreach (var content in news.WithCancellation(ct)) orderedEnumerable.Add(content);
@@ -90,14 +90,14 @@ public class AllNewsPageViewModel : ObservableObject
     {
         if (contentItem.IsFavorite)
         {
-            await _dataTransferService.RemoveNewsContentFromFavorite(contentItem);
+            await _dataService.RemoveNewsContentFromFavoriteAsync(contentItem);
             contentItem.IsFavorite = false;
             News[News.IndexOf(contentItem)] = contentItem;
             return;
         }
 
         contentItem.IsFavorite = true;
-        await _dataTransferService.SaveNewsContentToFavoriteAsync(contentItem);
+        await _dataService.SaveNewsContentToFavoriteAsync(contentItem);
         News[News.IndexOf(contentItem)] = contentItem;
     }
 
@@ -134,7 +134,7 @@ public class AllNewsPageViewModel : ObservableObject
         using var scope = _serviceScopeFactory.CreateScope();
         var rssWorker = scope.ServiceProvider.GetRequiredService<IRssWorkerService>();
 
-        var favoriteNews = await _dataTransferService.GetAllFavoritesNewsContentAsync();
+        var favoriteNews = await _dataService.GetAllFavoriteNewsContentAsync();
         var contentModels = rssWorker.GetFeeds(sources, favoriteNews.ToList());
 
         return contentModels;

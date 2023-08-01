@@ -73,7 +73,7 @@
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:HistoryItemDetails" x:Name="DataTemplate">
+                    <DataTemplate x:DataType="models:HistoryItem" x:Name="DataTemplate">
                         <UserControl PointerEntered="ListViewItem_PointerEntered"
                                      PointerExited="ListViewItem_PointerExited">
                             <Grid Background="Transparent" Height="50">
