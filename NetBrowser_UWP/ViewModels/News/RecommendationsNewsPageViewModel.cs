@@ -21,7 +21,7 @@ namespace NetBrowser_UWP.ViewModels.News;
 
 public class RecommendationsNewsPageViewModel : ObservableObject
 {
-    private readonly IDataTransferService _dataTransferService;
+    private readonly IDataService _dataService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly TabViewService _tabViewService;
     private bool _isConfiguredHidden;
@@ -29,11 +29,11 @@ public class RecommendationsNewsPageViewModel : ObservableObject
     private ContentModel _newsForSharing;
     private ObservableCollection<ContentModel> _recommendedNews;
 
-    public RecommendationsNewsPageViewModel(IDataTransferService dataTransferService,
+    public RecommendationsNewsPageViewModel(IDataService dataService,
         IServiceScopeFactory serviceScopeFactory,
         TabViewService tabViewService)
     {
-        _dataTransferService = dataTransferService;
+        _dataService = dataService;
         _serviceScopeFactory = serviceScopeFactory;
         _tabViewService = tabViewService;
         RecommendationsNewsPageLoadedCommand =
@@ -109,21 +109,21 @@ public class RecommendationsNewsPageViewModel : ObservableObject
 
     private async Task OnAddNewsToFavoriteCommandExecuted(ContentModel contentItem, CancellationToken ct)
     {
-        await _dataTransferService.SaveNewsContentToFavoriteAsync(contentItem);
+        await _dataService.SaveNewsContentToFavoriteAsync(contentItem);
         RecommendedNews.Remove(contentItem);
     }
 
     private async Task OnRecommendationsNewsPageLoadedCommandExecuted(CancellationToken ct = default)
     {
         var recommendationCategories =
-            await _dataTransferService.GetRecommendationRssCategoryAsync();
-        if (recommendationCategories.Count == 0)
+            await _dataService.GetLikedRssFeedersAsync();
+        if (!recommendationCategories.Any())
         {
             var result = await new FirstRunRecommendationsDialog().ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
                 recommendationCategories =
-                    await _dataTransferService.GetRecommendationRssCategoryAsync();
+                    await _dataService.GetLikedRssFeedersAsync();
                 IsConfiguredHidden = false;
             }
             else
@@ -147,7 +147,7 @@ public class RecommendationsNewsPageViewModel : ObservableObject
         using var scope = _serviceScopeFactory.CreateScope();
         var rssWorker = scope.ServiceProvider.GetRequiredService<IRssWorkerService>();
 
-        var favoriteNews = await _dataTransferService.GetAllFavoritesNewsContentAsync();
+        var favoriteNews = await _dataService.GetAllFavoriteNewsContentAsync();
         var contentModels = rssWorker.GetFeeds(sources, favoriteNews.ToList());
 
         return contentModels;

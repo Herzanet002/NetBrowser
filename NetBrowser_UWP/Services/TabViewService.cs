@@ -179,11 +179,15 @@ public class TabViewService : ObservableObject, ITabViewService
 
     public void CreateSettingsTab(Type pageType = default)
     {
-        var alreadyExistsSettingsTab = GetTabItemByFilter(tab => tab.Content is SettingsPage);
+        var settingsTabItem = GetTabItemByFilter(tab => tab.Content is SettingsPage);
 
-        if (alreadyExistsSettingsTab != null)
+        if (settingsTabItem != null)
         {
-            ChangeSelectedTabItem(alreadyExistsSettingsTab);
+            ChangeSelectedTabItem(settingsTabItem);
+            if (settingsTabItem.Content is SettingsPage page)
+            {
+                page.ViewModel.NavigateToPageType(pageType);
+            }
             return;
         }
 
@@ -198,11 +202,11 @@ public class TabViewService : ObservableObject, ITabViewService
 
     public void CreateNewsTab(Type pageType = default)
     {
-        var alreadyExistsContentTab = GetTabItemByFilter(tab => tab.Content is NewsShellPage);
+        var newsTabItem = GetTabItemByFilter(tab => tab.Content is NewsShellPage);
 
-        if (alreadyExistsContentTab != null)
+        if (newsTabItem != null)
         {
-            ChangeSelectedTabItem(alreadyExistsContentTab);
+            ChangeSelectedTabItem(newsTabItem);
             return;
         }
 

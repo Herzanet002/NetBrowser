@@ -9,16 +9,15 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.DbContexts;
 using NetBrowser_UWP.Helpers;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
+using Windows.Storage;
 
 namespace NetBrowser_UWP;
 
@@ -28,10 +27,8 @@ namespace NetBrowser_UWP;
 public sealed partial class App : Application
 {
     public static ThemeItem CurrentTheme;
-
     public static SearchEngineItem CurrentWebEngine;
-
-
+    
     public App()
     {
         InitializeComponent();
@@ -60,56 +57,56 @@ public sealed partial class App : Application
     {
         var services = new ServiceCollection();
 
-        services.AddDbContext<DataAccessContext>(opt =>
-                opt.UseSqlite("Filename=datasource.db")
-                    .EnableSensitiveDataLogging())
-            ;
-
-        services.AddTransient<DbInitializeService>();
-        //Services & Managers
-        services.AddSingleton<IDataTransferService, DataTransferDbService>();
-        services.AddTransient<DbInitializeService>();
+        // Services
+        services.AddScoped<IFirstRunAppInitializerService, FirstRunAppInitializerService>();
+        services.AddSingleton<IDataService, DataService>();
         services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
         services.AddSingleton<IWebView2Service, WebView2Service>();
         services.AddTransient<INavigationService, NavigationService>();
         services.AddTransient<INavigationViewService, NavigationViewService>();
         services.AddSingleton<AppConfigService>();
         services.AddSingleton<TabViewService>();
-
         services.AddScoped<IRssWorkerService, RssWorkerService>();
 
+        // ViewModels
         services.RegisterViewModels();
 
         services.AddHttpClient("NewsClient");
         services.AddLogging(x => x.AddConsole());
         return services.BuildServiceProvider();
     }
-
-
-    public static async Task SetApplicationTheme()
+    
+    private static async Task SetApplicationTheme()
     {
         var name = await Ioc.Default.GetRequiredService<ILocalSettingsService>()
             .ReadSettingAsync<string>("CurrentTheme");
         CurrentTheme = ThemeManager.SetRequestedTheme(name);
     }
 
+    private static bool IsFirstRun()
+    {
+        var localSettings = ApplicationData.Current.LocalSettings;
+        if (localSettings.Values.ContainsKey("IsFirstRun"))
+        {
+            return false;
+        }
+
+        localSettings.Values["IsFirstRun"] = true;
+        return true;
+    }
+
     protected override async void OnLaunched(LaunchActivatedEventArgs e)
     {
         var rootFrame = Window.Current.Content as Frame;
-
-        //Set Current Search Engine
-        using (var scope = Services.CreateScope())
+        
+        if (IsFirstRun())
         {
-            await scope.ServiceProvider.GetRequiredService<DbInitializeService>().InitializeAsync()
-                .ConfigureAwait(false);
+            await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>().InitializeSearchEngineStorageAsync();
+            await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>().InitializeStartPageStorageAsync();
+            await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>().InitializeRssFeeders();
         }
 
-        CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataTransferService>().GetCurrentSearchEngineAsync();
-        using (var scope = Services.CreateScope())
-        {
-            await scope.ServiceProvider.GetRequiredService<DbInitializeService>().InitializeAsync()
-                .ConfigureAwait(false);
-        }
+        CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataService>().GetCurrentSearchEngineAsync();
 
         // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
         // только обеспечьте активность окна
@@ -123,6 +120,7 @@ public sealed partial class App : Application
             if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
             {
                 //TODO: Загрузить состояние из ранее приостановленного приложения
+                //TODO: Загрузить предыдущие вкладки...
             }
 
             // Размещение фрейма в текущем окне

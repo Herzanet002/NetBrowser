@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
@@ -13,17 +14,17 @@ namespace NetBrowser_UWP.ViewModels.Settings;
 
 public class BookmarksPageViewModel : ObservableObject
 {
-    private static ObservableCollection<BookmarkDetails> _bookmarksList;
+    private static ObservableCollection<BookmarkItem> _bookmarksList;
     private static string _bookmarkNewTitle;
     private static string _bookmarkNewUrl;
-    private static BookmarkDetails _selectedBookmark;
+    private static BookmarkItem _selectedBookmark;
 
-    private readonly IDataTransferService _dataTransferService;
+    private readonly IDataService _dataService;
     private readonly TabViewService _tabViewService;
 
-    public BookmarksPageViewModel(IDataTransferService dataTransferService, TabViewService tabViewService)
+    public BookmarksPageViewModel(IDataService dataService, TabViewService tabViewService)
     {
-        _dataTransferService = dataTransferService;
+        _dataService = dataService;
         _tabViewService = tabViewService;
         BookmarksPageSettingsLoadedCommand = new AsyncRelayCommand(OnBookmarksPageSettingsLoadedCommandExecuted);
     }
@@ -42,13 +43,13 @@ public class BookmarksPageViewModel : ObservableObject
         set => SetProperty(ref _bookmarkNewUrl, value);
     }
 
-    public BookmarkDetails SelectedBookmark
+    public BookmarkItem SelectedBookmark
     {
         get => _selectedBookmark;
         set => SetProperty(ref _selectedBookmark, value);
     }
 
-    public ObservableCollection<BookmarkDetails> BookmarksList
+    public ObservableCollection<BookmarkItem> BookmarksList
     {
         get => _bookmarksList;
         set => SetProperty(ref _bookmarksList, value);
@@ -61,7 +62,7 @@ public class BookmarksPageViewModel : ObservableObject
 
     public async Task GetBookmarksAsync()
     {
-        BookmarksList = new ObservableCollection<BookmarkDetails>(await _dataTransferService.GetBookmarksListAsync());
+        BookmarksList = new ObservableCollection<BookmarkItem>(await _dataService.GetBookmarksAsync());
     }
 
     private async Task OnOpenBookmarkInWebCommandExecuted()
@@ -72,7 +73,7 @@ public class BookmarksPageViewModel : ObservableObject
 
     private async Task OnRemoveBookmarkCommandExecuted()
     {
-        await _dataTransferService.RemoveBookmarkAsync(SelectedBookmark);
+        await _dataService.RemoveBookmarkAsync(SelectedBookmark);
     }
 
     private async Task OnDeleteSelectedBookmarkCommandExecuted()
@@ -92,11 +93,11 @@ public class BookmarksPageViewModel : ObservableObject
 
     private Task OnSaveEditedBookmarkCommandExecuted()
     {
-        return _dataTransferService.EditBookmarkAsync(SelectedBookmark, new BookmarkDetails
+        return _dataService.EditBookmarkAsync(SelectedBookmark, new BookmarkItem
         {
             Name = BookmarkNewTitle,
             Url = BookmarkNewUrl,
-            FaviconUrl = Constants.Constants.FAVICONS_SERVICE + BookmarkNewUrl
+            FaviconUrl = ApplicationConstants.FAVICONS_SERVICE + BookmarkNewUrl
         });
     }
 

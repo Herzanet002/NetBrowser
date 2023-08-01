@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Helpers;
@@ -36,7 +37,7 @@ public class NavigationViewService : INavigationViewService
         _navigationView.BackRequested += OnBackRequested;
         _navigationView.ItemInvoked += OnItemInvoked;
         NavigationService.Navigated += OnNavigated;
-        if (pageType != default) NavigationService.Navigate(pageType);
+        if (pageType != default) NavigateToPageType(pageType);
     }
 
     public void UnregisterEvents()
@@ -67,18 +68,22 @@ public class NavigationViewService : INavigationViewService
         NavigationService.GoBack();
     }
 
+    public void NavigateToPageType(Type pageType, object parameter = null,
+        NavigationTransitionInfo transitionInfo = null)
+        => NavigationService.Navigate(pageType, parameter, transitionInfo);
+
     private void OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
         if (args.IsSettingsInvoked)
         {
-            NavigationService.Navigate(typeof(SettingsPage), null, args.RecommendedNavigationTransitionInfo);
+            NavigateToPageType(typeof(SettingsPage), null, args.RecommendedNavigationTransitionInfo);
         }
         else
         {
             var selectedItem = args.InvokedItemContainer as NavigationViewItem;
 
             if (selectedItem?.GetValue(NavigationHelper.NavigateToProperty) is Type pageType)
-                NavigationService.Navigate(pageType, null, args.RecommendedNavigationTransitionInfo);
+                NavigateToPageType(pageType, null, args.RecommendedNavigationTransitionInfo);
         }
     }
 

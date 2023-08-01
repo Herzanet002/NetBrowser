@@ -27,10 +27,10 @@ public sealed class ThemeManager : INotifyPropertyChanged, IThemeManager
     public ThemeItem GetRequestedTheme(string themeName)
     {
         return themeName == null
-            ? Constants.Constants.LightTheme
-            : Constants.Constants.ThemesDictionary.ContainsKey(themeName)
-                ? Constants.Constants.ThemesDictionary[themeName]
-                : Constants.Constants.LightTheme;
+            ? Constants.ApplicationConstants.LightTheme
+            : Constants.ApplicationConstants.ThemesDictionary.ContainsKey(themeName)
+                ? Constants.ApplicationConstants.ThemesDictionary[themeName]
+                : Constants.ApplicationConstants.LightTheme;
     }
 
     public ThemeItem SetRequestedTheme(string themeName)

@@ -10,12 +10,12 @@ namespace NetBrowser_UWP.ViewModels.Settings;
 public class SearchSystemPageViewModel : ObservableObject
 {
     private static ObservableCollection<SearchEngineItem> _listOfEngines;
-    private readonly IDataTransferService _dataTransferService;
+    private readonly IDataService _dataService;
     private SearchEngineItem _currentEngine;
 
-    public SearchSystemPageViewModel(IDataTransferService dataTransferService)
+    public SearchSystemPageViewModel(IDataService dataService)
     {
-        _dataTransferService = dataTransferService;
+        _dataService = dataService;
         GetEngines();
     }
 
@@ -37,17 +37,17 @@ public class SearchSystemPageViewModel : ObservableObject
 
     private void ChangeSearchEngine()
     {
-        _dataTransferService.ChangeSearchEngineAsync(CurrentEngine.Name);
+        _dataService.SetDefaultSearchEngineAsync(CurrentEngine);
         App.CurrentWebEngine = CurrentEngine;
     }
 
     public async Task GetEngines()
     {
         ListOfEngines =
-            new ObservableCollection<SearchEngineItem>(await _dataTransferService.GetSearchEngineListAsync());
+            new ObservableCollection<SearchEngineItem>(await _dataService.GetSearchEngineListAsync());
 
         var selectedEngine = from item in ListOfEngines
-            where item.IsSelected == "1"
+            where item.IsSelected
             select item;
         CurrentEngine = selectedEngine.FirstOrDefault();
     }

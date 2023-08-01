@@ -53,7 +53,7 @@
                     </MenuFlyout>
                 </ListView.Resources>
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:BookmarkDetails">
+                    <DataTemplate x:DataType="models:BookmarkItem">
                         <Grid Height="60">
                             <StackPanel Orientation="Horizontal">
                                 <BitmapIcon UriSource="{x:Bind FaviconUrl}"

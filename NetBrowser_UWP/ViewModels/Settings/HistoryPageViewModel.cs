@@ -15,21 +15,21 @@ namespace NetBrowser_UWP.ViewModels.Settings;
 
 public class HistoryPageViewModel : ObservableObject
 {
-    private static IEnumerable<HistoryItemDetails> _historyList;
-    private static HistoryItemDetails _selectedItem;
+    private static IEnumerable<HistoryItem> _historyList;
+    private static HistoryItem _selectedItem;
     private static string _searchText;
 
-    private readonly IDataTransferService _dataTransferService;
+    private readonly IDataService _dataService;
     private readonly TabViewService _tabViewService;
 
-    public HistoryPageViewModel(IDataTransferService dataTransferService, TabViewService tabViewService)
+    public HistoryPageViewModel(IDataService dataService, TabViewService tabViewService)
     {
-        _dataTransferService = dataTransferService;
+        _dataService = dataService;
         _tabViewService = tabViewService;
     }
 
     public IAsyncRelayCommand DeleteCommand =>
-        new AsyncRelayCommand<HistoryItemDetails>(OnDeleteHistoryItemCommandExecuted);
+        new AsyncRelayCommand<HistoryItem>(OnDeleteHistoryItemCommandExecuted);
 
     public IAsyncRelayCommand HistoryPageLoadedCommand => new AsyncRelayCommand(OnHistoryPageLoadedCommandExecuted);
 
@@ -49,21 +49,21 @@ public class HistoryPageViewModel : ObservableObject
         }
     }
 
-    public IEnumerable<HistoryItemDetails> HistoryList
+    public IEnumerable<HistoryItem> HistoryList
     {
         get => _historyList;
         set => SetProperty(ref _historyList, value);
     }
 
-    public HistoryItemDetails SelectedItem
+    public HistoryItem SelectedItem
     {
         get => _selectedItem;
         set => SetProperty(ref _selectedItem, value);
     }
 
-    private async Task OnDeleteHistoryItemCommandExecuted(HistoryItemDetails historyItem)
+    private async Task OnDeleteHistoryItemCommandExecuted(HistoryItem historyItem)
     {
-        await _dataTransferService.RemoveHistoryItemAsync(historyItem);
+        await _dataService.RemoveHistoryItemAsync(historyItem);
         var history = HistoryList.ToList();
         history.Remove(historyItem);
         HistoryList = history;
@@ -76,7 +76,7 @@ public class HistoryPageViewModel : ObservableObject
 
     private async Task OnClearHistoryJournalCommandExecuted()
     {
-        await _dataTransferService.ClearAllHistoryAsync();
+        await _dataService.ClearAllHistoryAsync();
     }
 
     private async Task OnOpenClearHistoryJournalDialogCommandExecuted()
@@ -117,7 +117,7 @@ public class HistoryPageViewModel : ObservableObject
 
     public async Task GetHistoryAsync()
     {
-        var list = await _dataTransferService.GetHistoryAsync();
+        var list = await _dataService.GetHistoryAsync();
         if (list == null) return;
         var historyItemDetailsEnumerable = list.ToList();
         historyItemDetailsEnumerable.Reverse();

@@ -296,7 +296,7 @@
                                 <ListView MaxHeight="500" IsItemClickEnabled="True"
                                           ItemsSource="{Binding BookmarksList}">
                                     <ListView.ItemTemplate>
-                                        <DataTemplate x:DataType="models:BookmarkDetails">
+                                        <DataTemplate x:DataType="models:BookmarkItem">
                                             <Grid Height="40">
                                                 <StackPanel Orientation="Horizontal">
                                                     <BitmapIcon UriSource="{x:Bind FaviconUrl}"
@@ -354,7 +354,7 @@
                             <ListView MaxHeight="500" IsItemClickEnabled="True"
                                       ItemsSource="{Binding HistoryList}">
                                 <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:HistoryItemDetails">
+                                    <DataTemplate x:DataType="models:HistoryItem">
                                         <Grid Height="50">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition />
