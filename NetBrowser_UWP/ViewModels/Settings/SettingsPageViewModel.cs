@@ -1,14 +1,14 @@
 ﻿using System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.ViewModels.Base;
 using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
-public class SettingsPageViewModel : ObservableObject
+public class SettingsPageViewModel : BindableBase
 {
     private readonly INavigationViewService _navigationViewService;
     private bool _isBackEnabled;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
+using NetBrowser.Utils;
 
 namespace NetBrowser_UWP.Services;
 

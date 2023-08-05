@@ -1,13 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
+using NetBrowser_UWP.ViewModels.Base;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
-public class SearchSystemPageViewModel : ObservableObject
+public class SearchSystemPageViewModel : BindableBase
 {
     private static ObservableCollection<SearchEngineItem> _listOfEngines;
     private readonly IDataService _dataService;

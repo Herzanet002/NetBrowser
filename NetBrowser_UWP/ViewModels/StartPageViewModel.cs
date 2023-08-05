@@ -12,12 +12,13 @@ using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views.UserControls;
 using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels;
 
-public class StartPageViewModel : ObservableObject
+public class StartPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
     private readonly ILocalSettingsService _localSettingsService;

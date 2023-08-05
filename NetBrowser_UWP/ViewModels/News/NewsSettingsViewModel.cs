@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.ViewModels.Base;
 
 namespace NetBrowser_UWP.ViewModels.News;
 
-public class NewsSettingsViewModel : ObservableObject
+public class NewsSettingsViewModel : BindableBase
 {
     private readonly IDataService _dataService;
 

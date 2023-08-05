@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using LiteDB;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
+using NetBrowser.Utils;
 
 namespace NetBrowser_UWP.Services;
 
@@ -143,7 +143,7 @@ public class DataService : IDataService
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection = liteConnection.GetCollection<ContentModel>(ApplicationConstants.FAVORITE_NEWS_COLLECTION_NAME);
-        collection.Delete(contentModel.Id);
+        collection.DeleteMany(x => x.Id == contentModel.Id);
         return Task.CompletedTask;
     }
 

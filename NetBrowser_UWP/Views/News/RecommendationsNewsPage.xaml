@@ -11,6 +11,7 @@
     xmlns:syndication="using:System.ServiceModel.Syndication"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:controls1="using:Microsoft.UI.Xaml.Controls"
+    xmlns:utils="using:NetBrowser.Utils"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=news:RecommendationsNewsPageViewModel,IsDesignTimeCreatable=True}"
     Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">
@@ -31,7 +32,7 @@
                     </ToolTipService.ToolTip>
                 </Grid>
             </DataTemplate>
-            <DataTemplate x:Key="NewsGridItemTemplate" x:DataType="models:ContentModel">
+            <DataTemplate x:Key="NewsGridItemTemplate" x:DataType="utils:ContentModel">
                 <Grid>
                     <Grid.RowDefinitions>
 

@@ -4,12 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:NetBrowser_UWP.Models"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:news="using:NetBrowser_UWP.ViewModels.News"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:converters="using:NetBrowser_UWP.Converters"
+    xmlns:utils="using:NetBrowser.Utils"
     mc:Ignorable="d"
     Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}"
     d:DataContext="{d:DesignInstance Type=news:FavoriteNewsPageViewModel,IsDesignTimeCreatable=True}">
@@ -20,7 +19,7 @@
     </interactivity:Interaction.Behaviors>
 
     <Page.Resources>
-        <DataTemplate x:Key="ListViewItemNewsTemplate" x:DataType="models:ContentModel">
+        <DataTemplate x:Key="ListViewItemNewsTemplate" x:DataType="utils:ContentModel">
             <Grid Margin="0,12,0,12">
                 <Grid Margin="12,0,0,0" ColumnSpacing="40">
                     <Grid.ColumnDefinitions>

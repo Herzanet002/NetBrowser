@@ -5,24 +5,15 @@ using System.Net.Http;
 using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
 using System.Xml;
-using NetBrowser_UWP.Helpers;
-using NetBrowser_UWP.Models;
 
-namespace NetBrowser_UWP.Services;
+namespace NetBrowser.Utils;
 
 public class RssWorkerService : IRssWorkerService
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-
-    public RssWorkerService(IHttpClientFactory httpClientFactory)
-    {
-        _httpClientFactory = httpClientFactory;
-    }
-
     public async IAsyncEnumerable<ContentModel> GetFeeds(IEnumerable<RssFeeder> rssFeeders,
-        IEnumerable<ContentModel> favoriteItems = null)
+        IEnumerable<ContentModel> favoriteItems, int? limit)
     {
-        var syndicationFeeds = new List<SyndicationFeed>();
+        var syndicationFeeds = new List<SyndicationFeed?>();
         await Task.Run(async () =>
         {
             foreach (var source in rssFeeders)
@@ -32,12 +23,13 @@ public class RssWorkerService : IRssWorkerService
         foreach (var syndicationFeed in syndicationFeeds)
         {
             if (syndicationFeed is null) continue;
-            foreach (var element in syndicationFeed.Items)
+            var syndicationItems =
+                limit == null ? syndicationFeed.Items : syndicationFeed.Items.Take(limit ?? 0);
+
+            foreach (var element in syndicationItems)
             {
                 if (element is null) continue;
                 var commonFavorite = favoriteItems?.FirstOrDefault(x => x.Link == element.Links[0].Uri.ToString());
-                var t = rssFeeders.FirstOrDefault(x => x.Link == syndicationFeed.Links[0].Uri ||
-                                                       x.RssUrl == syndicationFeed.Links[0].Uri.OriginalString);
                 yield return new ContentModel
                 {
                     Title = element.Title.Text,
@@ -54,27 +46,25 @@ public class RssWorkerService : IRssWorkerService
         }
     }
 
-    private async Task<SyndicationFeed> GetSyndicationFeedAsync(RssFeeder rssFeeder)
+    private static async Task<SyndicationFeed?> GetSyndicationFeedAsync(RssFeeder rssFeeder)
     {
-        var settings = new XmlReaderSettings { Async = true };
         try
         {
-            var client = _httpClientFactory.CreateClient();
-            var content = await client.GetStreamAsync(rssFeeder.RssUrl);
+            var client = new HttpClient {Timeout = TimeSpan.FromMilliseconds(500)};
+            using var content = await client.GetStreamAsync(rssFeeder.RssUrl);
+            var settings = new XmlReaderSettings
+            {
+                Async = true
+            };
+
             using var reader = XmlReader.Create(content, settings);
             var feed = SyndicationFeed.Load(reader);
             reader.Close();
             return feed;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return null;
         }
     }
-}
-
-public interface IRssWorkerService
-{
-    abstract IAsyncEnumerable<ContentModel> GetFeeds(IEnumerable<RssFeeder> rssFeeders,
-        IEnumerable<ContentModel> favoriteItems = null);
 }

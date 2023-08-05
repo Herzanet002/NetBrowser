@@ -1,9 +1,9 @@
 ﻿using Windows.Storage;
-using CommunityToolkit.Mvvm.ComponentModel;
+using NetBrowser_UWP.ViewModels.Base;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
-public class MainSettingsPageViewModel : ObservableObject
+public class MainSettingsPageViewModel : BindableBase
 {
     private string _fullAppInstalledPath;
 

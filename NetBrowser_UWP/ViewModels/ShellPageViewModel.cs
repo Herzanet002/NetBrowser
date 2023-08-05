@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Web.WebView2.Core;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views;
 using NetBrowser_UWP.Views.News;
 using NetBrowser_UWP.Views.Settings;
@@ -22,14 +22,13 @@ using winUI = Microsoft.UI.Xaml.Controls;
 
 namespace NetBrowser_UWP.ViewModels;
 
-public class ShellPageViewModel : ObservableObject
+public class ShellPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
     private readonly ILocalSettingsService _localSettingsService;
     private readonly TabViewService _tabViewService;
     private readonly IWebView2Service _webView2Service;
-
-
+    
     public ShellPageViewModel(IDataService dataService,
         IWebView2Service webView2Service,
         ILocalSettingsService localSettingsService,

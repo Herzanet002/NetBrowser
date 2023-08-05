@@ -8,7 +8,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
-    xmlns:models="using:NetBrowser_UWP.Models"
+    xmlns:utils="using:NetBrowser.Utils"
     mc:Ignorable="d"
     Title="Для начала выберите категории новостей, которые вам нравятся"
     PrimaryButtonText="Продолжить"
@@ -24,7 +24,7 @@
     </interactivity:Interaction.Behaviors>
     <Grid>
         <Grid.Resources>
-            <DataTemplate x:Key="ListViewCategoryTemplate" x:DataType="models:RssFeeder">
+            <DataTemplate x:Key="ListViewCategoryTemplate" x:DataType="utils:RssFeeder">
                 <Grid>
                     <TextBlock
                         Text="{x:Bind Name}" />

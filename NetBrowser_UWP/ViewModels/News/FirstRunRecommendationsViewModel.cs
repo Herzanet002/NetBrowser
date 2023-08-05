@@ -3,17 +3,17 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels.Base;
+using NetBrowser.Utils;
 using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels.News;
 
-public class FirstRunRecommendationsViewModel : ObservableObject
+public class FirstRunRecommendationsViewModel : BindableBase
 {
     private readonly ObservableCollection<RssFeeder> _chosenCategories;
     private readonly IDataService _dataService;
@@ -69,7 +69,7 @@ public class FirstRunRecommendationsViewModel : ObservableObject
         CanContinue = _chosenCategories.Count > 2;
     }
 
-    private async Task OnPageLoaded(CancellationToken ct = default)
+    private Task OnPageLoaded()
     {
         var appConfigService = Ioc.Default.GetRequiredService<AppConfigService>();
         var feedResources = appConfigService.GetSection<List<RssFeeder>>("FeedResources");
@@ -78,5 +78,6 @@ public class FirstRunRecommendationsViewModel : ObservableObject
 
         Categories = new ObservableCollection<RssFeeder>(categories);
         IsProgressRingActive = false;
+        return Task.CompletedTask;
     }
 }

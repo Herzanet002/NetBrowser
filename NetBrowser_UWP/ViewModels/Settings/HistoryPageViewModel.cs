@@ -4,16 +4,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views.UserControls;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
-public class HistoryPageViewModel : ObservableObject
+public class HistoryPageViewModel : BindableBase
 {
     private static IEnumerable<HistoryItem> _historyList;
     private static HistoryItem _selectedItem;

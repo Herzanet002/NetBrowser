@@ -147,10 +147,7 @@
     <Compile Include="Contracts\Services\IWebView2Service.cs" />
     <Compile Include="Contracts\Services\ITabViewService.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
-    <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="Helpers\ViewModelsRegistrator.cs" />
-    <Compile Include="Models\RssFeeder.cs" />
-    <Compile Include="Models\SyndicationCategoryModel.cs" />
     <Compile Include="Services\AppConfigService.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\FirstRunAppInitializerService.cs" />
@@ -167,7 +164,6 @@
     <Compile Include="Helpers\Json.cs" />
     <Compile Include="Helpers\XmlSerializer.cs" />
     <Compile Include="Models\BookmarkItem.cs" />
-    <Compile Include="Models\ContentModel.cs" />
     <Compile Include="Models\SiteItem.cs" />
     <Compile Include="Models\ThemeItem.cs" />
     <Compile Include="Helpers\ResourseHelper.cs" />
@@ -176,6 +172,7 @@
     </Compile>
     <Compile Include="Services\LocalSettingsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
+    <Compile Include="ViewModels\Base\BindableBase.cs" />
     <Compile Include="ViewModels\News\AllNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FavoriteNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FirstRunRecommendationsViewModel.cs" />
@@ -187,7 +184,6 @@
     <Compile Include="ViewModels\ShellPageViewModel.cs" />
     <Compile Include="ViewModels\News\NewsShellPageViewModel.cs" />
     <Compile Include="ViewModels\Settings\PersonalizePageViewModel.cs" />
-    <Compile Include="Services\RssWorkerService.cs" />
     <Compile Include="ViewModels\Settings\SettingsPageViewModel.cs" />
     <Compile Include="Views\News\AllNewsPage.xaml.cs">
       <DependentUpon>AllNewsPage.xaml</DependentUpon>
@@ -557,7 +553,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\NetBrowser.Utils\NetBrowser.Utils.csproj">
+      <Project>{2f10829b-6fe3-4a9b-a38f-88f1ee0fdae7}</Project>
+      <Name>NetBrowser.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

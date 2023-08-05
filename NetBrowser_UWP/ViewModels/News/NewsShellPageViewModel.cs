@@ -1,11 +1,11 @@
 ﻿using Windows.UI.Xaml.Navigation;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.ViewModels.Base;
 
 namespace NetBrowser_UWP.ViewModels.News;
 
-public class NewsShellPageViewModel : ObservableObject
+public class NewsShellPageViewModel : BindableBase
 {
     private NavigationViewItem _selectedNavViewItem;
 

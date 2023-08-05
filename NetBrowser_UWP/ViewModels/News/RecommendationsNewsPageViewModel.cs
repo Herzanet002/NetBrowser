@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Helpers;
-using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views.News;
+using NetBrowser.Utils;
 using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels.News;
 
-public class RecommendationsNewsPageViewModel : ObservableObject
+public class RecommendationsNewsPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -142,13 +142,13 @@ public class RecommendationsNewsPageViewModel : ObservableObject
         IsProgressRingActive = false;
     }
 
-    public async Task<IAsyncEnumerable<ContentModel>> GetNewsAsync(IEnumerable<RssFeeder> sources)
+    private async Task<IAsyncEnumerable<ContentModel>> GetNewsAsync(IEnumerable<RssFeeder> sources)
     {
         using var scope = _serviceScopeFactory.CreateScope();
         var rssWorker = scope.ServiceProvider.GetRequiredService<IRssWorkerService>();
 
         var favoriteNews = await _dataService.GetAllFavoriteNewsContentAsync();
-        var contentModels = rssWorker.GetFeeds(sources, favoriteNews.ToList());
+        var contentModels = rssWorker.GetFeeds(sources, favoriteNews.ToList(), null);
 
         return contentModels;
     }

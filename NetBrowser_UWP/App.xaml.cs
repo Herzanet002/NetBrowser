@@ -18,6 +18,7 @@ using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
 using Windows.Storage;
+using NetBrowser.Utils;
 
 namespace NetBrowser_UWP;
 
@@ -70,8 +71,7 @@ public sealed partial class App : Application
 
         // ViewModels
         services.RegisterViewModels();
-
-        services.AddHttpClient("NewsClient");
+        
         services.AddLogging(x => x.AddConsole());
         return services.BuildServiceProvider();
     }

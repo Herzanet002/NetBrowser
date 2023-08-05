@@ -4,16 +4,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels.Base;
+using NetBrowser.Utils;
 using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels.News;
 
-public class FavoriteNewsPageViewModel : ObservableObject
+public class FavoriteNewsPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
     private readonly TabViewService _tabViewService;

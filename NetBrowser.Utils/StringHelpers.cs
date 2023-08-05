@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace NetBrowser_UWP.Helpers;
+namespace NetBrowser.Utils;
 
 public static class StringHelpers
 {

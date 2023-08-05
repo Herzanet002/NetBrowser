@@ -2,15 +2,15 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
+using NetBrowser_UWP.ViewModels.Base;
 using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
-public class PersonalizePageViewModel : ObservableObject
+public class PersonalizePageViewModel : BindableBase
 {
     private readonly ILocalSettingsService _localSettingsService;
     private bool _isAnimationEnabled;

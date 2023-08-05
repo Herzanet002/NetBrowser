@@ -1,11 +1,11 @@
 ﻿using Windows.ApplicationModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Uwp.Helpers;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.ViewModels.Base;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
-public class AboutAppViewModel : ObservableObject
+public class AboutAppViewModel : BindableBase
 {
     public AboutAppViewModel(IWebView2Service webView2Service)
     {
