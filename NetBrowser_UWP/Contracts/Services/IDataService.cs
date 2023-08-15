@@ -15,9 +15,9 @@ public interface IDataService
 
     Task RemoveHistoryItemAsync(HistoryItem historyItem);
 
-    Task SaveSearchTermAsync(SiteItem siteItem);
+    Task AddOrReplaceSearchTermAsync(SearchTermItem searchTermItem);
 
-    Task<List<SiteItem>> GetSearchTermsAsync();
+    Task<List<SearchTermItem>> GetSearchTermsAsync();
 
     Task SaveBookmarkAsync(BookmarkItem bookmarkItem);
 
@@ -42,7 +42,7 @@ public interface IDataService
     Task<List<RssFeeder>> GetLikedRssFeedersAsync();
 
     Task ClearAllLikedRssFeedersAsync();
-    
+
     Task SetDefaultSearchEngineAsync(SearchEngineItem searchEngine);
 
     Task<List<SearchEngineItem>> GetSearchEngineListAsync();

@@ -7,7 +7,6 @@ using System.Windows.Input;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
@@ -34,7 +33,7 @@ public class StartPageViewModel : BindableBase
     private string _newSiteName;
     private string _newSiteUrl;
     private string _placeholderText;
-    private HashSet<SiteItem> _recentlySearchedItems;
+    private HashSet<SearchTermItem> _recentlySearchedItems;
     private SiteItem _searchBarSelectedItem;
     private string _searchBoxText;
     private ObservableCollection<SiteItem> _startPageItems;
@@ -151,7 +150,7 @@ public class StartPageViewModel : BindableBase
         set => SetProperty(ref _startPageItems, value);
     }
 
-    public HashSet<SiteItem> RecentlySearchedItems
+    public HashSet<SearchTermItem> RecentlySearchedItems
     {
         get => _recentlySearchedItems;
         set => SetProperty(ref _recentlySearchedItems, value);
@@ -226,7 +225,7 @@ public class StartPageViewModel : BindableBase
         if (searchTermListTransfer == null) return;
         var termListTransfer = searchTermListTransfer.ToList();
         termListTransfer.Reverse();
-        RecentlySearchedItems = new HashSet<SiteItem>(termListTransfer);
+        RecentlySearchedItems = new HashSet<SearchTermItem>(termListTransfer);
     }
 
     private async Task OnSearchButtonTappedCommandExecuted()

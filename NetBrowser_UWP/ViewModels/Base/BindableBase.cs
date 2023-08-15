@@ -6,6 +6,6 @@ namespace NetBrowser_UWP.ViewModels.Base;
 ///     A base class for objects of which the properties must be observable.
 ///     Implementation of INotifyPropertyChanged to simplify models.
 /// </summary>
-public class BindableBase : ObservableObject
+public class BindableBase : ObservableRecipient
 {
 }

@@ -13,6 +13,7 @@
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
     xmlns:converters="using:NetBrowser_UWP.Converters"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
+    xmlns:userControls="using:NetBrowser_UWP.Views.UserControls"
     Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
     d:DataContext="{d:DesignInstance Type=viewModels:ShellPageViewModel,IsDesignTimeCreatable=True}"
     IsTabStop="True">
@@ -147,6 +148,7 @@
                     ToolTipService.Placement="Bottom" Command="{Binding BackButtonCommand}">
                 <FontIcon Glyph="&#xF0D3;" FontSize="{StaticResource NavigationBarButtonFontSize}" />
             </Button>
+
             <!--Forward Button-->
             <Button Grid.Column="1" Command="{Binding ForwardButtonCommand}"
                     Style="{StaticResource NavigationBarButtonStyle}"
@@ -162,8 +164,8 @@
                     ToolTipService.Placement="Bottom"
                     Visibility="{Binding IsWebLoading, Converter={StaticResource InvertBooleanConverter}}">
                 <FontIcon Glyph="&#xE72C;" FontSize="{StaticResource NavigationBarButtonFontSize}" />
-
             </Button>
+
             <!--Stop loading button-->
             <Button Grid.Column="2" Style="{StaticResource NavigationBarButtonStyle}"
                     Command="{Binding StopLoadingButtonCommand}"
@@ -182,87 +184,7 @@
 
             <!--SearchBox-->
             <Grid Grid.Column="4" Margin="10,0,0,0">
-                <AutoSuggestBox x:Name="SearchBox" Style="{StaticResource AutoSuggestBoxTemplate}"
-                                Text="{Binding SearchBoxText, Mode=TwoWay}" QueryIcon="Find"
-                                ItemsSource="{Binding SearchBoxItemsCollection}"
-                                PlaceholderText="{helpers:ResourceString Name=SearchBoxPlaceholder/PlaceholderText}">
-                    <AutoSuggestBox.Shadow>
-                        <ThemeShadow />
-                    </AutoSuggestBox.Shadow>
-
-                    <i:Interaction.Behaviors>
-                        <core:EventTriggerBehavior EventName="TextChanged">
-                            <core:InvokeCommandAction Command="{Binding SearchBoxTextChangedCommand}" />
-                        </core:EventTriggerBehavior>
-                        <core:EventTriggerBehavior EventName="QuerySubmitted">
-                            <core:InvokeCommandAction Command="{Binding SearchBoxQuerySubmittedCommand}" />
-                        </core:EventTriggerBehavior>
-                    </i:Interaction.Behaviors>
-                </AutoSuggestBox>
-
-                <Button Background="Transparent" HorizontalAlignment="Left" Margin="5,0,0,0"
-                        Padding="0" Width="28" Height="24" BorderBrush="Transparent"
-                        VerticalAlignment="Center" Command="{Binding AddBookmarkButtonCommand}"
-                        ToolTipService.ToolTip="{helpers:ResourceString Name=SaveBookmarkButton/Tooltip}"
-                        ToolTipService.Placement="Bottom">
-                    <i:Interaction.Behaviors>
-                        <core:DataTriggerBehavior Binding="{Binding IsBookmarksExists}" Value="True">
-                            <core:DataTriggerBehavior.Actions>
-                                <core:ChangePropertyAction
-                                    PropertyName="Content">
-                                    <core:ChangePropertyAction.Value>
-                                        <FontIcon Glyph="&#xE735;" FontSize="14"
-                                                  Foreground="{Binding BookmarkSavedBrush, Source={StaticResource ThemeManager}}" />
-                                    </core:ChangePropertyAction.Value>
-                                </core:ChangePropertyAction>
-                            </core:DataTriggerBehavior.Actions>
-                        </core:DataTriggerBehavior>
-                        <core:DataTriggerBehavior Binding="{Binding IsBookmarksExists}" Value="False">
-                            <core:DataTriggerBehavior.Actions>
-                                <core:ChangePropertyAction
-                                    PropertyName="Content">
-                                    <core:ChangePropertyAction.Value>
-                                        <FontIcon Glyph="&#xE734;" FontSize="14" />
-                                    </core:ChangePropertyAction.Value>
-                                </core:ChangePropertyAction>
-                            </core:DataTriggerBehavior.Actions>
-                        </core:DataTriggerBehavior>
-                    </i:Interaction.Behaviors>
-                    <Button.Flyout>
-                        <Flyout Placement="Bottom">
-                            <StackPanel Width="300" Margin="5">
-                                <TextBlock Text="Добавить закладку" HorizontalAlignment="Center" FontWeight="SemiBold"
-                                           FontSize="14"
-                                           Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" />
-                                <TextBox Text="{Binding BookmarkTitleForSave, Mode=TwoWay}"
-                                         Header="Заголовок" Margin="0,15" PlaceholderText="Название сайта" />
-                                <TextBox Text="{Binding BookmarkUrlForSave, Mode=TwoWay}" Header="Ссылка"
-                                         Margin="0,10,0,30" PlaceholderText="Ссылка на сайт" />
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0" Content="Отмена"
-                                            Command="{Binding CancelSaveBookmarkButtonCommand}" />
-                                    <Button Content="Удалить" Grid.Column="1" HorizontalAlignment="Right"
-                                            Visibility="{Binding DeleteBookmarkButtonVisibility}"
-                                            Command="{Binding DeleteBookmarkButtonCommand}" />
-                                    <Button Grid.Column="1" Content="Добавить"
-                                            Command="{Binding SaveBookmarkButtonCommand}" HorizontalAlignment="Right"
-                                            Visibility="{Binding DeleteBookmarkButtonVisibility, Converter={StaticResource InvertBooleanConverter}}" />
-                                </Grid>
-                            </StackPanel>
-                            <i:Interaction.Behaviors>
-                                <core:DataTriggerBehavior Binding="{Binding IsFlyoutClosed}"
-                                                          ComparisonCondition="Equal" Value="True">
-                                    <actions:CloseFlyoutAction />
-                                </core:DataTriggerBehavior>
-                            </i:Interaction.Behaviors>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
-
+                <userControls:FindSuggestBox/>
             </Grid>
 
             <Button Grid.Column="6" Style="{StaticResource NavigationBarButtonStyle}"
@@ -424,7 +346,6 @@
 
         </Grid>
 
-
         <Grid Grid.Row="2">
             <Grid.Resources>
                 <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
@@ -459,8 +380,5 @@
                            HorizontalAlignment="Center" FontSize="14" />
             </StackPanel>
         </Grid>
-
-
     </Grid>
-
 </Page>

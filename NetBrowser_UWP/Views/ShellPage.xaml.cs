@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using NetBrowser_UWP.ViewModels;
 
@@ -14,6 +13,5 @@ public sealed partial class ShellPage : Page
     {
         InitializeComponent();
         DataContext = Ioc.Default.GetService<ShellPageViewModel>();
-        SearchBox.Translation += new Vector3(0, 0, 32);
     }
 }
