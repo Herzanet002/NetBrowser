@@ -7,9 +7,9 @@ using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels.Base;
@@ -28,6 +28,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
     private string _bookmarkUrlForSave;
     private bool _isBookmarksExists;
     private bool _isFlyoutClosed;
+    private bool _isSuggestionPaneOpen;
     private bool _visibilityDeleteBookmarkButton;
     private IList<SearchTermItem> _suggestionsCollection;
     private ObservableCollection<BookmarkItem> _bookmarksList;
@@ -44,6 +45,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
     public ICommand CancelSaveBookmarkButtonCommand { get; private set; }
 
+
     public FindBoxViewModel(TabViewService tabViewService,
         IWebView2Service webView2Service,
         IDataService dataService)
@@ -52,12 +54,12 @@ public class FindBoxViewModel : BindableBase, IFindBox
         _webView2Service = webView2Service;
         _dataService = dataService;
         QueryTextChangedCommand =
-            new AsyncRelayCommand<AutoSuggestBoxTextChangedEventArgs>(OnSearchBoxTextChangedCommandExecuted);
+            new AsyncRelayCommand<AutoSuggestBoxTextChangedEventArgs>(OnFindBoxTextChangedCommandExecuted);
         QuerySubmittedCommand =
-            new AsyncRelayCommand<AutoSuggestBoxQuerySubmittedEventArgs>(OnSearchBoxQuerySubmittedCommandExecuted);
+            new AsyncRelayCommand<AutoSuggestBoxQuerySubmittedEventArgs>(OnFindBoxQuerySubmittedCommandExecuted);
         AddBookmarkButtonCommand = new DelegateCommand(OnAddBookmarkButtonCommandExecuted);
         SaveBookmarkButtonCommand = new AsyncRelayCommand(OnSaveBookmarkCommandExecuted);
-        CancelSaveBookmarkButtonCommand = new DelegateCommand(OnCancelSaveBookmarkCommandExecuted);
+        CancelSaveBookmarkButtonCommand = new DelegateCommand(() => IsFlyoutClosed = true);
         DeleteBookmarkButtonCommand = new AsyncRelayCommand(OnDeleteBookmarkCommandExecuted);
         Messenger.Register<FindBoxViewModel, FindBoxQueryChangedMessage>(this,
             (vm, msg) => vm.QueryText = msg.Value);
@@ -66,6 +68,8 @@ public class FindBoxViewModel : BindableBase, IFindBox
         Messenger.Register<FindBoxViewModel, FindBoxSetBookmarkButtonAppearanceMessage>(this,
             (vm, _) => vm.SetBookmarkButtonAppearance());
     }
+
+    #region Public properties
 
     public string QueryText
     {
@@ -89,6 +93,12 @@ public class FindBoxViewModel : BindableBase, IFindBox
     {
         get => _isBookmarksExists;
         set => SetProperty(ref _isBookmarksExists, value);
+    }
+
+    public bool IsSuggestionPaneOpen
+    {
+        get => _isSuggestionPaneOpen;
+        set => SetProperty(ref _isSuggestionPaneOpen, value);
     }
 
     public bool DeleteBookmarkButtonVisibility
@@ -120,7 +130,9 @@ public class FindBoxViewModel : BindableBase, IFindBox
         }
     }
 
-    public async Task AutoSuggestListFill()
+    #endregion
+
+    public async Task FillSuggestionsCollection()
     {
         var searchTerm = await GetSearchTermListAsync();
 
@@ -183,31 +195,31 @@ public class FindBoxViewModel : BindableBase, IFindBox
         return searchTermListTransfer.ToHashSet();
     }
 
-    private async Task OnSearchBoxTextChangedCommandExecuted(AutoSuggestBoxTextChangedEventArgs obj)
+    private async Task OnFindBoxTextChangedCommandExecuted(AutoSuggestBoxTextChangedEventArgs args)
     {
-        if (obj is null)
+        if (args is null)
             return;
-        if (obj.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
-            await AutoSuggestListFill();
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            await FillSuggestionsCollection();
     }
 
-    private async Task OnSearchBoxQuerySubmittedCommandExecuted(AutoSuggestBoxQuerySubmittedEventArgs obj)
+    private async Task OnFindBoxQuerySubmittedCommandExecuted(AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        if (obj is null)
+        if (args is null)
             return;
         var queryForSearch = new SearchTermItem();
 
-        if (obj.ChosenSuggestion is SearchTermItem suggestion)
+        if (args.ChosenSuggestion is SearchTermItem suggestion)
         {
             queryForSearch = suggestion;
         }
         else
         {
-            if (!string.IsNullOrWhiteSpace(obj.QueryText))
+            if (!string.IsNullOrWhiteSpace(args.QueryText))
             {
                 queryForSearch = new SearchTermItem
                 {
-                    Query = obj.QueryText
+                    Query = args.QueryText
                 };
             }
         }
@@ -229,7 +241,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
         {
             Name = BookmarkTitleForSave,
             Url = BookmarkUrlForSave
-        });
+        }).ConfigureAwait(false);
         await GetBookmarksAsync();
         SetBookmarkButtonAppearance();
         IsFlyoutClosed = true;
@@ -254,7 +266,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
                 {
                     Name = BookmarkTitleForSave,
                     Url = BookmarkUrlForSave,
-                    FaviconUrl = Constants.ApplicationConstants.FAVICONS_SERVICE + BookmarkUrlForSave
+                    FaviconUrl = ApplicationConstants.FAVICONS_SERVICE + BookmarkUrlForSave
                 });
             await GetBookmarksAsync();
             IsFlyoutClosed = true;
@@ -271,11 +283,6 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
             await dialogError.ShowAsync();
         }
-    }
-
-    private void OnCancelSaveBookmarkCommandExecuted()
-    {
-        IsFlyoutClosed = true;
     }
 
     private void SetBookmarkIconState(bool isAccessable)
@@ -308,22 +315,4 @@ public class FindBoxViewModel : BindableBase, IFindBox
         bookmarksListTransfer.Reverse();
         BookmarksList = new ObservableCollection<BookmarkItem>(bookmarksListTransfer);
     }
-}
-
-public sealed class FindBoxQueryChangedMessage : ValueChangedMessage<string>
-{
-    public FindBoxQueryChangedMessage(string value) : base(value)
-    {
-    }
-}
-
-public sealed class FindBoxNavigateToMessage : ValueChangedMessage<string>
-{
-    public FindBoxNavigateToMessage(string value) : base(value)
-    {
-    }
-}
-
-public sealed class FindBoxSetBookmarkButtonAppearanceMessage
-{
 }

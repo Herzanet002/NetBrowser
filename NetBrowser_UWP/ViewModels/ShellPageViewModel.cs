@@ -12,6 +12,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Web.WebView2.Core;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels.Base;

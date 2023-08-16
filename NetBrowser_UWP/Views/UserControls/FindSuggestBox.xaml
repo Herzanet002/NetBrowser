@@ -71,8 +71,9 @@
                         TextBoxStyle="{StaticResource TextBoxStyle}"
                         ItemTemplate="{StaticResource SuggestionTemplate}"
                         BorderBrush="{ThemeResource ControlElevationBorderBrush}"
-                        Text="{Binding QueryText, Mode=TwoWay}"
+                        Text="{x:Bind ViewModel.QueryText, Mode=TwoWay}"
                         ItemsSource="{Binding SuggestionsCollection}"
+                        IsSuggestionListOpen="{x:Bind ViewModel.IsSuggestionPaneOpen, Mode = TwoWay}"
                         PlaceholderText="{helpers:ResourceString Name=SearchBoxPlaceholder/PlaceholderText}">
             <AutoSuggestBox.Shadow>
                 <ThemeShadow />

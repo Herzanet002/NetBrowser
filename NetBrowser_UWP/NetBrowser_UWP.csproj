@@ -175,6 +175,9 @@
     <Compile Include="Services\LocalSettingsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
     <Compile Include="ViewModels\Base\BindableBase.cs" />
+    <Compile Include="Messages\FindBoxNavigateToMessage.cs" />
+    <Compile Include="Messages\FindBoxQueryChangedMessage.cs" />
+    <Compile Include="Messages\FindBoxSetBookmarkButtonAppearanceMessage.cs" />
     <Compile Include="ViewModels\News\AllNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FavoriteNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FirstRunRecommendationsViewModel.cs" />
@@ -570,6 +573,7 @@
       <Name>NetBrowser.Utils</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

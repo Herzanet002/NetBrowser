@@ -12,5 +12,5 @@ public interface IFindBox
 
     IList<SearchTermItem> SuggestionsCollection { get; set; }
 
-    Task AutoSuggestListFill();
+    Task FillSuggestionsCollection();
 }
