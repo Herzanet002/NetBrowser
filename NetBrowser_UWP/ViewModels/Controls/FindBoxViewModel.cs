@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Helpers;
 using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
@@ -20,16 +21,14 @@ namespace NetBrowser_UWP.ViewModels.Controls;
 public class FindBoxViewModel : BindableBase, IFindBox
 {
     private readonly TabViewService _tabViewService;
-    private readonly IWebView2Service _webView2Service;
     private readonly IDataService _dataService;
 
     private string _queryText;
-    private string _bookmarkTitleForSave;
-    private string _bookmarkUrlForSave;
-    private bool _isBookmarksExists;
+    private bool _isBookmarkExists;
     private bool _isFlyoutClosed;
     private bool _isSuggestionPaneOpen;
-    private bool _visibilityDeleteBookmarkButton;
+
+    private BookmarkItem _bookmarkForSave;
     private IList<SearchTermItem> _suggestionsCollection;
     private ObservableCollection<BookmarkItem> _bookmarksList;
 
@@ -45,20 +44,17 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
     public ICommand CancelSaveBookmarkButtonCommand { get; private set; }
 
-
-    public FindBoxViewModel(TabViewService tabViewService,
-        IWebView2Service webView2Service,
-        IDataService dataService)
+    public FindBoxViewModel(TabViewService tabViewService, IDataService dataService)
     {
         _tabViewService = tabViewService;
-        _webView2Service = webView2Service;
         _dataService = dataService;
         QueryTextChangedCommand =
             new AsyncRelayCommand<AutoSuggestBoxTextChangedEventArgs>(OnFindBoxTextChangedCommandExecuted);
         QuerySubmittedCommand =
             new AsyncRelayCommand<AutoSuggestBoxQuerySubmittedEventArgs>(OnFindBoxQuerySubmittedCommandExecuted);
         AddBookmarkButtonCommand = new DelegateCommand(OnAddBookmarkButtonCommandExecuted);
-        SaveBookmarkButtonCommand = new AsyncRelayCommand(OnSaveBookmarkCommandExecuted);
+        SaveBookmarkButtonCommand = new AsyncRelayCommand(OnSaveBookmarkCommandExecuted,
+            () => !string.IsNullOrWhiteSpace(BookmarkForSave?.Url));
         CancelSaveBookmarkButtonCommand = new DelegateCommand(() => IsFlyoutClosed = true);
         DeleteBookmarkButtonCommand = new AsyncRelayCommand(OnDeleteBookmarkCommandExecuted);
         Messenger.Register<FindBoxViewModel, FindBoxQueryChangedMessage>(this,
@@ -66,7 +62,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
         Messenger.Register<FindBoxViewModel, FindBoxNavigateToMessage>(this,
             (vm, msg) => vm.NavigateTo(msg.Value));
         Messenger.Register<FindBoxViewModel, FindBoxSetBookmarkButtonAppearanceMessage>(this,
-            (vm, _) => vm.SetBookmarkButtonAppearance());
+            async (vm, _) => await vm.SetBookmarkButtonAppearance());
     }
 
     #region Public properties
@@ -89,10 +85,10 @@ public class FindBoxViewModel : BindableBase, IFindBox
         set => SetProperty(ref _bookmarksList, value);
     }
 
-    public bool IsBookmarksExists
+    public bool IsBookmarkExists
     {
-        get => _isBookmarksExists;
-        set => SetProperty(ref _isBookmarksExists, value);
+        get => _isBookmarkExists;
+        set => SetProperty(ref _isBookmarkExists, value);
     }
 
     public bool IsSuggestionPaneOpen
@@ -101,22 +97,14 @@ public class FindBoxViewModel : BindableBase, IFindBox
         set => SetProperty(ref _isSuggestionPaneOpen, value);
     }
 
-    public bool DeleteBookmarkButtonVisibility
+    public BookmarkItem BookmarkForSave
     {
-        get => _visibilityDeleteBookmarkButton;
-        set => SetProperty(ref _visibilityDeleteBookmarkButton, value);
-    }
-
-    public string BookmarkTitleForSave
-    {
-        get => _bookmarkTitleForSave;
-        set => SetProperty(ref _bookmarkTitleForSave, value);
-    }
-
-    public string BookmarkUrlForSave
-    {
-        get => _bookmarkUrlForSave;
-        set => SetProperty(ref _bookmarkUrlForSave, value);
+        get => _bookmarkForSave;
+        set
+        {
+            SetProperty(ref _bookmarkForSave, value);
+            SaveBookmarkButtonCommand.NotifyCanExecuteChanged();
+        }
     }
 
     public bool IsFlyoutClosed
@@ -140,11 +128,13 @@ public class FindBoxViewModel : BindableBase, IFindBox
             x.Query != null && x.Query.Contains(QueryText, StringComparison.OrdinalIgnoreCase)));
 
         if (!suitableItems.Any())
+        {
             suitableItems.Add(new SearchTermItem
             {
                 Query = QueryText,
                 IsNewSuggestedSearchQuery = true
             });
+        }
 
         if (QueryText.Length != 0)
         {
@@ -183,7 +173,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
                 break;
 
             default:
-                _tabViewService.SelectedWebView2.Source = _webView2Service.ResolveUri(address);
+                _tabViewService.SelectedWebView2.Source = UriResolver.ResolveUri(address).UriResult;
                 break;
         }
     }
@@ -237,76 +227,62 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
     private async Task OnDeleteBookmarkCommandExecuted()
     {
-        await _dataService.RemoveBookmarkAsync(new BookmarkItem
-        {
-            Name = BookmarkTitleForSave,
-            Url = BookmarkUrlForSave
-        }).ConfigureAwait(false);
+        await _dataService.RemoveBookmarkAsync(BookmarkForSave).ConfigureAwait(false);
         await GetBookmarksAsync();
-        SetBookmarkButtonAppearance();
+        await SetBookmarkButtonAppearance();
         IsFlyoutClosed = true;
     }
 
     private void OnAddBookmarkButtonCommandExecuted()
     {
-        if (_tabViewService.GetSelectedWebView() == null)
+        var selectedWebView = _tabViewService.GetSelectedWebView();
+        if (selectedWebView == null)
             return;
-        BookmarkTitleForSave = _tabViewService.GetSelectedWebView().CoreWebView2.DocumentTitle;
-        BookmarkUrlForSave = _tabViewService.GetSelectedWebView().Source.AbsoluteUri;
+
+        var existableBookmark = BookmarksList?.FirstOrDefault(bookmark =>
+            bookmark.Url == selectedWebView.Source.AbsoluteUri);
+
+        if (existableBookmark != null)
+        {
+            BookmarkForSave = existableBookmark;
+            return;
+        }
+
+        BookmarkForSave = new BookmarkItem
+        {
+            Name = selectedWebView.CoreWebView2.DocumentTitle,
+            Url = selectedWebView.Source.AbsoluteUri
+        };
     }
 
     private async Task OnSaveBookmarkCommandExecuted()
     {
-        if (!(string.IsNullOrWhiteSpace(BookmarkTitleForSave) ||
-              string.IsNullOrWhiteSpace(BookmarkUrlForSave)) &&
-            Uri.IsWellFormedUriString(BookmarkUrlForSave, UriKind.Absolute))
-        {
-            await _dataService.SaveBookmarkAsync(
-                new BookmarkItem
-                {
-                    Name = BookmarkTitleForSave,
-                    Url = BookmarkUrlForSave,
-                    FaviconUrl = ApplicationConstants.FAVICONS_SERVICE + BookmarkUrlForSave
-                });
-            await GetBookmarksAsync();
-            IsFlyoutClosed = true;
-            SetBookmarkButtonAppearance();
-        }
-        else
-        {
-            var dialogError = new ContentDialog
-            {
-                Title = "Неверные данные",
-                Content = "Проверьте правильность адреса",
-                CloseButtonText = "Закрыть"
-            };
+        BookmarkForSave.FaviconUrl = ApplicationConstants.FAVICONS_SERVICE + BookmarkForSave.Url;
+        await _dataService.SaveBookmarkAsync(BookmarkForSave);
 
-            await dialogError.ShowAsync();
-        }
+        IsFlyoutClosed = true;
+        await SetBookmarkButtonAppearance();
     }
 
-    private void SetBookmarkIconState(bool isAccessable)
-    {
-        IsBookmarksExists = isAccessable;
-        DeleteBookmarkButtonVisibility = isAccessable;
-    }
-
-    private void SetBookmarkButtonAppearance()
+    private async Task SetBookmarkButtonAppearance()
     {
         if (_tabViewService.GetSelectedWebView() == null ||
             _tabViewService.GetSelectedWebView().Source == null)
         {
-            SetBookmarkIconState(false);
+            IsBookmarkExists = false;
             return;
         }
 
+        await GetBookmarksAsync();
         if (BookmarksList == null)
+        {
             return;
+        }
 
-        var existableBookmark = BookmarksList.FirstOrDefault(bookmark =>
+        var existableBookmark = BookmarksList?.FirstOrDefault(bookmark =>
             bookmark.Url == _tabViewService.GetSelectedWebView().Source.AbsoluteUri);
 
-        SetBookmarkIconState(existableBookmark != null);
+        IsBookmarkExists = existableBookmark != null;
     }
 
     private async Task GetBookmarksAsync()

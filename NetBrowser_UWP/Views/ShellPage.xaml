@@ -14,6 +14,7 @@
     xmlns:converters="using:NetBrowser_UWP.Converters"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
     xmlns:userControls="using:NetBrowser_UWP.Views.UserControls"
+    xmlns:tools="using:Microsoft.Toolkit.Uwp.UI.Converters"
     Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
     d:DataContext="{d:DesignInstance Type=viewModels:ShellPageViewModel,IsDesignTimeCreatable=True}"
     IsTabStop="True">
@@ -25,7 +26,7 @@
 
     <Grid>
         <Grid.Resources>
-            <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
+            <tools:BoolNegationConverter x:Key="InvertBooleanConverter" />
             <Style x:Name="NavigationBarButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="HorizontalAlignment" Value="Center" />

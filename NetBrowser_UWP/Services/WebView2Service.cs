@@ -1,34 +1,30 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Helpers;
 
 namespace NetBrowser_UWP.Services;
 
 public class WebView2Service : IWebView2Service
 {
-    public WebView2Service()
-    {
-        ContainerStates = new ObservableCollection<WebView2>();
-    }
-
-    public ObservableCollection<WebView2> ContainerStates { get; set; }
+    public ObservableCollection<WebView2> ContainerStates { get; set; } = new();
 
     public string GetCurrentBrowserVersion()
     {
         return CoreWebView2Environment.GetAvailableBrowserVersionString();
     }
 
-
     public event EventHandler<CoreWebView2NavigationCompletedEventArgs> NavigationCompleted;
-    public event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;
-    public event TypedEventHandler<CoreWebView2, object> ContainsFullScreenElementChanged;
-    public event EventHandler<CoreWebView2NavigationStartingEventArgs> NavigationStarting;
 
+    public event EventHandler<CoreWebView2NewWindowRequestedEventArgs> NewWindowRequested;
+
+    public event TypedEventHandler<CoreWebView2, object> ContainsFullScreenElementChanged;
+
+    public event EventHandler<CoreWebView2NavigationStartingEventArgs> NavigationStarting;
 
     public async Task<WebView2> InstantiateWebView2(string uriToNavigate)
     {
@@ -42,35 +38,8 @@ public class WebView2Service : IWebView2Service
         instance.CoreWebView2.ContainsFullScreenElementChanged += OnContainsFullScreenElementChanged;
         instance.CoreWebView2.Navigate(string.IsNullOrWhiteSpace(uriToNavigate)
             ? App.CurrentWebEngine.HomePage
-            : ResolveUri(uriToNavigate).ToString());
+            : UriResolver.ResolveUri(uriToNavigate).UriResult?.ToString());
         return instance;
-    }
-
-    public Uri ResolveUri(string address)
-    {
-        address = address.Trim().ToLower();
-        const string PATTERN = @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$";
-        var rgx = new Regex(PATTERN, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-        var httpsScheme = string.Concat(Uri.UriSchemeHttps, "://");
-        var httpScheme = string.Concat(Uri.UriSchemeHttp, "://");
-
-        if (rgx.IsMatch(address))
-        {
-            if (!(address.StartsWith(httpScheme) || address.StartsWith(httpsScheme)))
-                address = string.Concat(httpsScheme, address);
-        }
-        else
-        {
-            return new Uri(App.CurrentWebEngine.Prefix + address);
-        }
-
-        var isUriCreated = Uri.TryCreate(address, UriKind.Absolute, out var uriAddress) &&
-                           (uriAddress.Scheme == Uri.UriSchemeHttp ||
-                            uriAddress.Scheme == Uri.UriSchemeHttps ||
-                            uriAddress.Scheme == Uri.UriSchemeFtp);
-
-        return isUriCreated ? uriAddress : new Uri(App.CurrentWebEngine.Prefix + address);
     }
 
     private void OnContainsFullScreenElementChanged(CoreWebView2 sender, object args)

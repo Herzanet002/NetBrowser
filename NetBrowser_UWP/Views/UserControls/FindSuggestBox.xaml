@@ -19,12 +19,15 @@
     d:DesignHeight="100"
     d:DesignWidth="400">
     <UserControl.Resources>
-        <converters:InvertBooleanConverter x:Key="InvertBooleanConverter" />
         <converters:SearchTermItemConverter x:Key="SearchTermItemConverter"/>
         <tools:BoolToObjectConverter
             x:Key="SearchSuggestionGlyphConverter"
             FalseValue="&#xF738;"
             TrueValue="&#xF6FA;" />
+        <converters:ValueConverterGroup x:Key="InvertAndVisibility">
+            <tools:BoolNegationConverter/>
+            <tools:BoolToVisibilityConverter/>
+        </converters:ValueConverterGroup>
 
         <Style x:Key="TextBoxStyle"
                BasedOn="{StaticResource AutoSuggestBoxTextBoxStyle}"
@@ -72,7 +75,7 @@
                         ItemTemplate="{StaticResource SuggestionTemplate}"
                         BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                         Text="{x:Bind ViewModel.QueryText, Mode=TwoWay}"
-                        ItemsSource="{Binding SuggestionsCollection}"
+                        ItemsSource="{x:Bind ViewModel.SuggestionsCollection, Mode=OneWay}"
                         IsSuggestionListOpen="{x:Bind ViewModel.IsSuggestionPaneOpen, Mode = TwoWay}"
                         PlaceholderText="{helpers:ResourceString Name=SearchBoxPlaceholder/PlaceholderText}">
             <AutoSuggestBox.Shadow>
@@ -92,24 +95,28 @@
 
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="TextChanged">
-                    <core:InvokeCommandAction Command="{Binding QueryTextChangedCommand}" />
+                    <core:InvokeCommandAction Command="{x:Bind ViewModel.QueryTextChangedCommand}" />
                 </core:EventTriggerBehavior>
                 <core:EventTriggerBehavior EventName="QuerySubmitted">
-                    <core:InvokeCommandAction Command="{Binding QuerySubmittedCommand}" />
+                    <core:InvokeCommandAction Command="{x:Bind ViewModel.QuerySubmittedCommand}" />
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
         </AutoSuggestBox>
 
-        <Button Background="Transparent" HorizontalAlignment="Left" Margin="5,0,0,0"
-                Padding="0" Width="28" Height="24" BorderBrush="Transparent"
-                VerticalAlignment="Center" Command="{Binding AddBookmarkButtonCommand}"
+        <Button Background="Transparent" 
+                HorizontalAlignment="Left" 
+                Margin="5,0,0,0"
+                Padding="0" 
+                Width="28" Height="24" 
+                BorderBrush="Transparent"
+                VerticalAlignment="Center" 
+                Command="{x:Bind ViewModel.AddBookmarkButtonCommand}"
                 ToolTipService.ToolTip="{helpers:ResourceString Name=SaveBookmarkButton/Tooltip}"
                 ToolTipService.Placement="Bottom">
             <interactivity:Interaction.Behaviors>
-                <core:DataTriggerBehavior Binding="{Binding IsBookmarksExists}" Value="True">
+                <core:DataTriggerBehavior Binding="{x:Bind ViewModel.IsBookmarkExists, Mode=OneWay}" Value="True">
                     <core:DataTriggerBehavior.Actions>
-                        <core:ChangePropertyAction
-                            PropertyName="Content">
+                        <core:ChangePropertyAction PropertyName="Content">
                             <core:ChangePropertyAction.Value>
                                 <FontIcon Glyph="&#xE735;" FontSize="14"
                                           Foreground="{Binding BookmarkSavedBrush, Source={StaticResource ThemeManager}}" />
@@ -117,10 +124,9 @@
                         </core:ChangePropertyAction>
                     </core:DataTriggerBehavior.Actions>
                 </core:DataTriggerBehavior>
-                <core:DataTriggerBehavior Binding="{Binding IsBookmarksExists}" Value="False">
+                <core:DataTriggerBehavior Binding="{x:Bind ViewModel.IsBookmarkExists, Mode=OneWay}" Value="False">
                     <core:DataTriggerBehavior.Actions>
-                        <core:ChangePropertyAction
-                            PropertyName="Content">
+                        <core:ChangePropertyAction PropertyName="Content">
                             <core:ChangePropertyAction.Value>
                                 <FontIcon Glyph="&#xE734;" FontSize="14" />
                             </core:ChangePropertyAction.Value>
@@ -134,27 +140,32 @@
                         <TextBlock Text="{helpers:ResourceString Name=AddToBookmarks}" HorizontalAlignment="Center" FontWeight="SemiBold"
                                    FontSize="14"
                                    Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" />
-                        <TextBox Text="{Binding BookmarkTitleForSave, Mode=TwoWay}"
-                                 Header="{helpers:ResourceString Name=Header}" Margin="0,15" PlaceholderText="{helpers:ResourceString Name=SiteName}" />
-                        <TextBox Text="{Binding BookmarkUrlForSave, Mode=TwoWay}" Header="{helpers:ResourceString Name=Link}"
-                                 Margin="0,10,0,30" PlaceholderText="{helpers:ResourceString Name=LinkOnASite}" />
+                        <TextBox Text="{x:Bind ViewModel.BookmarkForSave.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Header="{helpers:ResourceString Name=Header}" 
+                                 Margin="0,15" 
+                                 PlaceholderText="{helpers:ResourceString Name=SiteName}" />
+                        <TextBox Text="{x:Bind ViewModel.BookmarkForSave.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Header="{helpers:ResourceString Name=Link}"
+                                 Margin="0,10,0,30" 
+                                 PlaceholderText="{helpers:ResourceString Name=LinkOnASite}" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Button Grid.Column="0" Content="{helpers:ResourceString Name=Cancel}"
-                                    Command="{Binding CancelSaveBookmarkButtonCommand}" />
-                            <Button Content="{helpers:ResourceString Name=Remove}" Grid.Column="1" HorizontalAlignment="Right"
-                                    Visibility="{Binding DeleteBookmarkButtonVisibility}"
-                                    Command="{Binding DeleteBookmarkButtonCommand}" />
+                                    Command="{x:Bind ViewModel.CancelSaveBookmarkButtonCommand}" />
+                            <Button Content="{helpers:ResourceString Name=Remove}" Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    Visibility="{x:Bind ViewModel.IsBookmarkExists, Mode=OneWay}"
+                                    Command="{x:Bind ViewModel.DeleteBookmarkButtonCommand}" />
                             <Button Grid.Column="1" Content="{helpers:ResourceString Name=Add}"
-                                    Command="{Binding SaveBookmarkButtonCommand}" HorizontalAlignment="Right"
-                                    Visibility="{Binding DeleteBookmarkButtonVisibility, Converter={StaticResource InvertBooleanConverter}}" />
+                                    Command="{x:Bind ViewModel.SaveBookmarkButtonCommand}" HorizontalAlignment="Right"
+                                    Visibility="{x:Bind ViewModel.IsBookmarkExists, Mode=OneWay, Converter={StaticResource InvertAndVisibility}}" />
                         </Grid>
                     </StackPanel>
                     <interactivity:Interaction.Behaviors>
-                        <core:DataTriggerBehavior Binding="{Binding IsFlyoutClosed}" ComparisonCondition="Equal"
+                        <core:DataTriggerBehavior Binding="{x:Bind ViewModel.IsFlyoutClosed, Mode=OneWay}" ComparisonCondition="Equal"
                                                   Value="True">
                             <commands:CloseFlyoutAction />
                         </core:DataTriggerBehavior>
@@ -163,4 +174,4 @@
             </Button.Flyout>
         </Button>
     </Grid>
-</UserControl>
+</UserControl> 

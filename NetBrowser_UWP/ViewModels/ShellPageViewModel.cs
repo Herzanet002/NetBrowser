@@ -11,12 +11,12 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Web.WebView2.Core;
+using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels.Base;
-using NetBrowser_UWP.ViewModels.Controls;
 using NetBrowser_UWP.Views;
 using NetBrowser_UWP.Views.News;
 using NetBrowser_UWP.Views.Settings;
@@ -182,13 +182,23 @@ public class ShellPageViewModel : BindableBase
         var rightTab = _tabViewService.GetTabItemByFilter(tab => tab.Content == webInstance);
         if (rightTab == null) return;
 
-        var faviconUri = new Uri(Constants.ApplicationConstants.FAVICONS_SERVICE + webInstance.Source);
         rightTab.Header = webInstance.CoreWebView2.DocumentTitle;
-        rightTab.IconSource = new winUI.BitmapIconSource
+        try
         {
-            UriSource = faviconUri,
-            ShowAsMonochrome = false
-        };
+            rightTab.IconSource = new winUI.BitmapIconSource
+            {
+                UriSource = new Uri(webInstance.CoreWebView2.FaviconUri),
+                ShowAsMonochrome = false
+            };
+        }
+        catch (Exception e)
+        {
+            rightTab.IconSource = new winUI.BitmapIconSource
+            {
+                UriSource = new Uri(ApplicationConstants.FAVICONS_SERVICE + webInstance.Source),
+                ShowAsMonochrome = false
+            };
+        }
 
         _dataService.SaveHistoryAsync(new HistoryItem
         {
