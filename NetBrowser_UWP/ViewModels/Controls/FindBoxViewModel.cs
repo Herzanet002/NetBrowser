@@ -29,7 +29,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
     private bool _isSuggestionPaneOpen;
 
     private BookmarkItem _bookmarkForSave;
-    private IList<SearchTermItem> _suggestionsCollection;
+    private ObservableCollection<SearchTermItem> _suggestionsCollection;
     private ObservableCollection<BookmarkItem> _bookmarksList;
 
     public IAsyncRelayCommand QueryTextChangedCommand { get; private set; }
@@ -73,7 +73,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
         set => SetProperty(ref _queryText, value);
     }
 
-    public IList<SearchTermItem> SuggestionsCollection
+    public ObservableCollection<SearchTermItem> SuggestionsCollection
     {
         get => _suggestionsCollection;
         set => SetProperty(ref _suggestionsCollection, value);
@@ -125,20 +125,18 @@ public class FindBoxViewModel : BindableBase, IFindBox
         var searchTerm = await GetSearchTermListAsync();
 
         var suitableItems = new List<SearchTermItem>(searchTerm.Where(x =>
-            x.Query != null && x.Query.Contains(QueryText, StringComparison.OrdinalIgnoreCase)));
-
-        if (!suitableItems.Any())
+            x.Query != null && x.Query.Contains(QueryText, StringComparison.OrdinalIgnoreCase)))
         {
-            suitableItems.Add(new SearchTermItem
+            new()
             {
                 Query = QueryText,
                 IsNewSuggestedSearchQuery = true
-            });
-        }
+            }
+        };
 
         if (QueryText.Length != 0)
         {
-            SuggestionsCollection = suitableItems;
+            SuggestionsCollection = new ObservableCollection<SearchTermItem>(suitableItems);
             return;
         }
 
@@ -150,7 +148,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
             recentlySearch.AddRange(searchTermList.GetRange(0, 8));
 
         suitableItems = recentlySearch;
-        SuggestionsCollection = suitableItems;
+        SuggestionsCollection = new ObservableCollection<SearchTermItem>(suitableItems);
     }
 
     public void NavigateTo(string address)

@@ -14,22 +14,27 @@
     xmlns:animatedVisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:tools="using:Microsoft.Toolkit.Uwp.UI.Converters"
     xmlns:vm="using:NetBrowser_UWP.ViewModels.Controls"
+    xmlns:templateSelectors="using:NetBrowser_UWP.TemplateSelectors"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=vm:FindBoxViewModel, IsDesignTimeCreatable=True}"
     d:DesignHeight="100"
     d:DesignWidth="400">
     <UserControl.Resources>
-        <converters:SearchTermItemConverter x:Key="SearchTermItemConverter"/>
+        <converters:SearchTermItemConverter x:Key="SearchTermItemConverter" />
         <tools:BoolToObjectConverter
             x:Key="SearchSuggestionGlyphConverter"
             FalseValue="&#xF738;"
             TrueValue="&#xF6FA;" />
         <converters:ValueConverterGroup x:Key="InvertAndVisibility">
-            <tools:BoolNegationConverter/>
-            <tools:BoolToVisibilityConverter/>
+            <tools:BoolNegationConverter />
+            <tools:BoolToVisibilityConverter />
         </converters:ValueConverterGroup>
+        <templateSelectors:FindBoxItemTemplateSelector
+            x:Key="FindBoxItemTemplateSelector"
+            SuggestionNormalTemplate="{StaticResource SuggestionNormalTemplate}"
+            SuggestionChosenTemplate="{StaticResource SuggestionChosenTemplate}" />
 
-        <Style x:Key="TextBoxStyle"
+        <Style x:Key="FindBoxTextBoxStyle"
                BasedOn="{StaticResource AutoSuggestBoxTextBoxStyle}"
                TargetType="TextBox">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
@@ -50,7 +55,7 @@
             <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
         </Style>
 
-        <DataTemplate x:Key="SuggestionTemplate" x:DataType="models:SearchTermItem">
+        <DataTemplate x:Key="SuggestionNormalTemplate" x:DataType="models:SearchTermItem">
             <StackPanel
                 Orientation="Horizontal"
                 Spacing="8">
@@ -58,29 +63,51 @@
                           Glyph="{x:Bind IsNewSuggestedSearchQuery, Converter={StaticResource SearchSuggestionGlyphConverter}}"
                           FontSize="14"
                           Foreground="{Binding Path =NavigationButtonBrush, Source={StaticResource ThemeManager}}" />
-                <StackPanel Orientation="Vertical" 
+                <StackPanel Orientation="Vertical"
                             Margin="10,0,0,0">
                     <TextBlock Text="{Binding Converter={StaticResource SearchTermItemConverter}}" />
                 </StackPanel>
+            </StackPanel>
+        </DataTemplate>
 
+        <DataTemplate x:Key="SuggestionChosenTemplate" x:DataType="models:SearchTermItem">
+            <StackPanel
+                Orientation="Horizontal"
+                Spacing="8">
+                <FontIcon HorizontalAlignment="Left"
+                          Glyph="{x:Bind IsNewSuggestedSearchQuery, Converter={StaticResource SearchSuggestionGlyphConverter}}"
+                          FontSize="14"
+                          Foreground="{Binding Path =NavigationButtonBrush, Source={StaticResource ThemeManager}}" />
+                <StackPanel Orientation="Vertical"
+                            Margin="10">
+                    <TextBlock Text="{Binding Converter={StaticResource SearchTermItemConverter}}" />
+                    <TextBlock FontSize="{StaticResource FindBoxLastAccessLabelFontSize}"
+                               Foreground="{Binding BookmarkSavedBrush, Source={StaticResource ThemeManager}}">
+                        <Run Text="{helpers:ResourceString Name=LastVisit}"></Run>
+                        <Run Text=": "></Run>
+                        <Run Text="{x:Bind LastTimeAccess, Mode=OneWay}"></Run>
+                    </TextBlock>
+                </StackPanel>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
+
     <Grid>
         <AutoSuggestBox x:Name="SearchBox"
                         Height="34"
                         CornerRadius="7"
                         HorizontalAlignment="Stretch"
-                        TextBoxStyle="{StaticResource TextBoxStyle}"
-                        ItemTemplate="{StaticResource SuggestionTemplate}"
+                        TextBoxStyle="{StaticResource FindBoxTextBoxStyle}"
                         BorderBrush="{ThemeResource ControlElevationBorderBrush}"
                         Text="{x:Bind ViewModel.QueryText, Mode=TwoWay}"
                         ItemsSource="{x:Bind ViewModel.SuggestionsCollection, Mode=OneWay}"
+                        ItemTemplateSelector="{StaticResource FindBoxItemTemplateSelector}"
                         IsSuggestionListOpen="{x:Bind ViewModel.IsSuggestionPaneOpen, Mode = TwoWay}"
                         PlaceholderText="{helpers:ResourceString Name=SearchBoxPlaceholder/PlaceholderText}">
             <AutoSuggestBox.Shadow>
                 <ThemeShadow />
             </AutoSuggestBox.Shadow>
+
 
             <AutoSuggestBox.QueryIcon>
                 <controls:AnimatedIcon Height="16">
@@ -103,13 +130,13 @@
             </interactivity:Interaction.Behaviors>
         </AutoSuggestBox>
 
-        <Button Background="Transparent" 
-                HorizontalAlignment="Left" 
+        <Button Background="Transparent"
+                HorizontalAlignment="Left"
                 Margin="5,0,0,0"
-                Padding="0" 
-                Width="28" Height="24" 
+                Padding="0"
+                Width="28" Height="24"
                 BorderBrush="Transparent"
-                VerticalAlignment="Center" 
+                VerticalAlignment="Center"
                 Command="{x:Bind ViewModel.AddBookmarkButtonCommand}"
                 ToolTipService.ToolTip="{helpers:ResourceString Name=SaveBookmarkButton/Tooltip}"
                 ToolTipService.Placement="Bottom">
@@ -137,17 +164,20 @@
             <Button.Flyout>
                 <Flyout Placement="Bottom">
                     <StackPanel Width="300" Margin="5">
-                        <TextBlock Text="{helpers:ResourceString Name=AddToBookmarks}" HorizontalAlignment="Center" FontWeight="SemiBold"
+                        <TextBlock Text="{helpers:ResourceString Name=AddToBookmarks}" HorizontalAlignment="Center"
+                                   FontWeight="SemiBold"
                                    FontSize="14"
                                    Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" />
-                        <TextBox Text="{x:Bind ViewModel.BookmarkForSave.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Header="{helpers:ResourceString Name=Header}" 
-                                 Margin="0,15" 
-                                 PlaceholderText="{helpers:ResourceString Name=SiteName}" />
-                        <TextBox Text="{x:Bind ViewModel.BookmarkForSave.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                 Header="{helpers:ResourceString Name=Link}"
-                                 Margin="0,10,0,30" 
-                                 PlaceholderText="{helpers:ResourceString Name=LinkOnASite}" />
+                        <TextBox
+                            Text="{x:Bind ViewModel.BookmarkForSave.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Header="{helpers:ResourceString Name=Header}"
+                            Margin="0,15"
+                            PlaceholderText="{helpers:ResourceString Name=SiteName}" />
+                        <TextBox
+                            Text="{x:Bind ViewModel.BookmarkForSave.Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Header="{helpers:ResourceString Name=Link}"
+                            Margin="0,10,0,30"
+                            PlaceholderText="{helpers:ResourceString Name=LinkOnASite}" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -165,7 +195,8 @@
                         </Grid>
                     </StackPanel>
                     <interactivity:Interaction.Behaviors>
-                        <core:DataTriggerBehavior Binding="{x:Bind ViewModel.IsFlyoutClosed, Mode=OneWay}" ComparisonCondition="Equal"
+                        <core:DataTriggerBehavior Binding="{x:Bind ViewModel.IsFlyoutClosed, Mode=OneWay}"
+                                                  ComparisonCondition="Equal"
                                                   Value="True">
                             <commands:CloseFlyoutAction />
                         </core:DataTriggerBehavior>
@@ -174,4 +205,4 @@
             </Button.Flyout>
         </Button>
     </Grid>
-</UserControl> 
+</UserControl>

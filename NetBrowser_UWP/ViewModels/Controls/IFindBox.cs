@@ -1,16 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using NetBrowser_UWP.Models;
+﻿using System.Threading.Tasks;
 
 namespace NetBrowser_UWP.ViewModels.Controls;
 
 public interface IFindBox
 {
+    Task FillSuggestionsCollection();
+
     void NavigateTo(string address);
 
     string QueryText { get; set; }
-
-    IList<SearchTermItem> SuggestionsCollection { get; set; }
-
-    Task FillSuggestionsCollection();
 }

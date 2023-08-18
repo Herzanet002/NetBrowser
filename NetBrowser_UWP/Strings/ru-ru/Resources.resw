@@ -162,6 +162,9 @@
   <data name="HomeButton.Tooltip" xml:space="preserve">
     <value>Домашняя страница</value>
   </data>
+  <data name="LastVisit" xml:space="preserve">
+    <value>Последнее посещение</value>
+  </data>
   <data name="Link" xml:space="preserve">
     <value>Ссылка</value>
   </data>

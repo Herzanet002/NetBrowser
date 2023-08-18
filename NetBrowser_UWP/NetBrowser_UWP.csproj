@@ -180,6 +180,7 @@
     <Compile Include="Messages\FindBoxNavigateToMessage.cs" />
     <Compile Include="Messages\FindBoxQueryChangedMessage.cs" />
     <Compile Include="Messages\FindBoxSetBookmarkButtonAppearanceMessage.cs" />
+    <Compile Include="TemplateSelectors\FindBoxItemTemplateSelector.cs" />
     <Compile Include="ViewModels\News\AllNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FavoriteNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FirstRunRecommendationsViewModel.cs" />
