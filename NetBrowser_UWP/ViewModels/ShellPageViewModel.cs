@@ -8,9 +8,12 @@ using System.Windows.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Web.WebView2.Core;
+using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels.Base;
@@ -28,7 +31,7 @@ public class ShellPageViewModel : BindableBase
     private readonly ILocalSettingsService _localSettingsService;
     private readonly TabViewService _tabViewService;
     private readonly IWebView2Service _webView2Service;
-    
+
     public ShellPageViewModel(IDataService dataService,
         IWebView2Service webView2Service,
         ILocalSettingsService localSettingsService,
@@ -39,8 +42,6 @@ public class ShellPageViewModel : BindableBase
         _localSettingsService = localSettingsService;
         _tabViewService = tabViewService;
         SetEventHandlers();
-        //InitializeAsync();
-
         InitializeCommands();
     }
 
@@ -112,18 +113,10 @@ public class ShellPageViewModel : BindableBase
         ReloadButtonCommand = new DelegateCommand(OnReloadButtonCommandExecuted);
         StopLoadingButtonCommand = new DelegateCommand(OnStopLoadingButtonCommandExecuted);
         HomeButtonCommand = new DelegateCommand(OnHomeButtonCommandExecuted);
-        AddBookmarkButtonCommand = new DelegateCommand(OnAddBookmarkButtonCommandExecuted);
-        SaveBookmarkButtonCommand = new AsyncRelayCommand(OnSaveBookmarkCommandExecuted);
-        CancelSaveBookmarkButtonCommand = new DelegateCommand(OnCancelSaveBookmarkCommandExecuted);
-        DeleteBookmarkButtonCommand = new AsyncRelayCommand(OnDeleteBookmarkCommandExecuted);
         BookmarksButtonCommand = new AsyncRelayCommand(OnBookmarksButtonCommandExecuted);
         BookmarksSettingsButtonCommand = new DelegateCommand(OnBookmarkSettingButtonExecuted);
         BookmarksItemClickCommand =
             new AsyncRelayCommand<ItemClickEventArgs>(OnBookmarksFlyoutListViewItemClickExecuted);
-        SearchBoxTextChangedCommand =
-            new AsyncRelayCommand<AutoSuggestBoxTextChangedEventArgs>(OnSearchBoxTextChangedCommandExecuted);
-        SearchBoxQuerySubmittedCommand =
-            new AsyncRelayCommand<AutoSuggestBoxQuerySubmittedEventArgs>(OnSearchBoxQuerySubmittedCommandExecuted);
         NewsContentButtonCommand = new DelegateCommand(OnNewsContentButtonCommandExecuted);
         HistoryButtonCommand = new AsyncRelayCommand(OnHistoryButtonCommandExecuted);
         HistorySettingsButtonCommand = new DelegateCommand(OnHistorySettingsButtonExecuted);
@@ -136,45 +129,6 @@ public class ShellPageViewModel : BindableBase
             () => _tabViewService.GetSelectedWebView() != null);
         TaskManagerButtonCommand = new DelegateCommand(OnTaskManagerButtonCommandExecuted,
             () => _tabViewService.GetSelectedWebView() != null);
-    }
-
-    private async Task<IEnumerable<string>> GetSearchTermListAsync()
-    {
-        var searchTermListTransfer = await _dataService.GetSearchTermsAsync();
-        searchTermListTransfer.Reverse();
-
-        return searchTermListTransfer.Select(term => term.Name).ToHashSet();
-    }
-
-    private async Task AutoSuggestListFill()
-    {
-        var searchTermList = await GetSearchTermListAsync();
-
-        var enumerable = searchTermList.ToList();
-        var suitableItems = from item in enumerable
-            where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
-            select item;
-
-        var enumerableList = suitableItems.ToList();
-
-        if (enumerableList.Count == 0)
-            enumerableList.Add("Искать в " + App.CurrentWebEngine.Name + " " + SearchBoxText);
-
-        if (SearchBoxText.Length != 0)
-        {
-            SearchBoxItemsCollection = enumerableList;
-            return;
-        }
-
-        var recentlySearch = new List<string>();
-        if (enumerable.ToList().Count < 10)
-            recentlySearch = enumerableList;
-        else
-            recentlySearch.AddRange(enumerable.GetRange(0, 8));
-
-        suitableItems = recentlySearch;
-
-        SearchBoxItemsCollection = suitableItems.ToList();
     }
 
     private void CommandsRaiseCanExecuteChanged()
@@ -200,13 +154,13 @@ public class ShellPageViewModel : BindableBase
             SetProgressRingActivity(loadingState);
         }
 
-        SetBookmarkButtonAppearance();
+        Messenger.Send(new FindBoxSetBookmarkButtonAppearanceMessage());
     }
 
     private void SetVisualUiLabels(string appTitleText, string searchBoxText)
     {
         AppTitleText = appTitleText;
-        SearchBoxText = searchBoxText;
+        Messenger.Send(new FindBoxQueryChangedMessage(searchBoxText));
     }
 
     private void WebViewOnNavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs args)
@@ -228,13 +182,23 @@ public class ShellPageViewModel : BindableBase
         var rightTab = _tabViewService.GetTabItemByFilter(tab => tab.Content == webInstance);
         if (rightTab == null) return;
 
-        var faviconUri = new Uri(Constants.ApplicationConstants.FAVICONS_SERVICE + webInstance.Source);
         rightTab.Header = webInstance.CoreWebView2.DocumentTitle;
-        rightTab.IconSource = new winUI.BitmapIconSource
+        try
         {
-            UriSource = faviconUri,
-            ShowAsMonochrome = false
-        };
+            rightTab.IconSource = new winUI.BitmapIconSource
+            {
+                UriSource = new Uri(webInstance.CoreWebView2.FaviconUri),
+                ShowAsMonochrome = false
+            };
+        }
+        catch (Exception e)
+        {
+            rightTab.IconSource = new winUI.BitmapIconSource
+            {
+                UriSource = new Uri(ApplicationConstants.FAVICONS_SERVICE + webInstance.Source),
+                ShowAsMonochrome = false
+            };
+        }
 
         _dataService.SaveHistoryAsync(new HistoryItem
         {
@@ -251,31 +215,6 @@ public class ShellPageViewModel : BindableBase
         SetVisualUiElementStates(sender);
         CommandsRaiseCanExecuteChanged();
     }
-
-    public void NavigateTo(string address, winUI.WebView2 webViewInstance)
-    {
-        if (webViewInstance == null) return;
-
-        switch (address)
-        {
-            case Constants.ApplicationConstants.SETTINGS_ADDRESS:
-                _tabViewService.CreateSettingsTab();
-                break;
-
-            case Constants.ApplicationConstants.STARTPAGE_ADDRESS:
-                _tabViewService.CreateStartPageTab();
-                break;
-
-            case Constants.ApplicationConstants.NEWS_ADDRESS:
-                _tabViewService.CreateNewsTab();
-                break;
-
-            default:
-                webViewInstance.Source = _webView2Service.ResolveUri(address);
-                break;
-        }
-    }
-
 
     private void SelectionChangedTabHandler()
     {
@@ -324,49 +263,17 @@ public class ShellPageViewModel : BindableBase
         BookmarksList = new ObservableCollection<BookmarkItem>(bookmarksListTransfer);
     }
 
-    private void SetBookmarkIconState(bool isAccessable)
-    {
-        IsBookmarksExists = isAccessable;
-        DeleteBookmarkButtonVisibility = isAccessable;
-    }
-
-    private void SetBookmarkButtonAppearance()
-    {
-        if (_tabViewService.GetSelectedWebView() == null ||
-            _tabViewService.GetSelectedWebView().Source == null)
-        {
-            SetBookmarkIconState(false);
-            return;
-        }
-
-        if (BookmarksList == null) return;
-
-        var existableBookmark = BookmarksList.FirstOrDefault(bookmark =>
-            bookmark.Url == _tabViewService.GetSelectedWebView().Source.AbsoluteUri);
-
-        SetBookmarkIconState(existableBookmark != null);
-    }
-
     #region Private Global Element Region
 
     private ObservableCollection<BookmarkItem> _bookmarksList;
     private IList<HistoryItem> _historyList;
 
-    private IList<string> _searchBoxItemsCollection;
-
     private string _appTitleText;
-    private string _searchBoxText;
-    private string _bookmarkTitleForSave;
-    private string _bookmarkUrlForSave;
 
-    private bool _visibilityDeleteBookmarkButton;
     private bool _visibilityHomeButton;
     private bool _isProgressRingActive;
     private bool _isFlyoutClosed;
-
     private bool _isWebLoading;
-    private bool _isBookmarksExists;
-    private bool _isSuggestionListOpen;
 
     #endregion Private Global Element Region
 
@@ -377,19 +284,11 @@ public class ShellPageViewModel : BindableBase
     public DelegateCommand ReloadButtonCommand { get; private set; }
     public DelegateCommand StopLoadingButtonCommand { get; private set; }
     public DelegateCommand HomeButtonCommand { get; private set; }
-
-    public IAsyncRelayCommand SaveBookmarkButtonCommand { get; private set; }
-    public IAsyncRelayCommand DeleteBookmarkButtonCommand { get; private set; }
     public IAsyncRelayCommand BookmarksButtonCommand { get; private set; }
     public IAsyncRelayCommand BookmarksItemClickCommand { get; private set; }
-    public IAsyncRelayCommand SearchBoxTextChangedCommand { get; private set; }
-    public IAsyncRelayCommand SearchBoxQuerySubmittedCommand { get; private set; }
     public IAsyncRelayCommand HistoryItemClickCommand { get; private set; }
     public IAsyncRelayCommand HistoryButtonCommand { get; private set; }
     public IAsyncRelayCommand LoadedPageCommand { get; private set; }
-
-    public ICommand AddBookmarkButtonCommand { get; private set; }
-    public ICommand CancelSaveBookmarkButtonCommand { get; private set; }
     public ICommand BookmarksSettingsButtonCommand { get; private set; }
     public ICommand HistorySettingsButtonCommand { get; private set; }
     public ICommand SettingsButtonCommand { get; private set; }
@@ -402,18 +301,6 @@ public class ShellPageViewModel : BindableBase
     #endregion Commands Region
 
     #region Global Properties Region
-
-    public IList<string> SearchBoxItemsCollection
-    {
-        get => _searchBoxItemsCollection;
-        set => SetProperty(ref _searchBoxItemsCollection, value);
-    }
-
-    public string SearchBoxText
-    {
-        get => _searchBoxText;
-        set => SetProperty(ref _searchBoxText, value);
-    }
 
     public ObservableCollection<BookmarkItem> BookmarksList
     {
@@ -433,34 +320,10 @@ public class ShellPageViewModel : BindableBase
         set => SetProperty(ref _appTitleText, value);
     }
 
-    public string BookmarkTitleForSave
-    {
-        get => _bookmarkTitleForSave;
-        set => SetProperty(ref _bookmarkTitleForSave, value);
-    }
-
-    public string BookmarkUrlForSave
-    {
-        get => _bookmarkUrlForSave;
-        set => SetProperty(ref _bookmarkUrlForSave, value);
-    }
-
     public bool IsProgressRingActive
     {
         get => _isProgressRingActive;
         set => SetProperty(ref _isProgressRingActive, value);
-    }
-
-    public bool IsSuggestionListOpen
-    {
-        get => _isSuggestionListOpen;
-        set => SetProperty(ref _isSuggestionListOpen, value);
-    }
-
-    public bool DeleteBookmarkButtonVisibility
-    {
-        get => _visibilityDeleteBookmarkButton;
-        set => SetProperty(ref _visibilityDeleteBookmarkButton, value);
     }
 
     public bool IsFlyoutClosed
@@ -478,12 +341,6 @@ public class ShellPageViewModel : BindableBase
     {
         get => _isWebLoading;
         set => SetProperty(ref _isWebLoading, value);
-    }
-
-    public bool IsBookmarksExists
-    {
-        get => _isBookmarksExists;
-        set => SetProperty(ref _isBookmarksExists, value);
     }
 
     public bool VisibilityHomeButton
@@ -531,35 +388,10 @@ public class ShellPageViewModel : BindableBase
     {
         if (App.CurrentWebEngine?.HomePage != null
             && _tabViewService.GetSelectedWebView() != null)
-            NavigateTo(App.CurrentWebEngine.HomePage, _tabViewService.GetSelectedWebView());
-    }
-
-    private async Task OnSearchBoxTextChangedCommandExecuted(AutoSuggestBoxTextChangedEventArgs obj)
-    {
-        if (obj is not { }) return;
-        if (obj.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
-            await AutoSuggestListFill();
-    }
-
-    //TODO: Обновление поисковых запросов
-    private async Task OnSearchBoxQuerySubmittedCommandExecuted(AutoSuggestBoxQuerySubmittedEventArgs obj)
-    {
-        if (obj is not { }) return;
-
-        var queryForSearch = string.Empty;
-        if (!string.IsNullOrWhiteSpace(obj.QueryText))
-            queryForSearch = obj.QueryText;
-
-        if (string.IsNullOrWhiteSpace(queryForSearch)) return;
-        if (_tabViewService.GetSelectedWebView() == null) return;
-
-        NavigateTo(queryForSearch, _tabViewService.GetSelectedWebView());
-        await _dataService.SaveSearchTermAsync(new SiteItem()
         {
-            Name = queryForSearch
-        }).ConfigureAwait(false);
+            Messenger.Send(new FindBoxNavigateToMessage(App.CurrentWebEngine.HomePage));
+        }
     }
-
 
     private void OnSettingsButtonCommandExecuted()
     {
@@ -600,7 +432,9 @@ public class ShellPageViewModel : BindableBase
             var url = selectedHistoryItem.Url;
             await _tabViewService.CreateNewWebTab();
             if (url != null)
-                NavigateTo(url, _tabViewService.GetSelectedWebView());
+            {
+                Messenger.Send(new FindBoxNavigateToMessage(url));
+            }
         }
 
         IsFlyoutClosed = true;
@@ -609,60 +443,6 @@ public class ShellPageViewModel : BindableBase
     private async Task OnBookmarksButtonCommandExecuted()
     {
         await GetBookmarksAsync();
-    }
-
-    private void OnCancelSaveBookmarkCommandExecuted()
-    {
-        IsFlyoutClosed = true;
-    }
-
-    private async Task OnSaveBookmarkCommandExecuted()
-    {
-        if (!(string.IsNullOrWhiteSpace(BookmarkTitleForSave) ||
-              string.IsNullOrWhiteSpace(BookmarkUrlForSave)) &&
-            Uri.IsWellFormedUriString(BookmarkUrlForSave, UriKind.Absolute))
-        {
-            await _dataService.SaveBookmarkAsync(
-                new BookmarkItem
-                {
-                    Name = BookmarkTitleForSave,
-                    Url = BookmarkUrlForSave,
-                    FaviconUrl = Constants.ApplicationConstants.FAVICONS_SERVICE + BookmarkUrlForSave
-                });
-            await GetBookmarksAsync();
-            IsFlyoutClosed = true;
-            SetBookmarkButtonAppearance();
-        }
-        else
-        {
-            var dialogError = new ContentDialog
-            {
-                Title = "Неверные данные",
-                Content = "Проверьте правильность адреса",
-                CloseButtonText = "Закрыть"
-            };
-
-            await dialogError.ShowAsync();
-        }
-    }
-
-    private async Task OnDeleteBookmarkCommandExecuted()
-    {
-        await _dataService.RemoveBookmarkAsync(new BookmarkItem
-        {
-            Name = BookmarkTitleForSave,
-            Url = BookmarkUrlForSave
-        });
-        await GetBookmarksAsync();
-        SetBookmarkButtonAppearance();
-        IsFlyoutClosed = true;
-    }
-
-    private void OnAddBookmarkButtonCommandExecuted()
-    {
-        if (_tabViewService.GetSelectedWebView() == null) return;
-        BookmarkTitleForSave = _tabViewService.GetSelectedWebView().CoreWebView2.DocumentTitle;
-        BookmarkUrlForSave = _tabViewService.GetSelectedWebView().Source.AbsoluteUri;
     }
 
     private void OnBookmarkSettingButtonExecuted()

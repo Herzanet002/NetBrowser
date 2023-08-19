@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Add" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
   <data name="AddNewSite" xml:space="preserve">
     <value>Добавить сайт</value>
+  </data>
+  <data name="AddToBookmarks" xml:space="preserve">
+    <value>Добавить в закладки</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
     <value>NetBrowser</value>
@@ -138,17 +144,32 @@
   <data name="BuiltOnTechnologyBlock.Text" xml:space="preserve">
     <value>Построен на технологии Microsoft.Web.WebView2 версии </value>
   </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
   <data name="DeveloperInstruments.Text" xml:space="preserve">
     <value>Инструменты разработчика</value>
   </data>
   <data name="ForwardButton.Tooltip" xml:space="preserve">
     <value>Перейти вперед</value>
   </data>
+  <data name="Header" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
   <data name="HistoryButton.Tooltip" xml:space="preserve">
     <value>История</value>
   </data>
   <data name="HomeButton.Tooltip" xml:space="preserve">
     <value>Домашняя страница</value>
+  </data>
+  <data name="LastVisit" xml:space="preserve">
+    <value>Последнее посещение</value>
+  </data>
+  <data name="Link" xml:space="preserve">
+    <value>Ссылка</value>
+  </data>
+  <data name="LinkOnASite" xml:space="preserve">
+    <value>Ссылка на сайт</value>
   </data>
   <data name="LoadingString" xml:space="preserve">
     <value>Загрузка...</value>
@@ -161,6 +182,9 @@
   </data>
   <data name="RefreshButton.Tooltip" xml:space="preserve">
     <value>Обновить страницу</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Удалить</value>
   </data>
   <data name="RunOnOpenSourceProject.Text" xml:space="preserve">
     <value>На основе проекта с открытым кодом</value>
@@ -182,6 +206,9 @@
   </data>
   <data name="SettingsButton.Tooltip" xml:space="preserve">
     <value>Параметры</value>
+  </data>
+  <data name="SiteName" xml:space="preserve">
+    <value>Название сайта</value>
   </data>
   <data name="StopLoadingButton.Tooltip" xml:space="preserve">
     <value>Остановить загрузку</value>

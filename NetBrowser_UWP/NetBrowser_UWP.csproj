@@ -146,7 +146,10 @@
     <Compile Include="Contracts\Services\INavigationViewService.cs" />
     <Compile Include="Contracts\Services\IWebView2Service.cs" />
     <Compile Include="Contracts\Services\ITabViewService.cs" />
+    <Compile Include="Converters\ValueConverterGroup.cs" />
+    <Compile Include="Enums\EnumResultType.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
+    <Compile Include="Helpers\UriResolver.cs" />
     <Compile Include="Helpers\ViewModelsRegistrator.cs" />
     <Compile Include="Services\AppConfigService.cs" />
     <Compile Include="Services\DataService.cs" />
@@ -157,7 +160,7 @@
     <Compile Include="Converters\DateTimeToDateConverter.cs" />
     <Compile Include="Converters\HostNameConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
-    <Compile Include="Converters\InvertBooleanConverter.cs" />
+    <Compile Include="Converters\SearchTermItemConverter.cs" />
     <Compile Include="Converters\RecentlySearchItemsConverter.cs" />
     <Compile Include="Converters\TitleTextConverter.cs" />
     <Compile Include="Converters\TitleLetterConverter.cs" />
@@ -166,6 +169,7 @@
     <Compile Include="Models\BookmarkItem.cs" />
     <Compile Include="Models\SiteItem.cs" />
     <Compile Include="Models\ThemeItem.cs" />
+    <Compile Include="Models\SearchTermItem.cs" />
     <Compile Include="Helpers\ResourseHelper.cs" />
     <Compile Include="Resources\AuroraLite.xaml.cs">
       <DependentUpon>AuroraLite.xaml</DependentUpon>
@@ -173,6 +177,10 @@
     <Compile Include="Services\LocalSettingsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
     <Compile Include="ViewModels\Base\BindableBase.cs" />
+    <Compile Include="Messages\FindBoxNavigateToMessage.cs" />
+    <Compile Include="Messages\FindBoxQueryChangedMessage.cs" />
+    <Compile Include="Messages\FindBoxSetBookmarkButtonAppearanceMessage.cs" />
+    <Compile Include="TemplateSelectors\FindBoxItemTemplateSelector.cs" />
     <Compile Include="ViewModels\News\AllNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FavoriteNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FirstRunRecommendationsViewModel.cs" />
@@ -182,6 +190,8 @@
     <Compile Include="Helpers\ListExtension.cs" />
     <Compile Include="ViewModels\Settings\MainSettingsPageViewModel.cs" />
     <Compile Include="ViewModels\ShellPageViewModel.cs" />
+    <Compile Include="ViewModels\Controls\FindBoxViewModel.cs" />
+    <Compile Include="ViewModels\Controls\IFindBox.cs" />
     <Compile Include="ViewModels\News\NewsShellPageViewModel.cs" />
     <Compile Include="ViewModels\Settings\PersonalizePageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPageViewModel.cs" />
@@ -255,6 +265,9 @@
     <Compile Include="ViewModels\Settings\BookmarksPageViewModel.cs" />
     <Compile Include="Views\UserControls\EditBookmarkDialog.xaml.cs">
       <DependentUpon>EditBookmarkDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\FindSuggestBox.xaml.cs">
+      <DependentUpon>FindSuggestBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
@@ -341,6 +354,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\Thickness.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\TextBlocks.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -377,15 +394,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\AutoSuggestBox_Style.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\UserControls\DeleteBookmarkDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UserControls\EditStartPageItemDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\FindSuggestBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -559,6 +576,7 @@
       <Name>NetBrowser.Utils</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
