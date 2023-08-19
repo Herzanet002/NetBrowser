@@ -153,9 +153,6 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
     public void NavigateTo(string address)
     {
-        if (_tabViewService.GetSelectedWebView() == null)
-            return;
-
         switch (address)
         {
             case ApplicationConstants.SETTINGS_ADDRESS:
@@ -171,7 +168,9 @@ public class FindBoxViewModel : BindableBase, IFindBox
                 break;
 
             default:
-                _tabViewService.SelectedWebView2.Source = UriResolver.ResolveUri(address).UriResult;
+                if (_tabViewService.SelectedWebView == null)
+                    return;
+                _tabViewService.SelectedWebView.Source = UriResolver.ResolveUri(address).UriResult;
                 break;
         }
     }
@@ -212,9 +211,6 @@ public class FindBoxViewModel : BindableBase, IFindBox
             }
         }
 
-        if (_tabViewService.GetSelectedWebView() == null)
-            return;
-
         NavigateTo(queryForSearch.Query);
         await _dataService.AddOrReplaceSearchTermAsync(new SearchTermItem
         {
@@ -233,7 +229,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
     private void OnAddBookmarkButtonCommandExecuted()
     {
-        var selectedWebView = _tabViewService.GetSelectedWebView();
+        var selectedWebView = _tabViewService.SelectedWebView;
         if (selectedWebView == null)
             return;
 
@@ -264,8 +260,8 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
     private async Task SetBookmarkButtonAppearance()
     {
-        if (_tabViewService.GetSelectedWebView() == null ||
-            _tabViewService.GetSelectedWebView().Source == null)
+        if (_tabViewService.SelectedWebView == null ||
+            _tabViewService.SelectedWebView.Source == null)
         {
             IsBookmarkExists = false;
             return;
@@ -278,7 +274,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
         }
 
         var existableBookmark = BookmarksList?.FirstOrDefault(bookmark =>
-            bookmark.Url == _tabViewService.GetSelectedWebView().Source.AbsoluteUri);
+            bookmark.Url == _tabViewService.SelectedWebView.Source.AbsoluteUri);
 
         IsBookmarkExists = existableBookmark != null;
     }

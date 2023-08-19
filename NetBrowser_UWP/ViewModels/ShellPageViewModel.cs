@@ -45,11 +45,11 @@ public class ShellPageViewModel : BindableBase
         InitializeCommands();
     }
 
-    public ObservableCollection<winUI.TabViewItem> TabViewItemsList => _tabViewService.GetAllTabItems();
+    public ObservableCollection<winUI.TabViewItem> TabViewItemsList => _tabViewService.TabViewItemsList;
 
     public winUI.TabViewItem SelectedTabItem
     {
-        get => _tabViewService.GetSelectedTabItem();
+        get => _tabViewService.SelectedTabItem;
         set => _tabViewService.ChangeSelectedTabItem(value);
     }
 
@@ -84,12 +84,12 @@ public class ShellPageViewModel : BindableBase
         }
     }
 
-    private void TabViewServiceSelectionChangedHandler(object sender, SelectionChangedEventHandler e)
+    private void TabViewServiceSelectionChangedHandler(object sender, SelectionChangedEventArgs e)
     {
         SelectionChangedTabHandler();
-        if (_tabViewService.GetSelectedWebView() != null)
-            IsWebLoading = (bool)_tabViewService.GetSelectedWebView().Tag;
-        SetVisualUiElementStates(_tabViewService.GetSelectedWebView());
+        if (_tabViewService.SelectedWebView != null)
+            IsWebLoading = (bool)_tabViewService.SelectedWebView.Tag;
+        SetVisualUiElementStates(_tabViewService.SelectedWebView);
         CommandsRaiseCanExecuteChanged();
     }
 
@@ -107,9 +107,9 @@ public class ShellPageViewModel : BindableBase
     {
         LoadedPageCommand = new AsyncRelayCommand(InitializeAsync);
         BackButtonCommand = new DelegateCommand(OnBackButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() is { CanGoBack: true });
+            () => _tabViewService.SelectedWebView is { CanGoBack: true });
         ForwardButtonCommand = new DelegateCommand(OnForwardButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() is { CanGoForward: true });
+            () => _tabViewService.SelectedWebView is { CanGoForward: true });
         ReloadButtonCommand = new DelegateCommand(OnReloadButtonCommandExecuted);
         StopLoadingButtonCommand = new DelegateCommand(OnStopLoadingButtonCommandExecuted);
         HomeButtonCommand = new DelegateCommand(OnHomeButtonCommandExecuted);
@@ -126,9 +126,9 @@ public class ShellPageViewModel : BindableBase
         CloseTabButtonCommand =
             new DelegateCommand<winUI.TabViewTabCloseRequestedEventArgs>(OnCloseTabButtonCommandExecuted);
         DeveloperInstrumentsButtonCommand = new DelegateCommand(OnDeveloperInstrumentsButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() != null);
+            () => _tabViewService.SelectedWebView != null);
         TaskManagerButtonCommand = new DelegateCommand(OnTaskManagerButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() != null);
+            () => _tabViewService.SelectedWebView != null);
     }
 
     private void CommandsRaiseCanExecuteChanged()
@@ -210,7 +210,7 @@ public class ShellPageViewModel : BindableBase
 
         IsWebLoading = false;
 
-        if (webInstance.Source == null || _tabViewService.GetSelectedWebView() != sender) return;
+        if (webInstance.Source == null || _tabViewService.SelectedWebView != sender) return;
         SetVisualUiLabels(webInstance.CoreWebView2.DocumentTitle, webInstance.Source.AbsoluteUri);
         SetVisualUiElementStates(sender);
         CommandsRaiseCanExecuteChanged();
@@ -218,39 +218,39 @@ public class ShellPageViewModel : BindableBase
 
     private void SelectionChangedTabHandler()
     {
-        if (_tabViewService.GetSelectedTabItem() == null)
+        if (_tabViewService.SelectedTabItem == null)
         {
             SetVisualUiLabels(null, null);
             SetVisualUiElementStates(null);
             return;
         }
 
-        _tabViewService.ChangeSelectedWebView(_tabViewService.GetSelectedTabItem().Content as winUI.WebView2);
+        _tabViewService.SelectedWebView = _tabViewService.SelectedTabItem.Content as winUI.WebView2;
 
-        switch (_tabViewService.GetSelectedTabItem().Content)
+        switch (_tabViewService.SelectedTabItem.Content)
         {
             case SettingsPage:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(),
+                SetVisualUiLabels(_tabViewService.SelectedTabItem.Header.ToString(),
                     Constants.ApplicationConstants.SETTINGS_ADDRESS);
                 break;
 
             case StartPage:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(), string.Empty);
+                SetVisualUiLabels(_tabViewService.SelectedTabItem.Header.ToString(), string.Empty);
                 break;
 
             case winUI.WebView2:
-                if (_tabViewService.GetSelectedWebView()?.Source != null)
-                    SetVisualUiLabels(_tabViewService.GetSelectedWebView().CoreWebView2.DocumentTitle,
-                        _tabViewService.GetSelectedWebView().Source.AbsoluteUri);
+                if (_tabViewService.SelectedWebView?.Source != null)
+                    SetVisualUiLabels(_tabViewService.SelectedWebView.CoreWebView2.DocumentTitle,
+                        _tabViewService.SelectedWebView.Source.AbsoluteUri);
                 break;
 
             case NewsShellPage:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(),
+                SetVisualUiLabels(_tabViewService.SelectedTabItem.Header.ToString(),
                     Constants.ApplicationConstants.NEWS_ADDRESS);
                 break;
 
             default:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(), string.Empty);
+                SetVisualUiLabels(_tabViewService.SelectedTabItem.Header.ToString(), string.Empty);
                 break;
         }
     }
@@ -359,24 +359,24 @@ public class ShellPageViewModel : BindableBase
 
     private void OnBackButtonCommandExecuted()
     {
-        if (_tabViewService.GetSelectedWebView() is { CanGoBack: true })
-            _tabViewService.GetSelectedWebView().GoBack();
+        if (_tabViewService.SelectedWebView is { CanGoBack: true })
+            _tabViewService.SelectedWebView.GoBack();
     }
 
     private void OnForwardButtonCommandExecuted()
     {
-        if (_tabViewService.GetSelectedWebView() is { CanGoForward: true })
-            _tabViewService.GetSelectedWebView().GoForward();
+        if (_tabViewService.SelectedWebView is { CanGoForward: true })
+            _tabViewService.SelectedWebView.GoForward();
     }
 
     private void OnReloadButtonCommandExecuted()
     {
-        _tabViewService.GetSelectedWebView()?.CoreWebView2.Reload();
+        _tabViewService.SelectedWebView?.CoreWebView2.Reload();
     }
 
     private void OnStopLoadingButtonCommandExecuted()
     {
-        _tabViewService.GetSelectedWebView()?.CoreWebView2.Stop();
+        _tabViewService.SelectedWebView?.CoreWebView2.Stop();
     }
 
     private void OnNewsContentButtonCommandExecuted()
@@ -387,7 +387,7 @@ public class ShellPageViewModel : BindableBase
     private void OnHomeButtonCommandExecuted()
     {
         if (App.CurrentWebEngine?.HomePage != null
-            && _tabViewService.GetSelectedWebView() != null)
+            && _tabViewService.SelectedWebView != null)
         {
             Messenger.Send(new FindBoxNavigateToMessage(App.CurrentWebEngine.HomePage));
         }
@@ -400,12 +400,12 @@ public class ShellPageViewModel : BindableBase
 
     private void OnDeveloperInstrumentsButtonCommandExecuted()
     {
-        _tabViewService.GetSelectedWebView()?.CoreWebView2.OpenDevToolsWindow();
+        _tabViewService.SelectedWebView?.CoreWebView2.OpenDevToolsWindow();
     }
 
     private void OnTaskManagerButtonCommandExecuted()
     {
-        _tabViewService.GetSelectedWebView()?.CoreWebView2.OpenTaskManagerWindow();
+        _tabViewService.SelectedWebView?.CoreWebView2.OpenTaskManagerWindow();
     }
 
     private async Task OnHistoryButtonCommandExecuted()
