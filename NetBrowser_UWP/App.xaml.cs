@@ -18,7 +18,9 @@ using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
 using Windows.Storage;
+using Microsoft.Toolkit.Uwp.Helpers;
 using NetBrowser.Utils;
+using NetBrowser_UWP.Constants;
 
 namespace NetBrowser_UWP;
 
@@ -29,7 +31,7 @@ public sealed partial class App : Application
 {
     public static ThemeItem CurrentTheme;
     public static SearchEngineItem CurrentWebEngine;
-    
+
     public App()
     {
         InitializeComponent();
@@ -71,11 +73,11 @@ public sealed partial class App : Application
 
         // ViewModels
         services.RegisterViewModels();
-        
+
         services.AddLogging(x => x.AddConsole());
         return services.BuildServiceProvider();
     }
-    
+
     private static async Task SetApplicationTheme()
     {
         var name = await Ioc.Default.GetRequiredService<ILocalSettingsService>()
@@ -83,34 +85,21 @@ public sealed partial class App : Application
         CurrentTheme = ThemeManager.SetRequestedTheme(name);
     }
 
-    private static bool IsFirstRun()
-    {
-        var localSettings = ApplicationData.Current.LocalSettings;
-        if (localSettings.Values.ContainsKey("IsFirstRun"))
-        {
-            return false;
-        }
-
-        localSettings.Values["IsFirstRun"] = true;
-        return true;
-    }
-
     protected override async void OnLaunched(LaunchActivatedEventArgs e)
     {
-        var rootFrame = Window.Current.Content as Frame;
-        
-        if (IsFirstRun())
+        if (SystemInformation.Instance.IsFirstRun ||
+            !await Ioc.Default.GetRequiredService<ILocalSettingsService>()
+                .ReadSettingAsync<bool>(ApplicationConstants.FirstRunInitResultSettingsKey))
         {
-            await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>().InitializeSearchEngineStorageAsync();
-            await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>().InitializeStartPageStorageAsync();
-            await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>().InitializeRssFeeders();
+            await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>()
+                .InitializeAppStorageAsync();
         }
 
         CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataService>().GetCurrentSearchEngineAsync();
 
         // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
         // только обеспечьте активность окна
-        if (rootFrame == null)
+        if (Window.Current.Content is not Frame rootFrame)
         {
             // Создание фрейма, который станет контекстом навигации, и переход к первой странице
             rootFrame = new Frame();

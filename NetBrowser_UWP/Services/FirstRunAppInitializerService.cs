@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser.Utils;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using NetBrowser_UWP.Constants;
 
 namespace NetBrowser_UWP.Services;
 
@@ -19,12 +21,24 @@ public class FirstRunAppInitializerService : IFirstRunAppInitializerService
         _appConfigService = appConfigService;
     }
 
-    public Task InitializeConfigStorageAsync()
+    public async Task InitializeAppStorageAsync()
     {
-        throw new NotImplementedException();
+        try
+        {
+            await InitializeSearchEngineStorageAsync();
+            await InitializeStartPageStorageAsync();
+            await InitializeRssFeedersStorageAsync();
+            await Ioc.Default.GetRequiredService<ILocalSettingsService>()
+                .SaveSettingAsync(ApplicationConstants.FirstRunInitResultSettingsKey, true);
+        }
+        catch
+        {
+            await Ioc.Default.GetRequiredService<ILocalSettingsService>()
+                .SaveSettingAsync(ApplicationConstants.FirstRunInitResultSettingsKey, false);
+        }
     }
 
-    public async Task InitializeStartPageStorageAsync()
+    private async Task InitializeStartPageStorageAsync()
     {
         var defaultStartPageItems = _appConfigService.GetSection<IEnumerable<SiteItem>>("DefaultStartPageItems");
         foreach (var startPageItem in defaultStartPageItems)
@@ -33,7 +47,7 @@ public class FirstRunAppInitializerService : IFirstRunAppInitializerService
         }
     }
 
-    public async Task InitializeSearchEngineStorageAsync()
+    private async Task InitializeSearchEngineStorageAsync()
     {
         var defaultEngineItems = _appConfigService.GetSection<IEnumerable<SearchEngineItem>>("DefaultSearchEngines");
         foreach (var searchEngine in defaultEngineItems)
@@ -42,7 +56,7 @@ public class FirstRunAppInitializerService : IFirstRunAppInitializerService
         }
     }
 
-    public async Task InitializeRssFeeders()
+    private async Task InitializeRssFeedersStorageAsync()
     {
         var defaultFeedResources = _appConfigService.GetSection<IEnumerable<RssFeeder>>("FeedResources");
         await _dataService.AddRssFeedersAsync(defaultFeedResources);
