@@ -185,7 +185,7 @@
 
             <!--SearchBox-->
             <Grid Grid.Column="4" Margin="10,0,0,0">
-                <userControls:FindSuggestBox/>
+                <userControls:FindSuggestBox />
             </Grid>
 
             <Button Grid.Column="6" Style="{StaticResource NavigationBarButtonStyle}"
@@ -347,41 +347,6 @@
 
         </Grid>
 
-        <Grid Grid.Row="2">
-            <Grid.Resources>
-                <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
-            </Grid.Resources>
-            <winUi:TabView
-                TabItemsSource="{Binding TabViewItemsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                Style="{StaticResource TabViewStyleTemplate}" 
-                HorizontalAlignment="Stretch" 
-                VerticalAlignment="Stretch"
-                SelectedItem="{Binding SelectedTabItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                AddTabButtonCommand="{Binding AddTabButtonCommand}"
-                Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}">
-
-                <i:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="TabCloseRequested">
-                        <core:InvokeCommandAction Command="{Binding CloseTabButtonCommand}" />
-                    </core:EventTriggerBehavior>
-                </i:Interaction.Behaviors>
-
-                <!--<KeyboardAccelerator Key="F11">
-                    <i:Interaction.Behaviors>
-                        <icore:EventTriggerBehavior EventName="Invoked">
-                            <icore:InvokeCommandAction Command="{x:Bind ToggleFullScreenAcceleratorCommand}" />
-                        </icore:EventTriggerBehavior>
-                    </i:Interaction.Behaviors>
-                </KeyboardAccelerator>-->
-            </winUi:TabView>
-
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
-                        Visibility="{Binding TabViewItemsList.Count, Converter={StaticResource IntToVisibilityConverter}}">
-                <TextBlock Text="Нет открытых вкладок" VerticalAlignment="Center" HorizontalAlignment="Center"
-                           FontSize="24" />
-                <TextBlock Text="Чтобы начать работу, создайте новую вкладку..." VerticalAlignment="Center"
-                           HorizontalAlignment="Center" FontSize="14" />
-            </StackPanel>
-        </Grid>
+        <userControls:CustomTabViewControl Grid.Row="2"/>
     </Grid>
 </Page>

@@ -223,6 +223,9 @@
     <Compile Include="ViewModels\Settings\HistoryPageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SearchSystemPageViewModel.cs" />
     <Compile Include="ViewModels\StartPageViewModel.cs" />
+    <Compile Include="Views\UserControls\CustomTabViewControl.xaml.cs">
+      <DependentUpon>CustomTabViewControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\DeleteBookmarkDialog.xaml.cs">
       <DependentUpon>DeleteBookmarkDialog.xaml</DependentUpon>
     </Compile>
@@ -394,6 +397,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\UserControls\CustomTabViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\UserControls\DeleteBookmarkDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -439,14 +446,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\TabViewItem_Style.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\TabViewTemplate_Style.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
