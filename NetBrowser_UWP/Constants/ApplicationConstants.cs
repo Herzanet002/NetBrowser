@@ -43,6 +43,8 @@ public static class ApplicationConstants
 
     //private const string FAVICONS_SERVICE = "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=";
 
+    public const string FirstRunInitResultSettingsKey = "IsFirstRunInitSuccessful";
+
     #region THEMES_PATH
 
     public const string DARK_BLUE_THEME_PATH = "ms-appx:///Themes/Theme.DarkBlue.xaml";
