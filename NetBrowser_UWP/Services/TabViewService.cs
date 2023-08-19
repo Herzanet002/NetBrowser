@@ -20,9 +20,10 @@ public class TabViewService : ObservableObject, ITabViewService
 {
     private readonly IWebView2Service _webView2Service;
     private TabViewItem _selectedTabItem;
-
-    private WebView2 _selectedWebView2;
+    private WebView2 _selectedWebView;
     private ObservableCollection<TabViewItem> _tabViewItemsList;
+
+    public event SelectionChangedEventHandler SelectionChangedHandler;
 
     public TabViewService(IWebView2Service webView2Service)
     {
@@ -42,14 +43,14 @@ public class TabViewService : ObservableObject, ITabViewService
         set
         {
             SetProperty(ref _selectedTabItem, value);
-            SelectionChangedHandler?.Invoke(_selectedTabItem, E);
+            SelectionChangedHandler?.Invoke(null, null);
         }
     }
 
-    public WebView2 SelectedWebView2
+    public WebView2 SelectedWebView
     {
-        get => _selectedWebView2;
-        set => SetProperty(ref _selectedWebView2, value);
+        get => _selectedWebView;
+        set => SetProperty(ref _selectedWebView, value);
     }
 
     public void AddTabItem(TabViewItem item)
@@ -81,35 +82,10 @@ public class TabViewService : ObservableObject, ITabViewService
             SelectedTabItem = null;
     }
 
-    public TabViewItem GetSelectedTabItem()
-    {
-        return SelectedTabItem;
-    }
-
     public void RemoveTabItem(TabViewItem item)
     {
         if (TabViewItemsList.Contains(item))
             TabViewItemsList.Remove(item);
-    }
-
-    public int GetTabItemsCount()
-    {
-        return TabViewItemsList.Count();
-    }
-
-    public ObservableCollection<TabViewItem> GetAllTabItems()
-    {
-        return TabViewItemsList;
-    }
-
-    public WebView2 GetSelectedWebView()
-    {
-        return SelectedWebView2;
-    }
-
-    public void ChangeSelectedWebView(WebView2 webView)
-    {
-        SelectedWebView2 = webView;
     }
 
     public void ChangeTabItem(TabViewItem oldTabItem, TabViewItem newTabItem)
@@ -124,16 +100,9 @@ public class TabViewService : ObservableObject, ITabViewService
             webContent.Close();
 
         RemoveTabItem(tab);
-        if (GetTabItemsCount() == 0)
-            ChangeSelectedWebView(null);
+        if (!TabViewItemsList.Any())
+            SelectedWebView = null;
     }
-
-    public event EventHandler<SelectionChangedEventHandler> SelectionChangedHandler;
-
-    private void E(object sender, SelectionChangedEventArgs e)
-    {
-    }
-
 
     public TabViewItem CreateTabViewItemInstance<T>(string header, T content, IconSource icon)
     {
@@ -157,7 +126,7 @@ public class TabViewService : ObservableObject, ITabViewService
             new SymbolIconSource { Symbol = Symbol.More });
 
         if (isReplaced)
-            ChangeTabItem(GetSelectedTabItem(), newTab);
+            SelectedTabItem = newTab;
         else
             AddTabItem(newTab);
         if (isNavigated) ChangeSelectedTabItem(newTab);
@@ -188,6 +157,7 @@ public class TabViewService : ObservableObject, ITabViewService
             {
                 page.ViewModel.NavigateToPageType(pageType);
             }
+
             return;
         }
 

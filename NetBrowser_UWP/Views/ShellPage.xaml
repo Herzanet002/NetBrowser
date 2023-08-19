@@ -353,7 +353,9 @@
             </Grid.Resources>
             <winUi:TabView
                 TabItemsSource="{Binding TabViewItemsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                Style="{StaticResource TabViewStyleTemplate}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                Style="{StaticResource TabViewStyleTemplate}" 
+                HorizontalAlignment="Stretch" 
+                VerticalAlignment="Stretch"
                 SelectedItem="{Binding SelectedTabItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 AddTabButtonCommand="{Binding AddTabButtonCommand}"
                 Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}">
