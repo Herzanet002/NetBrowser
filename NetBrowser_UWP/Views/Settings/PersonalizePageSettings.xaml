@@ -8,6 +8,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:settings="using:NetBrowser_UWP.ViewModels.Settings"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=settings:PersonalizePageViewModel,IsDesignTimeCreatable=True}">
     <interactivity:Interaction.Behaviors>
@@ -16,12 +17,36 @@
         </core:EventTriggerBehavior>
     </interactivity:Interaction.Behaviors>
     <Grid>
+        <Grid.Resources>
+            <DataTemplate x:Key="RestartAppNotificationTemplate">
+                <UserControl>
+                    <Grid x:Name="RootGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="Чтобы это изменение вступило в силу, перезапустите браузер."
+                                   TextWrapping="WrapWholeWords"
+                                   TextTrimming="WordEllipsis"
+                                   VerticalAlignment="Center" />
+
+                        <StackPanel Grid.Row="0" Grid.Column="1"
+                                    Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Content="Перезапустить" Height="32"
+                                    Command="{Binding RestartApplicationCommand}" />
+                        </StackPanel>
+                    </Grid>
+                </UserControl>
+            </DataTemplate>
+
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <!--Header-->
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
-
         </Grid.RowDefinitions>
+
         <TextBlock Grid.Row="0" Text="Персонализация" Style="{StaticResource PageTitleStyle}" Margin="50,20" />
         <ScrollViewer Grid.Row="1">
             <StackPanel Spacing="20" Margin="60,0">
@@ -32,12 +57,12 @@
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="models:ThemeItem">
                                 <Grid Margin="10" Width="110" Height="70">
-                                    <Rectangle Fill="{Binding ThirdBrush}" Width="110" Height="70"
+                                    <Rectangle Fill="{x:Bind ThirdBrush}" Width="110" Height="70"
                                                VerticalAlignment="Top"
                                                RadiusX="3" RadiusY="3" Grid.ColumnSpan="2" />
-                                    <Rectangle Fill="{Binding BackgroundBrush}" Width="100" Height="60"
+                                    <Rectangle Fill="{x:Bind BackgroundBrush}" Width="100" Height="60"
                                                Margin="5,5,5,5" VerticalAlignment="Top" />
-                                    <Rectangle Fill="{Binding SecondBrush}" Width="100" Height="20" Margin="5,5,5,45"
+                                    <Rectangle Fill="{x:Bind SecondBrush}" Width="100" Height="20" Margin="5,5,5,45"
                                                VerticalAlignment="Top" />
                                 </Grid>
                             </DataTemplate>
@@ -69,21 +94,32 @@
                             <ComboBoxItem Content="Горизонтальная" />
                         </ComboBox>
                     </StackPanel>
-
                 </StackPanel>
 
                 <StackPanel Spacing="10">
-                    <TextBlock Text="Настройка панели инструментов" Style="{StaticResource PageSubTitleStyle}" />
+                    <TextBlock Text="Вкладки" Style="{StaticResource PageSubTitleStyle}" />
                     <StackPanel>
-                        <TextBlock Text="Показать кнопку домашней страницы на панели инструментов" />
-                        <ToggleSwitch IsOn="{Binding MainViewModel.VisibilityHomeButton, Mode=TwoWay}" />
+                        <TextBlock Text="Отображение вкладок" />
+                        <TextBlock Text="* Потребуется перезапуск приложения" FontSize="12" Margin="10,10, 0, 0"></TextBlock>
+                        <ComboBox SelectedIndex="{Binding TabViewPlacementMode, Mode=TwoWay}"
+                                  MinWidth="200" Margin="0,10,0,10">
+                            <ComboBoxItem Content="Снизу" />
+                            <ComboBoxItem Content="Сверху" />
+                        </ComboBox>
+                        <controls:InAppNotification
+                            x:Name="RestartAppNotification"
+                            ContentTemplate="{StaticResource RestartAppNotificationTemplate}" />
                     </StackPanel>
-
                 </StackPanel>
 
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Панель инструментов" Style="{StaticResource PageSubTitleStyle}" />
+                    <StackPanel>
+                        <TextBlock Text="Показать кнопку домашней страницы на панели инструментов" />
+                        <ToggleSwitch IsOn="{Binding IsHomeButtonEnabled, Mode=TwoWay}" />
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
-
-
     </Grid>
 </Page>

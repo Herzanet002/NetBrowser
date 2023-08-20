@@ -141,6 +141,7 @@
     <Compile Include="Contracts\IThemeManager.cs" />
     <Compile Include="Contracts\Services\IFirstRunAppInitializerService.cs" />
     <Compile Include="Contracts\Services\IDataService.cs" />
+    <Compile Include="Contracts\Services\Settings\IBaseSettingsService.cs" />
     <Compile Include="Contracts\Services\Settings\ILocalSettingsService.cs" />
     <Compile Include="Contracts\Services\INavigationService.cs" />
     <Compile Include="Contracts\Services\INavigationViewService.cs" />
@@ -148,8 +149,10 @@
     <Compile Include="Contracts\Services\ITabViewService.cs" />
     <Compile Include="Contracts\Services\Settings\IAppearanceSettingsService.cs" />
     <Compile Include="Contracts\Services\Settings\IGeneralSettingsService.cs" />
+    <Compile Include="Converters\CustomTabViewStyleConverter.cs" />
     <Compile Include="Converters\ValueConverterGroup.cs" />
     <Compile Include="Enums\EnumResultType.cs" />
+    <Compile Include="Enums\TabViewPlacementMode.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\UriResolver.cs" />
     <Compile Include="Helpers\ViewModelsRegistrator.cs" />
@@ -160,6 +163,7 @@
     <Compile Include="Services\NavigationViewService.cs" />
     <Compile Include="Services\Settings\AppearanceSettingsService.cs" />
     <Compile Include="Services\Settings\GeneralSettingsService.cs" />
+    <Compile Include="Services\Settings\SettingChangedEventArgs.cs" />
     <Compile Include="Services\TabViewService.cs" />
     <Compile Include="Converters\DateTimeToDateConverter.cs" />
     <Compile Include="Converters\HostNameConverter.cs" />

@@ -14,9 +14,11 @@ using Microsoft.Web.WebView2.Core;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Contracts.Services.Settings;
+using NetBrowser_UWP.Enums;
 using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
+using NetBrowser_UWP.Services.Settings;
 using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views;
 using NetBrowser_UWP.Views.News;
@@ -54,9 +56,11 @@ public class ShellPageViewModel : BindableBase
         set => _tabViewService.ChangeSelectedTabItem(value);
     }
 
+    public TabViewPlacementMode TabViewPlacementMode => _appearanceSettingsService.TabViewPlacementMode;
+
     private async Task InitializeAsync()
     {
-        VisibilityHomeButton = _appearanceSettingsService.IsHomeButtonEnabled;
+        IsHomeButtonEnabled = _appearanceSettingsService.IsHomeButtonEnabled;
         await GetBookmarksAsync();
         await _tabViewService.CreateNewWebTab().ConfigureAwait(false);
     }
@@ -69,6 +73,15 @@ public class ShellPageViewModel : BindableBase
         _webView2Service.NewWindowRequested += WebViewOnNewWindowRequested;
         _webView2Service.NavigationCompleted += WebViewOnNavigationCompleted;
         _webView2Service.ContainsFullScreenElementChanged += WebViewOnContainsFullScreenElementChanged;
+        _appearanceSettingsService.SettingChanged += AppearanceSettingsServiceOnSettingChanged;
+    }
+
+    private void AppearanceSettingsServiceOnSettingChanged(object sender, SettingChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(IsHomeButtonEnabled))
+        {
+            IsHomeButtonEnabled = (bool)e.NewValue;
+        }
     }
 
     private void WebViewOnContainsFullScreenElementChanged(CoreWebView2 sender, object args)
@@ -266,7 +279,8 @@ public class ShellPageViewModel : BindableBase
 
     private string _appTitleText;
 
-    private bool _visibilityHomeButton;
+    private bool _isHomeButtonEnabled;
+    private int _tabViewPlacementMode;
     private bool _isProgressRingActive;
     private bool _isFlyoutClosed;
     private bool _isWebLoading;
@@ -339,14 +353,10 @@ public class ShellPageViewModel : BindableBase
         set => SetProperty(ref _isWebLoading, value);
     }
 
-    public bool VisibilityHomeButton
+    public bool IsHomeButtonEnabled
     {
-        get => _visibilityHomeButton;
-        set
-        {
-            _appearanceSettingsService.IsHomeButtonEnabled = value;
-            SetProperty(ref _visibilityHomeButton, value);
-        }
+        get => _isHomeButtonEnabled;
+        set => SetProperty(ref _isHomeButtonEnabled, value);
     }
 
     #endregion Global Properties Region

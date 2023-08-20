@@ -1,8 +1,9 @@
-﻿using NetBrowser_UWP.Models;
+﻿using NetBrowser_UWP.Enums;
+using NetBrowser_UWP.Models;
 
 namespace NetBrowser_UWP.Contracts.Services.Settings;
 
-public interface IAppearanceSettingsService
+public interface IAppearanceSettingsService : IBaseSettingsService
 {
     /// <summary>
     ///     Gets or sets a selected theme of the application
@@ -33,4 +34,9 @@ public interface IAppearanceSettingsService
     ///     the address bar is enabled
     /// </summary>
     bool IsHomeButtonEnabled { get; set; }
+
+    /// <summary>
+    ///     Gets or sets a value indicating the placement of the custom tabview
+    /// </summary>
+    TabViewPlacementMode TabViewPlacementMode { get; set; }
 }

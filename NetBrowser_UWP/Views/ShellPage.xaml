@@ -124,7 +124,7 @@
             <Button Grid.Column="3" Style="{StaticResource NavigationBarButtonStyle}"
                     Command="{Binding HomeButtonCommand}"
                     ToolTipService.ToolTip="{helpers:ResourceString Name=HomeButton/Tooltip}"
-                    ToolTipService.Placement="Bottom" Visibility="{Binding VisibilityHomeButton}">
+                    ToolTipService.Placement="Bottom" Visibility="{Binding IsHomeButtonEnabled}">
                 <FontIcon Glyph="&#xE80F;" FontSize="{StaticResource NavigationBarButtonFontSize}" />
             </Button>
 

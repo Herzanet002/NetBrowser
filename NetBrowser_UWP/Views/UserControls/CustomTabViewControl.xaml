@@ -2,20 +2,25 @@
     x:Class="NetBrowser_UWP.Views.UserControls.CustomTabViewControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:NetBrowser_UWP.Views.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
-    xmlns:converters="using:NetBrowser_UWP.Converters"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
+    xmlns:converters="using:NetBrowser_UWP.Converters"
     d:DataContext="{d:DesignInstance Type=viewModels:ShellPageViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    IsTabStop="True">
     <UserControl.Resources>
+        <converters:CustomTabViewStyleConverter
+            x:Key="StyleSelectorConverter"
+            BottomStyle="{StaticResource TabViewBottomStyle}"
+            TopStyle="{StaticResource TabViewTopStyle}"/>
+
         <Style x:Key="TabViewCloseButtonStyle" TargetType="Button">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -80,6 +85,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
         <Style x:Key="TabViewItemStyle" TargetType="winui:TabViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Left" />
             <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
@@ -530,6 +536,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
         <Style x:Key="TabViewTopStyle" TargetType="winui:TabView">
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="Padding" Value="{ThemeResource TabViewHeaderPadding}" />
@@ -581,13 +588,14 @@
                                 <ContentPresenter Grid.Column="3" x:Name="RightContentPresenter" HorizontalAlignment="Stretch" Content="{TemplateBinding TabStripFooter}" 
                                                   ContentTemplate="{TemplateBinding TabStripFooterTemplate}" />
                             </Grid>
-                            <ContentPresenter x:Name="TabContentPresenter" Grid.Row="1" Background="{ThemeResource TabViewItemHeaderBackgroundSelected}" 
+                            <ContentPresenter x:Name="TabContentPresenter" Grid.Row="1" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}" 
                                               BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+        
         <Style x:Key="TabViewBottomStyle" TargetType="winui:TabView">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Padding" Value="{ThemeResource TabViewHeaderPadding}" />
@@ -639,13 +647,14 @@
                                 <ContentPresenter Grid.Column="3" x:Name="RightContentPresenter" HorizontalAlignment="Stretch" Content="{TemplateBinding TabStripFooter}" 
                                                   ContentTemplate="{TemplateBinding TabStripFooterTemplate}" />
                             </Grid>
-                            <ContentPresenter x:Name="TabContentPresenter" Grid.Row="0"
+                            <ContentPresenter x:Name="TabContentPresenter" Grid.Row="0" Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}"
                                               BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+        
         <Style x:Key="TabViewButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="{ThemeResource TabViewButtonBackground}" />
             <Setter Property="Foreground" Value="{ThemeResource TabViewButtonForeground}" />
@@ -722,17 +731,17 @@
     </UserControl.Resources>
 
     <winui:TabView
-        TabItemsSource="{Binding TabViewItemsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-        Style="{StaticResource TabViewBottomStyle}" 
+        TabItemsSource="{x:Bind ViewModel.TabViewItemsList, Mode=OneWay}"
+        Style="{x:Bind ViewModel.TabViewPlacementMode, Converter={StaticResource StyleSelectorConverter}}" 
         HorizontalAlignment="Stretch" 
         VerticalAlignment="Stretch"
-        SelectedItem="{Binding SelectedTabItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-        AddTabButtonCommand="{Binding AddTabButtonCommand}"
-        Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}">
+        SelectedItem="{x:Bind ViewModel.SelectedTabItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        AddTabButtonCommand="{x:Bind ViewModel.AddTabButtonCommand}"
+        IsTabStop="True">
 
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="TabCloseRequested">
-                <core:InvokeCommandAction Command="{Binding CloseTabButtonCommand}" />
+                <core:InvokeCommandAction Command="{x:Bind ViewModel.CloseTabButtonCommand}" />
             </core:EventTriggerBehavior>
         </interactivity:Interaction.Behaviors>
 
