@@ -13,6 +13,7 @@ using Microsoft.Toolkit.Uwp;
 using Microsoft.Web.WebView2.Core;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Contracts.Services.Settings;
 using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
@@ -28,18 +29,18 @@ namespace NetBrowser_UWP.ViewModels;
 public class ShellPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
-    private readonly ILocalSettingsService _localSettingsService;
+    private readonly IAppearanceSettingsService _appearanceSettingsService;
     private readonly TabViewService _tabViewService;
     private readonly IWebView2Service _webView2Service;
 
     public ShellPageViewModel(IDataService dataService,
+        IAppearanceSettingsService appearanceSettingsService,
         IWebView2Service webView2Service,
-        ILocalSettingsService localSettingsService,
         TabViewService tabViewService)
     {
         _dataService = dataService;
+        _appearanceSettingsService = appearanceSettingsService;
         _webView2Service = webView2Service;
-        _localSettingsService = localSettingsService;
         _tabViewService = tabViewService;
         SetEventHandlers();
         InitializeCommands();
@@ -55,7 +56,7 @@ public class ShellPageViewModel : BindableBase
 
     private async Task InitializeAsync()
     {
-        await InitializePageComponents();
+        VisibilityHomeButton = _appearanceSettingsService.IsHomeButtonEnabled;
         await GetBookmarksAsync();
         await _tabViewService.CreateNewWebTab().ConfigureAwait(false);
     }
@@ -96,11 +97,6 @@ public class ShellPageViewModel : BindableBase
     private void TabViewServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         OnPropertyChanged(e);
-    }
-
-    private async Task InitializePageComponents()
-    {
-        VisibilityHomeButton = await _localSettingsService.ReadSettingAsync<bool>("IsHomeButtonEnabled");
     }
 
     private void InitializeCommands()
@@ -348,8 +344,8 @@ public class ShellPageViewModel : BindableBase
         get => _visibilityHomeButton;
         set
         {
+            _appearanceSettingsService.IsHomeButtonEnabled = value;
             SetProperty(ref _visibilityHomeButton, value);
-            _localSettingsService.SaveSettingAsync("IsHomeButtonEnabled", value);
         }
     }
 

@@ -141,11 +141,13 @@
     <Compile Include="Contracts\IThemeManager.cs" />
     <Compile Include="Contracts\Services\IFirstRunAppInitializerService.cs" />
     <Compile Include="Contracts\Services\IDataService.cs" />
-    <Compile Include="Contracts\Services\ILocalSettingsService.cs" />
+    <Compile Include="Contracts\Services\Settings\ILocalSettingsService.cs" />
     <Compile Include="Contracts\Services\INavigationService.cs" />
     <Compile Include="Contracts\Services\INavigationViewService.cs" />
     <Compile Include="Contracts\Services\IWebView2Service.cs" />
     <Compile Include="Contracts\Services\ITabViewService.cs" />
+    <Compile Include="Contracts\Services\Settings\IAppearanceSettingsService.cs" />
+    <Compile Include="Contracts\Services\Settings\IGeneralSettingsService.cs" />
     <Compile Include="Converters\ValueConverterGroup.cs" />
     <Compile Include="Enums\EnumResultType.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
@@ -156,6 +158,8 @@
     <Compile Include="Services\FirstRunAppInitializerService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NavigationViewService.cs" />
+    <Compile Include="Services\Settings\AppearanceSettingsService.cs" />
+    <Compile Include="Services\Settings\GeneralSettingsService.cs" />
     <Compile Include="Services\TabViewService.cs" />
     <Compile Include="Converters\DateTimeToDateConverter.cs" />
     <Compile Include="Converters\HostNameConverter.cs" />
@@ -174,7 +178,7 @@
     <Compile Include="Resources\AuroraLite.xaml.cs">
       <DependentUpon>AuroraLite.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\LocalSettingsService.cs" />
+    <Compile Include="Services\Settings\LocalSettingsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
     <Compile Include="ViewModels\Base\BindableBase.cs" />
     <Compile Include="Messages\FindBoxNavigateToMessage.cs" />

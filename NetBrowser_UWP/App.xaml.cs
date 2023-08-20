@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -17,10 +16,10 @@ using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
-using Windows.Storage;
 using Microsoft.Toolkit.Uwp.Helpers;
 using NetBrowser.Utils;
-using NetBrowser_UWP.Constants;
+using NetBrowser_UWP.Contracts.Services.Settings;
+using NetBrowser_UWP.Services.Settings;
 
 namespace NetBrowser_UWP;
 
@@ -70,6 +69,8 @@ public sealed partial class App : Application
         services.AddSingleton<AppConfigService>();
         services.AddSingleton<TabViewService>();
         services.AddScoped<IRssWorkerService, RssWorkerService>();
+        services.AddSingleton<IAppearanceSettingsService, AppearanceSettingsService>();
+        services.AddSingleton<IGeneralSettingsService, GeneralSettingsService>();
 
         // ViewModels
         services.RegisterViewModels();
@@ -78,18 +79,16 @@ public sealed partial class App : Application
         return services.BuildServiceProvider();
     }
 
-    private static async Task SetApplicationTheme()
+    private static void SetApplicationTheme()
     {
-        var name = await Ioc.Default.GetRequiredService<ILocalSettingsService>()
-            .ReadSettingAsync<string>("CurrentTheme");
-        CurrentTheme = ThemeManager.SetRequestedTheme(name);
+        var theme = Ioc.Default.GetRequiredService<IAppearanceSettingsService>().SelectedTheme;
+        CurrentTheme = ThemeManager.SetRequestedTheme(theme.Name);
     }
 
     protected override async void OnLaunched(LaunchActivatedEventArgs e)
     {
         if (SystemInformation.Instance.IsFirstRun ||
-            !await Ioc.Default.GetRequiredService<ILocalSettingsService>()
-                .ReadSettingAsync<bool>(ApplicationConstants.FirstRunInitResultSettingsKey))
+            !Ioc.Default.GetRequiredService<IGeneralSettingsService>().IsFirstRunInitResultSuccessful)
         {
             await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>()
                 .InitializeAppStorageAsync();
@@ -114,7 +113,7 @@ public sealed partial class App : Application
 
             // Размещение фрейма в текущем окне
             Window.Current.Content = rootFrame;
-            await SetApplicationTheme();
+            SetApplicationTheme();
         }
 
         if (e.PrelaunchActivated == false)
