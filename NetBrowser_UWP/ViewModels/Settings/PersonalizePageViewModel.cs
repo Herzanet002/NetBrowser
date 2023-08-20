@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Contracts.Services.Settings;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.ViewModels.Base;
 using Prism.Commands;
@@ -12,7 +12,7 @@ namespace NetBrowser_UWP.ViewModels.Settings;
 
 public class PersonalizePageViewModel : BindableBase
 {
-    private readonly ILocalSettingsService _localSettingsService;
+    private readonly IAppearanceSettingsService _appearanceSettingsService;
     private bool _isAnimationEnabled;
     private bool _isHomeButtonEnabled;
     private bool _isSuggestionBarEnabled;
@@ -20,9 +20,10 @@ public class PersonalizePageViewModel : BindableBase
     private int _startPageGridViewOrientation;
     private ObservableCollection<ThemeItem> _themesList;
 
-    public PersonalizePageViewModel(ILocalSettingsService localSettingsService, ShellPageViewModel mainPageViewModel)
+    public PersonalizePageViewModel(IAppearanceSettingsService appearanceSettingsService,
+        ShellPageViewModel mainPageViewModel)
     {
-        _localSettingsService = localSettingsService;
+        _appearanceSettingsService = appearanceSettingsService;
         MainViewModel = mainPageViewModel;
         PersonalizePageLoadedCommand = new AsyncRelayCommand(OnPersonalizePageLoadedCommandExecuted);
     }
@@ -53,7 +54,7 @@ public class PersonalizePageViewModel : BindableBase
         set
         {
             SetProperty(ref _isSuggestionBarEnabled, value);
-            _localSettingsService.SaveSettingAsync(nameof(IsSuggestionBarEnabled), value);
+            _appearanceSettingsService.IsSuggestionBarEnabled = value;
         }
     }
 
@@ -63,7 +64,7 @@ public class PersonalizePageViewModel : BindableBase
         set
         {
             SetProperty(ref _isAnimationEnabled, value);
-            _localSettingsService.SaveSettingAsync(nameof(IsAnimationEnabled), value);
+            _appearanceSettingsService.IsAnimationEnabled = value;
         }
     }
 
@@ -73,7 +74,7 @@ public class PersonalizePageViewModel : BindableBase
         set
         {
             SetProperty(ref _startPageGridViewOrientation, value);
-            _localSettingsService.SaveSettingAsync(nameof(StartPageGridViewOrientation), value);
+            _appearanceSettingsService.StartPageGridViewOrientation = value;
         }
     }
 
@@ -83,7 +84,7 @@ public class PersonalizePageViewModel : BindableBase
         set
         {
             SetProperty(ref _isHomeButtonEnabled, value);
-            _localSettingsService.SaveSettingAsync(nameof(IsHomeButtonEnabled), value);
+            _appearanceSettingsService.IsHomeButtonEnabled = value;
         }
     }
 
@@ -91,18 +92,17 @@ public class PersonalizePageViewModel : BindableBase
 
     private async Task OnPersonalizePageLoadedCommandExecuted(CancellationToken ct)
     {
-        IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsSuggestionBarEnabled));
-        IsHomeButtonEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsHomeButtonEnabled));
-        IsAnimationEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsAnimationEnabled));
-        StartPageGridViewOrientation =
-            await _localSettingsService.ReadSettingAsync<int>(nameof(StartPageGridViewOrientation));
+        IsSuggestionBarEnabled = _appearanceSettingsService.IsSuggestionBarEnabled;
+        IsHomeButtonEnabled = _appearanceSettingsService.IsHomeButtonEnabled;
+        IsAnimationEnabled = _appearanceSettingsService.IsAnimationEnabled;
+        StartPageGridViewOrientation = _appearanceSettingsService.StartPageGridViewOrientation;
         ThemesList = new ObservableCollection<ThemeItem>(Constants.ApplicationConstants.ThemesDictionary.Values);
-        SelectedTheme = App.CurrentTheme;
+        SelectedTheme = _appearanceSettingsService.SelectedTheme;
     }
 
     private void OnSelectedThemeCommandExecuted()
     {
-        _localSettingsService.SaveSettingAsync("CurrentTheme", SelectedTheme.Name);
+        _appearanceSettingsService.SelectedTheme = SelectedTheme;
         App.ThemeManager.SetRequestedTheme(SelectedTheme.Name);
     }
 }

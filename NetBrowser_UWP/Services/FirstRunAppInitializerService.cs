@@ -1,23 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser.Utils;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using NetBrowser_UWP.Constants;
+using NetBrowser_UWP.Contracts.Services.Settings;
 
 namespace NetBrowser_UWP.Services;
 
 public class FirstRunAppInitializerService : IFirstRunAppInitializerService
 {
     private readonly IDataService _dataService;
+    private readonly IGeneralSettingsService _generalSettingsService;
     private readonly AppConfigService _appConfigService;
 
     public FirstRunAppInitializerService(IDataService dataService,
+        IGeneralSettingsService generalSettingsService,
         AppConfigService appConfigService)
     {
         _dataService = dataService;
+        _generalSettingsService = generalSettingsService;
         _appConfigService = appConfigService;
     }
 
@@ -28,13 +29,11 @@ public class FirstRunAppInitializerService : IFirstRunAppInitializerService
             await InitializeSearchEngineStorageAsync();
             await InitializeStartPageStorageAsync();
             await InitializeRssFeedersStorageAsync();
-            await Ioc.Default.GetRequiredService<ILocalSettingsService>()
-                .SaveSettingAsync(ApplicationConstants.FirstRunInitResultSettingsKey, true);
+            _generalSettingsService.IsFirstRunInitResultSuccessful = true;
         }
         catch
         {
-            await Ioc.Default.GetRequiredService<ILocalSettingsService>()
-                .SaveSettingAsync(ApplicationConstants.FirstRunInitResultSettingsKey, false);
+            _generalSettingsService.IsFirstRunInitResultSuccessful = false;
         }
     }
 

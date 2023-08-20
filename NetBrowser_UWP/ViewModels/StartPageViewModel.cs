@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Contracts.Services.Settings;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels.Base;
@@ -20,8 +21,8 @@ namespace NetBrowser_UWP.ViewModels;
 public class StartPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
-    private readonly ILocalSettingsService _localSettingsService;
     private readonly TabViewService _tabViewService;
+    private readonly IAppearanceSettingsService _appearanceSettingsService;
     private SiteItem _editableStartPageItem;
     private int _gridViewOrientation;
     private SiteItem _gridViewSelectedItem;
@@ -40,11 +41,11 @@ public class StartPageViewModel : BindableBase
 
     public StartPageViewModel(IDataService dataService,
         TabViewService tabViewService,
-        ILocalSettingsService localSettingsService)
+        IAppearanceSettingsService appearanceSettingsService)
     {
         _dataService = dataService;
         _tabViewService = tabViewService;
-        _localSettingsService = localSettingsService;
+        _appearanceSettingsService = appearanceSettingsService;
         InitializePageComponents();
     }
 
@@ -206,9 +207,9 @@ public class StartPageViewModel : BindableBase
 
     private async Task InitializePageComponents()
     {
-        IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsSuggestionBarEnabled));
-        IsAnimationEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsAnimationEnabled));
-        GridViewOrientation = await _localSettingsService.ReadSettingAsync<int>("StartPageGridViewOrientation");
+        IsSuggestionBarEnabled = _appearanceSettingsService.IsSuggestionBarEnabled;
+        IsAnimationEnabled = _appearanceSettingsService.IsAnimationEnabled;
+        GridViewOrientation = _appearanceSettingsService.StartPageGridViewOrientation;
 
         var currentWebEngineName = App.CurrentWebEngine.Name;
         if (currentWebEngineName == null) return;
