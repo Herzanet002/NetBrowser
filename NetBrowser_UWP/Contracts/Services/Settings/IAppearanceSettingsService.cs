@@ -3,7 +3,7 @@ using NetBrowser_UWP.Services.Settings;
 
 namespace NetBrowser_UWP.Contracts.Services.Settings;
 
-public interface IAppearanceSettingsService
+public interface IAppearanceSettingsService : IBaseSettingsService
 {
     /// <summary>
     ///     Gets or sets a selected theme of the application

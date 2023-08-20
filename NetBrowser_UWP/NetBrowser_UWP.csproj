@@ -141,6 +141,7 @@
     <Compile Include="Contracts\IThemeManager.cs" />
     <Compile Include="Contracts\Services\IFirstRunAppInitializerService.cs" />
     <Compile Include="Contracts\Services\IDataService.cs" />
+    <Compile Include="Contracts\Services\Settings\IBaseSettingsService.cs" />
     <Compile Include="Contracts\Services\Settings\ILocalSettingsService.cs" />
     <Compile Include="Contracts\Services\INavigationService.cs" />
     <Compile Include="Contracts\Services\INavigationViewService.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="Services\NavigationViewService.cs" />
     <Compile Include="Services\Settings\AppearanceSettingsService.cs" />
     <Compile Include="Services\Settings\GeneralSettingsService.cs" />
+    <Compile Include="Services\Settings\SettingChangedEventArgs.cs" />
     <Compile Include="Services\Settings\SettingHolder.cs" />
     <Compile Include="Services\TabViewService.cs" />
     <Compile Include="Converters\DateTimeToDateConverter.cs" />
