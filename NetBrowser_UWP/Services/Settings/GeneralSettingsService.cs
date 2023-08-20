@@ -11,9 +11,7 @@ public class GeneralSettingsService : IGeneralSettingsService
         _localSettingsService = localSettingsService;
     }
 
-    public bool IsFirstRunInitResultSuccessful
-    {
-        get => _localSettingsService.ReadSetting<bool>(nameof(IsFirstRunInitResultSuccessful));
-        set => _localSettingsService.SaveSetting(nameof(IsFirstRunInitResultSuccessful), value);
-    }
+    public SettingHolder<bool> IsFirstRunInitResultSuccessful => new(
+        onGetAction: () => _localSettingsService.ReadSetting<bool>(nameof(IsFirstRunInitResultSuccessful)),
+        onSetAction: setItem => _localSettingsService.SaveSetting(nameof(IsFirstRunInitResultSuccessful), setItem));
 }

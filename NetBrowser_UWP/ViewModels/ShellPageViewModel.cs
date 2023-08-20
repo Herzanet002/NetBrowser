@@ -56,7 +56,7 @@ public class ShellPageViewModel : BindableBase
 
     private async Task InitializeAsync()
     {
-        VisibilityHomeButton = _appearanceSettingsService.IsHomeButtonEnabled;
+        VisibilityHomeButton = _appearanceSettingsService.IsHomeButtonEnabled.GetSetting();
         await GetBookmarksAsync();
         await _tabViewService.CreateNewWebTab().ConfigureAwait(false);
     }
@@ -344,7 +344,7 @@ public class ShellPageViewModel : BindableBase
         get => _visibilityHomeButton;
         set
         {
-            _appearanceSettingsService.IsHomeButtonEnabled = value;
+            _appearanceSettingsService.IsHomeButtonEnabled.SetSetting(value);
             SetProperty(ref _visibilityHomeButton, value);
         }
     }

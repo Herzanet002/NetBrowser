@@ -12,35 +12,24 @@ public class AppearanceSettingsService : IAppearanceSettingsService
         _localSettingsService = localSettingsService;
     }
 
-    public ThemeItem SelectedTheme
-    {
-        get => App.ThemeManager.GetRequestedTheme(_localSettingsService
-            .ReadSetting<string>(nameof(SelectedTheme)));
+    public SettingHolder<ThemeItem> SelectedTheme => new(
+        onGetAction: () => App.ThemeManager.GetRequestedTheme(_localSettingsService
+            .ReadSetting<string>(nameof(SelectedTheme))),
+        onSetAction: setItem => _localSettingsService.SaveSetting(nameof(SelectedTheme), setItem?.Name));
 
-        set => _localSettingsService.SaveSetting(nameof(SelectedTheme), value?.Name);
-    }
+    public SettingHolder<bool> IsSuggestionBarEnabled => new(
+        onGetAction: () => _localSettingsService.ReadSetting<bool>(nameof(IsSuggestionBarEnabled)),
+        onSetAction: setItem => _localSettingsService.SaveSetting(nameof(IsSuggestionBarEnabled), setItem));
 
-    public bool IsSuggestionBarEnabled
-    {
-        get => _localSettingsService.ReadSetting<bool>(nameof(IsSuggestionBarEnabled));
-        set => _localSettingsService.SaveSetting(nameof(IsSuggestionBarEnabled), value);
-    }
+    public SettingHolder<bool> IsAnimationEnabled => new(
+        onGetAction: () => _localSettingsService.ReadSetting<bool>(nameof(IsAnimationEnabled)),
+        onSetAction: setItem => _localSettingsService.SaveSetting(nameof(IsAnimationEnabled), setItem));
 
-    public bool IsAnimationEnabled
-    {
-        get => _localSettingsService.ReadSetting<bool>(nameof(IsAnimationEnabled));
-        set => _localSettingsService.SaveSetting(nameof(IsAnimationEnabled), value);
-    }
+    public SettingHolder<int> StartPageGridViewOrientation => new(
+        onGetAction: () => _localSettingsService.ReadSetting<int>(nameof(StartPageGridViewOrientation)),
+        onSetAction: setItem => _localSettingsService.SaveSetting(nameof(StartPageGridViewOrientation), setItem));
 
-    public int StartPageGridViewOrientation
-    {
-        get => _localSettingsService.ReadSetting<int>(nameof(StartPageGridViewOrientation));
-        set => _localSettingsService.SaveSetting(nameof(StartPageGridViewOrientation), value);
-    }
-
-    public bool IsHomeButtonEnabled
-    {
-        get => _localSettingsService.ReadSetting<bool>(nameof(IsHomeButtonEnabled));
-        set => _localSettingsService.SaveSetting(nameof(IsHomeButtonEnabled), value);
-    }
+    public SettingHolder<bool> IsHomeButtonEnabled => new(
+        onGetAction: () => _localSettingsService.ReadSetting<bool>(nameof(IsHomeButtonEnabled)),
+        onSetAction: setItem => _localSettingsService.SaveSetting(nameof(IsHomeButtonEnabled), setItem));
 }

@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services.Settings;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.ViewModels.Base;
@@ -54,7 +55,7 @@ public class PersonalizePageViewModel : BindableBase
         set
         {
             SetProperty(ref _isSuggestionBarEnabled, value);
-            _appearanceSettingsService.IsSuggestionBarEnabled = value;
+            _appearanceSettingsService.IsSuggestionBarEnabled.SetSetting(value);
         }
     }
 
@@ -64,7 +65,7 @@ public class PersonalizePageViewModel : BindableBase
         set
         {
             SetProperty(ref _isAnimationEnabled, value);
-            _appearanceSettingsService.IsAnimationEnabled = value;
+            _appearanceSettingsService.IsAnimationEnabled.SetSetting(value);
         }
     }
 
@@ -74,7 +75,7 @@ public class PersonalizePageViewModel : BindableBase
         set
         {
             SetProperty(ref _startPageGridViewOrientation, value);
-            _appearanceSettingsService.StartPageGridViewOrientation = value;
+            _appearanceSettingsService.StartPageGridViewOrientation.SetSetting(value);
         }
     }
 
@@ -84,7 +85,7 @@ public class PersonalizePageViewModel : BindableBase
         set
         {
             SetProperty(ref _isHomeButtonEnabled, value);
-            _appearanceSettingsService.IsHomeButtonEnabled = value;
+            _appearanceSettingsService.IsHomeButtonEnabled.SetSetting(value);
         }
     }
 
@@ -92,17 +93,17 @@ public class PersonalizePageViewModel : BindableBase
 
     private async Task OnPersonalizePageLoadedCommandExecuted(CancellationToken ct)
     {
-        IsSuggestionBarEnabled = _appearanceSettingsService.IsSuggestionBarEnabled;
-        IsHomeButtonEnabled = _appearanceSettingsService.IsHomeButtonEnabled;
-        IsAnimationEnabled = _appearanceSettingsService.IsAnimationEnabled;
-        StartPageGridViewOrientation = _appearanceSettingsService.StartPageGridViewOrientation;
-        ThemesList = new ObservableCollection<ThemeItem>(Constants.ApplicationConstants.ThemesDictionary.Values);
-        SelectedTheme = _appearanceSettingsService.SelectedTheme;
+        IsSuggestionBarEnabled = _appearanceSettingsService.IsSuggestionBarEnabled.GetSetting();
+        IsHomeButtonEnabled = _appearanceSettingsService.IsHomeButtonEnabled.GetSetting();
+        IsAnimationEnabled = _appearanceSettingsService.IsAnimationEnabled.GetSetting();
+        StartPageGridViewOrientation = _appearanceSettingsService.StartPageGridViewOrientation.GetSetting();
+        ThemesList = new ObservableCollection<ThemeItem>(ApplicationConstants.ThemesDictionary.Values);
+        SelectedTheme = _appearanceSettingsService.SelectedTheme.GetSetting();
     }
 
     private void OnSelectedThemeCommandExecuted()
     {
-        _appearanceSettingsService.SelectedTheme = SelectedTheme;
+        _appearanceSettingsService.SelectedTheme.SetSetting(SelectedTheme);
         App.ThemeManager.SetRequestedTheme(SelectedTheme.Name);
     }
 }
