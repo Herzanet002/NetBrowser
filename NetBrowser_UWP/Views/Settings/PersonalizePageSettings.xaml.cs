@@ -11,9 +11,13 @@ namespace NetBrowser_UWP.Views.Settings;
 /// </summary>
 public sealed partial class PersonalizePageSettings : Page
 {
+    public PersonalizePageViewModel ViewModel { get; }
+
     public PersonalizePageSettings()
     {
         InitializeComponent();
-        DataContext = Ioc.Default.GetRequiredService<PersonalizePageViewModel>();
+        ViewModel = Ioc.Default.GetRequiredService<PersonalizePageViewModel>();
+        DataContext = ViewModel;
+        ViewModel.ShowNotificationRequested += (_, _) => RestartAppNotification.Show();
     }
 }

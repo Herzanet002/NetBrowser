@@ -11,7 +11,6 @@
     xmlns:actions="using:NetBrowser_UWP.Commands"
     xmlns:models="using:NetBrowser_UWP.Models"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
-    xmlns:converters="using:NetBrowser_UWP.Converters"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
     xmlns:userControls="using:NetBrowser_UWP.Views.UserControls"
     xmlns:tools="using:Microsoft.Toolkit.Uwp.UI.Converters"
@@ -23,86 +22,32 @@
             <core:InvokeCommandAction Command="{Binding LoadedPageCommand}" />
         </core:EventTriggerBehavior>
     </i:Interaction.Behaviors>
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <!-- ReSharper disable Xaml.RedundantResource -->
+                    <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="Transparent" />
+                    <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="Transparent" />
+                    <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
+                    <Style
+                        x:Key="NavigationBarButtonStyle"
+                        BasedOn="{StaticResource DefaultButtonStyle}"
+                        TargetType="Button">
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="Transparent" />
+                        <Setter Property="Width" Value="36" />
+                        <Setter Property="Height" Value="32" />
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
 
     <Grid>
         <Grid.Resources>
             <tools:BoolNegationConverter x:Key="InvertBooleanConverter" />
-            <Style x:Name="NavigationBarButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="HorizontalAlignment" Value="Center" />
-                <Setter Property="Padding" Value="0" />
-                <Setter Property="Width" Value="34" />
-                <Setter Property="Height" Value="30" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Grid x:Name="RootGrid" Background="{TemplateBinding Background}"
-                                  CornerRadius="{TemplateBinding CornerRadius}">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup x:Name="CommonStates">
-                                        <VisualState x:Name="Normal">
-                                            <Storyboard>
-                                                <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                            </Storyboard>
-                                        </VisualState>
-                                        <VisualState x:Name="PointerOver">
-                                            <VisualState.Setters>
-                                                <Setter Target="RootGrid.(RevealBrush.State)" Value="PointerOver" />
-                                                <Setter Target="RootGrid.Background"
-                                                        Value="{ThemeResource ButtonRevealBackgroundPointerOver}" />
-                                                <Setter Target="ContentPresenter.BorderBrush"
-                                                        Value="{ThemeResource ButtonRevealBorderBrushPointerOver}" />
-                                                <Setter Target="ContentPresenter.Foreground"
-                                                        Value="{ThemeResource ButtonForegroundPointerOver}" />
-                                            </VisualState.Setters>
-                                            <Storyboard>
-                                                <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                            </Storyboard>
-                                        </VisualState>
-                                        <VisualState x:Name="Pressed">
-                                            <VisualState.Setters>
-                                                <Setter Target="RootGrid.(RevealBrush.State)" Value="Pressed" />
-                                                <Setter Target="RootGrid.Background"
-                                                        Value="{ThemeResource ButtonRevealBackgroundPressed}" />
-                                                <Setter Target="ContentPresenter.BorderBrush"
-                                                        Value="{ThemeResource ButtonRevealBorderBrushPressed}" />
-                                                <Setter Target="ContentPresenter.Foreground"
-                                                        Value="{ThemeResource ButtonForegroundPressed}" />
-                                            </VisualState.Setters>
-                                            <Storyboard>
-                                                <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
-                                            </Storyboard>
-                                        </VisualState>
-                                        <VisualState x:Name="Disabled">
-                                            <VisualState.Setters>
-                                                <Setter Target="RootGrid.Background" Value="{x:Null}" />
-                                                <Setter Target="ContentPresenter.BorderBrush"
-                                                        Value="{ThemeResource ButtonRevealBorderBrushDisabled}" />
-                                                <Setter Target="ContentPresenter.Foreground"
-                                                        Value="{ThemeResource ButtonForegroundDisabled}" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                                <ContentPresenter x:Name="ContentPresenter"
-                                                  AutomationProperties.AccessibilityView="Raw"
-                                                  BorderBrush="{TemplateBinding BorderBrush}"
-                                                  BorderThickness="{TemplateBinding BorderThickness}"
-                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                  CornerRadius="{TemplateBinding CornerRadius}"
-                                                  Content="{TemplateBinding Content}"
-                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  Padding="{TemplateBinding Padding}"
-                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                  Foreground="{Binding NavigationButtonBrush, Source={StaticResource ThemeManager}}" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
         </Grid.Resources>
 
         <Grid.RowDefinitions>
@@ -179,13 +124,13 @@
             <Button Grid.Column="3" Style="{StaticResource NavigationBarButtonStyle}"
                     Command="{Binding HomeButtonCommand}"
                     ToolTipService.ToolTip="{helpers:ResourceString Name=HomeButton/Tooltip}"
-                    ToolTipService.Placement="Bottom" Visibility="{Binding VisibilityHomeButton}">
+                    ToolTipService.Placement="Bottom" Visibility="{Binding IsHomeButtonEnabled}">
                 <FontIcon Glyph="&#xE80F;" FontSize="{StaticResource NavigationBarButtonFontSize}" />
             </Button>
 
             <!--SearchBox-->
             <Grid Grid.Column="4" Margin="10,0,0,0">
-                <userControls:FindSuggestBox/>
+                <userControls:FindSuggestBox />
             </Grid>
 
             <Button Grid.Column="6" Style="{StaticResource NavigationBarButtonStyle}"
@@ -347,39 +292,6 @@
 
         </Grid>
 
-        <Grid Grid.Row="2">
-            <Grid.Resources>
-                <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
-            </Grid.Resources>
-            <winUi:TabView
-                TabItemsSource="{Binding TabViewItemsList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                Style="{StaticResource TabViewStyleTemplate}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                SelectedItem="{Binding SelectedTabItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                AddTabButtonCommand="{Binding AddTabButtonCommand}"
-                Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}">
-
-                <i:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="TabCloseRequested">
-                        <core:InvokeCommandAction Command="{Binding CloseTabButtonCommand}" />
-                    </core:EventTriggerBehavior>
-                </i:Interaction.Behaviors>
-
-                <!--<KeyboardAccelerator Key="F11">
-                    <i:Interaction.Behaviors>
-                        <icore:EventTriggerBehavior EventName="Invoked">
-                            <icore:InvokeCommandAction Command="{x:Bind ToggleFullScreenAcceleratorCommand}" />
-                        </icore:EventTriggerBehavior>
-                    </i:Interaction.Behaviors>
-                </KeyboardAccelerator>-->
-            </winUi:TabView>
-
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
-                        Visibility="{Binding TabViewItemsList.Count, Converter={StaticResource IntToVisibilityConverter}}">
-                <TextBlock Text="Нет открытых вкладок" VerticalAlignment="Center" HorizontalAlignment="Center"
-                           FontSize="24" />
-                <TextBlock Text="Чтобы начать работу, создайте новую вкладку..." VerticalAlignment="Center"
-                           HorizontalAlignment="Center" FontSize="14" />
-            </StackPanel>
-        </Grid>
+        <userControls:CustomTabViewControl Grid.Row="2"/>
     </Grid>
 </Page>

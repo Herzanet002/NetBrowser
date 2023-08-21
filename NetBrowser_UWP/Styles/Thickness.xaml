@@ -30,5 +30,8 @@
     <Thickness x:Key="FindSuggestBoxTextBoxPadding">40,6,6,6</Thickness>
 
     <Thickness x:Key="SettingsPageHyperlinkButtonMargin">-12,4,0,0</Thickness>
+
+    <CornerRadius x:Key="CustomTabViewItemCornerRadius">7</CornerRadius>
+    <Thickness x:Key="CustomTabViewItemContainerPaddings">0,3,2,4</Thickness>
     
 </ResourceDictionary>

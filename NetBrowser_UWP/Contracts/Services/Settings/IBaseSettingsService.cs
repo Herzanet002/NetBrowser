@@ -1,4 +1,4 @@
-﻿using NetBrowser_UWP.Services.Settings;
+using NetBrowser_UWP.Services.Settings;
 using System;
 
 namespace NetBrowser_UWP.Contracts.Services.Settings;
