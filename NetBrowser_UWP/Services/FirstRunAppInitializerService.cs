@@ -29,11 +29,11 @@ public class FirstRunAppInitializerService : IFirstRunAppInitializerService
             await InitializeSearchEngineStorageAsync();
             await InitializeStartPageStorageAsync();
             await InitializeRssFeedersStorageAsync();
-            _generalSettingsService.IsFirstRunInitResultSuccessful = true;
+            _generalSettingsService.IsFirstRunInitResultSuccessful.SetSetting(true);
         }
         catch
         {
-            _generalSettingsService.IsFirstRunInitResultSuccessful = false;
+            _generalSettingsService.IsFirstRunInitResultSuccessful.SetSetting(false);
         }
     }
 

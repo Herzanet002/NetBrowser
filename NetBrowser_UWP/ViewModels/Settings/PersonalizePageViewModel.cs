@@ -131,7 +131,7 @@ public class PersonalizePageViewModel : BindableBase
 
     private void OnSelectedThemeCommandExecuted()
     {
-        _appearanceSettingsService.SelectedTheme = SelectedTheme;
+        _appearanceSettingsService.SelectedTheme.SetSetting(SelectedTheme);
         App.ThemeManager.SetRequestedTheme(SelectedTheme.Name);
     }
 }

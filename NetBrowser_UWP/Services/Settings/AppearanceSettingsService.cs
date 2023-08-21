@@ -1,84 +1,60 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using NetBrowser_UWP.Contracts.Services.Settings;
-using NetBrowser_UWP.Enums;
 using NetBrowser_UWP.Models;
 
 namespace NetBrowser_UWP.Services.Settings;
 
 public class AppearanceSettingsService : IAppearanceSettingsService
 {
-    public event EventHandler<SettingChangedEventArgs> SettingChanged;
-
     private readonly ILocalSettingsService _localSettingsService;
 
     public AppearanceSettingsService(ILocalSettingsService localSettingsService)
-    {
-        _localSettingsService = localSettingsService;
-    }
+        => _localSettingsService = localSettingsService;
 
-    public ThemeItem SelectedTheme
-    {
-        get => App.ThemeManager.GetRequestedTheme(_localSettingsService
-            .ReadSetting<string>(nameof(SelectedTheme)));
+    public event EventHandler<SettingChangedEventArgs> SettingChanged;
 
-        set
+    public SettingHolder<ThemeItem> SelectedTheme => new(
+        onGetAction: () => App.ThemeManager.GetRequestedTheme(_localSettingsService
+            .ReadSetting<string>(nameof(SelectedTheme))),
+        onSetAction: setItem =>
         {
-            _localSettingsService.SaveSetting(nameof(SelectedTheme), value?.Name);
-            OnSettingsChanged(value);
-        }
-    }
+            _localSettingsService.SaveSetting(nameof(SelectedTheme), setItem?.Name);
+            OnSettingsChanged(setItem);
+        });
 
-    public bool IsSuggestionBarEnabled
-    {
-        get => _localSettingsService.ReadSetting<bool>(nameof(IsSuggestionBarEnabled));
-        set
+    public SettingHolder<bool> IsSuggestionBarEnabled => new(
+        onGetAction: () => _localSettingsService.ReadSetting<bool>(nameof(IsSuggestionBarEnabled)),
+        onSetAction: setItem =>
         {
-            _localSettingsService.SaveSetting(nameof(IsSuggestionBarEnabled), value);
-            OnSettingsChanged(value);
-        }
-    }
+            _localSettingsService.SaveSetting(nameof(IsSuggestionBarEnabled), setItem);
+            OnSettingsChanged(setItem);
+        });
 
-    public bool IsAnimationEnabled
-    {
-        get => _localSettingsService.ReadSetting<bool>(nameof(IsAnimationEnabled));
-        set
+    public SettingHolder<bool> IsAnimationEnabled => new(
+        onGetAction: () => _localSettingsService.ReadSetting<bool>(nameof(IsAnimationEnabled)),
+        onSetAction: setItem =>
         {
-            _localSettingsService.SaveSetting(nameof(IsAnimationEnabled), value);
-            OnSettingsChanged(value);
-        }
-    }
+            _localSettingsService.SaveSetting(nameof(IsAnimationEnabled), setItem);
+            OnSettingsChanged(setItem);
+        });
 
-    public int StartPageGridViewOrientation
-    {
-        get => _localSettingsService.ReadSetting<int>(nameof(StartPageGridViewOrientation));
-        set
+    public SettingHolder<int> StartPageGridViewOrientation => new(
+        onGetAction: () => _localSettingsService.ReadSetting<int>(nameof(StartPageGridViewOrientation)),
+        onSetAction: setItem =>
         {
-            _localSettingsService.SaveSetting(nameof(StartPageGridViewOrientation), value);
-            OnSettingsChanged(value);
-        }
-    }
+            _localSettingsService.SaveSetting(nameof(StartPageGridViewOrientation), setItem);
+            OnSettingsChanged(setItem);
+        });
 
-    public bool IsHomeButtonEnabled
-    {
-        get => _localSettingsService.ReadSetting<bool>(nameof(IsHomeButtonEnabled));
-        set
+    public SettingHolder<bool> IsHomeButtonEnabled => new(
+        onGetAction: () => _localSettingsService.ReadSetting<bool>(nameof(IsHomeButtonEnabled)),
+        onSetAction: setItem =>
         {
-            _localSettingsService.SaveSetting(nameof(IsHomeButtonEnabled), value);
-            OnSettingsChanged(value);
-        }
-    }
+            _localSettingsService.SaveSetting(nameof(IsHomeButtonEnabled), setItem);
+            OnSettingsChanged(setItem);
+        });
 
-    public TabViewPlacementMode TabViewPlacementMode
-    {
-        get => (TabViewPlacementMode)_localSettingsService.ReadSetting<int>(nameof(TabViewPlacementMode));
-        set
-        {
-            _localSettingsService.SaveSetting(nameof(TabViewPlacementMode), (int)value);
-            OnSettingsChanged(value);
-        }
-    }
-
-    private void OnSettingsChanged<T>(T newValue, [CallerMemberName] string propertyName = "")
+    private void OnSettingsChanged(object newValue, [CallerMemberName] string propertyName = "")
         => SettingChanged?.Invoke(this, new SettingChangedEventArgs(propertyName, newValue));
 }

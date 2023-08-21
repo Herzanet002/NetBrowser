@@ -207,9 +207,9 @@ public class StartPageViewModel : BindableBase
 
     private async Task InitializePageComponents()
     {
-        IsSuggestionBarEnabled = _appearanceSettingsService.IsSuggestionBarEnabled;
-        IsAnimationEnabled = _appearanceSettingsService.IsAnimationEnabled;
-        GridViewOrientation = _appearanceSettingsService.StartPageGridViewOrientation;
+        IsSuggestionBarEnabled = _appearanceSettingsService.IsSuggestionBarEnabled.GetSetting();
+        IsAnimationEnabled = _appearanceSettingsService.IsAnimationEnabled.GetSetting();
+        GridViewOrientation = _appearanceSettingsService.StartPageGridViewOrientation.GetSetting();
 
         var currentWebEngineName = App.CurrentWebEngine.Name;
         if (currentWebEngineName == null) return;

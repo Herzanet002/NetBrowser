@@ -164,6 +164,7 @@
     <Compile Include="Services\Settings\AppearanceSettingsService.cs" />
     <Compile Include="Services\Settings\GeneralSettingsService.cs" />
     <Compile Include="Services\Settings\SettingChangedEventArgs.cs" />
+    <Compile Include="Services\Settings\SettingHolder.cs" />
     <Compile Include="Services\TabViewService.cs" />
     <Compile Include="Converters\DateTimeToDateConverter.cs" />
     <Compile Include="Converters\HostNameConverter.cs" />

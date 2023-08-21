@@ -6,24 +6,20 @@ namespace NetBrowser_UWP.Services.Settings;
 
 public class GeneralSettingsService : IGeneralSettingsService
 {
-    public event EventHandler<SettingChangedEventArgs> SettingChanged;
-
     private readonly ILocalSettingsService _localSettingsService;
 
     public GeneralSettingsService(ILocalSettingsService localSettingsService)
-    {
-        _localSettingsService = localSettingsService;
-    }
+        => _localSettingsService = localSettingsService;
 
-    public bool IsFirstRunInitResultSuccessful
-    {
-        get => _localSettingsService.ReadSetting<bool>(nameof(IsFirstRunInitResultSuccessful));
-        set
+    public event EventHandler<SettingChangedEventArgs> SettingChanged;
+
+    public SettingHolder<bool> IsFirstRunInitResultSuccessful => new(
+        onGetAction: () => _localSettingsService.ReadSetting<bool>(nameof(IsFirstRunInitResultSuccessful)),
+        onSetAction: setItem =>
         {
-            _localSettingsService.SaveSetting(nameof(IsFirstRunInitResultSuccessful), value);
-            OnSettingsChanged(value);
-        }
-    }
+            _localSettingsService.SaveSetting(nameof(IsFirstRunInitResultSuccessful), setItem);
+            OnSettingsChanged(setItem);
+        });
 
     private void OnSettingsChanged(object newValue, [CallerMemberName] string propertyName = "")
         => SettingChanged?.Invoke(this, new SettingChangedEventArgs(propertyName, newValue));

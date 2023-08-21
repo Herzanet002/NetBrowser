@@ -81,14 +81,14 @@ public sealed partial class App : Application
 
     private static void SetApplicationTheme()
     {
-        var theme = Ioc.Default.GetRequiredService<IAppearanceSettingsService>().SelectedTheme;
+        var theme = Ioc.Default.GetRequiredService<IAppearanceSettingsService>().SelectedTheme.GetSetting();
         CurrentTheme = ThemeManager.SetRequestedTheme(theme.Name);
     }
 
     protected override async void OnLaunched(LaunchActivatedEventArgs e)
     {
         if (SystemInformation.Instance.IsFirstRun ||
-            !Ioc.Default.GetRequiredService<IGeneralSettingsService>().IsFirstRunInitResultSuccessful)
+            !Ioc.Default.GetRequiredService<IGeneralSettingsService>().IsFirstRunInitResultSuccessful.GetSetting())
         {
             await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>()
                 .InitializeAppStorageAsync();
