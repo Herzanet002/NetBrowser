@@ -56,11 +56,11 @@ public class ShellPageViewModel : BindableBase
         set => _tabViewService.ChangeSelectedTabItem(value);
     }
 
-    public TabViewPlacementMode TabViewPlacementMode => _appearanceSettingsService.TabViewPlacementMode;
+    public TabViewPlacementMode TabViewPlacementMode => _appearanceSettingsService.TabViewPlacementMode.GetSetting();
 
     private async Task InitializeAsync()
     {
-        IsHomeButtonEnabled = _appearanceSettingsService.IsHomeButtonEnabled;
+        IsHomeButtonEnabled = _appearanceSettingsService.IsHomeButtonEnabled.GetSetting();
         await GetBookmarksAsync();
         await _tabViewService.CreateNewWebTab().ConfigureAwait(false);
     }
