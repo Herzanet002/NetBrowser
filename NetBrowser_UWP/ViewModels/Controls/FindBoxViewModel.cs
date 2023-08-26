@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using NetBrowser_UWP.CommandProcessor;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Helpers;
@@ -22,6 +23,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
 {
     private readonly TabViewService _tabViewService;
     private readonly IDataService _dataService;
+    private readonly ICommandProcessor _commandProcessor;
 
     private string _queryText;
     private bool _isBookmarkExists;
@@ -44,10 +46,12 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
     public ICommand CancelSaveBookmarkButtonCommand { get; private set; }
 
-    public FindBoxViewModel(TabViewService tabViewService, IDataService dataService)
+    public FindBoxViewModel(TabViewService tabViewService, IDataService dataService,
+        ICommandProcessor commandProcessor)
     {
         _tabViewService = tabViewService;
         _dataService = dataService;
+        _commandProcessor = commandProcessor;
         QueryTextChangedCommand =
             new AsyncRelayCommand<AutoSuggestBoxTextChangedEventArgs>(OnFindBoxTextChangedCommandExecuted);
         QuerySubmittedCommand =
@@ -170,7 +174,8 @@ public class FindBoxViewModel : BindableBase, IFindBox
             default:
                 if (_tabViewService.SelectedWebView == null)
                     return;
-                _tabViewService.SelectedWebView.Source = UriResolver.ResolveUri(address).UriResult;
+                _tabViewService.SelectedWebView.Source =
+                    new Uri(_commandProcessor.ResolveCommand(new Command(address)).ResolvedCommandResult!);
                 break;
         }
     }

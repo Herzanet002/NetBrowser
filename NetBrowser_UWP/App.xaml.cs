@@ -18,6 +18,7 @@ using NetBrowser_UWP.Views;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
 using Microsoft.Toolkit.Uwp.Helpers;
 using NetBrowser.Utils;
+using NetBrowser_UWP.CommandProcessor;
 using NetBrowser_UWP.Contracts.Services.Settings;
 using NetBrowser_UWP.Services.Settings;
 
@@ -71,6 +72,8 @@ public sealed partial class App : Application
         services.AddScoped<IRssWorkerService, RssWorkerService>();
         services.AddSingleton<IAppearanceSettingsService, AppearanceSettingsService>();
         services.AddSingleton<IGeneralSettingsService, GeneralSettingsService>();
+
+        services.AddSingleton<ICommandProcessor, CommandProcessor.CommandProcessor>();
 
         // ViewModels
         services.RegisterViewModels();

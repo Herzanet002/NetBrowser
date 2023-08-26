@@ -136,6 +136,14 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CommandProcessor\Command.cs" />
+    <Compile Include="CommandProcessor\CommandProcessor.cs" />
+    <Compile Include="CommandProcessor\CommandResult.cs" />
+    <Compile Include="CommandProcessor\ICommandProcessor.cs" />
+    <Compile Include="CommandProcessor\Strategies\AbsoluteUriResolutionStrategy.cs" />
+    <Compile Include="CommandProcessor\Strategies\HttpsSchemeResolutionStrategy.cs" />
+    <Compile Include="CommandProcessor\Strategies\ICommandStrategy.cs" />
+    <Compile Include="CommandProcessor\Strategies\UserQueryResolutionStrategy.cs" />
     <Compile Include="Commands\OpenFlyoutAction.cs" />
     <Compile Include="Contracts\INavigationAware.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
@@ -151,10 +159,9 @@
     <Compile Include="Contracts\Services\Settings\IGeneralSettingsService.cs" />
     <Compile Include="Converters\CustomTabViewStyleConverter.cs" />
     <Compile Include="Converters\ValueConverterGroup.cs" />
-    <Compile Include="Enums\EnumResultType.cs" />
+    <Compile Include="Enums\CommandResultType.cs" />
     <Compile Include="Enums\TabViewPlacementMode.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
-    <Compile Include="Helpers\UriResolver.cs" />
     <Compile Include="Helpers\ViewModelsRegistrator.cs" />
     <Compile Include="Services\AppConfigService.cs" />
     <Compile Include="Services\DataService.cs" />

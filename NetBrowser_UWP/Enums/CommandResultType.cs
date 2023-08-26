@@ -1,6 +1,6 @@
 ﻿namespace NetBrowser_UWP.Enums;
 
-public enum UriResultType
+public enum CommandResultType
 {
     /// <summary>
     ///     Адрес с добавленным префиксом из App.CurrentWebEngine.Prefix
@@ -16,6 +16,11 @@ public enum UriResultType
     ///      Адрес с добавленной HTTPS-схемой
     /// </summary>
     WithHttpsScheme,
+
+    /// <summary>
+    ///     Внутренняя команда браузера
+    /// </summary>
+    ServiceCommand,
 
     /// <summary>
     ///     Неверный адрес, не поддающийся преобразованию
