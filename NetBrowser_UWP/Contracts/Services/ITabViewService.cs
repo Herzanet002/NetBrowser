@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.UI.Xaml.Controls;
+using NetBrowser_UWP.Services.PageService;
 
 namespace NetBrowser_UWP.Contracts.Services;
 
@@ -20,4 +21,6 @@ public interface ITabViewService
     void ChangeTabItem(TabViewItem oldTabItem, TabViewItem newTabItem);
 
     void CloseTabItemRequested(TabViewItem tab);
+
+    void CreateTabByPageInfo(PageInfo pageInfo);
 }

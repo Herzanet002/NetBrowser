@@ -7,15 +7,15 @@ using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using NetBrowser_UWP.CommandProcessor;
+using NetBrowser_UWP.CommandResolver;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Helpers;
 using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels.Base;
 using Prism.Commands;
+using NetBrowser_UWP.Enums;
 
 namespace NetBrowser_UWP.ViewModels.Controls;
 
@@ -23,7 +23,8 @@ public class FindBoxViewModel : BindableBase, IFindBox
 {
     private readonly TabViewService _tabViewService;
     private readonly IDataService _dataService;
-    private readonly ICommandProcessor _commandProcessor;
+    private readonly ICommandResolver _commandResolver;
+    private readonly IPageService _pageService;
 
     private string _queryText;
     private bool _isBookmarkExists;
@@ -46,12 +47,15 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
     public ICommand CancelSaveBookmarkButtonCommand { get; private set; }
 
-    public FindBoxViewModel(TabViewService tabViewService, IDataService dataService,
-        ICommandProcessor commandProcessor)
+    public FindBoxViewModel(TabViewService tabViewService,
+        IDataService dataService,
+        ICommandResolver commandResolver,
+        IPageService pageService)
     {
         _tabViewService = tabViewService;
         _dataService = dataService;
-        _commandProcessor = commandProcessor;
+        _commandResolver = commandResolver;
+        _pageService = pageService;
         QueryTextChangedCommand =
             new AsyncRelayCommand<AutoSuggestBoxTextChangedEventArgs>(OnFindBoxTextChangedCommandExecuted);
         QuerySubmittedCommand =
@@ -155,31 +159,6 @@ public class FindBoxViewModel : BindableBase, IFindBox
         SuggestionsCollection = new ObservableCollection<SearchTermItem>(suitableItems);
     }
 
-    public void NavigateTo(string address)
-    {
-        switch (address)
-        {
-            case ApplicationConstants.SETTINGS_ADDRESS:
-                _tabViewService.CreateSettingsTab();
-                break;
-
-            case ApplicationConstants.STARTPAGE_ADDRESS:
-                _tabViewService.CreateStartPageTab();
-                break;
-
-            case ApplicationConstants.NEWS_ADDRESS:
-                _tabViewService.CreateNewsTab();
-                break;
-
-            default:
-                if (_tabViewService.SelectedWebView == null)
-                    return;
-                _tabViewService.SelectedWebView.Source =
-                    new Uri(_commandProcessor.ResolveCommand(new Command(address)).ResolvedCommandResult!);
-                break;
-        }
-    }
-
     private async Task<IEnumerable<SearchTermItem>> GetSearchTermListAsync()
     {
         var searchTermListTransfer = await _dataService.GetSearchTermsAsync();
@@ -216,12 +195,39 @@ public class FindBoxViewModel : BindableBase, IFindBox
             }
         }
 
-        NavigateTo(queryForSearch.Query);
+        var commandResult = _commandResolver.ResolveCommand(new Command(queryForSearch.Query));
+        NavigateTo(commandResult);
+
         await _dataService.AddOrReplaceSearchTermAsync(new SearchTermItem
         {
             Query = queryForSearch.Query,
             LastTimeAccess = DateTime.Now
         }).ConfigureAwait(false);
+    }
+
+    public void NavigateTo(CommandResult commandResult)
+    {
+        switch (commandResult.ResultType)
+        {
+            case CommandResultType.Prefixed:
+            case CommandResultType.ValidAbsoluteUri:
+            case CommandResultType.WithHttpsScheme:
+                _tabViewService.SelectedWebView.Source = new Uri(commandResult.ResolvedCommandResult!);
+                break;
+
+            case CommandResultType.PredefinedCommand:
+                if (_pageService.GetPageInfo(commandResult.ResolvedCommandResult) != null)
+                {
+                    var page = _pageService.GetPageInfo(commandResult.ResolvedCommandResult);
+                    _tabViewService.CreateTabByPageInfo(page);
+                }
+
+                break;
+            case CommandResultType.Malformed:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     private async Task OnDeleteBookmarkCommandExecuted()

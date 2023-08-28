@@ -20,7 +20,7 @@ public enum CommandResultType
     /// <summary>
     ///     Внутренняя команда браузера
     /// </summary>
-    ServiceCommand,
+    PredefinedCommand,
 
     /// <summary>
     ///     Неверный адрес, не поддающийся преобразованию

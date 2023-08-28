@@ -136,19 +136,22 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CommandProcessor\Command.cs" />
-    <Compile Include="CommandProcessor\CommandProcessor.cs" />
-    <Compile Include="CommandProcessor\CommandResult.cs" />
-    <Compile Include="CommandProcessor\ICommandProcessor.cs" />
-    <Compile Include="CommandProcessor\Strategies\AbsoluteUriResolutionStrategy.cs" />
-    <Compile Include="CommandProcessor\Strategies\HttpsSchemeResolutionStrategy.cs" />
-    <Compile Include="CommandProcessor\Strategies\ICommandStrategy.cs" />
-    <Compile Include="CommandProcessor\Strategies\UserQueryResolutionStrategy.cs" />
+    <Compile Include="Attributes\ParentPageTypeAttribute.cs" />
+    <Compile Include="CommandResolver\Command.cs" />
+    <Compile Include="CommandResolver\CommandResolver.cs" />
+    <Compile Include="CommandResolver\CommandResult.cs" />
+    <Compile Include="CommandResolver\ICommandResolver.cs" />
+    <Compile Include="CommandResolver\Strategies\AbsoluteUriResolutionStrategy.cs" />
+    <Compile Include="CommandResolver\Strategies\HttpsSchemeResolutionStrategy.cs" />
+    <Compile Include="CommandResolver\Strategies\ICommandStrategy.cs" />
+    <Compile Include="CommandResolver\Strategies\PredefinedSchemeResolutionStrategy.cs" />
+    <Compile Include="CommandResolver\Strategies\UserQueryResolutionStrategy.cs" />
     <Compile Include="Commands\OpenFlyoutAction.cs" />
     <Compile Include="Contracts\INavigationAware.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
     <Compile Include="Contracts\Services\IFirstRunAppInitializerService.cs" />
     <Compile Include="Contracts\Services\IDataService.cs" />
+    <Compile Include="Contracts\Services\IPageService.cs" />
     <Compile Include="Contracts\Services\Settings\IBaseSettingsService.cs" />
     <Compile Include="Contracts\Services\Settings\ILocalSettingsService.cs" />
     <Compile Include="Contracts\Services\INavigationService.cs" />
@@ -163,11 +166,15 @@
     <Compile Include="Enums\TabViewPlacementMode.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\ViewModelsRegistrator.cs" />
+    <Compile Include="Attributes\PageAddressAttribute.cs" />
+    <Compile Include="Messages\FindBoxNavigateToMessage.cs" />
     <Compile Include="Services\AppConfigService.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\FirstRunAppInitializerService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NavigationViewService.cs" />
+    <Compile Include="Services\PageService\PageInfo.cs" />
+    <Compile Include="Services\PageService\PageService.cs" />
     <Compile Include="Services\Settings\AppearanceSettingsService.cs" />
     <Compile Include="Services\Settings\GeneralSettingsService.cs" />
     <Compile Include="Services\Settings\SettingChangedEventArgs.cs" />
@@ -193,7 +200,6 @@
     <Compile Include="Services\Settings\LocalSettingsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
     <Compile Include="ViewModels\Base\BindableBase.cs" />
-    <Compile Include="Messages\FindBoxNavigateToMessage.cs" />
     <Compile Include="Messages\FindBoxQueryChangedMessage.cs" />
     <Compile Include="Messages\FindBoxSetBookmarkButtonAppearanceMessage.cs" />
     <Compile Include="TemplateSelectors\FindBoxItemTemplateSelector.cs" />
@@ -255,9 +261,6 @@
       <DependentUpon>BookmarksPageSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\ApplicationConstants.cs" />
-    <Compile Include="Views\ErrorLoadPage.xaml.cs">
-      <DependentUpon>ErrorLoadPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Models\HistoryItem.cs" />
     <Compile Include="Views\Settings\MainItemPageSettings.xaml.cs">
       <DependentUpon>MainItemPageSettings.xaml</DependentUpon>
@@ -434,10 +437,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BookmarksPageSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ErrorLoadPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Windows.UI.Xaml.Controls;
+﻿using System.Collections.Generic;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Views;
-using NetBrowser_UWP.Views.News;
-using NetBrowser_UWP.Views.Settings;
 
 namespace NetBrowser_UWP.Constants;
 
@@ -75,19 +70,6 @@ public static class ApplicationConstants
 
     #endregion
 
-    #region ADDRESSES
-
     public const string SETTINGS_ADDRESS = "app://settings";
-    public const string STARTPAGE_ADDRESS = "app://newtab";
     public const string NEWS_ADDRESS = "app://news";
-
-    public static Dictionary<string, Type> ApplicationPaths = new()
-    {
-        { "app://settings", typeof(SettingsPage) },
-        { "app://news", typeof(AllNewsPage) },
-        { "app://startpage", typeof(StartPage) },
-        { "app://settings/about", typeof(AboutAppPage) }
-    };
-
-    #endregion
 }

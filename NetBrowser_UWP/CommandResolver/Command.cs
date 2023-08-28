@@ -1,4 +1,4 @@
-﻿namespace NetBrowser_UWP.CommandProcessor;
+﻿namespace NetBrowser_UWP.CommandResolver;
 
 public class Command
 {

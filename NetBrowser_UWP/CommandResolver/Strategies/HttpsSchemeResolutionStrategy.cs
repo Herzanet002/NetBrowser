@@ -1,8 +1,8 @@
-﻿using NetBrowser_UWP.Enums;
+﻿using System;
 using System.Text.RegularExpressions;
-using System;
+using NetBrowser_UWP.Enums;
 
-namespace NetBrowser_UWP.CommandProcessor.Strategies;
+namespace NetBrowser_UWP.CommandResolver.Strategies;
 
 public class HttpsSchemeResolutionStrategy : ICommandStrategy
 {

@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.UI.Xaml.Controls;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Services.PageService;
 using NetBrowser_UWP.Views;
 using NetBrowser_UWP.Views.News;
 using NetBrowser_UWP.Views.Settings;
@@ -16,7 +17,7 @@ using SymbolIconSource = Microsoft.UI.Xaml.Controls.SymbolIconSource;
 
 namespace NetBrowser_UWP.Services;
 
-public class TabViewService : ObservableObject, ITabViewService
+public class TabViewService : ObservableRecipient, ITabViewService
 {
     private readonly IWebView2Service _webView2Service;
     private TabViewItem _selectedTabItem;
@@ -190,5 +191,23 @@ public class TabViewService : ObservableObject, ITabViewService
 
         AddTabItem(newsTab);
         ChangeSelectedTabItem(newsTab);
+    }
+
+    public void CreateTabByPageInfo(PageInfo pageInfo)
+    {
+        if (pageInfo.ParentType == typeof(StartPage))
+        {
+            CreateStartPageTab();
+        }
+
+        if (pageInfo.ParentType == typeof(SettingsPage))
+        {
+            CreateSettingsTab(pageInfo.Type);
+        }
+
+        if (pageInfo.ParentType == typeof(NewsShellPage))
+        {
+            CreateNewsTab(pageInfo.Type);
+        }
     }
 }

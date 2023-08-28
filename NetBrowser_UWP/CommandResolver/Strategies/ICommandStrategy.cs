@@ -1,4 +1,4 @@
-﻿namespace NetBrowser_UWP.CommandProcessor.Strategies;
+﻿namespace NetBrowser_UWP.CommandResolver.Strategies;
 
 public interface ICommandStrategy
 {
