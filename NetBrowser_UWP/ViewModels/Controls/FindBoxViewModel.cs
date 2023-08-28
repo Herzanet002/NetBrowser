@@ -197,12 +197,14 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
         var commandResult = _commandResolver.ResolveCommand(new Command(queryForSearch.Query));
         NavigateTo(commandResult);
-
-        await _dataService.AddOrReplaceSearchTermAsync(new SearchTermItem
+        if (commandResult.ResultType != CommandResultType.PredefinedCommand)
         {
-            Query = queryForSearch.Query,
-            LastTimeAccess = DateTime.Now
-        }).ConfigureAwait(false);
+            await _dataService.AddOrReplaceSearchTermAsync(new SearchTermItem
+            {
+                Query = queryForSearch.Query,
+                LastTimeAccess = DateTime.Now
+            }).ConfigureAwait(false);
+        }
     }
 
     public void NavigateTo(CommandResult commandResult)
