@@ -4,19 +4,22 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
+using NetBrowser_UWP.CommandResolver;
 using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Helpers;
 
 namespace NetBrowser_UWP.Services;
 
 public class WebView2Service : IWebView2Service
 {
+    private readonly ICommandResolver _commandResolver;
+
+    public WebView2Service(ICommandResolver commandResolver)
+        => _commandResolver = commandResolver;
+
     public ObservableCollection<WebView2> ContainerStates { get; set; } = new();
 
     public string GetCurrentBrowserVersion()
-    {
-        return CoreWebView2Environment.GetAvailableBrowserVersionString();
-    }
+        => CoreWebView2Environment.GetAvailableBrowserVersionString();
 
     public event EventHandler<CoreWebView2NavigationCompletedEventArgs> NavigationCompleted;
 
@@ -32,13 +35,14 @@ public class WebView2Service : IWebView2Service
         await instance.EnsureCoreWebView2Async();
         instance.Tag = true;
         ContainerStates.Add(instance);
+        //instance.CoreWebView2.MemoryUsageTargetLevel // show if in low energy mode
         instance.NavigationCompleted += OnNavigationCompleted;
         instance.CoreWebView2.NewWindowRequested += OnNewWindowRequested;
         instance.NavigationStarting += OnNavigationStarting;
         instance.CoreWebView2.ContainsFullScreenElementChanged += OnContainsFullScreenElementChanged;
         instance.CoreWebView2.Navigate(string.IsNullOrWhiteSpace(uriToNavigate)
             ? App.CurrentWebEngine.HomePage
-            : UriResolver.ResolveUri(uriToNavigate).UriResult?.ToString());
+            : _commandResolver.ResolveCommand(new Command(uriToNavigate)).ResolvedCommandResult);
         return instance;
     }
 

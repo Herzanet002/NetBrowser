@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Helpers;
@@ -20,6 +21,9 @@ using Microsoft.Toolkit.Uwp.Helpers;
 using NetBrowser.Utils;
 using NetBrowser_UWP.Contracts.Services.Settings;
 using NetBrowser_UWP.Services.Settings;
+using NetBrowser_UWP.CommandResolver;
+using NetBrowser_UWP.CommandResolver.Strategies;
+using NetBrowser_UWP.Services.PageService;
 
 namespace NetBrowser_UWP;
 
@@ -71,6 +75,16 @@ public sealed partial class App : Application
         services.AddScoped<IRssWorkerService, RssWorkerService>();
         services.AddSingleton<IAppearanceSettingsService, AppearanceSettingsService>();
         services.AddSingleton<IGeneralSettingsService, GeneralSettingsService>();
+        services.AddSingleton<IPageService, PageService>();
+        services.AddSingleton<ICommandResolver, CommandResolver.CommandResolver>();
+        services.TryAddEnumerable(new[]
+        {
+            ServiceDescriptor.Singleton<ICommandStrategy, AbsoluteUriResolutionStrategy>(),
+            ServiceDescriptor.Singleton<ICommandStrategy, HttpsSchemeResolutionStrategy>(),
+            ServiceDescriptor.Singleton<ICommandStrategy, PredefinedSchemeResolutionStrategy>(provider =>
+                new PredefinedSchemeResolutionStrategy(provider.GetService<IPageService>())),
+            ServiceDescriptor.Singleton<ICommandStrategy, UserQueryResolutionStrategy>(),
+        });
 
         // ViewModels
         services.RegisterViewModels();

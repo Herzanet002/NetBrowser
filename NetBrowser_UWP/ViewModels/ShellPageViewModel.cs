@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Web.WebView2.Core;
+using NetBrowser_UWP.CommandResolver;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Contracts.Services.Settings;
@@ -33,17 +34,20 @@ public class ShellPageViewModel : BindableBase
     private readonly IDataService _dataService;
     private readonly IAppearanceSettingsService _appearanceSettingsService;
     private readonly TabViewService _tabViewService;
+    private readonly ICommandResolver _commandResolver;
     private readonly IWebView2Service _webView2Service;
 
     public ShellPageViewModel(IDataService dataService,
         IAppearanceSettingsService appearanceSettingsService,
         IWebView2Service webView2Service,
-        TabViewService tabViewService)
+        TabViewService tabViewService,
+        ICommandResolver commandResolver)
     {
         _dataService = dataService;
         _appearanceSettingsService = appearanceSettingsService;
         _webView2Service = webView2Service;
         _tabViewService = tabViewService;
+        _commandResolver = commandResolver;
         SetEventHandlers();
         InitializeCommands();
     }
@@ -395,7 +399,7 @@ public class ShellPageViewModel : BindableBase
         if (App.CurrentWebEngine?.HomePage != null
             && _tabViewService.SelectedWebView != null)
         {
-            Messenger.Send(new FindBoxNavigateToMessage(App.CurrentWebEngine.HomePage));
+            _tabViewService.SelectedWebView.Source = new Uri(App.CurrentWebEngine.HomePage);
         }
     }
 
@@ -439,7 +443,7 @@ public class ShellPageViewModel : BindableBase
             await _tabViewService.CreateNewWebTab();
             if (url != null)
             {
-                Messenger.Send(new FindBoxNavigateToMessage(url));
+                Messenger.Send(new FindBoxNavigateToMessage(_commandResolver.ResolveCommand(new Command(url))));
             }
         }
 

@@ -70,11 +70,6 @@ public static class ApplicationConstants
 
     #endregion
 
-    #region ADDRESSES
-
     public const string SETTINGS_ADDRESS = "app://settings";
-    public const string STARTPAGE_ADDRESS = "app://newtab";
     public const string NEWS_ADDRESS = "app://news";
-
-    #endregion
 }

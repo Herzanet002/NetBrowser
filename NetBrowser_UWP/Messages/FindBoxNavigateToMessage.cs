@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
+using NetBrowser_UWP.CommandResolver;
 
 namespace NetBrowser_UWP.Messages;
 
-public sealed class FindBoxNavigateToMessage : ValueChangedMessage<string>
+public sealed class FindBoxNavigateToMessage : ValueChangedMessage<CommandResult>
 {
-    public FindBoxNavigateToMessage(string value) : base(value)
+    public FindBoxNavigateToMessage(CommandResult value) : base(value)
     {
     }
 }
