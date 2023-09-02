@@ -16,16 +16,16 @@ using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Contracts.Services.Settings;
 using NetBrowser_UWP.Enums;
+using NetBrowser_UWP.EventArguments;
 using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
-using NetBrowser_UWP.Services.Settings;
 using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views;
 using NetBrowser_UWP.Views.News;
 using NetBrowser_UWP.Views.Settings;
 using Prism.Commands;
 using winUI = Microsoft.UI.Xaml.Controls;
+using NetBrowser_UWP.ViewModels.Controls;
 
 namespace NetBrowser_UWP.ViewModels;
 
@@ -33,34 +33,37 @@ public class ShellPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
     private readonly IAppearanceSettingsService _appearanceSettingsService;
-    private readonly TabViewService _tabViewService;
+    private readonly ITabViewService _tabViewService;
     private readonly ICommandResolver _commandResolver;
+    private readonly IPageService _pageService;
     private readonly IWebView2Service _webView2Service;
 
     public ShellPageViewModel(IDataService dataService,
         IAppearanceSettingsService appearanceSettingsService,
         IWebView2Service webView2Service,
-        TabViewService tabViewService,
-        ICommandResolver commandResolver)
+        ITabViewService tabViewService,
+        ICommandResolver commandResolver,
+        IPageService pageService)
     {
         _dataService = dataService;
         _appearanceSettingsService = appearanceSettingsService;
         _webView2Service = webView2Service;
         _tabViewService = tabViewService;
         _commandResolver = commandResolver;
+        _pageService = pageService;
         SetEventHandlers();
         InitializeCommands();
+        WeakReferenceMessenger.Default.Register<ShellPageViewModel, InnerPageTypeChangedMessage>(this,
+            UpdateUiLabelsByReason);
     }
 
-    public ObservableCollection<winUI.TabViewItem> TabViewItemsList => _tabViewService.TabViewItemsList;
-
-    public winUI.TabViewItem SelectedTabItem
+    private void UpdateUiLabelsByReason(ShellPageViewModel recipient, InnerPageTypeChangedMessage message)
     {
-        get => _tabViewService.SelectedTabItem;
-        set => _tabViewService.ChangeSelectedTabItem(value);
+        if (SelectedTabItem != null)
+        {
+            Messenger.Send(new FindBoxQueryChangedMessage(_pageService.GetPageInfoByPageType(message.Value)?.Path));
+        }
     }
-
-    public TabViewPlacementMode TabViewPlacementMode => _appearanceSettingsService.TabViewPlacementMode.GetSetting();
 
     private async Task InitializeAsync()
     {
@@ -94,7 +97,7 @@ public class ShellPageViewModel : BindableBase
 
         if (sender.ContainsFullScreenElement)
         {
-            var t = applicationView.TryEnterFullScreenMode();
+            applicationView.TryEnterFullScreenMode();
         }
         else if (applicationView.IsFullScreenMode)
         {
@@ -102,9 +105,58 @@ public class ShellPageViewModel : BindableBase
         }
     }
 
+    //private void SetFindBoxQueryTextByPageContent(Page pageType)
+    //{
+    //    if (pageType is not INavigationViewContentPage navigationViewContentPage) return;
+    //    if (navigationViewContentPage.InnerPageType == null)
+    //    {
+    //        Messenger.Send(new FindBoxQueryChangedMessage(_pageService
+    //            .GetPageInfoByPageType(navigationViewContentPage.GetType())?.Path));
+    //    }
+
+    //    Messenger.Send(new FindBoxQueryChangedMessage(_pageService
+    //        .GetPageInfoByPageType(navigationViewContentPage.InnerPageType)?.Path));
+    //}
+
     private void TabViewServiceSelectionChangedHandler(object sender, SelectionChangedEventArgs e)
     {
-        SelectionChangedTabHandler();
+        var selectedTabItem = _tabViewService.SelectedTabItem;
+        if (selectedTabItem == null)
+        {
+            SetVisualUiLabels(null, null);
+            SetVisualUiElementStates(null);
+            return;
+        }
+
+        _tabViewService.SelectedWebView = selectedTabItem.Content as winUI.WebView2;
+
+        switch (selectedTabItem.Content)
+        {
+            case SettingsPage settingsPage:
+                SetVisualUiLabels(selectedTabItem.Header.ToString(),
+                    _pageService.GetPageInfoByPageType(typeof(SettingsPage))?.Path);
+                break;
+
+            case StartPage:
+                SetVisualUiLabels(selectedTabItem.Header.ToString(), string.Empty);
+                break;
+
+            case winUI.WebView2:
+                if (_tabViewService.SelectedWebView?.Source != null)
+                    SetVisualUiLabels(_tabViewService.SelectedWebView.CoreWebView2.DocumentTitle,
+                        _tabViewService.SelectedWebView.Source.AbsoluteUri);
+                break;
+
+            case NewsShellPage:
+                SetVisualUiLabels(selectedTabItem.Header.ToString(),
+                    _pageService.GetPageInfoByPageType(typeof(AllNewsPage)).Path);
+                break;
+
+            default:
+                SetVisualUiLabels(selectedTabItem.Header.ToString(), string.Empty);
+                break;
+        }
+
         if (_tabViewService.SelectedWebView != null)
             IsWebLoading = (bool)_tabViewService.SelectedWebView.Tag;
         SetVisualUiElementStates(_tabViewService.SelectedWebView);
@@ -170,10 +222,10 @@ public class ShellPageViewModel : BindableBase
         Messenger.Send(new FindBoxSetBookmarkButtonAppearanceMessage());
     }
 
-    private void SetVisualUiLabels(string appTitleText, string searchBoxText)
+    private void SetVisualUiLabels(string appTitleText, string findBoxQueryText)
     {
         AppTitleText = appTitleText;
-        Messenger.Send(new FindBoxQueryChangedMessage(searchBoxText));
+        Messenger.Send(new FindBoxQueryChangedMessage(findBoxQueryText));
     }
 
     private void WebViewOnNavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs args)
@@ -204,7 +256,7 @@ public class ShellPageViewModel : BindableBase
                 ShowAsMonochrome = false
             };
         }
-        catch (Exception e)
+        catch (Exception)
         {
             rightTab.IconSource = new winUI.BitmapIconSource
             {
@@ -229,46 +281,6 @@ public class ShellPageViewModel : BindableBase
         CommandsRaiseCanExecuteChanged();
     }
 
-    private void SelectionChangedTabHandler()
-    {
-        if (_tabViewService.SelectedTabItem == null)
-        {
-            SetVisualUiLabels(null, null);
-            SetVisualUiElementStates(null);
-            return;
-        }
-
-        _tabViewService.SelectedWebView = _tabViewService.SelectedTabItem.Content as winUI.WebView2;
-
-        switch (_tabViewService.SelectedTabItem.Content)
-        {
-            case SettingsPage:
-                SetVisualUiLabels(_tabViewService.SelectedTabItem.Header.ToString(),
-                    Constants.ApplicationConstants.SETTINGS_ADDRESS);
-                break;
-
-            case StartPage:
-                SetVisualUiLabels(_tabViewService.SelectedTabItem.Header.ToString(), string.Empty);
-                break;
-
-            case winUI.WebView2:
-                if (_tabViewService.SelectedWebView?.Source != null)
-                    SetVisualUiLabels(_tabViewService.SelectedWebView.CoreWebView2.DocumentTitle,
-                        _tabViewService.SelectedWebView.Source.AbsoluteUri);
-                break;
-
-            case NewsShellPage:
-                SetVisualUiLabels(_tabViewService.SelectedTabItem.Header.ToString(),
-                    Constants.ApplicationConstants.NEWS_ADDRESS);
-                break;
-
-            default:
-                SetVisualUiLabels(_tabViewService.SelectedTabItem.Header.ToString(), string.Empty);
-                break;
-        }
-    }
-
-
     private async Task GetBookmarksAsync()
     {
         var bookmarksListTransfer = await _dataService.GetBookmarksAsync();
@@ -284,7 +296,6 @@ public class ShellPageViewModel : BindableBase
     private string _appTitleText;
 
     private bool _isHomeButtonEnabled;
-    private int _tabViewPlacementMode;
     private bool _isProgressRingActive;
     private bool _isFlyoutClosed;
     private bool _isWebLoading;
@@ -315,6 +326,16 @@ public class ShellPageViewModel : BindableBase
     #endregion Commands Region
 
     #region Global Properties Region
+
+    public ObservableCollection<winUI.TabViewItem> TabViewItemsList => _tabViewService.ItemsCollection;
+
+    public TabViewPlacementMode TabViewPlacementMode => _appearanceSettingsService.TabViewPlacementMode.GetSetting();
+
+    public winUI.TabViewItem SelectedTabItem
+    {
+        get => _tabViewService.SelectedTabItem;
+        set => _tabViewService.ChangeSelectedTabItem(value);
+    }
 
     public ObservableCollection<BookmarkItem> BookmarksList
     {

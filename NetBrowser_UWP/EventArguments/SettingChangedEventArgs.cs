@@ -1,4 +1,4 @@
-﻿namespace NetBrowser_UWP.Services.Settings;
+﻿namespace NetBrowser_UWP.EventArguments;
 
 public class SettingChangedEventArgs
 {

@@ -14,6 +14,7 @@
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
     xmlns:userControls="using:NetBrowser_UWP.Views.UserControls"
     xmlns:tools="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    xmlns:animatedVisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
     d:DataContext="{d:DesignInstance Type=viewModels:ShellPageViewModel,IsDesignTimeCreatable=True}"
     IsTabStop="True">
@@ -34,7 +35,7 @@
                         x:Key="NavigationBarButtonStyle"
                         BasedOn="{StaticResource DefaultButtonStyle}"
                         TargetType="Button">
-                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Padding" Value="2" />
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="BorderBrush" Value="Transparent" />
                         <Setter Property="Width" Value="36" />

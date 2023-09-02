@@ -1,5 +1,5 @@
-using NetBrowser_UWP.Services.Settings;
 using System;
+using NetBrowser_UWP.EventArguments;
 
 namespace NetBrowser_UWP.Contracts.Services.Settings;
 

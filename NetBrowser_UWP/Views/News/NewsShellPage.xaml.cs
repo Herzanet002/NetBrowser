@@ -2,14 +2,11 @@
 using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using NetBrowser_UWP.ViewModels.News;
-
-// Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
+using NetBrowser_UWP.Attributes;
 
 namespace NetBrowser_UWP.Views.News;
 
-/// <summary>
-///     Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
-/// </summary>
+[PageAddress("app://news")]
 public sealed partial class NewsShellPage : Page
 {
     public NewsShellPage(Type pageType = default)

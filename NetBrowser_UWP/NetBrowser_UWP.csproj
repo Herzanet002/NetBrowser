@@ -149,6 +149,7 @@
     <Compile Include="Commands\OpenFlyoutAction.cs" />
     <Compile Include="Contracts\INavigationAware.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
+    <Compile Include="Contracts\ITrackingContract.cs" />
     <Compile Include="Contracts\Services\IFirstRunAppInitializerService.cs" />
     <Compile Include="Contracts\Services\IDataService.cs" />
     <Compile Include="Contracts\Services\IPageService.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="Helpers\ViewModelsRegistrator.cs" />
     <Compile Include="Attributes\PageAddressAttribute.cs" />
     <Compile Include="Messages\FindBoxNavigateToMessage.cs" />
+    <Compile Include="Messages\InnerPageTypeChangedMessage.cs" />
     <Compile Include="Services\AppConfigService.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\FirstRunAppInitializerService.cs" />
@@ -177,7 +179,7 @@
     <Compile Include="Services\PageService\PageService.cs" />
     <Compile Include="Services\Settings\AppearanceSettingsService.cs" />
     <Compile Include="Services\Settings\GeneralSettingsService.cs" />
-    <Compile Include="Services\Settings\SettingChangedEventArgs.cs" />
+    <Compile Include="EventArguments\SettingChangedEventArgs.cs" />
     <Compile Include="Services\Settings\SettingHolder.cs" />
     <Compile Include="Services\TabViewService.cs" />
     <Compile Include="Converters\DateTimeToDateConverter.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using NetBrowser_UWP.Contracts.Services.Settings;
+using NetBrowser_UWP.EventArguments;
 
 namespace NetBrowser_UWP.Services.Settings;
 

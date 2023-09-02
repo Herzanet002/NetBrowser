@@ -29,10 +29,10 @@ public class TabViewService : ObservableRecipient, ITabViewService
     public TabViewService(IWebView2Service webView2Service)
     {
         _webView2Service = webView2Service;
-        TabViewItemsList = new ObservableCollection<TabViewItem>();
+        ItemsCollection = new ObservableCollection<TabViewItem>();
     }
 
-    public ObservableCollection<TabViewItem> TabViewItemsList
+    public ObservableCollection<TabViewItem> ItemsCollection
     {
         get => _tabViewItemsList;
         set => SetProperty(ref _tabViewItemsList, value);
@@ -44,7 +44,7 @@ public class TabViewService : ObservableRecipient, ITabViewService
         set
         {
             SetProperty(ref _selectedTabItem, value);
-            SelectionChangedHandler?.Invoke(null, null);
+            SelectionChangedHandler?.Invoke(this, null);
         }
     }
 
@@ -57,27 +57,18 @@ public class TabViewService : ObservableRecipient, ITabViewService
     public void AddTabItem(TabViewItem item)
     {
         if (item is null) return;
-        TabViewItemsList.Add(item);
+        ItemsCollection.Add(item);
     }
 
-    public bool ContainsTab(TabViewItem item)
-    {
-        return TabViewItemsList.Contains(item);
-    }
 
     public TabViewItem GetTabItemByFilter(Func<TabViewItem, bool> filter)
     {
-        return TabViewItemsList.SingleOrDefault(filter);
-    }
-
-    public int GetTabItemIndex(TabViewItem item)
-    {
-        return TabViewItemsList.IndexOf(item);
+        return ItemsCollection.SingleOrDefault(filter);
     }
 
     public void ChangeSelectedTabItem(TabViewItem newItem)
     {
-        if (TabViewItemsList.Contains(newItem))
+        if (ItemsCollection.Contains(newItem))
             SelectedTabItem = newItem;
         if (newItem is null)
             SelectedTabItem = null;
@@ -85,14 +76,14 @@ public class TabViewService : ObservableRecipient, ITabViewService
 
     public void RemoveTabItem(TabViewItem item)
     {
-        if (TabViewItemsList.Contains(item))
-            TabViewItemsList.Remove(item);
+        if (ItemsCollection.Contains(item))
+            ItemsCollection.Remove(item);
     }
 
     public void ChangeTabItem(TabViewItem oldTabItem, TabViewItem newTabItem)
     {
-        var index = TabViewItemsList.IndexOf(oldTabItem);
-        TabViewItemsList[index] = newTabItem;
+        var index = ItemsCollection.IndexOf(oldTabItem);
+        ItemsCollection[index] = newTabItem;
     }
 
     public void CloseTabItemRequested(TabViewItem tab)
@@ -101,7 +92,7 @@ public class TabViewService : ObservableRecipient, ITabViewService
             webContent.Close();
 
         RemoveTabItem(tab);
-        if (!TabViewItemsList.Any())
+        if (!ItemsCollection.Any())
             SelectedWebView = null;
     }
 
@@ -147,7 +138,7 @@ public class TabViewService : ObservableRecipient, ITabViewService
         ChangeSelectedTabItem(startPageTab);
     }
 
-    public void CreateSettingsTab(Type pageType = default)
+    public void CreateSettingsTab(Type innerPageType = default)
     {
         var settingsTabItem = GetTabItemByFilter(tab => tab.Content is SettingsPage);
 
@@ -156,7 +147,7 @@ public class TabViewService : ObservableRecipient, ITabViewService
             ChangeSelectedTabItem(settingsTabItem);
             if (settingsTabItem.Content is SettingsPage page)
             {
-                page.ViewModel.NavigateToPageType(pageType);
+                page.ViewModel.NavigateToPageType(innerPageType);
             }
 
             return;
@@ -164,14 +155,14 @@ public class TabViewService : ObservableRecipient, ITabViewService
 
         var settingsTab = CreateTabViewItemInstance(
             "Settings".GetLocalized(),
-            new SettingsPage(pageType ?? typeof(MainItemPageSettings)),
+            new SettingsPage(innerPageType ?? typeof(MainItemPageSettings)),
             new SymbolIconSource { Symbol = Symbol.Setting });
 
         AddTabItem(settingsTab);
         ChangeSelectedTabItem(settingsTab);
     }
 
-    public void CreateNewsTab(Type pageType = default)
+    public void CreateNewsTab(Type innerPageType = default)
     {
         var newsTabItem = GetTabItemByFilter(tab => tab.Content is NewsShellPage);
 
@@ -183,7 +174,7 @@ public class TabViewService : ObservableRecipient, ITabViewService
 
         var newsTab = CreateTabViewItemInstance(
             "News".GetLocalized(),
-            new NewsShellPage(pageType ?? typeof(AllNewsPage)),
+            new NewsShellPage(innerPageType ?? typeof(AllNewsPage)),
             new FontIconSource
             {
                 Glyph = "\xE8A1"

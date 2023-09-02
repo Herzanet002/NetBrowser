@@ -10,18 +10,17 @@ namespace NetBrowser_UWP.Contracts.Services;
 
 public interface INavigationViewService
 {
+    event NavigatedEventHandler Navigated;
+
+    NavigationViewItem GetSelectedItem(Type pageType);
+
     IList<object> MenuItems { get; }
 
-    object SettingsItem { get; }
     INavigationService NavigationService { get; }
 
     void Initialize(Frame frame, NavigationView navigationView, Type pageType = default);
 
     void UnregisterEvents();
-
-    event NavigatedEventHandler Navigated;
-
-    NavigationViewItem GetSelectedItem(Type pageType);
 
     void NavigateToPageType(Type pageType, object parameter = null, NavigationTransitionInfo transitionInfo = null);
 }

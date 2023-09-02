@@ -1,14 +1,17 @@
 ﻿using System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using CommunityToolkit.Mvvm.Messaging;
+using NetBrowser_UWP.Contracts;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.ViewModels.Base;
 using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
-public class SettingsPageViewModel : BindableBase
+public class SettingsPageViewModel : BindableBase, ITrackingContract
 {
     private readonly INavigationViewService _navigationViewService;
     private bool _isBackEnabled;
@@ -24,7 +27,6 @@ public class SettingsPageViewModel : BindableBase
     public void Initialize(Frame frame, NavigationView navigationView, Type pageType)
         => _navigationViewService?.Initialize(frame, navigationView, pageType);
 
-
     public NavigationViewItem Selected
     {
         get => _selected;
@@ -39,7 +41,7 @@ public class SettingsPageViewModel : BindableBase
 
     public void NavigateToPageType(Type pageType)
         => _navigationViewService.NavigateToPageType(pageType);
-    
+
     private void OnNavigated(object sender, NavigationEventArgs e)
     {
         IsBackEnabled = _navigationViewService.NavigationService.CanGoBack;
@@ -48,5 +50,12 @@ public class SettingsPageViewModel : BindableBase
         {
             Selected = selectedItem;
         }
+
+        NotifyPropertyChanged(e.SourcePageType);
+    }
+
+    public void NotifyPropertyChanged(Type propertyType)
+    {
+        WeakReferenceMessenger.Default.Send(new InnerPageTypeChangedMessage(propertyType));
     }
 }

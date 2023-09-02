@@ -21,7 +21,7 @@ namespace NetBrowser_UWP.ViewModels.Controls;
 
 public class FindBoxViewModel : BindableBase, IFindBox
 {
-    private readonly TabViewService _tabViewService;
+    private readonly ITabViewService _tabViewService;
     private readonly IDataService _dataService;
     private readonly ICommandResolver _commandResolver;
     private readonly IPageService _pageService;
@@ -47,7 +47,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
     public ICommand CancelSaveBookmarkButtonCommand { get; private set; }
 
-    public FindBoxViewModel(TabViewService tabViewService,
+    public FindBoxViewModel(ITabViewService tabViewService,
         IDataService dataService,
         ICommandResolver commandResolver,
         IPageService pageService)
@@ -266,9 +266,8 @@ public class FindBoxViewModel : BindableBase, IFindBox
     {
         BookmarkForSave.FaviconUrl = ApplicationConstants.FAVICONS_SERVICE + BookmarkForSave.Url;
         await _dataService.SaveBookmarkAsync(BookmarkForSave);
-
-        IsFlyoutClosed = true;
         await SetBookmarkButtonAppearance();
+        IsFlyoutClosed = true;
     }
 
     private async Task SetBookmarkButtonAppearance()

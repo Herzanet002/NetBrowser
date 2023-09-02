@@ -71,7 +71,8 @@ public sealed partial class App : Application
         services.AddTransient<INavigationService, NavigationService>();
         services.AddTransient<INavigationViewService, NavigationViewService>();
         services.AddSingleton<AppConfigService>();
-        services.AddSingleton<TabViewService>();
+        services.AddSingleton<ITabViewService, TabViewService>();
+        services.AddSingleton<TabViewService>(); // TODO: Remove
         services.AddScoped<IRssWorkerService, RssWorkerService>();
         services.AddSingleton<IAppearanceSettingsService, AppearanceSettingsService>();
         services.AddSingleton<IGeneralSettingsService, GeneralSettingsService>();
@@ -88,8 +89,6 @@ public sealed partial class App : Application
 
         // ViewModels
         services.RegisterViewModels();
-
-        services.AddLogging(x => x.AddConsole());
         return services.BuildServiceProvider();
     }
 

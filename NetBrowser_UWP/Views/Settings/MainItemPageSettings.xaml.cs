@@ -5,7 +5,7 @@ using NetBrowser_UWP.Attributes;
 
 namespace NetBrowser_UWP.Views.Settings;
 
-[PageAddress("app://settings")]
+[PageAddress("app://settings/general")]
 [ParentPageType(typeof(SettingsPage))]
 public sealed partial class MainItemPageSettings : Page
 {

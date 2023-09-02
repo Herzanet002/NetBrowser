@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Windows.UI.Xaml.Controls;
@@ -13,8 +14,11 @@ public class PageService : IPageService
         => InitializePagesList();
 
 
-    public PageInfo GetPageInfo(string path)
+    public PageInfo? GetPageInfo(string path)
         => _pages.Find(x => x.Path == path);
+
+    public PageInfo? GetPageInfoByPageType(Type pageType)
+        => _pages.Find(x => x.Type == pageType);
 
     private readonly List<PageInfo> _pages = new();
 

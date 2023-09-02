@@ -69,7 +69,4 @@ public static class ApplicationConstants
     public const string LIKED_RSS_FEEDERS_COLLECTION_NAME = "liked_rss_feeders";
 
     #endregion
-
-    public const string SETTINGS_ADDRESS = "app://settings";
-    public const string NEWS_ADDRESS = "app://news";
 }

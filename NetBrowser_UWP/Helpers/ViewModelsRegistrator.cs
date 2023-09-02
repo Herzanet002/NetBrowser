@@ -12,7 +12,9 @@ public static class ViewModelsRegistrator
     {
         services.AddSingleton<ShellPageViewModel>();
         services.AddSingleton<FindBoxViewModel>();
-        services.AddSingleton<MainSettingsPageViewModel>();
+        services.AddTransient<MainSettingsPageViewModel>();
+        services.AddTransient<FirstRunRecommendationsViewModel>();
+        services.AddTransient<NewsShellPageViewModel>();
         services.AddTransient<HistoryPageViewModel>();
         services.AddTransient<AllNewsPageViewModel>();
         services.AddTransient<FavoriteNewsPageViewModel>();
@@ -21,9 +23,7 @@ public static class ViewModelsRegistrator
         services.AddTransient<PersonalizePageViewModel>();
         services.AddTransient<SearchSystemPageViewModel>();
         services.AddTransient<SettingsPageViewModel>();
-        services.AddTransient<FirstRunRecommendationsViewModel>();
-        services.AddSingleton<NewsShellPageViewModel>();
-        services.AddSingleton<NewsSettingsViewModel>();
+        services.AddTransient<NewsSettingsViewModel>();
         services.AddTransient<RecommendationsNewsPageViewModel>();
         services.AddTransient<AboutAppViewModel>();
     }
