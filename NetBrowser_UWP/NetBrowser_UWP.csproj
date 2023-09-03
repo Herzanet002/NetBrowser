@@ -194,7 +194,6 @@
     <Compile Include="Converters\TitleTextConverter.cs" />
     <Compile Include="Converters\TitleLetterConverter.cs" />
     <Compile Include="Helpers\Json.cs" />
-    <Compile Include="Helpers\XmlSerializer.cs" />
     <Compile Include="Models\BookmarkItem.cs" />
     <Compile Include="Models\SiteItem.cs" />
     <Compile Include="Models\ThemeItem.cs" />
