@@ -72,7 +72,6 @@ public sealed partial class App : Application
         services.AddTransient<INavigationViewService, NavigationViewService>();
         services.AddSingleton<AppConfigService>();
         services.AddSingleton<ITabViewService, TabViewService>();
-        services.AddSingleton<TabViewService>(); // TODO: Remove
         services.AddScoped<IRssWorkerService, RssWorkerService>();
         services.AddSingleton<IAppearanceSettingsService, AppearanceSettingsService>();
         services.AddSingleton<IGeneralSettingsService, GeneralSettingsService>();

@@ -20,9 +20,9 @@ public class BookmarksPageViewModel : BindableBase
     private static BookmarkItem _selectedBookmark;
 
     private readonly IDataService _dataService;
-    private readonly TabViewService _tabViewService;
+    private readonly ITabViewService _tabViewService;
 
-    public BookmarksPageViewModel(IDataService dataService, TabViewService tabViewService)
+    public BookmarksPageViewModel(IDataService dataService, ITabViewService tabViewService)
     {
         _dataService = dataService;
         _tabViewService = tabViewService;

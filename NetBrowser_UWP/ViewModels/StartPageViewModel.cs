@@ -11,7 +11,6 @@ using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Contracts.Services.Settings;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views.UserControls;
 using Prism.Commands;
@@ -21,7 +20,7 @@ namespace NetBrowser_UWP.ViewModels;
 public class StartPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
-    private readonly TabViewService _tabViewService;
+    private readonly ITabViewService _tabViewService;
     private readonly IAppearanceSettingsService _appearanceSettingsService;
     private SiteItem _editableStartPageItem;
     private int _gridViewOrientation;
@@ -40,7 +39,7 @@ public class StartPageViewModel : BindableBase
     private ObservableCollection<SiteItem> _startPageItems;
 
     public StartPageViewModel(IDataService dataService,
-        TabViewService tabViewService,
+        ITabViewService tabViewService,
         IAppearanceSettingsService appearanceSettingsService)
     {
         _dataService = dataService;

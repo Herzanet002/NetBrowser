@@ -20,9 +20,9 @@ public class HistoryPageViewModel : BindableBase
     private static string _searchText;
 
     private readonly IDataService _dataService;
-    private readonly TabViewService _tabViewService;
+    private readonly ITabViewService _tabViewService;
 
-    public HistoryPageViewModel(IDataService dataService, TabViewService tabViewService)
+    public HistoryPageViewModel(IDataService dataService, ITabViewService tabViewService)
     {
         _dataService = dataService;
         _tabViewService = tabViewService;

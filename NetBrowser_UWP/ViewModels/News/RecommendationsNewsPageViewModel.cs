@@ -11,7 +11,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Helpers;
-using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views.News;
 using NetBrowser.Utils;
@@ -23,7 +22,7 @@ public class RecommendationsNewsPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly TabViewService _tabViewService;
+    private readonly ITabViewService _tabViewService;
     private bool _isConfiguredHidden;
     private bool _isProgressRingActive = true;
     private ContentModel _newsForSharing;
@@ -31,7 +30,7 @@ public class RecommendationsNewsPageViewModel : BindableBase
 
     public RecommendationsNewsPageViewModel(IDataService dataService,
         IServiceScopeFactory serviceScopeFactory,
-        TabViewService tabViewService)
+        ITabViewService tabViewService)
     {
         _dataService = dataService;
         _serviceScopeFactory = serviceScopeFactory;

@@ -6,7 +6,6 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser.Utils;
 using Prism.Commands;
@@ -16,12 +15,12 @@ namespace NetBrowser_UWP.ViewModels.News;
 public class FavoriteNewsPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
-    private readonly TabViewService _tabViewService;
+    private readonly ITabViewService _tabViewService;
     private ObservableCollection<ContentModel> _favoriteNews = new();
     private ContentModel _newsForSharing;
     private ContentModel _selectedItemNews;
 
-    public FavoriteNewsPageViewModel(IDataService dataService, TabViewService tabViewService)
+    public FavoriteNewsPageViewModel(IDataService dataService, ITabViewService tabViewService)
     {
         _dataService = dataService;
         _tabViewService = tabViewService;
