@@ -51,7 +51,7 @@
         </ListView>
 
         <controls:ProgressRing Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center"
-                               Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}"
+                               Foreground="{Binding CurrentTheme.AppTitleBrush, Source={StaticResource ThemeManager}}"
                                IsActive="{Binding IsProgressRingActive}" />
 
     </Grid>

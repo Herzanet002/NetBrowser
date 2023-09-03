@@ -45,12 +45,12 @@ public static class ApplicationConstants
 
     #region THEMES_PATH
 
-    public const string DARK_BLUE_THEME_PATH = "ms-appx:///Themes/Theme.DarkBlue.xaml";
+    public const string DARK_BLUE_THEME_PATH = "ms-appx:///Themes/Theme.Dark.Blue.xaml";
     public const string LIGHT_THEME_PATH = "ms-appx:///Themes/Theme.Light.xaml";
     public const string LIGHT_PINK_THEME_PATH = "ms-appx:///Themes/Theme.LightPink.xaml";
     public const string DARK_THEME_PATH = "ms-appx:///Themes/Theme.Dark.xaml";
-    public const string LIGHT_BLUE_THEME_PATH = "ms-appx:///Themes/Theme.LightBlue.xaml";
-    public const string DARK_NAVY_BLUE_THEME_PATH = "ms-appx:///Themes/Theme.Dark.NavyBlue.xaml";
+    public const string LIGHT_BLUE_THEME_PATH = "ms-appx:///Themes/Theme.Light.Blue.xaml";
+    public const string DARK_NAVY_BLUE_THEME_PATH = "ms-appx:///Themes/Theme.Dark.Purple.xaml";
     public const string DARK_ACRYLIC_THEME_PATH = "ms-appx:///Themes/Theme.Dark.Acrylic.xaml";
     public const string LIGHT_ACRYLIC_THEME_PATH = "ms-appx:///Themes/Theme.Light.Acrylic.xaml";
     public const string LIGHT_LILAC_THEME_PATH = "ms-appx:///Themes/Theme.Light.Lilac.xaml";

@@ -62,7 +62,7 @@
                 <FontIcon HorizontalAlignment="Left"
                           Glyph="{x:Bind IsNewSuggestedSearchQuery, Converter={StaticResource SearchSuggestionGlyphConverter}}"
                           FontSize="14"
-                          Foreground="{Binding Path =NavigationButtonBrush, Source={StaticResource ThemeManager}}" />
+                          Foreground="{Binding Path=CurrentTheme.NavigationButtonBrush, Source={StaticResource ThemeManager}}" />
                 <StackPanel Orientation="Vertical"
                             Margin="10,0,0,0">
                     <TextBlock Text="{Binding Converter={StaticResource SearchTermItemConverter}}" />
@@ -77,12 +77,12 @@
                 <FontIcon HorizontalAlignment="Left"
                           Glyph="{x:Bind IsNewSuggestedSearchQuery, Converter={StaticResource SearchSuggestionGlyphConverter}}"
                           FontSize="14"
-                          Foreground="{Binding Path =NavigationButtonBrush, Source={StaticResource ThemeManager}}" />
+                          Foreground="{Binding Path =CurrentTheme.NavigationButtonBrush, Source={StaticResource ThemeManager}}" />
                 <StackPanel Orientation="Vertical"
                             Margin="10">
                     <TextBlock Text="{Binding Converter={StaticResource SearchTermItemConverter}}" />
                     <TextBlock FontSize="{StaticResource FindBoxLastAccessLabelFontSize}"
-                               Foreground="{Binding BookmarkSavedBrush, Source={StaticResource ThemeManager}}">
+                               Foreground="{Binding CurrentTheme.BookmarkSavedBrush, Source={StaticResource ThemeManager}}">
                         <Run Text="{helpers:ResourceString Name=LastVisit}"></Run>
                         <Run Text=": "></Run>
                         <Run Text="{x:Bind LastTimeAccess, Mode=OneWay}"></Run>
@@ -146,7 +146,7 @@
                         <core:ChangePropertyAction PropertyName="Content">
                             <core:ChangePropertyAction.Value>
                                 <FontIcon Glyph="&#xE735;" FontSize="14"
-                                          Foreground="{Binding BookmarkSavedBrush, Source={StaticResource ThemeManager}}" />
+                                          Foreground="{Binding CurrentTheme.BookmarkSavedBrush, Source={StaticResource ThemeManager}}" />
                             </core:ChangePropertyAction.Value>
                         </core:ChangePropertyAction>
                     </core:DataTriggerBehavior.Actions>
@@ -167,7 +167,7 @@
                         <TextBlock Text="{helpers:ResourceString Name=AddToBookmarks}" HorizontalAlignment="Center"
                                    FontWeight="SemiBold"
                                    FontSize="14"
-                                   Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" />
+                                   Foreground="{Binding CurrentTheme.ForegroundBrush, Source={StaticResource ThemeManager}}" />
                         <TextBox
                             Text="{x:Bind ViewModel.BookmarkForSave.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Header="{helpers:ResourceString Name=Header}"

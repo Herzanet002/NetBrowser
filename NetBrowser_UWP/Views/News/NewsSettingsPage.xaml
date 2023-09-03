@@ -7,7 +7,7 @@
     xmlns:news="using:NetBrowser_UWP.ViewModels.News"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=news:NewsSettingsViewModel,IsDesignTimeCreatable=True}"
-    Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">
+    Background="{Binding Source={StaticResource ThemeManager}, Path=CurrentTheme.ThirdBrush}">
 
     <Grid>
         <Grid.RowDefinitions>

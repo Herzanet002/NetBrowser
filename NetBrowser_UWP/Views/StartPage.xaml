@@ -101,7 +101,7 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
 
-                            <Grid Background="{Binding ThirdBrush, Source={StaticResource ThemeManager}}">
+                            <Grid Background="{Binding CurrentTheme.ThirdBrush, Source={StaticResource ThemeManager}}">
                                 <TextBlock Text="{x:Bind Url, Converter={StaticResource TitleLetterConverter}}"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Top" FontSize="24" FontWeight="Bold" Padding="5" />
@@ -131,7 +131,7 @@
 
                             </Grid>
                             <StackPanel Orientation="Vertical" VerticalAlignment="Bottom"
-                                        Background="{Binding SecondBrush, Source={StaticResource ThemeManager}}"
+                                        Background="{Binding CurrentTheme.SecondBrush, Source={StaticResource ThemeManager}}"
                                         Padding="10,5,10,5" Height="45">
                                 <TextBlock Text="{x:Bind Name}" />
                                 <TextBlock Text="{x:Bind Url, Converter={StaticResource TitleTextConverter}}"

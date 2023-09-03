@@ -9,9 +9,12 @@ namespace NetBrowser_UWP.Views;
 /// </summary>
 public sealed partial class ShellPage : Page
 {
+    public ShellPageViewModel ViewModel { get; }
+
     public ShellPage()
     {
         InitializeComponent();
-        DataContext = Ioc.Default.GetService<ShellPageViewModel>();
+        ViewModel = Ioc.Default.GetService<ShellPageViewModel>();
+        DataContext = ViewModel;
     }
 }

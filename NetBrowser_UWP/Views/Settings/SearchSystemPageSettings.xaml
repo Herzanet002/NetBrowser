@@ -15,9 +15,9 @@
         </Grid.RowDefinitions>
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="Поисковая система" FontSize="40"
                    Grid.Row="0"
-                   Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="50,30,0,20" />
+                   Foreground="{Binding CurrentTheme.ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="50,30,0,20" />
         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="Выбор движка" FontSize="26" Grid.Row="1"
-                   Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="70,0,0,0" />
+                   Foreground="{Binding CurrentTheme.ForegroundBrush, Source={StaticResource ThemeManager}}" Margin="70,0,0,0" />
 
         <ComboBox Grid.Row="2" Margin="80,10,0,0"
                   ItemsSource="{Binding ListOfEngines}"

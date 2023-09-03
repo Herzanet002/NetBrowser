@@ -1,45 +1,30 @@
-﻿using System.ComponentModel;
-using Windows.UI;
+﻿using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using NetBrowser_UWP.Contracts;
 using NetBrowser_UWP.Models;
 
-// ReSharper disable once CheckNamespace
-namespace NetBrowser_UWP;
+namespace NetBrowser_UWP.Services.Managers;
 
-public sealed class ThemeManager : INotifyPropertyChanged, IThemeManager
+public sealed class ThemeManager : ObservableRecipient, IThemeManager
 {
-    public static ThemeItem CurrentTheme;
-
-    public static Brush BackgroundBrush => CurrentTheme.BackgroundBrush;
-    public static Brush SecondBrush => CurrentTheme.SecondBrush;
-    public static Brush ThirdBrush => CurrentTheme.ThirdBrush;
-    public static Brush AppTitleBrush => CurrentTheme.AppTitleBrush;
-    public static Brush ForegroundBrush => CurrentTheme.ForegroundBrush;
-    public static Brush NavigationButtonBrush => CurrentTheme.NavigationButtonBrush;
-    public static Brush SearchBoxForeground => CurrentTheme.SearchBoxForeground;
-    public static Brush SearchBoxBorderBrush => CurrentTheme.SearchBoxBorderBrush;
-    public static Brush BookmarkSavedBrush => CurrentTheme.BookmarkSavedBrush;
-
-    public event PropertyChangedEventHandler PropertyChanged;
+    public static ThemeItem CurrentTheme { get; set; }
 
     public ThemeItem GetRequestedTheme(string themeName)
-    {
-        return themeName == null
+        => themeName == null
             ? Constants.ApplicationConstants.LightTheme
-            : Constants.ApplicationConstants.ThemesDictionary.ContainsKey(themeName)
-                ? Constants.ApplicationConstants.ThemesDictionary[themeName]
+            : Constants.ApplicationConstants.ThemesDictionary.TryGetValue(themeName, out var value)
+                ? value
                 : Constants.ApplicationConstants.LightTheme;
-    }
 
     public ThemeItem SetRequestedTheme(string themeName)
     {
         CurrentTheme = GetRequestedTheme(themeName);
         App.CurrentTheme = CurrentTheme;
 
-        var buttonForegroundColor = NavigationButtonBrush as SolidColorBrush;
-        var buttonInactiveBackgroundColor = BackgroundBrush as SolidColorBrush;
+        var buttonForegroundColor = CurrentTheme.NavigationButtonBrush as SolidColorBrush;
+        var buttonInactiveBackgroundColor = CurrentTheme.BackgroundBrush as SolidColorBrush;
 
         if (App.TitleBar != null)
         {
@@ -49,7 +34,7 @@ public sealed class ThemeManager : INotifyPropertyChanged, IThemeManager
         }
 
         SetRequestedElementThemeMode();
-        RaisePropertyChanged();
+        OnPropertyChanged(nameof(CurrentTheme));
         return CurrentTheme;
     }
 
@@ -57,23 +42,5 @@ public sealed class ThemeManager : INotifyPropertyChanged, IThemeManager
     {
         if (Window.Current.Content is FrameworkElement frameworkElement)
             frameworkElement.RequestedTheme = CurrentTheme.ThemeMode;
-    }
-
-    private void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    private void RaisePropertyChanged()
-    {
-        OnPropertyChanged(nameof(BackgroundBrush));
-        OnPropertyChanged(nameof(SecondBrush));
-        OnPropertyChanged(nameof(ThirdBrush));
-        OnPropertyChanged(nameof(AppTitleBrush));
-        OnPropertyChanged(nameof(ForegroundBrush));
-        OnPropertyChanged(nameof(NavigationButtonBrush));
-        OnPropertyChanged(nameof(SearchBoxBorderBrush));
-        OnPropertyChanged(nameof(SearchBoxForeground));
-        OnPropertyChanged(nameof(BookmarkSavedBrush));
     }
 }

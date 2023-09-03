@@ -10,7 +10,7 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:utils="using:NetBrowser.Utils"
     mc:Ignorable="d"
-    Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}"
+    Background="{Binding Source={StaticResource ThemeManager}, Path=CurrentTheme.ThirdBrush}"
     d:DataContext="{d:DesignInstance Type=news:FavoriteNewsPageViewModel,IsDesignTimeCreatable=True}">
     <interactivity:Interaction.Behaviors>
         <core:EventTriggerBehavior EventName="Loaded">
@@ -30,7 +30,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Border Padding="5,0,5,0" CornerRadius="6"
-                            Background="{Binding Source={StaticResource ThemeManager}, Path=AppTitleBrush}">
+                            Background="{Binding Source={StaticResource ThemeManager}, Path=CurrentTheme.AppTitleBrush}">
                         <controls:ImageEx Source="{x:Bind Feeder.FeederImageLink}" MinWidth="80" Height="50"
                                           HorizontalAlignment="Stretch" />
                     </Border>

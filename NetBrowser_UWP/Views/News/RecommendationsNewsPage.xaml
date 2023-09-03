@@ -14,7 +14,7 @@
     xmlns:utils="using:NetBrowser.Utils"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=news:RecommendationsNewsPageViewModel,IsDesignTimeCreatable=True}"
-    Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">
+    Background="{Binding Source={StaticResource ThemeManager}, Path=CurrentTheme.ThirdBrush}">
     <interactivity:Interaction.Behaviors>
         <core:EventTriggerBehavior EventName="Loaded">
             <core:InvokeCommandAction Command="{Binding RecommendationsNewsPageLoadedCommand}" />
@@ -83,7 +83,7 @@
 
         <Grid Grid.Row="0" Margin="10" CornerRadius="8">
             <controls1:ProgressRing VerticalAlignment="Center" HorizontalAlignment="Center"
-                                    Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}"
+                                    Foreground="{Binding CurrentTheme.AppTitleBrush, Source={StaticResource ThemeManager}}"
                                     IsActive="{Binding IsProgressRingActive}" />
             <controls:AdaptiveGridView ItemsSource="{Binding RecommendedNews}" Padding="15"
                                        StretchContentForSingleRow="False"

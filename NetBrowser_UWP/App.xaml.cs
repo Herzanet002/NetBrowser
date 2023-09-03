@@ -23,6 +23,7 @@ using NetBrowser_UWP.Contracts.Services.Settings;
 using NetBrowser_UWP.Services.Settings;
 using NetBrowser_UWP.CommandResolver;
 using NetBrowser_UWP.CommandResolver.Strategies;
+using NetBrowser_UWP.Services.Managers;
 using NetBrowser_UWP.Services.PageService;
 
 namespace NetBrowser_UWP;

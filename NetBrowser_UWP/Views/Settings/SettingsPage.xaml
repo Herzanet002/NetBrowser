@@ -9,7 +9,7 @@
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
     xmlns:settings="using:NetBrowser_UWP.Views.Settings"
     xmlns:views="using:NetBrowser_UWP.Views"
-    Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}">
+    Background="{Binding CurrentTheme.BackgroundBrush, Source={StaticResource ThemeManager}}">
 
     <Grid>
         <muxc:NavigationView IsSettingsVisible="False"

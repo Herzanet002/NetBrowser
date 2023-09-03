@@ -32,6 +32,8 @@
     <Thickness x:Key="SettingsPageHyperlinkButtonMargin">-12,4,0,0</Thickness>
 
     <CornerRadius x:Key="CustomTabViewItemCornerRadius">7</CornerRadius>
+    <CornerRadius x:Key="CustomTabViewContainerCornerRadius">7</CornerRadius>
+    <Thickness x:Key="CustomTabViewContainerMargin">4,0,4,0</Thickness>
     <Thickness x:Key="CustomTabViewItemContainerPaddings">0,3,2,4</Thickness>
     
 </ResourceDictionary>

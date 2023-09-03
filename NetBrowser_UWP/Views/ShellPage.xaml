@@ -14,8 +14,7 @@
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
     xmlns:userControls="using:NetBrowser_UWP.Views.UserControls"
     xmlns:tools="using:Microsoft.Toolkit.Uwp.UI.Converters"
-    xmlns:animatedVisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
-    Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
+    Background="{Binding Path=CurrentTheme.BackgroundBrush, Source={StaticResource ThemeManager}}"
     d:DataContext="{d:DesignInstance Type=viewModels:ShellPageViewModel,IsDesignTimeCreatable=True}"
     IsTabStop="True">
     <i:Interaction.Behaviors>
@@ -57,24 +56,26 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}" Height="30">
+        <Grid Row="0"
+              Height="28"
+              Background="{Binding CurrentTheme.BackgroundBrush, Source={StaticResource ThemeManager}}" >
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-
-                <winUi:ProgressRing IsActive="{Binding IsProgressRingActive}" Height="10" Width="10"
-                                    Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}" />
+                <winUi:ProgressRing IsActive="{Binding IsProgressRingActive}" 
+                                    Height="10" 
+                                    Width="10"
+                                    Foreground="{Binding CurrentTheme.AppTitleBrush, Source={StaticResource ThemeManager}}" />
                 <TextBlock
-                    VerticalAlignment="Center" Margin="15,0" FontSize="12.5" HorizontalTextAlignment="Center"
-                    Foreground="{Binding AppTitleBrush, Source={StaticResource ThemeManager}}">
+                    VerticalAlignment="Center" FontSize="14" Padding="0,4,0,0"
+                    Foreground="{Binding CurrentTheme.AppTitleBrush, Source={StaticResource ThemeManager}}">
                     <Run Text="{helpers:ResourceString Name=AppTitle/Text}" />
                     <Run Text="{Binding AppTitleText}" />
                 </TextBlock>
             </StackPanel>
-
         </Grid>
 
         <Grid Grid.Row="1" HorizontalAlignment="Stretch"
-              Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
-              ColumnSpacing="5" Height="44" Padding="10,0,10,0">
+              Background="{Binding CurrentTheme.BackgroundBrush, Source={StaticResource ThemeManager}}"
+              ColumnSpacing="5" Height="46" Padding="10,0,10,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -154,7 +155,7 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Сохраненные закладки" FontWeight="SemiBold" FontSize="16"
                                                Margin="0,10" HorizontalAlignment="Center"
-                                               Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" />
+                                               Foreground="{Binding CurrentTheme.ForegroundBrush, Source={StaticResource ThemeManager}}" />
                                     <Button Grid.Column="1" Width="32" Height="28" Padding="0"
                                             ToolTipService.ToolTip="Параметры закладок"
                                             Command="{Binding BookmarksSettingsButtonCommand}">
@@ -213,7 +214,7 @@
                                 <TextBlock Text="История" FontWeight="SemiBold" Margin="0,10"
                                            HorizontalAlignment="Center"
                                            FontSize="16"
-                                           Foreground="{Binding ForegroundBrush, Source={StaticResource ThemeManager}}" />
+                                           Foreground="{Binding CurrentTheme.ForegroundBrush, Source={StaticResource ThemeManager}}" />
                                 <Button Grid.Column="1" Width="32" Height="28" Padding="0"
                                         ToolTipService.ToolTip="Параметры журнала истории"
                                         Command="{Binding HistorySettingsButtonCommand}">
@@ -258,7 +259,7 @@
             </Button>
 
 
-            <Rectangle Grid.Column="9" Width="1" Fill="{Binding SecondBrush, Source={StaticResource ThemeManager}}"
+            <Rectangle Grid.Column="9" Width="1" Fill="{Binding CurrentTheme.SecondBrush, Source={StaticResource ThemeManager}}"
                        Margin="10" />
 
             <!--Settings button-->
