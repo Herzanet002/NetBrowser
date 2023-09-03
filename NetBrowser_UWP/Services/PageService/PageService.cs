@@ -32,24 +32,26 @@ public class PageService : IPageService
         foreach (var pageType in pageTypes)
         {
             var pageAttributes = pageType.GetCustomAttributes();
-            var page = new PageInfo();
+            var pageInfo = new PageInfo();
 
             foreach (var attribute in pageAttributes)
             {
                 switch (attribute)
                 {
                     case PageAddressAttribute addressAttribute:
-                        page.Path = addressAttribute.Address;
+                        pageInfo.Path = addressAttribute.Address;
                         break;
                     case ParentPageTypeAttribute parentTypeAttribute:
-                        page.ParentType = parentTypeAttribute.ParentPageType;
+                        pageInfo.ParentType = parentTypeAttribute.ParentPageType;
+                        break;
+                    case PageMetadataAttribute metadataAttribute:
+                        pageInfo.PathIsVisible = metadataAttribute.PathIsVisible;
                         break;
                 }
             }
 
-            page.Type = pageType;
-
-            _pages.Add(page);
+            pageInfo.Type = pageType;
+            _pages.Add(pageInfo);
         }
     }
 }

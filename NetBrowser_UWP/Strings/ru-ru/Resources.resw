@@ -156,7 +156,7 @@
   <data name="Header" xml:space="preserve">
     <value>Заголовок</value>
   </data>
-  <data name="HistoryButton.Tooltip" xml:space="preserve">
+  <data name="History.Title" xml:space="preserve">
     <value>История</value>
   </data>
   <data name="HomeButton.Tooltip" xml:space="preserve">
@@ -201,10 +201,25 @@
   <data name="SecurityButton.Tooltip" xml:space="preserve">
     <value>Посмотреть сведения о сайте</value>
   </data>
-  <data name="Settings" xml:space="preserve">
-    <value>Параметры</value>
+  <data name="Settings.About" xml:space="preserve">
+    <value>О программе</value>
   </data>
-  <data name="SettingsButton.Tooltip" xml:space="preserve">
+  <data name="Settings.Favorites" xml:space="preserve">
+    <value>Избранное</value>
+  </data>
+  <data name="Settings.General" xml:space="preserve">
+    <value>Общие</value>
+  </data>
+  <data name="Settings.History" xml:space="preserve">
+    <value>История</value>
+  </data>
+  <data name="Settings.Personalization" xml:space="preserve">
+    <value>Персонализация</value>
+  </data>
+  <data name="Settings.SearchEngine" xml:space="preserve">
+    <value>Поисковая система</value>
+  </data>
+  <data name="Settings.Title" xml:space="preserve">
     <value>Параметры</value>
   </data>
   <data name="SiteName" xml:space="preserve">

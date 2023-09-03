@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace NetBrowser_UWP.Services.PageService;
 
@@ -12,6 +13,14 @@ public class PageInfo
     {
         Path = path;
         Type = type;
+        ParentType = parentType;
+    }
+
+    public PageInfo(string path, Type type, bool pathIsVisible, Type? parentType = null)
+    {
+        Path = path;
+        Type = type;
+        PathIsVisible = pathIsVisible;
         ParentType = parentType;
     }
 
@@ -34,4 +43,9 @@ public class PageInfo
     ///     If this field is null, it means that this page is the root of all descendants
     /// </summary>
     public Type? ParentType { get; set; }
+
+    /// <summary>
+    ///     Displays whether the page address should be displayed in the findbox bar 
+    /// </summary>
+    public bool PathIsVisible { get; set; } = true;
 }

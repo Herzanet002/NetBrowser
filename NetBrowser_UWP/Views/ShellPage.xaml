@@ -200,7 +200,7 @@
             <!--History Flyout-->
             <Button Grid.Column="8" Style="{StaticResource NavigationBarButtonStyle}"
                     Command="{Binding HistoryButtonCommand}"
-                    ToolTipService.ToolTip="{helpers:ResourceString Name=HistoryButton/Tooltip}"
+                    ToolTipService.ToolTip="{helpers:ResourceString Name=HistoryTitle}"
                     ToolTipService.Placement="Bottom">
                 <Button.Flyout>
                     <Flyout Placement="Bottom">
@@ -268,7 +268,7 @@
                 <FontIcon Glyph="&#xE712;" FontSize="{StaticResource NavigationBarButtonFontSize}" />
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem Text="{helpers:ResourceString Name=Settings}"
+                        <MenuFlyoutItem Text="{helpers:ResourceString Name=Settings/Title}"
                                         Command="{Binding SettingsButtonCommand}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE713;" />

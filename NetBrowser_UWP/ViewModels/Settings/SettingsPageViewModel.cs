@@ -11,10 +11,11 @@ using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
-public class SettingsPageViewModel : BindableBase, ITrackingContract
+public class SettingsPageViewModel : BindableBase, INavigationViewContentPage
 {
     private readonly INavigationViewService _navigationViewService;
     private bool _isBackEnabled;
+    private Type _innerPageType;
     private NavigationViewItem _selected;
 
     public SettingsPageViewModel(INavigationViewService navigationViewService)
@@ -39,6 +40,12 @@ public class SettingsPageViewModel : BindableBase, ITrackingContract
         set => SetProperty(ref _isBackEnabled, value);
     }
 
+    public Type InnerPageType
+    {
+        get => _innerPageType;
+        set => SetProperty(ref _innerPageType, value);
+    }
+
     public void NavigateToPageType(Type pageType)
         => _navigationViewService.NavigateToPageType(pageType);
 
@@ -51,11 +58,7 @@ public class SettingsPageViewModel : BindableBase, ITrackingContract
             Selected = selectedItem;
         }
 
-        NotifyPropertyChanged(e.SourcePageType);
-    }
-
-    public void NotifyPropertyChanged(Type propertyType)
-    {
-        WeakReferenceMessenger.Default.Send(new InnerPageTypeChangedMessage(propertyType));
+        InnerPageType = e.SourcePageType;
+        WeakReferenceMessenger.Default.Send(new InnerPageTypeChangedMessage(e.SourcePageType));
     }
 }

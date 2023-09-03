@@ -1,5 +1,4 @@
 ﻿using System;
-using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using NetBrowser_UWP.ViewModels.Settings;
 using NetBrowser_UWP.Attributes;
@@ -7,7 +6,7 @@ using NetBrowser_UWP.Attributes;
 namespace NetBrowser_UWP.Views.Settings;
 
 [PageAddress("app://settings")]
-public sealed partial class SettingsPage : Page
+public sealed partial class SettingsPage : NavigationViewContentPage
 {
     public SettingsPage(Type pageType = default)
     {
@@ -18,4 +17,7 @@ public sealed partial class SettingsPage : Page
     }
 
     public SettingsPageViewModel ViewModel { get; set; }
+
+    public override Type GetInnerPageType()
+        => ViewModel.InnerPageType;
 }

@@ -9,6 +9,7 @@ using NetBrowser_UWP.Attributes;
 namespace NetBrowser_UWP.Views;
 
 [PageAddress("app://startpage")]
+[PageMetadata(pathIsVisible: false)]
 public sealed partial class StartPage : Page
 {
     public StartPage()

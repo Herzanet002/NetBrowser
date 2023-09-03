@@ -154,7 +154,7 @@ public class TabViewService : ObservableRecipient, ITabViewService
         }
 
         var settingsTab = CreateTabViewItemInstance(
-            "Settings".GetLocalized(),
+            "Settings/Title".GetLocalized(),
             new SettingsPage(innerPageType ?? typeof(MainItemPageSettings)),
             new SymbolIconSource { Symbol = Symbol.Setting });
 

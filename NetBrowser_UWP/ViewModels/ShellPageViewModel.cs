@@ -19,13 +19,13 @@ using NetBrowser_UWP.Enums;
 using NetBrowser_UWP.EventArguments;
 using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.Models;
+using NetBrowser_UWP.UiUpdater;
 using NetBrowser_UWP.ViewModels.Base;
-using NetBrowser_UWP.Views;
-using NetBrowser_UWP.Views.News;
 using NetBrowser_UWP.Views.Settings;
 using Prism.Commands;
 using winUI = Microsoft.UI.Xaml.Controls;
-using NetBrowser_UWP.ViewModels.Controls;
+using NetBrowser_UWP.Contracts;
+using NetBrowser_UWP.Views;
 
 namespace NetBrowser_UWP.ViewModels;
 
@@ -61,7 +61,7 @@ public class ShellPageViewModel : BindableBase
     {
         if (SelectedTabItem != null)
         {
-            Messenger.Send(new FindBoxQueryChangedMessage(_pageService.GetPageInfoByPageType(message.Value)?.Path));
+            UpdateUiElementsStateByReason(new InnerPageUpdateUiReasonArgument(message.Value));
         }
     }
 
@@ -105,68 +105,68 @@ public class ShellPageViewModel : BindableBase
         }
     }
 
-    //private void SetFindBoxQueryTextByPageContent(Page pageType)
-    //{
-    //    if (pageType is not INavigationViewContentPage navigationViewContentPage) return;
-    //    if (navigationViewContentPage.InnerPageType == null)
-    //    {
-    //        Messenger.Send(new FindBoxQueryChangedMessage(_pageService
-    //            .GetPageInfoByPageType(navigationViewContentPage.GetType())?.Path));
-    //    }
-
-    //    Messenger.Send(new FindBoxQueryChangedMessage(_pageService
-    //        .GetPageInfoByPageType(navigationViewContentPage.InnerPageType)?.Path));
-    //}
-
     private void TabViewServiceSelectionChangedHandler(object sender, SelectionChangedEventArgs e)
     {
         var selectedTabItem = _tabViewService.SelectedTabItem;
         if (selectedTabItem == null)
         {
-            SetVisualUiLabels(null, null);
-            SetVisualUiElementStates(null);
+            AppTitleText = string.Empty;
+            UpdateFindBoxQueryText(string.Empty);
+            UpdateUiElementsStateByReason(new TabViewUpdateUiReasonArgument(null));
             return;
         }
 
         _tabViewService.SelectedWebView = selectedTabItem.Content as winUI.WebView2;
 
-        switch (selectedTabItem.Content)
+        var contentBaseType = DeriveBaseTabItemContentType(selectedTabItem.Content);
+
+        if (contentBaseType == typeof(winUI.WebView2))
         {
-            case SettingsPage settingsPage:
-                SetVisualUiLabels(selectedTabItem.Header.ToString(),
-                    _pageService.GetPageInfoByPageType(typeof(SettingsPage))?.Path);
-                break;
-
-            case StartPage:
-                SetVisualUiLabels(selectedTabItem.Header.ToString(), string.Empty);
-                break;
-
-            case winUI.WebView2:
-                if (_tabViewService.SelectedWebView?.Source != null)
-                    SetVisualUiLabels(_tabViewService.SelectedWebView.CoreWebView2.DocumentTitle,
-                        _tabViewService.SelectedWebView.Source.AbsoluteUri);
-                break;
-
-            case NewsShellPage:
-                SetVisualUiLabels(selectedTabItem.Header.ToString(),
-                    _pageService.GetPageInfoByPageType(typeof(AllNewsPage)).Path);
-                break;
-
-            default:
-                SetVisualUiLabels(selectedTabItem.Header.ToString(), string.Empty);
-                break;
+            AppTitleText = _tabViewService.SelectedWebView?.CoreWebView2.DocumentTitle;
+            UpdateFindBoxQueryText(_tabViewService.SelectedWebView?.Source?.AbsoluteUri);
         }
 
-        if (_tabViewService.SelectedWebView != null)
-            IsWebLoading = (bool)_tabViewService.SelectedWebView.Tag;
-        SetVisualUiElementStates(_tabViewService.SelectedWebView);
+        else if (contentBaseType == typeof(NavigationViewContentPage))
+        {
+            AppTitleText = selectedTabItem.Header.ToString();
+            if (selectedTabItem.Content is NavigationViewContentPage pageCasted)
+            {
+                var innerPage = _pageService.GetPageInfoByPageType(pageCasted.GetInnerPageType());
+                UpdateFindBoxQueryText(innerPage is { PathIsVisible: true }
+                    ? innerPage.Path
+                    : string.Empty);
+            }
+        }
+
+        else if (contentBaseType == typeof(Page))
+        {
+            var contentType = selectedTabItem.Content?.GetType();
+            var pageInfo = _pageService.GetPageInfoByPageType(contentType);
+
+            AppTitleText = selectedTabItem.Header.ToString();
+            UpdateFindBoxQueryText(pageInfo is { PathIsVisible: true }
+                ? pageInfo.Path
+                : string.Empty);
+        }
+
+        else
+        {
+            UpdateFindBoxQueryText(string.Empty);
+            AppTitleText = selectedTabItem.Header.ToString();
+        }
+
+        UpdateUiElementsStateByReason(new TabViewUpdateUiReasonArgument(_tabViewService.SelectedWebView));
         CommandsRaiseCanExecuteChanged();
     }
 
-    private void TabViewServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private static Type DeriveBaseTabItemContentType(object content)
     {
-        OnPropertyChanged(e);
+        var contentType = content.GetType();
+        return contentType.BaseType != typeof(Control) ? contentType.BaseType : contentType;
     }
+
+    private void TabViewServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        => OnPropertyChanged(e);
 
     private void InitializeCommands()
     {
@@ -202,37 +202,46 @@ public class ShellPageViewModel : BindableBase
         ForwardButtonCommand.RaiseCanExecuteChanged();
     }
 
-    private void SetProgressRingActivity(bool isActive)
+    private void UpdateUiElementsStateByReason(UpdateUiReasonArgument reasonArgument)
     {
-        IsProgressRingActive = isActive;
-    }
-
-    private void SetVisualUiElementStates(object sender)
-    {
-        if (sender is not winUI.WebView2 webInstance)
+        if (reasonArgument is InnerPageUpdateUiReasonArgument innerPageUpdateUiReason)
         {
-            SetProgressRingActivity(false);
+            var pageInfo = _pageService.GetPageInfoByPageType(innerPageUpdateUiReason.PageType);
+            Messenger.Send(new FindBoxQueryChangedMessage(pageInfo?.Path));
         }
-        else
+
+        if (reasonArgument is WebViewUpdateUiReasonArgument webViewUpdateUiReason)
         {
-            var loadingState = (bool)webInstance.Tag;
-            SetProgressRingActivity(loadingState);
+            IsProgressRingActive = (bool)webViewUpdateUiReason.WebViewInstance.Tag;
+            return;
+        }
+
+        if (reasonArgument is TabViewUpdateUiReasonArgument tabViewUpdateUiReason)
+        {
+            if (tabViewUpdateUiReason.Content is winUI.WebView2 webView)
+            {
+                IsProgressRingActive = (bool)webView.Tag;
+                IsWebLoading = (bool)webView.Tag;
+                return;
+            }
+
+            IsWebLoading = false;
+            IsProgressRingActive = false;
+            return;
         }
 
         Messenger.Send(new FindBoxSetBookmarkButtonAppearanceMessage());
     }
 
-    private void SetVisualUiLabels(string appTitleText, string findBoxQueryText)
-    {
-        AppTitleText = appTitleText;
-        Messenger.Send(new FindBoxQueryChangedMessage(findBoxQueryText));
-    }
+    private void UpdateFindBoxQueryText(string queryText)
+        => Messenger.Send(new FindBoxQueryChangedMessage(queryText));
 
     private void WebViewOnNavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs args)
     {
         IsWebLoading = true;
-        SetVisualUiElementStates(sender);
-        SetVisualUiLabels("LoadingString".GetLocalized(), args.Uri);
+        UpdateUiElementsStateByReason(new WebViewUpdateUiReasonArgument(sender as winUI.WebView2));
+        AppTitleText = "LoadingString".GetLocalized();
+        UpdateFindBoxQueryText(args.Uri);
     }
 
     private async void WebViewOnNewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs args)
@@ -276,8 +285,9 @@ public class ShellPageViewModel : BindableBase
         IsWebLoading = false;
 
         if (webInstance.Source == null || _tabViewService.SelectedWebView != sender) return;
-        SetVisualUiLabels(webInstance.CoreWebView2.DocumentTitle, webInstance.Source.AbsoluteUri);
-        SetVisualUiElementStates(sender);
+        AppTitleText = webInstance.CoreWebView2.DocumentTitle;
+        UpdateFindBoxQueryText(webInstance.Source.AbsoluteUri);
+        UpdateUiElementsStateByReason(new WebViewUpdateUiReasonArgument(webInstance));
         CommandsRaiseCanExecuteChanged();
     }
 

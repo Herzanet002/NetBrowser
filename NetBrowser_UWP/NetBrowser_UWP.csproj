@@ -136,6 +136,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Attributes\PageMetadataAttribute.cs" />
     <Compile Include="Attributes\ParentPageTypeAttribute.cs" />
     <Compile Include="CommandResolver\Command.cs" />
     <Compile Include="CommandResolver\CommandResolver.cs" />
@@ -149,7 +150,7 @@
     <Compile Include="Commands\OpenFlyoutAction.cs" />
     <Compile Include="Contracts\INavigationAware.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
-    <Compile Include="Contracts\ITrackingContract.cs" />
+    <Compile Include="Contracts\INavigationViewContentPage.cs" />
     <Compile Include="Contracts\Services\IFirstRunAppInitializerService.cs" />
     <Compile Include="Contracts\Services\IDataService.cs" />
     <Compile Include="Contracts\Services\IPageService.cs" />
@@ -165,6 +166,9 @@
     <Compile Include="Converters\ValueConverterGroup.cs" />
     <Compile Include="Enums\CommandResultType.cs" />
     <Compile Include="Enums\TabViewPlacementMode.cs" />
+    <Compile Include="UiUpdater\InnerPageUpdateUiReasonArgument.cs" />
+    <Compile Include="UiUpdater\TabViewUpdateUiReasonArgument.cs" />
+    <Compile Include="UiUpdater\UpdateUIReason.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\ViewModelsRegistrator.cs" />
     <Compile Include="Attributes\PageAddressAttribute.cs" />
@@ -201,6 +205,8 @@
     </Compile>
     <Compile Include="Services\Settings\LocalSettingsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
+    <Compile Include="UiUpdater\UpdateUiReasonArgument.cs" />
+    <Compile Include="UiUpdater\WebViewUpdateUiReasonArgument.cs" />
     <Compile Include="ViewModels\Base\BindableBase.cs" />
     <Compile Include="Messages\FindBoxQueryChangedMessage.cs" />
     <Compile Include="Messages\FindBoxSetBookmarkButtonAppearanceMessage.cs" />
@@ -247,6 +253,7 @@
     <Compile Include="ViewModels\Settings\HistoryPageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SearchSystemPageViewModel.cs" />
     <Compile Include="ViewModels\StartPageViewModel.cs" />
+    <Compile Include="Views\NavigationViewContentPage.cs" />
     <Compile Include="Views\UserControls\CustomTabViewControl.xaml.cs">
       <DependentUpon>CustomTabViewControl.xaml</DependentUpon>
     </Compile>
