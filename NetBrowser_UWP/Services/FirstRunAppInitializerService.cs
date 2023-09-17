@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
-using NetBrowser.Utils;
 using NetBrowser_UWP.Contracts.Services.Settings;
 
 namespace NetBrowser_UWP.Services;
@@ -28,7 +27,6 @@ public class FirstRunAppInitializerService : IFirstRunAppInitializerService
         {
             await InitializeSearchEngineStorageAsync();
             await InitializeStartPageStorageAsync();
-            await InitializeRssFeedersStorageAsync();
             _generalSettingsService.IsFirstRunInitResultSuccessful.SetSetting(true);
         }
         catch
@@ -53,11 +51,5 @@ public class FirstRunAppInitializerService : IFirstRunAppInitializerService
         {
             await _dataService.AddSearchEngineAsync(searchEngine);
         }
-    }
-
-    private async Task InitializeRssFeedersStorageAsync()
-    {
-        var defaultFeedResources = _appConfigService.GetSection<IEnumerable<RssFeeder>>("FeedResources");
-        await _dataService.AddRssFeedersAsync(defaultFeedResources);
     }
 }

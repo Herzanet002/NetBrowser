@@ -5,13 +5,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:news="using:NetBrowser_UWP.ViewModels.News"
-    xmlns:models="using:NetBrowser_UWP.Models"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:syndication="using:System.ServiceModel.Syndication"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:controls1="using:Microsoft.UI.Xaml.Controls"
-    xmlns:utils="using:NetBrowser.Utils"
+    xmlns:models="using:NetBrowser_UWP.Models"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=news:RecommendationsNewsPageViewModel,IsDesignTimeCreatable=True}"
     Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">
@@ -32,7 +31,7 @@
                     </ToolTipService.ToolTip>
                 </Grid>
             </DataTemplate>
-            <DataTemplate x:Key="NewsGridItemTemplate" x:DataType="utils:ContentModel">
+            <DataTemplate x:Key="NewsGridItemTemplate" x:DataType="models:ContentModel">
                 <Grid>
                     <Grid.RowDefinitions>
 
