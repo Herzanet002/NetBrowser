@@ -11,17 +11,12 @@
     xmlns:controls1="using:Microsoft.UI.Xaml.Controls"
     xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
     xmlns:news="using:NetBrowser_UWP.ViewModels.News"
-    xmlns:utils="using:NetBrowser.Utils"
+    xmlns:models="using:NetBrowser_UWP.Models"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=news:AllNewsPageViewModel,IsDesignTimeCreatable=True}"
     Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">
-    <interactivity:Interaction.Behaviors>
-        <core:EventTriggerBehavior EventName="Loaded">
-            <core:InvokeCommandAction Command="{Binding AllNewsPageLoadedCommand}" />
-        </core:EventTriggerBehavior>
-    </interactivity:Interaction.Behaviors>
     <Page.Resources>
-        <DataTemplate x:Key="NewsGridItemTemplate" x:DataType="utils:ContentModel">
+        <DataTemplate x:Key="NewsGridItemTemplate" x:DataType="models:ContentModel">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -35,7 +30,7 @@
                         <SolidColorBrush Color="Black" />
                     </controls:ImageEx.Background>
                 </controls:ImageEx>
-                <TextBlock Grid.Row="0" Text="{x:Bind Feeder.Name}" FontSize="14" FontWeight="SemiBold"
+                <TextBlock Grid.Row="0" Text="{x:Bind FeederName}" FontSize="14" FontWeight="SemiBold"
                            Margin="10" Foreground="White" />
                 <TextBlock Grid.Row="1" VerticalAlignment="Bottom" Text="{x:Bind Title}" FontSize="20"
                            FontWeight="SemiBold" Style="{ThemeResource BaseTextBlockStyle}"
@@ -87,7 +82,7 @@
 
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="RotatorTileTemplate" x:DataType="utils:ContentModel">
+        <DataTemplate x:Key="RotatorTileTemplate" x:DataType="models:ContentModel">
             <Grid CornerRadius="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="4*" />

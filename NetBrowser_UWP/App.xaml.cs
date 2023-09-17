@@ -10,7 +10,6 @@ using Windows.UI.Xaml.Navigation;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Helpers;
 using NetBrowser_UWP.Models;
@@ -18,11 +17,11 @@ using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
 using Microsoft.Toolkit.Uwp.Helpers;
-using NetBrowser.Utils;
 using NetBrowser_UWP.Contracts.Services.Settings;
 using NetBrowser_UWP.Services.Settings;
 using NetBrowser_UWP.CommandResolver;
 using NetBrowser_UWP.CommandResolver.Strategies;
+using NetBrowser_UWP.IncrementalSources;
 using NetBrowser_UWP.Services.PageService;
 
 namespace NetBrowser_UWP;
@@ -72,11 +71,12 @@ public sealed partial class App : Application
         services.AddTransient<INavigationViewService, NavigationViewService>();
         services.AddSingleton<AppConfigService>();
         services.AddSingleton<ITabViewService, TabViewService>();
-        services.AddScoped<IRssWorkerService, RssWorkerService>();
         services.AddSingleton<IAppearanceSettingsService, AppearanceSettingsService>();
         services.AddSingleton<IGeneralSettingsService, GeneralSettingsService>();
         services.AddSingleton<IPageService, PageService>();
         services.AddSingleton<ICommandResolver, CommandResolver.CommandResolver>();
+        services.AddSingleton<INewsApiClientService, NewsApiClientService>();
+        services.AddSingleton<INewsIncrementalSourceFactory, NewsIncrementalSourceFactory>();
         services.TryAddEnumerable(new[]
         {
             ServiceDescriptor.Singleton<ICommandStrategy, AbsoluteUriResolutionStrategy>(),
@@ -88,6 +88,7 @@ public sealed partial class App : Application
 
         // ViewModels
         services.RegisterViewModels();
+        services.AddHttpClient();
         return services.BuildServiceProvider();
     }
 

@@ -21,7 +21,7 @@ public class NewsSettingsViewModel : BindableBase
 
     private async Task OnClearRecommendCategoriesCommandExecuted()
     {
-        await _dataService.ClearAllLikedRssFeedersAsync();
+        await _dataService.ClearLikedNewsProvidersAsync();
         await new ContentDialog
         {
             Title = "Успешно выполнено",

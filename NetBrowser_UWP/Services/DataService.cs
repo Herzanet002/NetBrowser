@@ -7,7 +7,6 @@ using LiteDB;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
-using NetBrowser.Utils;
 
 namespace NetBrowser_UWP.Services;
 
@@ -134,7 +133,15 @@ public class DataService : IDataService
         return Task.CompletedTask;
     }
 
-    public Task<List<ContentModel>> GetAllFavoriteNewsContentAsync()
+    public Task RemoveNewsContentFromFavoritesAsync(ContentModel content)
+    {
+        using var liteConnection = new LiteDatabase(FullFilePath);
+        var collection = liteConnection.GetCollection<ContentModel>(ApplicationConstants.FAVORITE_NEWS_COLLECTION_NAME);
+        collection.Delete(content.Id);
+        return Task.CompletedTask;
+    }
+
+    public Task<List<ContentModel>> GetAllFavoritesNewsContentAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection = liteConnection.GetCollection<ContentModel>(ApplicationConstants.FAVORITE_NEWS_COLLECTION_NAME);
@@ -150,43 +157,28 @@ public class DataService : IDataService
         return Task.CompletedTask;
     }
 
-    public Task<List<RssFeeder>> GetRssFeedersListAsync()
+    public Task AddLikedNewsProvidersAsync(IEnumerable<NewsProvider> feeders)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<RssFeeder>(ApplicationConstants.RSS_FEEDERS_COLLECTION_NAME);
-        return Task.FromResult(collection.FindAll().ToList());
-    }
-
-    public Task AddRssFeedersAsync(IEnumerable<RssFeeder> feeders)
-    {
-        using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<RssFeeder>(ApplicationConstants.RSS_FEEDERS_COLLECTION_NAME);
+        var collection =
+            liteConnection.GetCollection<NewsProvider>(ApplicationConstants.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
         collection.Insert(feeders);
         return Task.CompletedTask;
     }
 
-    public Task AddLikedRssFeedersAsync(IEnumerable<RssFeeder> feeders)
+    public Task<List<NewsProvider>> GetLikedNewsProvidersAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection =
-            liteConnection.GetCollection<RssFeeder>(ApplicationConstants.LIKED_RSS_FEEDERS_COLLECTION_NAME);
-        collection.Insert(feeders);
-        return Task.CompletedTask;
-    }
-
-    public Task<List<RssFeeder>> GetLikedRssFeedersAsync()
-    {
-        using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection =
-            liteConnection.GetCollection<RssFeeder>(ApplicationConstants.LIKED_RSS_FEEDERS_COLLECTION_NAME);
+            liteConnection.GetCollection<NewsProvider>(ApplicationConstants.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
         return Task.FromResult(collection.FindAll().ToList());
     }
 
-    public Task ClearAllLikedRssFeedersAsync()
+    public Task ClearLikedNewsProvidersAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection =
-            liteConnection.GetCollection<RssFeeder>(ApplicationConstants.LIKED_RSS_FEEDERS_COLLECTION_NAME);
+            liteConnection.GetCollection<NewsProvider>(ApplicationConstants.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
         collection.DeleteAll();
         return Task.CompletedTask;
     }

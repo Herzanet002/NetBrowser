@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using NetBrowser_UWP.Models;
-using NetBrowser.Utils;
 
 namespace NetBrowser_UWP.Contracts.Services;
 
@@ -27,21 +26,17 @@ public interface IDataService
 
     Task RemoveBookmarkAsync(BookmarkItem bookmarkItem);
 
-    Task SaveNewsContentToFavoriteAsync(ContentModel contentItem);
+    Task ClearLikedNewsProvidersAsync();
 
-    Task<List<ContentModel>> GetAllFavoriteNewsContentAsync();
+    Task<List<NewsProvider>> GetLikedNewsProvidersAsync();
 
-    Task RemoveNewsContentFromFavoriteAsync(ContentModel contentModel);
+    Task AddLikedNewsProvidersAsync(IEnumerable<NewsProvider> feeders);
 
-    Task<List<RssFeeder>> GetRssFeedersListAsync();
+    Task SaveNewsContentToFavoriteAsync(ContentModel content);
 
-    Task AddRssFeedersAsync(IEnumerable<RssFeeder> feeders);
+    Task<List<ContentModel>> GetAllFavoritesNewsContentAsync();
 
-    Task AddLikedRssFeedersAsync(IEnumerable<RssFeeder> feeders);
-
-    Task<List<RssFeeder>> GetLikedRssFeedersAsync();
-
-    Task ClearAllLikedRssFeedersAsync();
+    Task RemoveNewsContentFromFavoritesAsync(ContentModel content);
 
     Task SetDefaultSearchEngineAsync(SearchEngineItem searchEngine);
 

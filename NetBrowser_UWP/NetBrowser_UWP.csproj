@@ -153,6 +153,7 @@
     <Compile Include="Contracts\INavigationViewContentPage.cs" />
     <Compile Include="Contracts\Services\IFirstRunAppInitializerService.cs" />
     <Compile Include="Contracts\Services\IDataService.cs" />
+    <Compile Include="Contracts\Services\INewsApiClientService.cs" />
     <Compile Include="Contracts\Services\IPageService.cs" />
     <Compile Include="Contracts\Services\Settings\IBaseSettingsService.cs" />
     <Compile Include="Contracts\Services\Settings\ILocalSettingsService.cs" />
@@ -166,6 +167,13 @@
     <Compile Include="Converters\ValueConverterGroup.cs" />
     <Compile Include="Enums\CommandResultType.cs" />
     <Compile Include="Enums\TabViewPlacementMode.cs" />
+    <Compile Include="IncrementalSources\INewsIncrementalSourceFactory.cs" />
+    <Compile Include="IncrementalSources\NewsIncrementalSource.cs" />
+    <Compile Include="IncrementalSources\NewsIncrementalSourceFactory.cs" />
+    <Compile Include="Models\ContentModel.cs" />
+    <Compile Include="Models\NewsApiSetting.cs" />
+    <Compile Include="Models\NewsProvider.cs" />
+    <Compile Include="Services\NewsApiClientService.cs" />
     <Compile Include="UiUpdater\InnerPageUpdateUiReasonArgument.cs" />
     <Compile Include="UiUpdater\TabViewUpdateUiReasonArgument.cs" />
     <Compile Include="UiUpdater\UpdateUIReason.cs" />
@@ -574,6 +582,9 @@
     <PackageReference Include="Prism.Core">
       <Version>8.1.97</Version>
     </PackageReference>
+    <PackageReference Include="System.Net.Http.Json">
+      <Version>7.0.1</Version>
+    </PackageReference>
     <PackageReference Include="System.ServiceModel.Syndication">
       <Version>7.0.0</Version>
     </PackageReference>
@@ -592,13 +603,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NetBrowser.Utils\NetBrowser.Utils.csproj">
-      <Project>{2f10829b-6fe3-4a9b-a38f-88f1ee0fdae7}</Project>
-      <Name>NetBrowser.Utils</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Models;
 using NetBrowser_UWP.ViewModels.Base;
-using NetBrowser.Utils;
 using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels.News;
@@ -57,7 +56,7 @@ public class FavoriteNewsPageViewModel : BindableBase
 
     private async Task OnRemoveNewsCommandExecuted(ContentModel contentItem)
     {
-        await _dataService.RemoveNewsContentFromFavoriteAsync(contentItem);
+        await _dataService.RemoveNewsContentFromFavoritesAsync(contentItem);
         FavoriteNews.Remove(contentItem);
     }
 
@@ -72,14 +71,14 @@ public class FavoriteNewsPageViewModel : BindableBase
     {
         if (_newsForSharing == null) return;
 
-        args.Request.Data.SetText(_newsForSharing.Title);
+        args.Request.Data.SetText(_newsForSharing.Title!);
         args.Request.Data.Properties.Title = Package.Current.DisplayName;
-        args.Request.Data.SetWebLink(new Uri(_newsForSharing.Link));
+        args.Request.Data.SetWebLink(new Uri(_newsForSharing.Link!));
     }
 
-    private async Task OnFavoriteNewsPageLoadedExecuted(CancellationToken ct)
+    private async Task OnFavoriteNewsPageLoadedExecuted()
     {
-        var allFavoritesNewsContent = await _dataService.GetAllFavoriteNewsContentAsync();
+        var allFavoritesNewsContent = await _dataService.GetAllFavoritesNewsContentAsync();
         allFavoritesNewsContent.Reverse();
         FavoriteNews = new ObservableCollection<ContentModel>(allFavoritesNewsContent);
     }
