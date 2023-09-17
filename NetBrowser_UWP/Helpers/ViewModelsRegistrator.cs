@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NetBrowser_UWP.ViewModels;
+using NetBrowser_UWP.ViewModels.Controls;
 using NetBrowser_UWP.ViewModels.News;
 using NetBrowser_UWP.ViewModels.Settings;
 
@@ -10,7 +11,10 @@ public static class ViewModelsRegistrator
     public static void RegisterViewModels(this ServiceCollection services)
     {
         services.AddSingleton<ShellPageViewModel>();
-        services.AddSingleton<MainSettingsPageViewModel>();
+        services.AddSingleton<FindBoxViewModel>();
+        services.AddTransient<MainSettingsPageViewModel>();
+        services.AddTransient<FirstRunRecommendationsViewModel>();
+        services.AddTransient<NewsShellPageViewModel>();
         services.AddTransient<HistoryPageViewModel>();
         services.AddTransient<AllNewsPageViewModel>();
         services.AddTransient<FavoriteNewsPageViewModel>();
@@ -19,9 +23,7 @@ public static class ViewModelsRegistrator
         services.AddTransient<PersonalizePageViewModel>();
         services.AddTransient<SearchSystemPageViewModel>();
         services.AddTransient<SettingsPageViewModel>();
-        services.AddTransient<FirstRunRecommendationsViewModel>();
-        services.AddSingleton<NewsShellPageViewModel>();
-        services.AddSingleton<NewsSettingsViewModel>();
+        services.AddTransient<NewsSettingsViewModel>();
         services.AddTransient<RecommendationsNewsPageViewModel>();
         services.AddTransient<AboutAppViewModel>();
     }

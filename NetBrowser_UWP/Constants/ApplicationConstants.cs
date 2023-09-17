@@ -65,16 +65,7 @@ public static class ApplicationConstants
     public const string STARTPAGE_ITEMS_COLLECTION_NAME = "startpage_items";
     public const string SEARCHTERMS_COLLECTION_NAME = "search_term";
     public const string FAVORITE_NEWS_COLLECTION_NAME = "favorite_news";
-    public const string RSS_FEEDERS_COLLECTION_NAME = "rss_feeders";
-    public const string LIKED_RSS_FEEDERS_COLLECTION_NAME = "liked_rss_feeders";
-
-    #endregion
-
-    #region ADDRESSES
-
-    public const string SETTINGS_ADDRESS = "app://settings";
-    public const string STARTPAGE_ADDRESS = "app://newtab";
-    public const string NEWS_ADDRESS = "app://news";
+    public const string LIKED_NEWS_PROVIDERS_COLLECTION_NAME = "liked_rss_feeders";
 
     #endregion
 }

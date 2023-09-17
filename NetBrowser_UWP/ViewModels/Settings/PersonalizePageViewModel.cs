@@ -1,40 +1,48 @@
 ﻿using System.Collections.ObjectModel;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
-using Prism.Commands;
+using NetBrowser_UWP.ViewModels.Base;
+using Windows.ApplicationModel.Core;
+using System;
+using NetBrowser_UWP.Contracts.Services.Settings;
+using NetBrowser_UWP.Enums;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
-public class PersonalizePageViewModel : ObservableObject
+public class PersonalizePageViewModel : BindableBase
 {
-    private readonly ILocalSettingsService _localSettingsService;
+    private readonly IAppearanceSettingsService _appearanceSettingsService;
+
     private bool _isAnimationEnabled;
     private bool _isHomeButtonEnabled;
     private bool _isSuggestionBarEnabled;
-    private ThemeItem _selectedTheme;
+
     private int _startPageGridViewOrientation;
+    private int? _tabViewPlacementMode;
+
+    private ThemeItem _selectedTheme;
     private ObservableCollection<ThemeItem> _themesList;
 
-    public PersonalizePageViewModel(ILocalSettingsService localSettingsService, ShellPageViewModel mainPageViewModel)
+    public event EventHandler ShowNotificationRequested;
+
+    public PersonalizePageViewModel(IAppearanceSettingsService appearanceSettingsService)
     {
-        _localSettingsService = localSettingsService;
-        MainViewModel = mainPageViewModel;
-        PersonalizePageLoadedCommand = new AsyncRelayCommand(OnPersonalizePageLoadedCommandExecuted);
+        _appearanceSettingsService = appearanceSettingsService;
+        InitializePageComponents();
     }
 
-    public IAsyncRelayCommand PersonalizePageLoadedCommand { get; set; }
+    public ICommand SelectThemeCommand => new RelayCommand(OnSelectedThemeCommandExecuted);
 
-    public ICommand SelectThemeCommand => new DelegateCommand(OnSelectedThemeCommandExecuted, () => true);
+    public ICommand RestartApplicationCommand => new AsyncRelayCommand(async () =>
+        await CoreApplication.RequestRestartAsync("-changed_tab_view_property -placement"));
+
+    #region Properties
 
     public ObservableCollection<ThemeItem> ThemesList
     {
         get => _themesList;
-        set => SetProperty(ref _themesList, value);
+        private set => SetProperty(ref _themesList, value);
     }
 
     public ThemeItem SelectedTheme
@@ -42,7 +50,8 @@ public class PersonalizePageViewModel : ObservableObject
         get => _selectedTheme;
         set
         {
-            if (value == null) return;
+            if (value == null)
+                return;
             SetProperty(ref _selectedTheme, value);
         }
     }
@@ -52,8 +61,8 @@ public class PersonalizePageViewModel : ObservableObject
         get => _isSuggestionBarEnabled;
         set
         {
+            _appearanceSettingsService.IsSuggestionBarEnabled.SetSetting(value);
             SetProperty(ref _isSuggestionBarEnabled, value);
-            _localSettingsService.SaveSettingAsync(nameof(IsSuggestionBarEnabled), value);
         }
     }
 
@@ -62,8 +71,8 @@ public class PersonalizePageViewModel : ObservableObject
         get => _isAnimationEnabled;
         set
         {
+            _appearanceSettingsService.IsAnimationEnabled.SetSetting(value);
             SetProperty(ref _isAnimationEnabled, value);
-            _localSettingsService.SaveSettingAsync(nameof(IsAnimationEnabled), value);
         }
     }
 
@@ -72,8 +81,28 @@ public class PersonalizePageViewModel : ObservableObject
         get => _startPageGridViewOrientation;
         set
         {
+            _appearanceSettingsService.StartPageGridViewOrientation.SetSetting(value);
             SetProperty(ref _startPageGridViewOrientation, value);
-            _localSettingsService.SaveSettingAsync(nameof(StartPageGridViewOrientation), value);
+        }
+    }
+
+    public int? TabViewPlacementMode
+    {
+        get => _tabViewPlacementMode;
+        set
+        {
+            if (value == null)
+            {
+                return;
+            }
+
+            if (_tabViewPlacementMode.HasValue)
+            {
+                ShowNotificationRequested?.Invoke(this, EventArgs.Empty);
+            }
+
+            _appearanceSettingsService.TabViewPlacementMode.SetSetting((TabViewPlacementMode)value.Value);
+            SetProperty(ref _tabViewPlacementMode, value);
         }
     }
 
@@ -82,27 +111,27 @@ public class PersonalizePageViewModel : ObservableObject
         get => _isHomeButtonEnabled;
         set
         {
+            _appearanceSettingsService.IsHomeButtonEnabled.SetSetting(value);
             SetProperty(ref _isHomeButtonEnabled, value);
-            _localSettingsService.SaveSettingAsync(nameof(IsHomeButtonEnabled), value);
         }
     }
 
-    public ShellPageViewModel MainViewModel { get; }
+    #endregion
 
-    private async Task OnPersonalizePageLoadedCommandExecuted(CancellationToken ct)
+    private void InitializePageComponents()
     {
-        IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsSuggestionBarEnabled));
-        IsHomeButtonEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsHomeButtonEnabled));
-        IsAnimationEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsAnimationEnabled));
-        StartPageGridViewOrientation =
-            await _localSettingsService.ReadSettingAsync<int>(nameof(StartPageGridViewOrientation));
+        IsSuggestionBarEnabled = _appearanceSettingsService.IsSuggestionBarEnabled.GetSetting();
+        IsHomeButtonEnabled = _appearanceSettingsService.IsHomeButtonEnabled.GetSetting();
+        IsAnimationEnabled = _appearanceSettingsService.IsAnimationEnabled.GetSetting();
+        StartPageGridViewOrientation = _appearanceSettingsService.StartPageGridViewOrientation.GetSetting();
+        TabViewPlacementMode = (int)_appearanceSettingsService.TabViewPlacementMode.GetSetting();
         ThemesList = new ObservableCollection<ThemeItem>(Constants.ApplicationConstants.ThemesDictionary.Values);
         SelectedTheme = App.CurrentTheme;
     }
 
     private void OnSelectedThemeCommandExecuted()
     {
-        _localSettingsService.SaveSettingAsync("CurrentTheme", SelectedTheme.Name);
+        _appearanceSettingsService.SelectedTheme.SetSetting(SelectedTheme);
         App.ThemeManager.SetRequestedTheme(SelectedTheme.Name);
     }
 }

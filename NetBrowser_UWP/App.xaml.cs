@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -10,14 +9,20 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Helpers;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
 using NetBrowser_UWP.Views;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
-using Windows.Storage;
+using Microsoft.Toolkit.Uwp.Helpers;
+using NetBrowser_UWP.Contracts.Services.Settings;
+using NetBrowser_UWP.Services.Settings;
+using NetBrowser_UWP.CommandResolver;
+using NetBrowser_UWP.CommandResolver.Strategies;
+using NetBrowser_UWP.IncrementalSources;
+using NetBrowser_UWP.Services.PageService;
 
 namespace NetBrowser_UWP;
 
@@ -28,7 +33,7 @@ public sealed partial class App : Application
 {
     public static ThemeItem CurrentTheme;
     public static SearchEngineItem CurrentWebEngine;
-    
+
     public App()
     {
         InitializeComponent();
@@ -65,52 +70,48 @@ public sealed partial class App : Application
         services.AddTransient<INavigationService, NavigationService>();
         services.AddTransient<INavigationViewService, NavigationViewService>();
         services.AddSingleton<AppConfigService>();
-        services.AddSingleton<TabViewService>();
-        services.AddScoped<IRssWorkerService, RssWorkerService>();
+        services.AddSingleton<ITabViewService, TabViewService>();
+        services.AddSingleton<IAppearanceSettingsService, AppearanceSettingsService>();
+        services.AddSingleton<IGeneralSettingsService, GeneralSettingsService>();
+        services.AddSingleton<IPageService, PageService>();
+        services.AddSingleton<ICommandResolver, CommandResolver.CommandResolver>();
+        services.AddSingleton<INewsApiClientService, NewsApiClientService>();
+        services.AddSingleton<INewsIncrementalSourceFactory, NewsIncrementalSourceFactory>();
+        services.TryAddEnumerable(new[]
+        {
+            ServiceDescriptor.Singleton<ICommandStrategy, AbsoluteUriResolutionStrategy>(),
+            ServiceDescriptor.Singleton<ICommandStrategy, HttpsSchemeResolutionStrategy>(),
+            ServiceDescriptor.Singleton<ICommandStrategy, PredefinedSchemeResolutionStrategy>(provider =>
+                new PredefinedSchemeResolutionStrategy(provider.GetService<IPageService>())),
+            ServiceDescriptor.Singleton<ICommandStrategy, UserQueryResolutionStrategy>(),
+        });
 
         // ViewModels
         services.RegisterViewModels();
-
-        services.AddHttpClient("NewsClient");
-        services.AddLogging(x => x.AddConsole());
+        services.AddHttpClient();
         return services.BuildServiceProvider();
     }
-    
-    private static async Task SetApplicationTheme()
-    {
-        var name = await Ioc.Default.GetRequiredService<ILocalSettingsService>()
-            .ReadSettingAsync<string>("CurrentTheme");
-        CurrentTheme = ThemeManager.SetRequestedTheme(name);
-    }
 
-    private static bool IsFirstRun()
+    private static void SetApplicationTheme()
     {
-        var localSettings = ApplicationData.Current.LocalSettings;
-        if (localSettings.Values.ContainsKey("IsFirstRun"))
-        {
-            return false;
-        }
-
-        localSettings.Values["IsFirstRun"] = true;
-        return true;
+        var theme = Ioc.Default.GetRequiredService<IAppearanceSettingsService>().SelectedTheme.GetSetting();
+        CurrentTheme = ThemeManager.SetRequestedTheme(theme.Name);
     }
 
     protected override async void OnLaunched(LaunchActivatedEventArgs e)
     {
-        var rootFrame = Window.Current.Content as Frame;
-        
-        if (IsFirstRun())
+        if (SystemInformation.Instance.IsFirstRun ||
+            !Ioc.Default.GetRequiredService<IGeneralSettingsService>().IsFirstRunInitResultSuccessful.GetSetting())
         {
-            await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>().InitializeSearchEngineStorageAsync();
-            await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>().InitializeStartPageStorageAsync();
-            await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>().InitializeRssFeeders();
+            await Ioc.Default.GetRequiredService<IFirstRunAppInitializerService>()
+                .InitializeAppStorageAsync();
         }
 
         CurrentWebEngine = await Ioc.Default.GetRequiredService<IDataService>().GetCurrentSearchEngineAsync();
 
         // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
         // только обеспечьте активность окна
-        if (rootFrame == null)
+        if (Window.Current.Content is not Frame rootFrame)
         {
             // Создание фрейма, который станет контекстом навигации, и переход к первой странице
             rootFrame = new Frame();
@@ -125,7 +126,7 @@ public sealed partial class App : Application
 
             // Размещение фрейма в текущем окне
             Window.Current.Content = rootFrame;
-            await SetApplicationTheme();
+            SetApplicationTheme();
         }
 
         if (e.PrelaunchActivated == false)

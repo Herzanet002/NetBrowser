@@ -2,17 +2,17 @@
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views.UserControls;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
-public class BookmarksPageViewModel : ObservableObject
+public class BookmarksPageViewModel : BindableBase
 {
     private static ObservableCollection<BookmarkItem> _bookmarksList;
     private static string _bookmarkNewTitle;
@@ -20,9 +20,9 @@ public class BookmarksPageViewModel : ObservableObject
     private static BookmarkItem _selectedBookmark;
 
     private readonly IDataService _dataService;
-    private readonly TabViewService _tabViewService;
+    private readonly ITabViewService _tabViewService;
 
-    public BookmarksPageViewModel(IDataService dataService, TabViewService tabViewService)
+    public BookmarksPageViewModel(IDataService dataService, ITabViewService tabViewService)
     {
         _dataService = dataService;
         _tabViewService = tabViewService;

@@ -1,27 +1,25 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels.Base;
 using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels.News;
 
-public class FavoriteNewsPageViewModel : ObservableObject
+public class FavoriteNewsPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
-    private readonly TabViewService _tabViewService;
+    private readonly ITabViewService _tabViewService;
     private ObservableCollection<ContentModel> _favoriteNews = new();
     private ContentModel _newsForSharing;
     private ContentModel _selectedItemNews;
 
-    public FavoriteNewsPageViewModel(IDataService dataService, TabViewService tabViewService)
+    public FavoriteNewsPageViewModel(IDataService dataService, ITabViewService tabViewService)
     {
         _dataService = dataService;
         _tabViewService = tabViewService;
@@ -58,7 +56,7 @@ public class FavoriteNewsPageViewModel : ObservableObject
 
     private async Task OnRemoveNewsCommandExecuted(ContentModel contentItem)
     {
-        await _dataService.RemoveNewsContentFromFavoriteAsync(contentItem);
+        await _dataService.RemoveNewsContentFromFavoritesAsync(contentItem);
         FavoriteNews.Remove(contentItem);
     }
 
@@ -73,14 +71,14 @@ public class FavoriteNewsPageViewModel : ObservableObject
     {
         if (_newsForSharing == null) return;
 
-        args.Request.Data.SetText(_newsForSharing.Title);
+        args.Request.Data.SetText(_newsForSharing.Title!);
         args.Request.Data.Properties.Title = Package.Current.DisplayName;
-        args.Request.Data.SetWebLink(new Uri(_newsForSharing.Link));
+        args.Request.Data.SetWebLink(new Uri(_newsForSharing.Link!));
     }
 
-    private async Task OnFavoriteNewsPageLoadedExecuted(CancellationToken ct)
+    private async Task OnFavoriteNewsPageLoadedExecuted()
     {
-        var allFavoritesNewsContent = await _dataService.GetAllFavoriteNewsContentAsync();
+        var allFavoritesNewsContent = await _dataService.GetAllFavoritesNewsContentAsync();
         allFavoritesNewsContent.Reverse();
         FavoriteNews = new ObservableCollection<ContentModel>(allFavoritesNewsContent);
     }

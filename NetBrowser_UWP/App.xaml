@@ -9,11 +9,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <controls:XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <ResourceDictionary Source="Styles/TabViewItem_Style.xaml" />
-                <ResourceDictionary Source="Styles/TabViewTemplate_Style.xaml" />
-                <ResourceDictionary Source="Styles/AutoSuggestBox_Style.xaml" />
                 <ResourceDictionary Source="Styles/FontSizes.xaml" />
                 <ResourceDictionary Source="Styles/TextBlocks.xaml" />
+                <ResourceDictionary Source="Styles/Thickness.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <local:ThemeManager x:Key="ThemeManager" />
             <FontFamily x:Key="Segoe Fluent">pack://application:,,,/Fonts/#Segoe Fluent Icons</FontFamily>
@@ -21,8 +19,6 @@
                    x:Key="ContentDialogStyle" />
 
         </ResourceDictionary>
-
-
     </Application.Resources>
 
 </Application>

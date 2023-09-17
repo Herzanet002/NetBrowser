@@ -4,14 +4,12 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using NetBrowser_UWP.ViewModels;
-
-// Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238
+using NetBrowser_UWP.Attributes;
 
 namespace NetBrowser_UWP.Views;
 
-/// <summary>
-///     Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
-/// </summary>
+[PageAddress("app://startpage")]
+[PageMetadata(pathIsVisible: false)]
 public sealed partial class StartPage : Page
 {
     public StartPage()

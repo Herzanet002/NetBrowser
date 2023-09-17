@@ -1,4 +1,4 @@
-﻿<Page
+﻿<views:NavigationViewContentPage
     x:Class="NetBrowser_UWP.Views.News.NewsShellPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,6 +8,7 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
     xmlns:news="using:NetBrowser_UWP.ViewModels.News"
+    xmlns:views="using:NetBrowser_UWP.Views"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     d:DataContext="{d:DesignInstance Type=news:NewsShellPageViewModel,IsDesignTimeCreatable=True}"
@@ -57,4 +58,4 @@
     </Grid>
 
 
-</Page>
+</views:NavigationViewContentPage>

@@ -1,41 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Uwp;
 using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Helpers;
+using NetBrowser_UWP.IncrementalSources;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views.News;
 using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels.News;
 
-public class RecommendationsNewsPageViewModel : ObservableObject
+public class RecommendationsNewsPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly TabViewService _tabViewService;
+    private readonly ITabViewService _tabViewService;
+    private readonly INewsIncrementalSourceFactory _newsIncrementalSourceFactory;
     private bool _isConfiguredHidden;
     private bool _isProgressRingActive = true;
     private ContentModel _newsForSharing;
-    private ObservableCollection<ContentModel> _recommendedNews;
+    private IncrementalLoadingCollection<NewsIncrementalSource, ContentModel> _recommendedNews;
 
     public RecommendationsNewsPageViewModel(IDataService dataService,
-        IServiceScopeFactory serviceScopeFactory,
-        TabViewService tabViewService)
+        ITabViewService tabViewService,
+        INewsIncrementalSourceFactory newsIncrementalSourceFactory)
     {
         _dataService = dataService;
-        _serviceScopeFactory = serviceScopeFactory;
         _tabViewService = tabViewService;
+        _newsIncrementalSourceFactory = newsIncrementalSourceFactory;
         RecommendationsNewsPageLoadedCommand =
             new AsyncRelayCommand(OnRecommendationsNewsPageLoadedCommandExecuted);
         CategoriesButtonSetCommand = new AsyncRelayCommand(OnCategoriesButtonSetCommandExecuted);
@@ -54,17 +50,17 @@ public class RecommendationsNewsPageViewModel : ObservableObject
     public bool IsConfiguredHidden
     {
         get => _isConfiguredHidden;
-        set => SetProperty(ref _isConfiguredHidden, value);
+        private set => SetProperty(ref _isConfiguredHidden, value);
     }
 
     public bool IsProgressRingActive
     {
         get => _isProgressRingActive;
-        set => SetProperty(ref _isProgressRingActive, value);
+        private set => SetProperty(ref _isProgressRingActive, value);
     }
 
 
-    public ObservableCollection<ContentModel> RecommendedNews
+    public IncrementalLoadingCollection<NewsIncrementalSource, ContentModel> RecommendedNews
     {
         get => _recommendedNews;
         set => SetProperty(ref _recommendedNews, value);
@@ -80,18 +76,18 @@ public class RecommendationsNewsPageViewModel : ObservableObject
     {
         if (_newsForSharing == null) return;
 
-        args.Request.Data.SetText(_newsForSharing.Title);
+        args.Request.Data.SetText(_newsForSharing.Title!);
         args.Request.Data.Properties.Title = Package.Current.DisplayName;
-        args.Request.Data.SetWebLink(new Uri(_newsForSharing.Link));
+        args.Request.Data.SetWebLink(new Uri(_newsForSharing.Link!));
     }
 
-    private async Task OnCategoriesButtonSetCommandExecuted(CancellationToken ct = default)
+    private async Task OnCategoriesButtonSetCommandExecuted()
     {
         var result = await new FirstRunRecommendationsDialog().ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
             IsConfiguredHidden = false;
-            await OnRecommendationsNewsPageLoadedCommandExecuted(ct);
+            await OnRecommendationsNewsPageLoadedCommandExecuted();
         }
         else
         {
@@ -107,23 +103,23 @@ public class RecommendationsNewsPageViewModel : ObservableObject
         DataTransferManager.ShowShareUI();
     }
 
-    private async Task OnAddNewsToFavoriteCommandExecuted(ContentModel contentItem, CancellationToken ct)
+    private async Task OnAddNewsToFavoriteCommandExecuted(ContentModel contentItem)
     {
         await _dataService.SaveNewsContentToFavoriteAsync(contentItem);
         RecommendedNews.Remove(contentItem);
     }
 
-    private async Task OnRecommendationsNewsPageLoadedCommandExecuted(CancellationToken ct = default)
+    private async Task OnRecommendationsNewsPageLoadedCommandExecuted()
     {
-        var recommendationCategories =
-            await _dataService.GetLikedRssFeedersAsync();
-        if (!recommendationCategories.Any())
+        var likedNewsProviders =
+            await _dataService.GetLikedNewsProvidersAsync();
+        if (!likedNewsProviders.Any())
         {
             var result = await new FirstRunRecommendationsDialog().ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                recommendationCategories =
-                    await _dataService.GetLikedRssFeedersAsync();
+                likedNewsProviders =
+                    await _dataService.GetLikedNewsProvidersAsync();
                 IsConfiguredHidden = false;
             }
             else
@@ -134,22 +130,13 @@ public class RecommendationsNewsPageViewModel : ObservableObject
             }
         }
 
-        var news = await GetNewsAsync(recommendationCategories);
-        var suitableNews = new List<ContentModel>();
-        await foreach (var content in news.WithCancellation(ct)) suitableNews.Add(content);
-        suitableNews.Shuffle();
-        RecommendedNews = new ObservableCollection<ContentModel>(suitableNews);
-        IsProgressRingActive = false;
-    }
-
-    public async Task<IAsyncEnumerable<ContentModel>> GetNewsAsync(IEnumerable<RssFeeder> sources)
-    {
-        using var scope = _serviceScopeFactory.CreateScope();
-        var rssWorker = scope.ServiceProvider.GetRequiredService<IRssWorkerService>();
-
-        var favoriteNews = await _dataService.GetAllFavoriteNewsContentAsync();
-        var contentModels = rssWorker.GetFeeds(sources, favoriteNews.ToList());
-
-        return contentModels;
+        var newsByProvidersIncrementalSource =
+            _newsIncrementalSourceFactory.CreateNewsByProvidersIncrementalSource(likedNewsProviders);
+        RecommendedNews =
+            new IncrementalLoadingCollection<NewsIncrementalSource, ContentModel>(newsByProvidersIncrementalSource)
+            {
+                OnEndLoading = () => IsProgressRingActive = false,
+                OnStartLoading = () => IsProgressRingActive = true
+            };
     }
 }

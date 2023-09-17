@@ -136,46 +136,88 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Attributes\PageMetadataAttribute.cs" />
+    <Compile Include="Attributes\ParentPageTypeAttribute.cs" />
+    <Compile Include="CommandResolver\Command.cs" />
+    <Compile Include="CommandResolver\CommandResolver.cs" />
+    <Compile Include="CommandResolver\CommandResult.cs" />
+    <Compile Include="CommandResolver\ICommandResolver.cs" />
+    <Compile Include="CommandResolver\Strategies\AbsoluteUriResolutionStrategy.cs" />
+    <Compile Include="CommandResolver\Strategies\HttpsSchemeResolutionStrategy.cs" />
+    <Compile Include="CommandResolver\Strategies\ICommandStrategy.cs" />
+    <Compile Include="CommandResolver\Strategies\PredefinedSchemeResolutionStrategy.cs" />
+    <Compile Include="CommandResolver\Strategies\UserQueryResolutionStrategy.cs" />
     <Compile Include="Commands\OpenFlyoutAction.cs" />
     <Compile Include="Contracts\INavigationAware.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
+    <Compile Include="Contracts\INavigationViewContentPage.cs" />
     <Compile Include="Contracts\Services\IFirstRunAppInitializerService.cs" />
     <Compile Include="Contracts\Services\IDataService.cs" />
-    <Compile Include="Contracts\Services\ILocalSettingsService.cs" />
+    <Compile Include="Contracts\Services\INewsApiClientService.cs" />
+    <Compile Include="Contracts\Services\IPageService.cs" />
+    <Compile Include="Contracts\Services\Settings\IBaseSettingsService.cs" />
+    <Compile Include="Contracts\Services\Settings\ILocalSettingsService.cs" />
     <Compile Include="Contracts\Services\INavigationService.cs" />
     <Compile Include="Contracts\Services\INavigationViewService.cs" />
     <Compile Include="Contracts\Services\IWebView2Service.cs" />
     <Compile Include="Contracts\Services\ITabViewService.cs" />
+    <Compile Include="Contracts\Services\Settings\IAppearanceSettingsService.cs" />
+    <Compile Include="Contracts\Services\Settings\IGeneralSettingsService.cs" />
+    <Compile Include="Converters\CustomTabViewStyleConverter.cs" />
+    <Compile Include="Converters\ValueConverterGroup.cs" />
+    <Compile Include="Enums\CommandResultType.cs" />
+    <Compile Include="Enums\TabViewPlacementMode.cs" />
+    <Compile Include="IncrementalSources\INewsIncrementalSourceFactory.cs" />
+    <Compile Include="IncrementalSources\NewsIncrementalSource.cs" />
+    <Compile Include="IncrementalSources\NewsIncrementalSourceFactory.cs" />
+    <Compile Include="Models\ContentModel.cs" />
+    <Compile Include="Models\NewsApiSetting.cs" />
+    <Compile Include="Models\NewsProvider.cs" />
+    <Compile Include="Services\NewsApiClientService.cs" />
+    <Compile Include="UiUpdater\InnerPageUpdateUiReasonArgument.cs" />
+    <Compile Include="UiUpdater\TabViewUpdateUiReasonArgument.cs" />
+    <Compile Include="UiUpdater\UpdateUIReason.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
-    <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="Helpers\ViewModelsRegistrator.cs" />
-    <Compile Include="Models\RssFeeder.cs" />
-    <Compile Include="Models\SyndicationCategoryModel.cs" />
+    <Compile Include="Attributes\PageAddressAttribute.cs" />
+    <Compile Include="Messages\FindBoxNavigateToMessage.cs" />
+    <Compile Include="Messages\InnerPageTypeChangedMessage.cs" />
     <Compile Include="Services\AppConfigService.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\FirstRunAppInitializerService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NavigationViewService.cs" />
+    <Compile Include="Services\PageService\PageInfo.cs" />
+    <Compile Include="Services\PageService\PageService.cs" />
+    <Compile Include="Services\Settings\AppearanceSettingsService.cs" />
+    <Compile Include="Services\Settings\GeneralSettingsService.cs" />
+    <Compile Include="EventArguments\SettingChangedEventArgs.cs" />
+    <Compile Include="Services\Settings\SettingHolder.cs" />
     <Compile Include="Services\TabViewService.cs" />
     <Compile Include="Converters\DateTimeToDateConverter.cs" />
     <Compile Include="Converters\HostNameConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
-    <Compile Include="Converters\InvertBooleanConverter.cs" />
+    <Compile Include="Converters\SearchTermItemConverter.cs" />
     <Compile Include="Converters\RecentlySearchItemsConverter.cs" />
     <Compile Include="Converters\TitleTextConverter.cs" />
     <Compile Include="Converters\TitleLetterConverter.cs" />
     <Compile Include="Helpers\Json.cs" />
-    <Compile Include="Helpers\XmlSerializer.cs" />
     <Compile Include="Models\BookmarkItem.cs" />
-    <Compile Include="Models\ContentModel.cs" />
     <Compile Include="Models\SiteItem.cs" />
     <Compile Include="Models\ThemeItem.cs" />
+    <Compile Include="Models\SearchTermItem.cs" />
     <Compile Include="Helpers\ResourseHelper.cs" />
     <Compile Include="Resources\AuroraLite.xaml.cs">
       <DependentUpon>AuroraLite.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\LocalSettingsService.cs" />
+    <Compile Include="Services\Settings\LocalSettingsService.cs" />
     <Compile Include="Services\WebView2Service.cs" />
+    <Compile Include="UiUpdater\UpdateUiReasonArgument.cs" />
+    <Compile Include="UiUpdater\WebViewUpdateUiReasonArgument.cs" />
+    <Compile Include="ViewModels\Base\BindableBase.cs" />
+    <Compile Include="Messages\FindBoxQueryChangedMessage.cs" />
+    <Compile Include="Messages\FindBoxSetBookmarkButtonAppearanceMessage.cs" />
+    <Compile Include="TemplateSelectors\FindBoxItemTemplateSelector.cs" />
     <Compile Include="ViewModels\News\AllNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FavoriteNewsPageViewModel.cs" />
     <Compile Include="ViewModels\News\FirstRunRecommendationsViewModel.cs" />
@@ -185,9 +227,10 @@
     <Compile Include="Helpers\ListExtension.cs" />
     <Compile Include="ViewModels\Settings\MainSettingsPageViewModel.cs" />
     <Compile Include="ViewModels\ShellPageViewModel.cs" />
+    <Compile Include="ViewModels\Controls\FindBoxViewModel.cs" />
+    <Compile Include="ViewModels\Controls\IFindBox.cs" />
     <Compile Include="ViewModels\News\NewsShellPageViewModel.cs" />
     <Compile Include="ViewModels\Settings\PersonalizePageViewModel.cs" />
-    <Compile Include="Services\RssWorkerService.cs" />
     <Compile Include="ViewModels\Settings\SettingsPageViewModel.cs" />
     <Compile Include="Views\News\AllNewsPage.xaml.cs">
       <DependentUpon>AllNewsPage.xaml</DependentUpon>
@@ -217,6 +260,10 @@
     <Compile Include="ViewModels\Settings\HistoryPageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SearchSystemPageViewModel.cs" />
     <Compile Include="ViewModels\StartPageViewModel.cs" />
+    <Compile Include="Views\NavigationViewContentPage.cs" />
+    <Compile Include="Views\UserControls\CustomTabViewControl.xaml.cs">
+      <DependentUpon>CustomTabViewControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\DeleteBookmarkDialog.xaml.cs">
       <DependentUpon>DeleteBookmarkDialog.xaml</DependentUpon>
     </Compile>
@@ -230,9 +277,6 @@
       <DependentUpon>BookmarksPageSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants\ApplicationConstants.cs" />
-    <Compile Include="Views\ErrorLoadPage.xaml.cs">
-      <DependentUpon>ErrorLoadPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Models\HistoryItem.cs" />
     <Compile Include="Views\Settings\MainItemPageSettings.xaml.cs">
       <DependentUpon>MainItemPageSettings.xaml</DependentUpon>
@@ -259,6 +303,9 @@
     <Compile Include="ViewModels\Settings\BookmarksPageViewModel.cs" />
     <Compile Include="Views\UserControls\EditBookmarkDialog.xaml.cs">
       <DependentUpon>EditBookmarkDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\FindSuggestBox.xaml.cs">
+      <DependentUpon>FindSuggestBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
@@ -345,6 +392,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\Thickness.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\TextBlocks.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -381,7 +432,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\AutoSuggestBox_Style.xaml">
+    <Page Include="Views\UserControls\CustomTabViewControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -393,15 +444,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\UserControls\FindSuggestBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\UserControls\HistoryClearConfirmationDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BookmarksPageSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ErrorLoadPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -426,14 +477,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\TabViewItem_Style.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\TabViewTemplate_Style.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -539,6 +582,9 @@
     <PackageReference Include="Prism.Core">
       <Version>8.1.97</Version>
     </PackageReference>
+    <PackageReference Include="System.Net.Http.Json">
+      <Version>7.0.1</Version>
+    </PackageReference>
     <PackageReference Include="System.ServiceModel.Syndication">
       <Version>7.0.0</Version>
     </PackageReference>
@@ -557,7 +603,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

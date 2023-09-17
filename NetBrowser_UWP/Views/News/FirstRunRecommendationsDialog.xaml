@@ -24,7 +24,7 @@
     </interactivity:Interaction.Behaviors>
     <Grid>
         <Grid.Resources>
-            <DataTemplate x:Key="ListViewCategoryTemplate" x:DataType="models:RssFeeder">
+            <DataTemplate x:Key="ListViewCategoryTemplate" x:DataType="models:NewsProvider">
                 <Grid>
                     <TextBlock
                         Text="{x:Bind Name}" />
@@ -39,8 +39,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock Text="Выберите как минимум 3 категории" Margin="10" />
-        <ListView Grid.Row="1" ItemsSource="{Binding Categories}" MaxHeight="500"
+        <TextBlock Text="Выберите как минимум 1 категорию" Margin="10" />
+        <ListView Grid.Row="1" ItemsSource="{Binding Providers}" MaxHeight="500"
                   ItemTemplate="{StaticResource ListViewCategoryTemplate}"
                   SelectionMode="Multiple" IsMultiSelectCheckBoxEnabled="True">
             <interactivity:Interaction.Behaviors>

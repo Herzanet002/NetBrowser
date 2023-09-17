@@ -7,21 +7,21 @@ using System.Windows.Input;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Contracts.Services.Settings;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
+using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views.UserControls;
 using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels;
 
-public class StartPageViewModel : ObservableObject
+public class StartPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
-    private readonly ILocalSettingsService _localSettingsService;
-    private readonly TabViewService _tabViewService;
+    private readonly ITabViewService _tabViewService;
+    private readonly IAppearanceSettingsService _appearanceSettingsService;
     private SiteItem _editableStartPageItem;
     private int _gridViewOrientation;
     private SiteItem _gridViewSelectedItem;
@@ -33,18 +33,18 @@ public class StartPageViewModel : ObservableObject
     private string _newSiteName;
     private string _newSiteUrl;
     private string _placeholderText;
-    private HashSet<SiteItem> _recentlySearchedItems;
+    private HashSet<SearchTermItem> _recentlySearchedItems;
     private SiteItem _searchBarSelectedItem;
     private string _searchBoxText;
     private ObservableCollection<SiteItem> _startPageItems;
 
     public StartPageViewModel(IDataService dataService,
-        TabViewService tabViewService,
-        ILocalSettingsService localSettingsService)
+        ITabViewService tabViewService,
+        IAppearanceSettingsService appearanceSettingsService)
     {
         _dataService = dataService;
         _tabViewService = tabViewService;
-        _localSettingsService = localSettingsService;
+        _appearanceSettingsService = appearanceSettingsService;
         InitializePageComponents();
     }
 
@@ -150,7 +150,7 @@ public class StartPageViewModel : ObservableObject
         set => SetProperty(ref _startPageItems, value);
     }
 
-    public HashSet<SiteItem> RecentlySearchedItems
+    public HashSet<SearchTermItem> RecentlySearchedItems
     {
         get => _recentlySearchedItems;
         set => SetProperty(ref _recentlySearchedItems, value);
@@ -206,9 +206,9 @@ public class StartPageViewModel : ObservableObject
 
     private async Task InitializePageComponents()
     {
-        IsSuggestionBarEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsSuggestionBarEnabled));
-        IsAnimationEnabled = await _localSettingsService.ReadSettingAsync<bool>(nameof(IsAnimationEnabled));
-        GridViewOrientation = await _localSettingsService.ReadSettingAsync<int>("StartPageGridViewOrientation");
+        IsSuggestionBarEnabled = _appearanceSettingsService.IsSuggestionBarEnabled.GetSetting();
+        IsAnimationEnabled = _appearanceSettingsService.IsAnimationEnabled.GetSetting();
+        GridViewOrientation = _appearanceSettingsService.StartPageGridViewOrientation.GetSetting();
 
         var currentWebEngineName = App.CurrentWebEngine.Name;
         if (currentWebEngineName == null) return;
@@ -225,7 +225,7 @@ public class StartPageViewModel : ObservableObject
         if (searchTermListTransfer == null) return;
         var termListTransfer = searchTermListTransfer.ToList();
         termListTransfer.Reverse();
-        RecentlySearchedItems = new HashSet<SiteItem>(termListTransfer);
+        RecentlySearchedItems = new HashSet<SearchTermItem>(termListTransfer);
     }
 
     private async Task OnSearchButtonTappedCommandExecuted()

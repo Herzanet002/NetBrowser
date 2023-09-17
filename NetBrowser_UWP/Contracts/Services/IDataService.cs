@@ -14,9 +14,9 @@ public interface IDataService
 
     Task RemoveHistoryItemAsync(HistoryItem historyItem);
 
-    Task SaveSearchTermAsync(SiteItem siteItem);
+    Task AddOrReplaceSearchTermAsync(SearchTermItem searchTermItem);
 
-    Task<List<SiteItem>> GetSearchTermsAsync();
+    Task<List<SearchTermItem>> GetSearchTermsAsync();
 
     Task SaveBookmarkAsync(BookmarkItem bookmarkItem);
 
@@ -26,22 +26,18 @@ public interface IDataService
 
     Task RemoveBookmarkAsync(BookmarkItem bookmarkItem);
 
-    Task SaveNewsContentToFavoriteAsync(ContentModel contentItem);
+    Task ClearLikedNewsProvidersAsync();
 
-    Task<List<ContentModel>> GetAllFavoriteNewsContentAsync();
+    Task<List<NewsProvider>> GetLikedNewsProvidersAsync();
 
-    Task RemoveNewsContentFromFavoriteAsync(ContentModel contentModel);
+    Task AddLikedNewsProvidersAsync(IEnumerable<NewsProvider> feeders);
 
-    Task<List<RssFeeder>> GetRssFeedersListAsync();
+    Task SaveNewsContentToFavoriteAsync(ContentModel content);
 
-    Task AddRssFeedersAsync(IEnumerable<RssFeeder> feeders);
+    Task<List<ContentModel>> GetAllFavoritesNewsContentAsync();
 
-    Task AddLikedRssFeedersAsync(IEnumerable<RssFeeder> feeders);
+    Task RemoveNewsContentFromFavoritesAsync(ContentModel content);
 
-    Task<List<RssFeeder>> GetLikedRssFeedersAsync();
-
-    Task ClearAllLikedRssFeedersAsync();
-    
     Task SetDefaultSearchEngineAsync(SearchEngineItem searchEngine);
 
     Task<List<SearchEngineItem>> GetSearchEngineListAsync();

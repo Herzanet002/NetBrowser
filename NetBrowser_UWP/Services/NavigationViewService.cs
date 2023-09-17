@@ -6,7 +6,6 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Helpers;
-using NetBrowser_UWP.Views.Settings;
 using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 using NavigationViewBackRequestedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs;
 using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
@@ -19,34 +18,30 @@ public class NavigationViewService : INavigationViewService
     private NavigationView _navigationView;
 
     public NavigationViewService(INavigationService navigationService)
-    {
-        NavigationService = navigationService;
-    }
+        => NavigationService = navigationService;
+
 
     public INavigationService NavigationService { get; }
-    public event NavigatedEventHandler Navigated;
 
     public IList<object> MenuItems => _navigationView?.MenuItems;
 
-    public object SettingsItem => _navigationView?.SettingsItem;
+    public event NavigatedEventHandler Navigated;
 
     public void Initialize(Frame frame, NavigationView navigationView, Type pageType = default)
     {
         NavigationService.Frame = frame;
+        NavigationService.Navigated += OnNavigated;
         _navigationView = navigationView;
         _navigationView.BackRequested += OnBackRequested;
         _navigationView.ItemInvoked += OnItemInvoked;
-        NavigationService.Navigated += OnNavigated;
         if (pageType != default) NavigateToPageType(pageType);
     }
 
     public void UnregisterEvents()
     {
-        if (_navigationView != null)
-        {
-            _navigationView.BackRequested -= OnBackRequested;
-            _navigationView.ItemInvoked -= OnItemInvoked;
-        }
+        if (_navigationView == null) return;
+        _navigationView.BackRequested -= OnBackRequested;
+        _navigationView.ItemInvoked -= OnItemInvoked;
     }
 
     public NavigationViewItem GetSelectedItem(Type pageType)
@@ -54,7 +49,6 @@ public class NavigationViewService : INavigationViewService
         if (_navigationView != null)
             return GetSelectedItem(_navigationView.MenuItems, pageType) ??
                    GetSelectedItem(_navigationView.FooterMenuItems, pageType);
-
         return null;
     }
 
@@ -74,17 +68,10 @@ public class NavigationViewService : INavigationViewService
 
     private void OnItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
-        if (args.IsSettingsInvoked)
-        {
-            NavigateToPageType(typeof(SettingsPage), null, args.RecommendedNavigationTransitionInfo);
-        }
-        else
-        {
-            var selectedItem = args.InvokedItemContainer as NavigationViewItem;
+        var selectedItem = args.InvokedItemContainer as NavigationViewItem;
 
-            if (selectedItem?.GetValue(NavigationHelper.NavigateToProperty) is Type pageType)
-                NavigateToPageType(pageType, null, args.RecommendedNavigationTransitionInfo);
-        }
+        if (selectedItem?.GetValue(NavigationHelper.NavigateToProperty) is Type pageType)
+            NavigateToPageType(pageType, null, args.RecommendedNavigationTransitionInfo);
     }
 
     private NavigationViewItem GetSelectedItem(IEnumerable<object> menuItems, Type pageType)

@@ -4,12 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:NetBrowser_UWP.Models"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:news="using:NetBrowser_UWP.ViewModels.News"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:converters="using:NetBrowser_UWP.Converters"
+    xmlns:models="using:NetBrowser_UWP.Models"
     mc:Ignorable="d"
     Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}"
     d:DataContext="{d:DesignInstance Type=news:FavoriteNewsPageViewModel,IsDesignTimeCreatable=True}">
@@ -24,25 +22,19 @@
             <Grid Margin="0,12,0,12">
                 <Grid Margin="12,0,0,0" ColumnSpacing="40">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="80" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
-
-                    <Border Padding="5,0,5,0" CornerRadius="6"
-                            Background="{Binding Source={StaticResource ThemeManager}, Path=AppTitleBrush}">
-                        <controls:ImageEx Source="{x:Bind Feeder.FeederImageLink}" MinWidth="80" Height="50"
-                                          HorizontalAlignment="Stretch" />
-                    </Border>
-                    <TextBlock Grid.Column="1" Text="{x:Bind Title}" Style="{ThemeResource BodyTextBlockStyle}"
+                    
+                    <TextBlock Grid.Column="0" Text="{x:Bind Title}" Style="{ThemeResource BodyTextBlockStyle}"
                                VerticalAlignment="Center"
                                TextTrimming="CharacterEllipsis" MaxLines="3" HorizontalTextAlignment="Left"
                                FontWeight="SemiBold" />
-                    <TextBlock Grid.Column="2" Text="{x:Bind PubDate}" FontWeight="SemiBold" Margin="10,0"
+                    <TextBlock Grid.Column="1" Text="{x:Bind PubDate}" FontWeight="SemiBold" Margin="10,0"
                                Style="{ThemeResource CaptionTextBlockStyle}"
                                VerticalAlignment="Center" HorizontalAlignment="Left" />
-                    <Button Grid.Column="3" Width="50" Height="35" Style="{StaticResource TabViewButtonStyle}">
+                    <Button Grid.Column="2" Width="50" Height="35">
                         <Button.Content>
                             <FontIcon Glyph="&#xE712;" />
                         </Button.Content>

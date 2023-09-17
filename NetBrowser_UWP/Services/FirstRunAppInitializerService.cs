@@ -1,29 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Models;
+using NetBrowser_UWP.Contracts.Services.Settings;
 
 namespace NetBrowser_UWP.Services;
 
 public class FirstRunAppInitializerService : IFirstRunAppInitializerService
 {
     private readonly IDataService _dataService;
+    private readonly IGeneralSettingsService _generalSettingsService;
     private readonly AppConfigService _appConfigService;
 
     public FirstRunAppInitializerService(IDataService dataService,
+        IGeneralSettingsService generalSettingsService,
         AppConfigService appConfigService)
     {
         _dataService = dataService;
+        _generalSettingsService = generalSettingsService;
         _appConfigService = appConfigService;
     }
 
-    public Task InitializeConfigStorageAsync()
+    public async Task InitializeAppStorageAsync()
     {
-        throw new NotImplementedException();
+        try
+        {
+            await InitializeSearchEngineStorageAsync();
+            await InitializeStartPageStorageAsync();
+            _generalSettingsService.IsFirstRunInitResultSuccessful.SetSetting(true);
+        }
+        catch
+        {
+            _generalSettingsService.IsFirstRunInitResultSuccessful.SetSetting(false);
+        }
     }
 
-    public async Task InitializeStartPageStorageAsync()
+    private async Task InitializeStartPageStorageAsync()
     {
         var defaultStartPageItems = _appConfigService.GetSection<IEnumerable<SiteItem>>("DefaultStartPageItems");
         foreach (var startPageItem in defaultStartPageItems)
@@ -32,18 +44,12 @@ public class FirstRunAppInitializerService : IFirstRunAppInitializerService
         }
     }
 
-    public async Task InitializeSearchEngineStorageAsync()
+    private async Task InitializeSearchEngineStorageAsync()
     {
         var defaultEngineItems = _appConfigService.GetSection<IEnumerable<SearchEngineItem>>("DefaultSearchEngines");
         foreach (var searchEngine in defaultEngineItems)
         {
             await _dataService.AddSearchEngineAsync(searchEngine);
         }
-    }
-
-    public async Task InitializeRssFeeders()
-    {
-        var defaultFeedResources = _appConfigService.GetSection<IEnumerable<RssFeeder>>("FeedResources");
-        await _dataService.AddRssFeedersAsync(defaultFeedResources);
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,21 +57,24 @@ public class DataService : IDataService
 
     #region Search term
 
-    public Task SaveSearchTermAsync(SiteItem siteItem)
+    public Task AddOrReplaceSearchTermAsync(SearchTermItem searchTermItem)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SiteItem>(ApplicationConstants.SEARCHTERMS_COLLECTION_NAME);
-        collection.Insert(siteItem);
+        var collection = liteConnection.GetCollection<SearchTermItem>(ApplicationConstants.SEARCHTERMS_COLLECTION_NAME);
+        if (collection.Exists(x => x.Query == searchTermItem.Query))
+        {
+            collection.DeleteMany(x => x.Query == searchTermItem.Query);
+        }
 
-        collection.EnsureIndex(x => x.Name);
-        collection.EnsureIndex(x => x.Url);
+        collection.Insert(searchTermItem);
+        collection.EnsureIndex(x => x.Query);
         return Task.CompletedTask;
     }
 
-    public Task<List<SiteItem>> GetSearchTermsAsync()
+    public Task<List<SearchTermItem>> GetSearchTermsAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SiteItem>(ApplicationConstants.SEARCHTERMS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<SearchTermItem>(ApplicationConstants.SEARCHTERMS_COLLECTION_NAME);
         var siteItems = collection.FindAll().ToList();
         return Task.FromResult(siteItems);
     }
@@ -131,7 +133,15 @@ public class DataService : IDataService
         return Task.CompletedTask;
     }
 
-    public Task<List<ContentModel>> GetAllFavoriteNewsContentAsync()
+    public Task RemoveNewsContentFromFavoritesAsync(ContentModel content)
+    {
+        using var liteConnection = new LiteDatabase(FullFilePath);
+        var collection = liteConnection.GetCollection<ContentModel>(ApplicationConstants.FAVORITE_NEWS_COLLECTION_NAME);
+        collection.Delete(content.Id);
+        return Task.CompletedTask;
+    }
+
+    public Task<List<ContentModel>> GetAllFavoritesNewsContentAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection = liteConnection.GetCollection<ContentModel>(ApplicationConstants.FAVORITE_NEWS_COLLECTION_NAME);
@@ -143,44 +153,32 @@ public class DataService : IDataService
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection = liteConnection.GetCollection<ContentModel>(ApplicationConstants.FAVORITE_NEWS_COLLECTION_NAME);
-        collection.Delete(contentModel.Id);
+        collection.DeleteMany(x => x.Id == contentModel.Id);
         return Task.CompletedTask;
     }
 
-    public Task<List<RssFeeder>> GetRssFeedersListAsync()
+    public Task AddLikedNewsProvidersAsync(IEnumerable<NewsProvider> feeders)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<RssFeeder>(ApplicationConstants.RSS_FEEDERS_COLLECTION_NAME);
-        return Task.FromResult(collection.FindAll().ToList());
-    }
-
-    public Task AddRssFeedersAsync(IEnumerable<RssFeeder> feeders)
-    {
-        using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<RssFeeder>(ApplicationConstants.RSS_FEEDERS_COLLECTION_NAME);
+        var collection =
+            liteConnection.GetCollection<NewsProvider>(ApplicationConstants.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
         collection.Insert(feeders);
         return Task.CompletedTask;
     }
 
-    public Task AddLikedRssFeedersAsync(IEnumerable<RssFeeder> feeders)
+    public Task<List<NewsProvider>> GetLikedNewsProvidersAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<RssFeeder>(ApplicationConstants.LIKED_RSS_FEEDERS_COLLECTION_NAME);
-        collection.Insert(feeders);
-        return Task.CompletedTask;
-    }
-
-    public Task<List<RssFeeder>> GetLikedRssFeedersAsync()
-    {
-        using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<RssFeeder>(ApplicationConstants.LIKED_RSS_FEEDERS_COLLECTION_NAME);
+        var collection =
+            liteConnection.GetCollection<NewsProvider>(ApplicationConstants.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
         return Task.FromResult(collection.FindAll().ToList());
     }
 
-    public Task ClearAllLikedRssFeedersAsync()
+    public Task ClearLikedNewsProvidersAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<RssFeeder>(ApplicationConstants.LIKED_RSS_FEEDERS_COLLECTION_NAME);
+        var collection =
+            liteConnection.GetCollection<NewsProvider>(ApplicationConstants.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
         collection.DeleteAll();
         return Task.CompletedTask;
     }
@@ -192,7 +190,8 @@ public class DataService : IDataService
     public Task SetDefaultSearchEngineAsync(SearchEngineItem searchEngine)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
+        var collection =
+            liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
         var currentSearchEngine = collection.Find(x => x.IsSelected).First();
         currentSearchEngine.IsSelected = false;
         collection.Update(currentSearchEngine);
@@ -205,7 +204,8 @@ public class DataService : IDataService
     public Task<List<SearchEngineItem>> GetSearchEngineListAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
+        var collection =
+            liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
         var searchEngineList = collection.FindAll().ToList();
         return Task.FromResult(searchEngineList);
     }
@@ -213,7 +213,8 @@ public class DataService : IDataService
     public Task<SearchEngineItem> GetCurrentSearchEngineAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
+        var collection =
+            liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
         var currentSearchEngine = collection.Find(x => x.IsSelected).FirstOrDefault();
         return Task.FromResult(currentSearchEngine);
     }
@@ -221,7 +222,8 @@ public class DataService : IDataService
     public Task AddSearchEngineAsync(SearchEngineItem engineItem)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
+        var collection =
+            liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
         collection.Insert(engineItem);
         return Task.CompletedTask;
     }

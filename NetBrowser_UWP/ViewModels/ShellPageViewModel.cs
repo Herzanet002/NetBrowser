@@ -7,55 +7,67 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Web.WebView2.Core;
+using NetBrowser_UWP.CommandResolver;
+using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Contracts.Services.Settings;
+using NetBrowser_UWP.Enums;
+using NetBrowser_UWP.EventArguments;
+using NetBrowser_UWP.Messages;
 using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
-using NetBrowser_UWP.Views;
-using NetBrowser_UWP.Views.News;
+using NetBrowser_UWP.UiUpdater;
+using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views.Settings;
 using Prism.Commands;
 using winUI = Microsoft.UI.Xaml.Controls;
+using NetBrowser_UWP.Contracts;
+using NetBrowser_UWP.Views;
 
 namespace NetBrowser_UWP.ViewModels;
 
-public class ShellPageViewModel : ObservableObject
+public class ShellPageViewModel : BindableBase
 {
     private readonly IDataService _dataService;
-    private readonly ILocalSettingsService _localSettingsService;
-    private readonly TabViewService _tabViewService;
+    private readonly IAppearanceSettingsService _appearanceSettingsService;
+    private readonly ITabViewService _tabViewService;
+    private readonly ICommandResolver _commandResolver;
+    private readonly IPageService _pageService;
     private readonly IWebView2Service _webView2Service;
 
-
     public ShellPageViewModel(IDataService dataService,
+        IAppearanceSettingsService appearanceSettingsService,
         IWebView2Service webView2Service,
-        ILocalSettingsService localSettingsService,
-        TabViewService tabViewService)
+        ITabViewService tabViewService,
+        ICommandResolver commandResolver,
+        IPageService pageService)
     {
         _dataService = dataService;
+        _appearanceSettingsService = appearanceSettingsService;
         _webView2Service = webView2Service;
-        _localSettingsService = localSettingsService;
         _tabViewService = tabViewService;
+        _commandResolver = commandResolver;
+        _pageService = pageService;
         SetEventHandlers();
-        //InitializeAsync();
-
         InitializeCommands();
+        WeakReferenceMessenger.Default.Register<ShellPageViewModel, InnerPageTypeChangedMessage>(this,
+            UpdateUiLabelsByReason);
     }
 
-    public ObservableCollection<winUI.TabViewItem> TabViewItemsList => _tabViewService.GetAllTabItems();
-
-    public winUI.TabViewItem SelectedTabItem
+    private void UpdateUiLabelsByReason(ShellPageViewModel recipient, InnerPageTypeChangedMessage message)
     {
-        get => _tabViewService.GetSelectedTabItem();
-        set => _tabViewService.ChangeSelectedTabItem(value);
+        if (SelectedTabItem != null)
+        {
+            UpdateUiElementsStateByReason(new InnerPageUpdateUiReasonArgument(message.Value));
+        }
     }
 
     private async Task InitializeAsync()
     {
-        await InitializePageComponents();
+        IsHomeButtonEnabled = _appearanceSettingsService.IsHomeButtonEnabled.GetSetting();
         await GetBookmarksAsync();
         await _tabViewService.CreateNewWebTab().ConfigureAwait(false);
     }
@@ -68,6 +80,15 @@ public class ShellPageViewModel : ObservableObject
         _webView2Service.NewWindowRequested += WebViewOnNewWindowRequested;
         _webView2Service.NavigationCompleted += WebViewOnNavigationCompleted;
         _webView2Service.ContainsFullScreenElementChanged += WebViewOnContainsFullScreenElementChanged;
+        _appearanceSettingsService.SettingChanged += AppearanceSettingsServiceOnSettingChanged;
+    }
+
+    private void AppearanceSettingsServiceOnSettingChanged(object sender, SettingChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(IsHomeButtonEnabled))
+        {
+            IsHomeButtonEnabled = (bool)e.NewValue;
+        }
     }
 
     private void WebViewOnContainsFullScreenElementChanged(CoreWebView2 sender, object args)
@@ -76,7 +97,7 @@ public class ShellPageViewModel : ObservableObject
 
         if (sender.ContainsFullScreenElement)
         {
-            var t = applicationView.TryEnterFullScreenMode();
+            applicationView.TryEnterFullScreenMode();
         }
         else if (applicationView.IsFullScreenMode)
         {
@@ -84,47 +105,83 @@ public class ShellPageViewModel : ObservableObject
         }
     }
 
-    private void TabViewServiceSelectionChangedHandler(object sender, SelectionChangedEventHandler e)
+    private void TabViewServiceSelectionChangedHandler(object sender, SelectionChangedEventArgs e)
     {
-        SelectionChangedTabHandler();
-        if (_tabViewService.GetSelectedWebView() != null)
-            IsWebLoading = (bool)_tabViewService.GetSelectedWebView().Tag;
-        SetVisualUiElementStates(_tabViewService.GetSelectedWebView());
+        var selectedTabItem = _tabViewService.SelectedTabItem;
+        if (selectedTabItem == null)
+        {
+            AppTitleText = string.Empty;
+            UpdateFindBoxQueryText(string.Empty);
+            UpdateUiElementsStateByReason(new TabViewUpdateUiReasonArgument(null));
+            return;
+        }
+
+        _tabViewService.SelectedWebView = selectedTabItem.Content as winUI.WebView2;
+
+        var contentBaseType = DeriveBaseTabItemContentType(selectedTabItem.Content);
+
+        if (contentBaseType == typeof(winUI.WebView2))
+        {
+            AppTitleText = _tabViewService.SelectedWebView?.CoreWebView2.DocumentTitle;
+            UpdateFindBoxQueryText(_tabViewService.SelectedWebView?.Source?.AbsoluteUri);
+        }
+
+        else if (contentBaseType == typeof(NavigationViewContentPage))
+        {
+            AppTitleText = selectedTabItem.Header.ToString();
+            if (selectedTabItem.Content is NavigationViewContentPage pageCasted)
+            {
+                var innerPage = _pageService.GetPageInfoByPageType(pageCasted.GetInnerPageType());
+                UpdateFindBoxQueryText(innerPage is { PathIsVisible: true }
+                    ? innerPage.Path
+                    : string.Empty);
+            }
+        }
+
+        else if (contentBaseType == typeof(Page))
+        {
+            var contentType = selectedTabItem.Content?.GetType();
+            var pageInfo = _pageService.GetPageInfoByPageType(contentType);
+
+            AppTitleText = selectedTabItem.Header.ToString();
+            UpdateFindBoxQueryText(pageInfo is { PathIsVisible: true }
+                ? pageInfo.Path
+                : string.Empty);
+        }
+
+        else
+        {
+            UpdateFindBoxQueryText(string.Empty);
+            AppTitleText = selectedTabItem.Header.ToString();
+        }
+
+        UpdateUiElementsStateByReason(new TabViewUpdateUiReasonArgument(_tabViewService.SelectedWebView));
         CommandsRaiseCanExecuteChanged();
     }
 
-    private void TabViewServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+    private static Type DeriveBaseTabItemContentType(object content)
     {
-        OnPropertyChanged(e);
+        var contentType = content.GetType();
+        return contentType.BaseType != typeof(Control) ? contentType.BaseType : contentType;
     }
 
-    private async Task InitializePageComponents()
-    {
-        VisibilityHomeButton = await _localSettingsService.ReadSettingAsync<bool>("IsHomeButtonEnabled");
-    }
+    private void TabViewServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        => OnPropertyChanged(e);
 
     private void InitializeCommands()
     {
         LoadedPageCommand = new AsyncRelayCommand(InitializeAsync);
         BackButtonCommand = new DelegateCommand(OnBackButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() is { CanGoBack: true });
+            () => _tabViewService.SelectedWebView is { CanGoBack: true });
         ForwardButtonCommand = new DelegateCommand(OnForwardButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() is { CanGoForward: true });
+            () => _tabViewService.SelectedWebView is { CanGoForward: true });
         ReloadButtonCommand = new DelegateCommand(OnReloadButtonCommandExecuted);
         StopLoadingButtonCommand = new DelegateCommand(OnStopLoadingButtonCommandExecuted);
         HomeButtonCommand = new DelegateCommand(OnHomeButtonCommandExecuted);
-        AddBookmarkButtonCommand = new DelegateCommand(OnAddBookmarkButtonCommandExecuted);
-        SaveBookmarkButtonCommand = new AsyncRelayCommand(OnSaveBookmarkCommandExecuted);
-        CancelSaveBookmarkButtonCommand = new DelegateCommand(OnCancelSaveBookmarkCommandExecuted);
-        DeleteBookmarkButtonCommand = new AsyncRelayCommand(OnDeleteBookmarkCommandExecuted);
         BookmarksButtonCommand = new AsyncRelayCommand(OnBookmarksButtonCommandExecuted);
         BookmarksSettingsButtonCommand = new DelegateCommand(OnBookmarkSettingButtonExecuted);
         BookmarksItemClickCommand =
             new AsyncRelayCommand<ItemClickEventArgs>(OnBookmarksFlyoutListViewItemClickExecuted);
-        SearchBoxTextChangedCommand =
-            new AsyncRelayCommand<AutoSuggestBoxTextChangedEventArgs>(OnSearchBoxTextChangedCommandExecuted);
-        SearchBoxQuerySubmittedCommand =
-            new AsyncRelayCommand<AutoSuggestBoxQuerySubmittedEventArgs>(OnSearchBoxQuerySubmittedCommandExecuted);
         NewsContentButtonCommand = new DelegateCommand(OnNewsContentButtonCommandExecuted);
         HistoryButtonCommand = new AsyncRelayCommand(OnHistoryButtonCommandExecuted);
         HistorySettingsButtonCommand = new DelegateCommand(OnHistorySettingsButtonExecuted);
@@ -134,48 +191,9 @@ public class ShellPageViewModel : ObservableObject
         CloseTabButtonCommand =
             new DelegateCommand<winUI.TabViewTabCloseRequestedEventArgs>(OnCloseTabButtonCommandExecuted);
         DeveloperInstrumentsButtonCommand = new DelegateCommand(OnDeveloperInstrumentsButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() != null);
+            () => _tabViewService.SelectedWebView != null);
         TaskManagerButtonCommand = new DelegateCommand(OnTaskManagerButtonCommandExecuted,
-            () => _tabViewService.GetSelectedWebView() != null);
-    }
-
-    private async Task<IEnumerable<string>> GetSearchTermListAsync()
-    {
-        var searchTermListTransfer = await _dataService.GetSearchTermsAsync();
-        searchTermListTransfer.Reverse();
-
-        return searchTermListTransfer.Select(term => term.Name).ToHashSet();
-    }
-
-    private async Task AutoSuggestListFill()
-    {
-        var searchTermList = await GetSearchTermListAsync();
-
-        var enumerable = searchTermList.ToList();
-        var suitableItems = from item in enumerable
-            where item.Contains(SearchBoxText, StringComparison.OrdinalIgnoreCase)
-            select item;
-
-        var enumerableList = suitableItems.ToList();
-
-        if (enumerableList.Count == 0)
-            enumerableList.Add("Искать в " + App.CurrentWebEngine.Name + " " + SearchBoxText);
-
-        if (SearchBoxText.Length != 0)
-        {
-            SearchBoxItemsCollection = enumerableList;
-            return;
-        }
-
-        var recentlySearch = new List<string>();
-        if (enumerable.ToList().Count < 10)
-            recentlySearch = enumerableList;
-        else
-            recentlySearch.AddRange(enumerable.GetRange(0, 8));
-
-        suitableItems = recentlySearch;
-
-        SearchBoxItemsCollection = suitableItems.ToList();
+            () => _tabViewService.SelectedWebView != null);
     }
 
     private void CommandsRaiseCanExecuteChanged()
@@ -184,37 +202,46 @@ public class ShellPageViewModel : ObservableObject
         ForwardButtonCommand.RaiseCanExecuteChanged();
     }
 
-    private void SetProgressRingActivity(bool isActive)
+    private void UpdateUiElementsStateByReason(UpdateUiReasonArgument reasonArgument)
     {
-        IsProgressRingActive = isActive;
-    }
-
-    private void SetVisualUiElementStates(object sender)
-    {
-        if (sender is not winUI.WebView2 webInstance)
+        if (reasonArgument is InnerPageUpdateUiReasonArgument innerPageUpdateUiReason)
         {
-            SetProgressRingActivity(false);
-        }
-        else
-        {
-            var loadingState = (bool)webInstance.Tag;
-            SetProgressRingActivity(loadingState);
+            var pageInfo = _pageService.GetPageInfoByPageType(innerPageUpdateUiReason.PageType);
+            Messenger.Send(new FindBoxQueryChangedMessage(pageInfo?.Path));
         }
 
-        SetBookmarkButtonAppearance();
+        if (reasonArgument is WebViewUpdateUiReasonArgument webViewUpdateUiReason)
+        {
+            IsProgressRingActive = (bool)webViewUpdateUiReason.WebViewInstance.Tag;
+            return;
+        }
+
+        if (reasonArgument is TabViewUpdateUiReasonArgument tabViewUpdateUiReason)
+        {
+            if (tabViewUpdateUiReason.Content is winUI.WebView2 webView)
+            {
+                IsProgressRingActive = (bool)webView.Tag;
+                IsWebLoading = (bool)webView.Tag;
+                return;
+            }
+
+            IsWebLoading = false;
+            IsProgressRingActive = false;
+            return;
+        }
+
+        Messenger.Send(new FindBoxSetBookmarkButtonAppearanceMessage());
     }
 
-    private void SetVisualUiLabels(string appTitleText, string searchBoxText)
-    {
-        AppTitleText = appTitleText;
-        SearchBoxText = searchBoxText;
-    }
+    private void UpdateFindBoxQueryText(string queryText)
+        => Messenger.Send(new FindBoxQueryChangedMessage(queryText));
 
     private void WebViewOnNavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs args)
     {
         IsWebLoading = true;
-        SetVisualUiElementStates(sender);
-        SetVisualUiLabels("LoadingString".GetLocalized(), args.Uri);
+        UpdateUiElementsStateByReason(new WebViewUpdateUiReasonArgument(sender as winUI.WebView2));
+        AppTitleText = "LoadingString".GetLocalized();
+        UpdateFindBoxQueryText(args.Uri);
     }
 
     private async void WebViewOnNewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs args)
@@ -229,13 +256,23 @@ public class ShellPageViewModel : ObservableObject
         var rightTab = _tabViewService.GetTabItemByFilter(tab => tab.Content == webInstance);
         if (rightTab == null) return;
 
-        var faviconUri = new Uri(Constants.ApplicationConstants.FAVICONS_SERVICE + webInstance.Source);
         rightTab.Header = webInstance.CoreWebView2.DocumentTitle;
-        rightTab.IconSource = new winUI.BitmapIconSource
+        try
         {
-            UriSource = faviconUri,
-            ShowAsMonochrome = false
-        };
+            rightTab.IconSource = new winUI.BitmapIconSource
+            {
+                UriSource = new Uri(webInstance.CoreWebView2.FaviconUri),
+                ShowAsMonochrome = false
+            };
+        }
+        catch (Exception)
+        {
+            rightTab.IconSource = new winUI.BitmapIconSource
+            {
+                UriSource = new Uri(ApplicationConstants.FAVICONS_SERVICE + webInstance.Source),
+                ShowAsMonochrome = false
+            };
+        }
 
         _dataService.SaveHistoryAsync(new HistoryItem
         {
@@ -247,76 +284,12 @@ public class ShellPageViewModel : ObservableObject
 
         IsWebLoading = false;
 
-        if (webInstance.Source == null || _tabViewService.GetSelectedWebView() != sender) return;
-        SetVisualUiLabels(webInstance.CoreWebView2.DocumentTitle, webInstance.Source.AbsoluteUri);
-        SetVisualUiElementStates(sender);
+        if (webInstance.Source == null || _tabViewService.SelectedWebView != sender) return;
+        AppTitleText = webInstance.CoreWebView2.DocumentTitle;
+        UpdateFindBoxQueryText(webInstance.Source.AbsoluteUri);
+        UpdateUiElementsStateByReason(new WebViewUpdateUiReasonArgument(webInstance));
         CommandsRaiseCanExecuteChanged();
     }
-
-    public void NavigateTo(string address, winUI.WebView2 webViewInstance)
-    {
-        if (webViewInstance == null) return;
-
-        switch (address)
-        {
-            case Constants.ApplicationConstants.SETTINGS_ADDRESS:
-                _tabViewService.CreateSettingsTab();
-                break;
-
-            case Constants.ApplicationConstants.STARTPAGE_ADDRESS:
-                _tabViewService.CreateStartPageTab();
-                break;
-
-            case Constants.ApplicationConstants.NEWS_ADDRESS:
-                _tabViewService.CreateNewsTab();
-                break;
-
-            default:
-                webViewInstance.Source = _webView2Service.ResolveUri(address);
-                break;
-        }
-    }
-
-
-    private void SelectionChangedTabHandler()
-    {
-        if (_tabViewService.GetSelectedTabItem() == null)
-        {
-            SetVisualUiLabels(null, null);
-            SetVisualUiElementStates(null);
-            return;
-        }
-
-        _tabViewService.ChangeSelectedWebView(_tabViewService.GetSelectedTabItem().Content as winUI.WebView2);
-
-        switch (_tabViewService.GetSelectedTabItem().Content)
-        {
-            case SettingsPage:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(),
-                    Constants.ApplicationConstants.SETTINGS_ADDRESS);
-                break;
-
-            case StartPage:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(), string.Empty);
-                break;
-
-            case winUI.WebView2:
-                if (_tabViewService.GetSelectedWebView()?.Source != null)
-                    SetVisualUiLabels(_tabViewService.GetSelectedWebView().CoreWebView2.DocumentTitle,
-                        _tabViewService.GetSelectedWebView().Source.AbsoluteUri);
-                break;
-
-            case NewsShellPage:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(),
-                    Constants.ApplicationConstants.NEWS_ADDRESS);
-                break;
-
-            default:
-                SetVisualUiLabels(_tabViewService.GetSelectedTabItem().Header.ToString(), string.Empty);
-                break;
-        }
-    }
-
 
     private async Task GetBookmarksAsync()
     {
@@ -325,49 +298,17 @@ public class ShellPageViewModel : ObservableObject
         BookmarksList = new ObservableCollection<BookmarkItem>(bookmarksListTransfer);
     }
 
-    private void SetBookmarkIconState(bool isAccessable)
-    {
-        IsBookmarksExists = isAccessable;
-        DeleteBookmarkButtonVisibility = isAccessable;
-    }
-
-    private void SetBookmarkButtonAppearance()
-    {
-        if (_tabViewService.GetSelectedWebView() == null ||
-            _tabViewService.GetSelectedWebView().Source == null)
-        {
-            SetBookmarkIconState(false);
-            return;
-        }
-
-        if (BookmarksList == null) return;
-
-        var existableBookmark = BookmarksList.FirstOrDefault(bookmark =>
-            bookmark.Url == _tabViewService.GetSelectedWebView().Source.AbsoluteUri);
-
-        SetBookmarkIconState(existableBookmark != null);
-    }
-
     #region Private Global Element Region
 
     private ObservableCollection<BookmarkItem> _bookmarksList;
     private IList<HistoryItem> _historyList;
 
-    private IList<string> _searchBoxItemsCollection;
-
     private string _appTitleText;
-    private string _searchBoxText;
-    private string _bookmarkTitleForSave;
-    private string _bookmarkUrlForSave;
 
-    private bool _visibilityDeleteBookmarkButton;
-    private bool _visibilityHomeButton;
+    private bool _isHomeButtonEnabled;
     private bool _isProgressRingActive;
     private bool _isFlyoutClosed;
-
     private bool _isWebLoading;
-    private bool _isBookmarksExists;
-    private bool _isSuggestionListOpen;
 
     #endregion Private Global Element Region
 
@@ -378,19 +319,11 @@ public class ShellPageViewModel : ObservableObject
     public DelegateCommand ReloadButtonCommand { get; private set; }
     public DelegateCommand StopLoadingButtonCommand { get; private set; }
     public DelegateCommand HomeButtonCommand { get; private set; }
-
-    public IAsyncRelayCommand SaveBookmarkButtonCommand { get; private set; }
-    public IAsyncRelayCommand DeleteBookmarkButtonCommand { get; private set; }
     public IAsyncRelayCommand BookmarksButtonCommand { get; private set; }
     public IAsyncRelayCommand BookmarksItemClickCommand { get; private set; }
-    public IAsyncRelayCommand SearchBoxTextChangedCommand { get; private set; }
-    public IAsyncRelayCommand SearchBoxQuerySubmittedCommand { get; private set; }
     public IAsyncRelayCommand HistoryItemClickCommand { get; private set; }
     public IAsyncRelayCommand HistoryButtonCommand { get; private set; }
     public IAsyncRelayCommand LoadedPageCommand { get; private set; }
-
-    public ICommand AddBookmarkButtonCommand { get; private set; }
-    public ICommand CancelSaveBookmarkButtonCommand { get; private set; }
     public ICommand BookmarksSettingsButtonCommand { get; private set; }
     public ICommand HistorySettingsButtonCommand { get; private set; }
     public ICommand SettingsButtonCommand { get; private set; }
@@ -404,16 +337,14 @@ public class ShellPageViewModel : ObservableObject
 
     #region Global Properties Region
 
-    public IList<string> SearchBoxItemsCollection
-    {
-        get => _searchBoxItemsCollection;
-        set => SetProperty(ref _searchBoxItemsCollection, value);
-    }
+    public ObservableCollection<winUI.TabViewItem> TabViewItemsList => _tabViewService.ItemsCollection;
 
-    public string SearchBoxText
+    public TabViewPlacementMode TabViewPlacementMode => _appearanceSettingsService.TabViewPlacementMode.GetSetting();
+
+    public winUI.TabViewItem SelectedTabItem
     {
-        get => _searchBoxText;
-        set => SetProperty(ref _searchBoxText, value);
+        get => _tabViewService.SelectedTabItem;
+        set => _tabViewService.ChangeSelectedTabItem(value);
     }
 
     public ObservableCollection<BookmarkItem> BookmarksList
@@ -434,34 +365,10 @@ public class ShellPageViewModel : ObservableObject
         set => SetProperty(ref _appTitleText, value);
     }
 
-    public string BookmarkTitleForSave
-    {
-        get => _bookmarkTitleForSave;
-        set => SetProperty(ref _bookmarkTitleForSave, value);
-    }
-
-    public string BookmarkUrlForSave
-    {
-        get => _bookmarkUrlForSave;
-        set => SetProperty(ref _bookmarkUrlForSave, value);
-    }
-
     public bool IsProgressRingActive
     {
         get => _isProgressRingActive;
         set => SetProperty(ref _isProgressRingActive, value);
-    }
-
-    public bool IsSuggestionListOpen
-    {
-        get => _isSuggestionListOpen;
-        set => SetProperty(ref _isSuggestionListOpen, value);
-    }
-
-    public bool DeleteBookmarkButtonVisibility
-    {
-        get => _visibilityDeleteBookmarkButton;
-        set => SetProperty(ref _visibilityDeleteBookmarkButton, value);
     }
 
     public bool IsFlyoutClosed
@@ -481,20 +388,10 @@ public class ShellPageViewModel : ObservableObject
         set => SetProperty(ref _isWebLoading, value);
     }
 
-    public bool IsBookmarksExists
+    public bool IsHomeButtonEnabled
     {
-        get => _isBookmarksExists;
-        set => SetProperty(ref _isBookmarksExists, value);
-    }
-
-    public bool VisibilityHomeButton
-    {
-        get => _visibilityHomeButton;
-        set
-        {
-            SetProperty(ref _visibilityHomeButton, value);
-            _localSettingsService.SaveSettingAsync("IsHomeButtonEnabled", value);
-        }
+        get => _isHomeButtonEnabled;
+        set => SetProperty(ref _isHomeButtonEnabled, value);
     }
 
     #endregion Global Properties Region
@@ -503,24 +400,24 @@ public class ShellPageViewModel : ObservableObject
 
     private void OnBackButtonCommandExecuted()
     {
-        if (_tabViewService.GetSelectedWebView() is { CanGoBack: true })
-            _tabViewService.GetSelectedWebView().GoBack();
+        if (_tabViewService.SelectedWebView is { CanGoBack: true })
+            _tabViewService.SelectedWebView.GoBack();
     }
 
     private void OnForwardButtonCommandExecuted()
     {
-        if (_tabViewService.GetSelectedWebView() is { CanGoForward: true })
-            _tabViewService.GetSelectedWebView().GoForward();
+        if (_tabViewService.SelectedWebView is { CanGoForward: true })
+            _tabViewService.SelectedWebView.GoForward();
     }
 
     private void OnReloadButtonCommandExecuted()
     {
-        _tabViewService.GetSelectedWebView()?.CoreWebView2.Reload();
+        _tabViewService.SelectedWebView?.CoreWebView2.Reload();
     }
 
     private void OnStopLoadingButtonCommandExecuted()
     {
-        _tabViewService.GetSelectedWebView()?.CoreWebView2.Stop();
+        _tabViewService.SelectedWebView?.CoreWebView2.Stop();
     }
 
     private void OnNewsContentButtonCommandExecuted()
@@ -531,36 +428,11 @@ public class ShellPageViewModel : ObservableObject
     private void OnHomeButtonCommandExecuted()
     {
         if (App.CurrentWebEngine?.HomePage != null
-            && _tabViewService.GetSelectedWebView() != null)
-            NavigateTo(App.CurrentWebEngine.HomePage, _tabViewService.GetSelectedWebView());
-    }
-
-    private async Task OnSearchBoxTextChangedCommandExecuted(AutoSuggestBoxTextChangedEventArgs obj)
-    {
-        if (obj is not { }) return;
-        if (obj.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
-            await AutoSuggestListFill();
-    }
-
-    //TODO: Обновление поисковых запросов
-    private async Task OnSearchBoxQuerySubmittedCommandExecuted(AutoSuggestBoxQuerySubmittedEventArgs obj)
-    {
-        if (obj is not { }) return;
-
-        var queryForSearch = string.Empty;
-        if (!string.IsNullOrWhiteSpace(obj.QueryText))
-            queryForSearch = obj.QueryText;
-
-        if (string.IsNullOrWhiteSpace(queryForSearch)) return;
-        if (_tabViewService.GetSelectedWebView() == null) return;
-
-        NavigateTo(queryForSearch, _tabViewService.GetSelectedWebView());
-        await _dataService.SaveSearchTermAsync(new SiteItem()
+            && _tabViewService.SelectedWebView != null)
         {
-            Name = queryForSearch
-        }).ConfigureAwait(false);
+            _tabViewService.SelectedWebView.Source = new Uri(App.CurrentWebEngine.HomePage);
+        }
     }
-
 
     private void OnSettingsButtonCommandExecuted()
     {
@@ -569,12 +441,12 @@ public class ShellPageViewModel : ObservableObject
 
     private void OnDeveloperInstrumentsButtonCommandExecuted()
     {
-        _tabViewService.GetSelectedWebView()?.CoreWebView2.OpenDevToolsWindow();
+        _tabViewService.SelectedWebView?.CoreWebView2.OpenDevToolsWindow();
     }
 
     private void OnTaskManagerButtonCommandExecuted()
     {
-        _tabViewService.GetSelectedWebView()?.CoreWebView2.OpenTaskManagerWindow();
+        _tabViewService.SelectedWebView?.CoreWebView2.OpenTaskManagerWindow();
     }
 
     private async Task OnHistoryButtonCommandExecuted()
@@ -601,7 +473,9 @@ public class ShellPageViewModel : ObservableObject
             var url = selectedHistoryItem.Url;
             await _tabViewService.CreateNewWebTab();
             if (url != null)
-                NavigateTo(url, _tabViewService.GetSelectedWebView());
+            {
+                Messenger.Send(new FindBoxNavigateToMessage(_commandResolver.ResolveCommand(new Command(url))));
+            }
         }
 
         IsFlyoutClosed = true;
@@ -610,60 +484,6 @@ public class ShellPageViewModel : ObservableObject
     private async Task OnBookmarksButtonCommandExecuted()
     {
         await GetBookmarksAsync();
-    }
-
-    private void OnCancelSaveBookmarkCommandExecuted()
-    {
-        IsFlyoutClosed = true;
-    }
-
-    private async Task OnSaveBookmarkCommandExecuted()
-    {
-        if (!(string.IsNullOrWhiteSpace(BookmarkTitleForSave) ||
-              string.IsNullOrWhiteSpace(BookmarkUrlForSave)) &&
-            Uri.IsWellFormedUriString(BookmarkUrlForSave, UriKind.Absolute))
-        {
-            await _dataService.SaveBookmarkAsync(
-                new BookmarkItem
-                {
-                    Name = BookmarkTitleForSave,
-                    Url = BookmarkUrlForSave,
-                    FaviconUrl = Constants.ApplicationConstants.FAVICONS_SERVICE + BookmarkUrlForSave
-                });
-            await GetBookmarksAsync();
-            IsFlyoutClosed = true;
-            SetBookmarkButtonAppearance();
-        }
-        else
-        {
-            var dialogError = new ContentDialog
-            {
-                Title = "Неверные данные",
-                Content = "Проверьте правильность адреса",
-                CloseButtonText = "Закрыть"
-            };
-
-            await dialogError.ShowAsync();
-        }
-    }
-
-    private async Task OnDeleteBookmarkCommandExecuted()
-    {
-        await _dataService.RemoveBookmarkAsync(new BookmarkItem
-        {
-            Name = BookmarkTitleForSave,
-            Url = BookmarkUrlForSave
-        });
-        await GetBookmarksAsync();
-        SetBookmarkButtonAppearance();
-        IsFlyoutClosed = true;
-    }
-
-    private void OnAddBookmarkButtonCommandExecuted()
-    {
-        if (_tabViewService.GetSelectedWebView() == null) return;
-        BookmarkTitleForSave = _tabViewService.GetSelectedWebView().CoreWebView2.DocumentTitle;
-        BookmarkUrlForSave = _tabViewService.GetSelectedWebView().Source.AbsoluteUri;
     }
 
     private void OnBookmarkSettingButtonExecuted()
