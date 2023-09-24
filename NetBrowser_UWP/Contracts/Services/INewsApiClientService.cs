@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using NetBrowser_UWP.Models;
+using NetBrowser.Core.Models;
 
 namespace NetBrowser_UWP.Contracts.Services;
 

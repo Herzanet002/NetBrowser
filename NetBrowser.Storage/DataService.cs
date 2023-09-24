@@ -4,11 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using LiteDB;
-using NetBrowser_UWP.Constants;
-using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
+using NetBrowser.Core.Models;
 
-namespace NetBrowser_UWP.Services;
+namespace NetBrowser.Storage;
 
 public class DataService : IDataService
 {
@@ -21,7 +19,7 @@ public class DataService : IDataService
     public Task<List<HistoryItem>> GetHistoryAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<HistoryItem>(ApplicationConstants.HISTORY_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<HistoryItem>(CollectionNames.HISTORY_COLLECTION_NAME);
         var historyItems = collection.FindAll().ToList();
         return Task.FromResult(historyItems);
     }
@@ -29,7 +27,7 @@ public class DataService : IDataService
     public Task SaveHistoryAsync(HistoryItem historyItem)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<HistoryItem>(ApplicationConstants.HISTORY_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<HistoryItem>(CollectionNames.HISTORY_COLLECTION_NAME);
         collection.Insert(historyItem);
 
         collection.EnsureIndex(x => x.Name);
@@ -40,7 +38,7 @@ public class DataService : IDataService
     public Task ClearAllHistoryAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<HistoryItem>(ApplicationConstants.HISTORY_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<HistoryItem>(CollectionNames.HISTORY_COLLECTION_NAME);
         collection.DeleteAll();
         return Task.CompletedTask;
     }
@@ -48,7 +46,7 @@ public class DataService : IDataService
     public Task RemoveHistoryItemAsync(HistoryItem historyItem)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<HistoryItem>(ApplicationConstants.HISTORY_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<HistoryItem>(CollectionNames.HISTORY_COLLECTION_NAME);
         collection.Delete(historyItem.Id);
         return Task.CompletedTask;
     }
@@ -60,7 +58,7 @@ public class DataService : IDataService
     public Task AddOrReplaceSearchTermAsync(SearchTermItem searchTermItem)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SearchTermItem>(ApplicationConstants.SEARCHTERMS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<SearchTermItem>(CollectionNames.SEARCHTERM_COLLECTION_NAME);
         if (collection.Exists(x => x.Query == searchTermItem.Query))
         {
             collection.DeleteMany(x => x.Query == searchTermItem.Query);
@@ -74,7 +72,7 @@ public class DataService : IDataService
     public Task<List<SearchTermItem>> GetSearchTermsAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SearchTermItem>(ApplicationConstants.SEARCHTERMS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<SearchTermItem>(CollectionNames.SEARCHTERM_COLLECTION_NAME);
         var siteItems = collection.FindAll().ToList();
         return Task.FromResult(siteItems);
     }
@@ -86,7 +84,7 @@ public class DataService : IDataService
     public Task SaveBookmarkAsync(BookmarkItem bookmarkItem)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<BookmarkItem>(ApplicationConstants.BOOKMARKS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<BookmarkItem>(CollectionNames.BOOKMARKS_COLLECTION_NAME);
         collection.Insert(bookmarkItem);
 
         collection.EnsureIndex(x => x.Name);
@@ -97,7 +95,7 @@ public class DataService : IDataService
     public Task EditBookmarkAsync(BookmarkItem oldBookmark, BookmarkItem newBookmark)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<BookmarkItem>(ApplicationConstants.BOOKMARKS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<BookmarkItem>(CollectionNames.BOOKMARKS_COLLECTION_NAME);
         collection.Update(oldBookmark.Id, newBookmark);
         return Task.CompletedTask;
     }
@@ -105,7 +103,7 @@ public class DataService : IDataService
     public Task<List<BookmarkItem>> GetBookmarksAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<BookmarkItem>(ApplicationConstants.BOOKMARKS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<BookmarkItem>(CollectionNames.BOOKMARKS_COLLECTION_NAME);
         var bookmarkItems = collection.FindAll().ToList();
         return Task.FromResult(bookmarkItems);
     }
@@ -113,7 +111,7 @@ public class DataService : IDataService
     public Task RemoveBookmarkAsync(BookmarkItem bookmarkItem)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<BookmarkItem>(ApplicationConstants.BOOKMARKS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<BookmarkItem>(CollectionNames.BOOKMARKS_COLLECTION_NAME);
         collection.Delete(bookmarkItem.Id);
         return Task.CompletedTask;
     }
@@ -125,7 +123,7 @@ public class DataService : IDataService
     public Task SaveNewsContentToFavoriteAsync(ContentModel contentItem)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<ContentModel>(ApplicationConstants.FAVORITE_NEWS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<ContentModel>(CollectionNames.FAVORITE_NEWS_COLLECTION_NAME);
         collection.Insert(contentItem);
 
         collection.EnsureIndex(x => x.Title);
@@ -136,7 +134,7 @@ public class DataService : IDataService
     public Task RemoveNewsContentFromFavoritesAsync(ContentModel content)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<ContentModel>(ApplicationConstants.FAVORITE_NEWS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<ContentModel>(CollectionNames.FAVORITE_NEWS_COLLECTION_NAME);
         collection.Delete(content.Id);
         return Task.CompletedTask;
     }
@@ -144,7 +142,7 @@ public class DataService : IDataService
     public Task<List<ContentModel>> GetAllFavoritesNewsContentAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<ContentModel>(ApplicationConstants.FAVORITE_NEWS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<ContentModel>(CollectionNames.FAVORITE_NEWS_COLLECTION_NAME);
         var collectionItems = collection.FindAll().ToList();
         return Task.FromResult(collectionItems);
     }
@@ -152,7 +150,7 @@ public class DataService : IDataService
     public Task RemoveNewsContentFromFavoriteAsync(ContentModel contentModel)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<ContentModel>(ApplicationConstants.FAVORITE_NEWS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<ContentModel>(CollectionNames.FAVORITE_NEWS_COLLECTION_NAME);
         collection.DeleteMany(x => x.Id == contentModel.Id);
         return Task.CompletedTask;
     }
@@ -161,7 +159,7 @@ public class DataService : IDataService
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection =
-            liteConnection.GetCollection<NewsProvider>(ApplicationConstants.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
+            liteConnection.GetCollection<NewsProvider>(CollectionNames.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
         collection.Insert(feeders);
         return Task.CompletedTask;
     }
@@ -170,7 +168,7 @@ public class DataService : IDataService
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection =
-            liteConnection.GetCollection<NewsProvider>(ApplicationConstants.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
+            liteConnection.GetCollection<NewsProvider>(CollectionNames.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
         return Task.FromResult(collection.FindAll().ToList());
     }
 
@@ -178,7 +176,7 @@ public class DataService : IDataService
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection =
-            liteConnection.GetCollection<NewsProvider>(ApplicationConstants.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
+            liteConnection.GetCollection<NewsProvider>(CollectionNames.LIKED_NEWS_PROVIDERS_COLLECTION_NAME);
         collection.DeleteAll();
         return Task.CompletedTask;
     }
@@ -191,7 +189,7 @@ public class DataService : IDataService
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection =
-            liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
+            liteConnection.GetCollection<SearchEngineItem>(CollectionNames.SEARCH_ENGINES_COLLECTION_NAME);
         var currentSearchEngine = collection.Find(x => x.IsSelected).First();
         currentSearchEngine.IsSelected = false;
         collection.Update(currentSearchEngine);
@@ -205,7 +203,7 @@ public class DataService : IDataService
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection =
-            liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
+            liteConnection.GetCollection<SearchEngineItem>(CollectionNames.SEARCH_ENGINES_COLLECTION_NAME);
         var searchEngineList = collection.FindAll().ToList();
         return Task.FromResult(searchEngineList);
     }
@@ -214,7 +212,7 @@ public class DataService : IDataService
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection =
-            liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
+            liteConnection.GetCollection<SearchEngineItem>(CollectionNames.SEARCH_ENGINES_COLLECTION_NAME);
         var currentSearchEngine = collection.Find(x => x.IsSelected).FirstOrDefault();
         return Task.FromResult(currentSearchEngine);
     }
@@ -223,7 +221,7 @@ public class DataService : IDataService
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
         var collection =
-            liteConnection.GetCollection<SearchEngineItem>(ApplicationConstants.SEARCH_ENGINES_COLLECTION_NAME);
+            liteConnection.GetCollection<SearchEngineItem>(CollectionNames.SEARCH_ENGINES_COLLECTION_NAME);
         collection.Insert(engineItem);
         return Task.CompletedTask;
     }
@@ -235,7 +233,7 @@ public class DataService : IDataService
     public Task<List<SiteItem>> GetStartPageElementsAsync()
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SiteItem>(ApplicationConstants.STARTPAGE_ITEMS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<SiteItem>(CollectionNames.STARTPAGE_ITEMS_COLLECTION_NAME);
         var collectionItems = collection.FindAll().ToList();
         return Task.FromResult(collectionItems);
     }
@@ -243,7 +241,7 @@ public class DataService : IDataService
     public Task EditStartPageItemAsync(SiteItem oldItem, SiteItem newItem)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SiteItem>(ApplicationConstants.STARTPAGE_ITEMS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<SiteItem>(CollectionNames.STARTPAGE_ITEMS_COLLECTION_NAME);
         collection.Update(oldItem.Id, newItem);
         return Task.CompletedTask;
     }
@@ -251,7 +249,7 @@ public class DataService : IDataService
     public Task AddNewSiteOnStartPageAsync(SiteItem siteItem)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SiteItem>(ApplicationConstants.STARTPAGE_ITEMS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<SiteItem>(CollectionNames.STARTPAGE_ITEMS_COLLECTION_NAME);
         collection.Insert(siteItem);
 
         collection.EnsureIndex(x => x.Name);
@@ -262,7 +260,7 @@ public class DataService : IDataService
     public Task RemoveSiteOnStartPageAsync(SiteItem siteItem)
     {
         using var liteConnection = new LiteDatabase(FullFilePath);
-        var collection = liteConnection.GetCollection<SiteItem>(ApplicationConstants.STARTPAGE_ITEMS_COLLECTION_NAME);
+        var collection = liteConnection.GetCollection<SiteItem>(CollectionNames.STARTPAGE_ITEMS_COLLECTION_NAME);
         collection.Delete(siteItem.Id);
         return Task.CompletedTask;
     }

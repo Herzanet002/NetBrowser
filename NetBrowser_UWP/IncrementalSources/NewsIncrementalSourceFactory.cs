@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Microsoft.Toolkit.Collections;
 using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
+using NetBrowser.Core.Models;
 
 namespace NetBrowser_UWP.IncrementalSources;
 

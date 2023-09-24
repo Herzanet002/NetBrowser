@@ -9,12 +9,11 @@
     xmlns:winUi="using:Microsoft.UI.Xaml.Controls"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:actions="using:NetBrowser_UWP.Commands"
-    xmlns:models="using:NetBrowser_UWP.Models"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
     xmlns:userControls="using:NetBrowser_UWP.Views.UserControls"
     xmlns:tools="using:Microsoft.Toolkit.Uwp.UI.Converters"
-    xmlns:animatedVisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
+    xmlns:models="using:NetBrowser.Core.Models"
     Background="{Binding BackgroundBrush, Source={StaticResource ThemeManager}}"
     d:DataContext="{d:DesignInstance Type=viewModels:ShellPageViewModel,IsDesignTimeCreatable=True}"
     IsTabStop="True">

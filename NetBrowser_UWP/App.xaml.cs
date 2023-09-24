@@ -23,6 +23,8 @@ using NetBrowser_UWP.CommandResolver;
 using NetBrowser_UWP.CommandResolver.Strategies;
 using NetBrowser_UWP.IncrementalSources;
 using NetBrowser_UWP.Services.PageService;
+using NetBrowser.Core.Models;
+using NetBrowser.Storage;
 
 namespace NetBrowser_UWP;
 

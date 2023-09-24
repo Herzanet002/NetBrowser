@@ -1,4 +1,4 @@
-﻿namespace NetBrowser_UWP.Models;
+﻿namespace NetBrowser.Core.Models;
 
 public class BookmarkItem : SiteItem
 {

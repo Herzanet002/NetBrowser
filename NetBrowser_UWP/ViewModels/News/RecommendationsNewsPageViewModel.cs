@@ -8,9 +8,10 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Toolkit.Uwp;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.IncrementalSources;
-using NetBrowser_UWP.Models;
 using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views.News;
+using NetBrowser.Core.Models;
+using NetBrowser.Storage;
 using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels.News;

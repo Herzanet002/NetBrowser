@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using NetBrowser_UWP.Attributes;
+using NetBrowser.Core.Attributes;
 using NetBrowser_UWP.ViewModels.Settings;
 
 namespace NetBrowser_UWP.Views.Settings;

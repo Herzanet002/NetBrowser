@@ -11,21 +11,21 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Web.WebView2.Core;
+using NetBrowser.Core.Enums;
+using NetBrowser.Core.EventArguments;
 using NetBrowser_UWP.CommandResolver;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Contracts.Services.Settings;
-using NetBrowser_UWP.Enums;
-using NetBrowser_UWP.EventArguments;
 using NetBrowser_UWP.Messages;
-using NetBrowser_UWP.Models;
 using NetBrowser_UWP.UiUpdater;
 using NetBrowser_UWP.ViewModels.Base;
 using NetBrowser_UWP.Views.Settings;
 using Prism.Commands;
 using winUI = Microsoft.UI.Xaml.Controls;
-using NetBrowser_UWP.Contracts;
 using NetBrowser_UWP.Views;
+using NetBrowser.Core.Models;
+using NetBrowser.Storage;
 
 namespace NetBrowser_UWP.ViewModels;
 
@@ -269,7 +269,7 @@ public class ShellPageViewModel : BindableBase
         {
             rightTab.IconSource = new winUI.BitmapIconSource
             {
-                UriSource = new Uri(ApplicationConstants.FAVICONS_SERVICE + webInstance.Source),
+                UriSource = new Uri(AppConstants.FAVICONS_SERVICE + webInstance.Source),
                 ShowAsMonochrome = false
             };
         }

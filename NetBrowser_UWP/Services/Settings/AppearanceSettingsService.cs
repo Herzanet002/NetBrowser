@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using NetBrowser.Core.Enums;
+using NetBrowser.Core.EventArguments;
 using NetBrowser_UWP.Contracts.Services.Settings;
-using NetBrowser_UWP.Enums;
-using NetBrowser_UWP.EventArguments;
 using NetBrowser_UWP.Models;
 
 namespace NetBrowser_UWP.Services.Settings;

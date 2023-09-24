@@ -1,7 +1,6 @@
-﻿using System;
-using LiteDB;
+﻿using LiteDB;
 
-namespace NetBrowser_UWP.Models;
+namespace NetBrowser.Core.Models;
 
 public class SiteItem
 {

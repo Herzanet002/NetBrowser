@@ -7,15 +7,15 @@ using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using NetBrowser.Core.Enums;
 using NetBrowser_UWP.CommandResolver;
 using NetBrowser_UWP.Constants;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Messages;
-using NetBrowser_UWP.Models;
-using NetBrowser_UWP.Services;
 using NetBrowser_UWP.ViewModels.Base;
 using Prism.Commands;
-using NetBrowser_UWP.Enums;
+using NetBrowser.Core.Models;
+using NetBrowser.Storage;
 
 namespace NetBrowser_UWP.ViewModels.Controls;
 
@@ -264,7 +264,7 @@ public class FindBoxViewModel : BindableBase, IFindBox
 
     private async Task OnSaveBookmarkCommandExecuted()
     {
-        BookmarkForSave.FaviconUrl = ApplicationConstants.FAVICONS_SERVICE + BookmarkForSave.Url;
+        BookmarkForSave.FaviconUrl = AppConstants.FAVICONS_SERVICE + BookmarkForSave.Url;
         await _dataService.SaveBookmarkAsync(BookmarkForSave);
         await SetBookmarkButtonAppearance();
         IsFlyoutClosed = true;

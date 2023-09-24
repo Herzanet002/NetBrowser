@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
-using NetBrowser_UWP.Models;
+using NetBrowser.Core.Models;
 
 namespace NetBrowser_UWP.Converters;
 

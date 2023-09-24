@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using NetBrowser_UWP.Enums;
+using NetBrowser.Core.Enums;
 
 namespace NetBrowser_UWP.CommandResolver.Strategies;
 

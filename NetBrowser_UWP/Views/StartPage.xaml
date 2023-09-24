@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:NetBrowser_UWP.ViewModels"
-    xmlns:models="using:NetBrowser_UWP.Models"
     mc:Ignorable="d"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
@@ -13,9 +12,8 @@
     xmlns:commands="using:NetBrowser_UWP.Commands"
     xmlns:converters="using:NetBrowser_UWP.Converters"
     xmlns:helpers="using:NetBrowser_UWP.Helpers"
+    xmlns:models="using:NetBrowser.Core.Models"
     d:DataContext="{d:DesignInstance Type=viewModels:StartPageViewModel,IsDesignTimeCreatable=True}">
-
-
     <Page.Resources>
         <converters:TitleTextConverter x:Key="TitleTextConverter" />
         <converters:TitleLetterConverter x:Key="TitleLetterConverter" />

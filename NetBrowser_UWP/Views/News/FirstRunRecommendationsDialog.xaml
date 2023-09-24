@@ -8,7 +8,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
-    xmlns:models="using:NetBrowser_UWP.Models"
+    xmlns:models="using:NetBrowser.Core.Models"
     mc:Ignorable="d"
     Title="Для начала выберите категории новостей, которые вам нравятся"
     PrimaryButtonText="Продолжить"

@@ -1,4 +1,4 @@
-﻿namespace NetBrowser_UWP.Enums;
+﻿namespace NetBrowser.Core.Enums;
 
 public enum TabViewPlacementMode : uint
 {

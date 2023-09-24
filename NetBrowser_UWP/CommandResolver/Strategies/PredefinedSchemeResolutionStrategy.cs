@@ -1,5 +1,5 @@
-﻿using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Enums;
+﻿using NetBrowser.Core.Enums;
+using NetBrowser_UWP.Contracts.Services;
 
 namespace NetBrowser_UWP.CommandResolver.Strategies;
 

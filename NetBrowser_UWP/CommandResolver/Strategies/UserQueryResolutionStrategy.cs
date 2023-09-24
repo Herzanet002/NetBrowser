@@ -1,5 +1,5 @@
 ﻿using System;
-using NetBrowser_UWP.Enums;
+using NetBrowser.Core.Enums;
 
 namespace NetBrowser_UWP.CommandResolver.Strategies;
 

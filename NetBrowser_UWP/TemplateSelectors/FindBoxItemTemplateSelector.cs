@@ -1,7 +1,7 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using NetBrowser_UWP.Models;
+using NetBrowser.Core.Models;
 
 namespace NetBrowser_UWP.TemplateSelectors;
 

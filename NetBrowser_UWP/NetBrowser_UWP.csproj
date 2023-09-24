@@ -41,6 +41,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -54,6 +55,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -66,6 +68,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <OutputPath>bin\ARM\Release\</OutputPath>
@@ -79,6 +82,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
     <DebugSymbols>true</DebugSymbols>
@@ -92,6 +96,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
     <OutputPath>bin\ARM64\Release\</OutputPath>
@@ -105,6 +110,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -116,8 +122,9 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>10</LangVersion>
     <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -131,13 +138,12 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Attributes\PageMetadataAttribute.cs" />
-    <Compile Include="Attributes\ParentPageTypeAttribute.cs" />
     <Compile Include="CommandResolver\Command.cs" />
     <Compile Include="CommandResolver\CommandResolver.cs" />
     <Compile Include="CommandResolver\CommandResult.cs" />
@@ -152,7 +158,6 @@
     <Compile Include="Contracts\IThemeManager.cs" />
     <Compile Include="Contracts\INavigationViewContentPage.cs" />
     <Compile Include="Contracts\Services\IFirstRunAppInitializerService.cs" />
-    <Compile Include="Contracts\Services\IDataService.cs" />
     <Compile Include="Contracts\Services\INewsApiClientService.cs" />
     <Compile Include="Contracts\Services\IPageService.cs" />
     <Compile Include="Contracts\Services\Settings\IBaseSettingsService.cs" />
@@ -165,26 +170,20 @@
     <Compile Include="Contracts\Services\Settings\IGeneralSettingsService.cs" />
     <Compile Include="Converters\CustomTabViewStyleConverter.cs" />
     <Compile Include="Converters\ValueConverterGroup.cs" />
-    <Compile Include="Enums\CommandResultType.cs" />
-    <Compile Include="Enums\TabViewPlacementMode.cs" />
     <Compile Include="Exceptions\NewsApiException.cs" />
     <Compile Include="IncrementalSources\INewsIncrementalSourceFactory.cs" />
     <Compile Include="IncrementalSources\NewsIncrementalSource.cs" />
     <Compile Include="IncrementalSources\NewsIncrementalSourceFactory.cs" />
-    <Compile Include="Models\ContentModel.cs" />
     <Compile Include="Models\NewsApiSetting.cs" />
-    <Compile Include="Models\NewsProvider.cs" />
     <Compile Include="Services\NewsApiClientService.cs" />
     <Compile Include="UiUpdater\InnerPageUpdateUiReasonArgument.cs" />
     <Compile Include="UiUpdater\TabViewUpdateUiReasonArgument.cs" />
     <Compile Include="UiUpdater\UpdateUIReason.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\ViewModelsRegistrator.cs" />
-    <Compile Include="Attributes\PageAddressAttribute.cs" />
     <Compile Include="Messages\FindBoxNavigateToMessage.cs" />
     <Compile Include="Messages\InnerPageTypeChangedMessage.cs" />
     <Compile Include="Services\AppConfigService.cs" />
-    <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\FirstRunAppInitializerService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NavigationViewService.cs" />
@@ -192,7 +191,6 @@
     <Compile Include="Services\PageService\PageService.cs" />
     <Compile Include="Services\Settings\AppearanceSettingsService.cs" />
     <Compile Include="Services\Settings\GeneralSettingsService.cs" />
-    <Compile Include="EventArguments\SettingChangedEventArgs.cs" />
     <Compile Include="Services\Settings\SettingHolder.cs" />
     <Compile Include="Services\TabViewService.cs" />
     <Compile Include="Converters\DateTimeToDateConverter.cs" />
@@ -203,10 +201,7 @@
     <Compile Include="Converters\TitleTextConverter.cs" />
     <Compile Include="Converters\TitleLetterConverter.cs" />
     <Compile Include="Helpers\Json.cs" />
-    <Compile Include="Models\BookmarkItem.cs" />
-    <Compile Include="Models\SiteItem.cs" />
     <Compile Include="Models\ThemeItem.cs" />
-    <Compile Include="Models\SearchTermItem.cs" />
     <Compile Include="Helpers\ResourseHelper.cs" />
     <Compile Include="Resources\AuroraLite.xaml.cs">
       <DependentUpon>AuroraLite.xaml</DependentUpon>
@@ -277,8 +272,7 @@
     <Compile Include="Views\Settings\BookmarksPageSettings.xaml.cs">
       <DependentUpon>BookmarksPageSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Constants\ApplicationConstants.cs" />
-    <Compile Include="Models\HistoryItem.cs" />
+    <Compile Include="Constants\AppConstants.cs" />
     <Compile Include="Views\Settings\MainItemPageSettings.xaml.cs">
       <DependentUpon>MainItemPageSettings.xaml</DependentUpon>
     </Compile>
@@ -290,7 +284,6 @@
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\SearchEngineItem.cs" />
     <Compile Include="Views\Settings\HistoryPageSettings.xaml.cs">
       <DependentUpon>HistoryPageSettings.xaml</DependentUpon>
     </Compile>
@@ -604,20 +597,34 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NetBrowser.Core\NetBrowser.Core.csproj">
+      <Project>{440a0c9c-bd9a-4d36-9acd-f78943c56411}</Project>
+      <Name>NetBrowser.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetBrowser.Storage\NetBrowser.Storage.csproj">
+      <Project>{b84d1f84-acbd-4ac2-ac4e-64abd4c60528}</Project>
+      <Name>NetBrowser.Storage</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|Win32'">
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|Win32'">
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

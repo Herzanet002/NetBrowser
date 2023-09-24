@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.Exceptions;
 using NetBrowser_UWP.Models;
+using NetBrowser.Core.Models;
 
 namespace NetBrowser_UWP.Services;
 

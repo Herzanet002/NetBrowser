@@ -1,4 +1,4 @@
-using NetBrowser_UWP.Enums;
+using NetBrowser.Core.Enums;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.Services.Settings;
 

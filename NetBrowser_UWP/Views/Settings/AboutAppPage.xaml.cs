@@ -1,6 +1,6 @@
 ﻿using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using NetBrowser_UWP.Attributes;
+using NetBrowser.Core.Attributes;
 using NetBrowser_UWP.ViewModels.Settings;
 
 // Документацию по шаблону элемента "Пустая страница" см. по адресу https://go.microsoft.com/fwlink/?LinkId=234238

@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.Input;
-using NetBrowser_UWP.Contracts.Services;
 using NetBrowser_UWP.ViewModels.Base;
+using NetBrowser.Storage;
 
 namespace NetBrowser_UWP.ViewModels.News;
 

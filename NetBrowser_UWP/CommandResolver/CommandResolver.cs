@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
+using NetBrowser.Core.Enums;
 using NetBrowser_UWP.CommandResolver.Strategies;
-using NetBrowser_UWP.Enums;
 
 namespace NetBrowser_UWP.CommandResolver;
 

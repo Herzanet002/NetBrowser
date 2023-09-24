@@ -11,7 +11,7 @@
     xmlns:controls1="using:Microsoft.UI.Xaml.Controls"
     xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
     xmlns:news="using:NetBrowser_UWP.ViewModels.News"
-    xmlns:models="using:NetBrowser_UWP.Models"
+    xmlns:models="using:NetBrowser.Core.Models"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=news:AllNewsPageViewModel,IsDesignTimeCreatable=True}"
     Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">

@@ -5,8 +5,8 @@ using NetBrowser_UWP.Models;
 using NetBrowser_UWP.ViewModels.Base;
 using Windows.ApplicationModel.Core;
 using System;
+using NetBrowser.Core.Enums;
 using NetBrowser_UWP.Contracts.Services.Settings;
-using NetBrowser_UWP.Enums;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 
@@ -125,7 +125,7 @@ public class PersonalizePageViewModel : BindableBase
         IsAnimationEnabled = _appearanceSettingsService.IsAnimationEnabled.GetSetting();
         StartPageGridViewOrientation = _appearanceSettingsService.StartPageGridViewOrientation.GetSetting();
         TabViewPlacementMode = (int)_appearanceSettingsService.TabViewPlacementMode.GetSetting();
-        ThemesList = new ObservableCollection<ThemeItem>(Constants.ApplicationConstants.ThemesDictionary.Values);
+        ThemesList = new ObservableCollection<ThemeItem>(Constants.AppConstants.ThemesDictionary.Values);
         SelectedTheme = App.CurrentTheme;
     }
 

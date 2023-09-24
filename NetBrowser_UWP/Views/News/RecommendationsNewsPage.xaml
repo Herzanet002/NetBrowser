@@ -10,7 +10,7 @@
     xmlns:syndication="using:System.ServiceModel.Syndication"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:controls1="using:Microsoft.UI.Xaml.Controls"
-    xmlns:models="using:NetBrowser_UWP.Models"
+    xmlns:models="using:NetBrowser.Core.Models"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=news:RecommendationsNewsPageViewModel,IsDesignTimeCreatable=True}"
     Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}">

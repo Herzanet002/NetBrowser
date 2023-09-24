@@ -5,8 +5,9 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using CommunityToolkit.Mvvm.Input;
 using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
 using NetBrowser_UWP.ViewModels.Base;
+using NetBrowser.Core.Models;
+using NetBrowser.Storage;
 using Prism.Commands;
 
 namespace NetBrowser_UWP.ViewModels.News;

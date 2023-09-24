@@ -7,7 +7,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:news="using:NetBrowser_UWP.ViewModels.News"
-    xmlns:models="using:NetBrowser_UWP.Models"
+    xmlns:models="using:NetBrowser.Core.Models"
     mc:Ignorable="d"
     Background="{Binding Source={StaticResource ThemeManager}, Path=ThirdBrush}"
     d:DataContext="{d:DesignInstance Type=news:FavoriteNewsPageViewModel,IsDesignTimeCreatable=True}">

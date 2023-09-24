@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Windows.UI.Xaml.Controls;
-using NetBrowser_UWP.Attributes;
+using NetBrowser.Core.Attributes;
 using NetBrowser_UWP.Contracts.Services;
 
 namespace NetBrowser_UWP.Services.PageService;

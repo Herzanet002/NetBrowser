@@ -1,7 +1,7 @@
 ﻿using Windows.UI.Xaml.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using NetBrowser.Core.Attributes;
 using NetBrowser_UWP.ViewModels.News;
-using NetBrowser_UWP.Attributes;
 
 namespace NetBrowser_UWP.Views.News;
 

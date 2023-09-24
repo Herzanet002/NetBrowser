@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using NetBrowser_UWP.Contracts.Services;
-using NetBrowser_UWP.Models;
 using NetBrowser_UWP.ViewModels.Base;
+using NetBrowser.Core.Models;
+using NetBrowser.Storage;
 
 namespace NetBrowser_UWP.ViewModels.Settings;
 

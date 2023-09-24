@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using NetBrowser_UWP.Models;
+using NetBrowser.Core.Models;
 
 namespace NetBrowser_UWP.IncrementalSources;
 

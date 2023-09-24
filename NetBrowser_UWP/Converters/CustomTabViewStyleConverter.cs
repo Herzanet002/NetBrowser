@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
-using NetBrowser_UWP.Enums;
+using NetBrowser.Core.Enums;
 
 namespace NetBrowser_UWP.Converters;
 
