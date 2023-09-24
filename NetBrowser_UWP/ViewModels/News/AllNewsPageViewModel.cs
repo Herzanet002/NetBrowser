@@ -5,6 +5,7 @@ using Windows.ApplicationModel.DataTransfer;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Toolkit.Uwp;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Exceptions;
 using NetBrowser_UWP.IncrementalSources;
 using NetBrowser_UWP.Models;
 using NetBrowser_UWP.ViewModels.Base;
@@ -18,6 +19,7 @@ public class AllNewsPageViewModel : BindableBase
     private readonly IDataService _dataService;
 
     private bool _isProgressRingActive = true;
+    private NewsApiException _apiThrownException;
     private ContentModel _newsForSharing;
     private ContentModel _selectedItemInAllNews;
     private IncrementalLoadingCollection<NewsIncrementalSource, ContentModel> _news;
@@ -32,7 +34,8 @@ public class AllNewsPageViewModel : BindableBase
         News = new IncrementalLoadingCollection<NewsIncrementalSource, ContentModel>(newsIncrementalSource)
         {
             OnEndLoading = () => IsProgressRingActive = false,
-            OnStartLoading = () => IsProgressRingActive = true
+            OnStartLoading = () => IsProgressRingActive = true,
+            OnError = ex => ApiThrownException = ex as NewsApiException
         };
         InitializeCommands();
         DataTransferManager.GetForCurrentView().DataRequested += OnDataSharing;
@@ -54,6 +57,12 @@ public class AllNewsPageViewModel : BindableBase
     {
         get => _isProgressRingActive;
         private set => SetProperty(ref _isProgressRingActive, value);
+    }
+
+    public NewsApiException ApiThrownException
+    {
+        get => _apiThrownException;
+        private set => SetProperty(ref _apiThrownException, value);
     }
 
     public IncrementalLoadingCollection<NewsIncrementalSource, ContentModel> News

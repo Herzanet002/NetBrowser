@@ -167,6 +167,7 @@
     <Compile Include="Converters\ValueConverterGroup.cs" />
     <Compile Include="Enums\CommandResultType.cs" />
     <Compile Include="Enums\TabViewPlacementMode.cs" />
+    <Compile Include="Exceptions\NewsApiException.cs" />
     <Compile Include="IncrementalSources\INewsIncrementalSourceFactory.cs" />
     <Compile Include="IncrementalSources\NewsIncrementalSource.cs" />
     <Compile Include="IncrementalSources\NewsIncrementalSourceFactory.cs" />
@@ -571,7 +572,7 @@
       <Version>2.8.5</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.1901.177</Version>
+      <Version>1.0.2106-prerelease</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.1</Version>

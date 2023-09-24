@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using NetBrowser_UWP.Contracts.Services;
+using NetBrowser_UWP.Exceptions;
 using NetBrowser_UWP.Models;
 
 namespace NetBrowser_UWP.Services;
@@ -27,19 +29,19 @@ public class NewsApiClientService : INewsApiClientService
             var newsApiSetting = _appConfigService.GetSection<NewsApiSetting>(nameof(NewsApiSetting));
             var connection = $"{newsApiSetting.Connection}/news?pageSize={pageSize}&pageIndex={pageIndex}";
             var response = await _httpClient.GetAsync(connection);
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                var body = await response.Content.ReadAsByteArrayAsync();
-                var content = JsonSerializer.Deserialize<IEnumerable<ContentModel>>(body);
-                return content;
+                return null;
             }
-        }
-        catch
-        {
-            return null;
-        }
 
-        return null;
+            var body = await response.Content.ReadAsByteArrayAsync();
+            var content = JsonSerializer.Deserialize<IEnumerable<ContentModel>>(body);
+            return content;
+        }
+        catch (Exception ex)
+        {
+            throw new NewsApiException(ex.Message, ex);
+        }
     }
 
     public async Task<IEnumerable<ContentModel>> GetNewsByProvidersAsync(IEnumerable<NewsProvider> providers,
@@ -49,21 +51,21 @@ public class NewsApiClientService : INewsApiClientService
         {
             var newsApiSetting = _appConfigService.GetSection<NewsApiSetting>(nameof(NewsApiSetting));
             var connection = $"{newsApiSetting.Connection}/news?pageSize={pageSize}&pageIndex={pageIndex}";
-            var response = await _httpClient.PostAsJsonAsync(connection, new 
+            var response = await _httpClient.PostAsJsonAsync(connection, new
                 { Ids = providers.Select(x => x.Id) });
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                var body = await response.Content.ReadAsByteArrayAsync();
-                var content = JsonSerializer.Deserialize<IEnumerable<ContentModel>>(body);
-                return content;
+                return null;
             }
-        }
-        catch
-        {
-            return null;
-        }
 
-        return null;
+            var body = await response.Content.ReadAsByteArrayAsync();
+            var content = JsonSerializer.Deserialize<IEnumerable<ContentModel>>(body);
+            return content;
+        }
+        catch (Exception ex)
+        {
+            throw new NewsApiException(ex.Message, ex);
+        }
     }
 
     public async Task<IEnumerable<NewsProvider>> GetNewsProvidersAsync()
@@ -73,18 +75,18 @@ public class NewsApiClientService : INewsApiClientService
             var newsApiSetting = _appConfigService.GetSection<NewsApiSetting>(nameof(NewsApiSetting));
             var connection = $"{newsApiSetting.Connection}/news-providers";
             var response = await _httpClient.GetAsync(connection);
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                var body = await response.Content.ReadAsByteArrayAsync();
-                var content = JsonSerializer.Deserialize<IEnumerable<NewsProvider>>(body);
-                return content;
+                return null;
             }
-        }
-        catch
-        {
-            return null;
-        }
 
-        return null;
+            var body = await response.Content.ReadAsByteArrayAsync();
+            var content = JsonSerializer.Deserialize<IEnumerable<NewsProvider>>(body);
+            return content;
+        }
+        catch (Exception ex)
+        {
+            throw new NewsApiException(ex.Message, ex);
+        }
     }
 }
