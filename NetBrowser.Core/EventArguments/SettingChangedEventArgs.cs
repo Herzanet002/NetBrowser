@@ -1,6 +1,8 @@
-﻿namespace NetBrowser.Core.EventArguments;
+﻿using System;
 
-public class SettingChangedEventArgs
+namespace NetBrowser.Core.EventArguments;
+
+public class SettingChangedEventArgs : EventArgs
 {
     public string PropertyName { get; }
 

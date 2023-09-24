@@ -65,8 +65,8 @@ public sealed partial class App : Application
         var services = new ServiceCollection();
 
         // Services
+        services.AddStorageFeature();
         services.AddScoped<IFirstRunAppInitializerService, FirstRunAppInitializerService>();
-        services.AddSingleton<IDataService, DataService>();
         services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
         services.AddSingleton<IWebView2Service, WebView2Service>();
         services.AddTransient<INavigationService, NavigationService>();

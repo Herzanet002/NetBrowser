@@ -154,7 +154,6 @@
     <Compile Include="CommandResolver\Strategies\PredefinedSchemeResolutionStrategy.cs" />
     <Compile Include="CommandResolver\Strategies\UserQueryResolutionStrategy.cs" />
     <Compile Include="Commands\OpenFlyoutAction.cs" />
-    <Compile Include="Contracts\INavigationAware.cs" />
     <Compile Include="Contracts\IThemeManager.cs" />
     <Compile Include="Contracts\INavigationViewContentPage.cs" />
     <Compile Include="Contracts\Services\IFirstRunAppInitializerService.cs" />
